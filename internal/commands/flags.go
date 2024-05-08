@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	buildIDFlag = &cli.StringFlag{
+	buildIDFlag = &cli.IntFlag{
 		Name:     "build-id",
 		Aliases:  []string{"b"},
 		EnvVars:  []string{"HATHORA_BUILD_ID"},

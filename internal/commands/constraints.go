@@ -15,7 +15,7 @@ func requireValidEnumValue(value string, allowedValues []string, enumName string
 }
 
 func requireIntInRange(value int, lower int, upper int, flagName string) error {
-	if(value < lower || value > upper) {
+	if value < lower || value > upper {
 		return fmt.Errorf("flag %s must be between %d and %d", flagName, lower, upper)
 	}
 	
