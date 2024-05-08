@@ -1,0 +1,43 @@
+# golang, rust
+**/bin/
+
+# jvm
+**/target/
+
+# node
+**/node_modules/
+
+# sbt
+**/project/plugins/project/
+**/boot/
+**/lib_managed/
+**/src_managed/
+
+# metals
+**/.metals/
+**/.bsp/
+**/.bloop/
+**/metals.sbt
+
+# prose linting
+**/.vale.ini
+**/.prose/
+
+# ignore [ce]tags files
+**/tags
+
+# vim
+**/*.sw?
+
+# intellij
+**/.idea/
+.fleet
+
+# vscode
+**/.vscode/
+
+# localonly
+**/localonly.md
+
+# scratch space
+**/tmp/
