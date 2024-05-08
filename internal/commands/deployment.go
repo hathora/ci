@@ -16,7 +16,7 @@ var Deployment = &cli.Command{
 	Usage: "options for deployments",
 	Subcommands: []*cli.Command{
 		{
-			Name:  "get",
+			Name:  "get-deployment-info",
 			Usage: "get a deployment by id",
 			Flags: append([]cli.Flag{
 				appIDFlag,
@@ -28,7 +28,7 @@ var Deployment = &cli.Command{
 			},
 		},
 		{
-			Name:  "get-latest",
+			Name:  "get-latest-deployment",
 			Usage: "get the latest deployment",
 			Flags: append([]cli.Flag{
 				appIDFlag,
@@ -39,7 +39,7 @@ var Deployment = &cli.Command{
 			},
 		},
 		{
-			Name:  "get-all",
+			Name:  "get-deployments",
 			Usage: "get all deployments",
 			Flags: append([]cli.Flag{
 				appIDFlag,
@@ -50,7 +50,7 @@ var Deployment = &cli.Command{
 			},
 		},
 		{
-			Name:  "create",
+			Name:  "create-deployment",
 			Usage: "create a deployment",
 			Flags: append([]cli.Flag{
 				appIDFlag,

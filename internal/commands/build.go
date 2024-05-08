@@ -13,7 +13,7 @@ var Build = &cli.Command{
 	Usage: "options for builds",
 	Subcommands: []*cli.Command{
 		{
-			Name:  "get",
+			Name:  "get-build-info",
 			Usage: "get a build",
 			Flags: append([]cli.Flag{
 				appIDFlag,
@@ -41,7 +41,7 @@ var Build = &cli.Command{
 			},
 		},
 		{
-			Name:  "get-all",
+			Name:  "get-builds",
 			Usage: "get all builds",
 			Flags: append([]cli.Flag{
 				appIDFlag,
@@ -52,7 +52,7 @@ var Build = &cli.Command{
 			},
 		},
 		{
-			Name:  "create",
+			Name:  "create-build",
 			Usage: "create a build",
 			Flags: append([]cli.Flag{
 				appIDFlag,
@@ -64,7 +64,7 @@ var Build = &cli.Command{
 			},
 		},
 		{
-			Name:  "run",
+			Name:  "run-build",
 			Usage: "run a build by id",
 			Flags: append([]cli.Flag{
 				appIDFlag,
@@ -83,7 +83,7 @@ var Build = &cli.Command{
 			},
 		},
 		{
-			Name:  "delete",
+			Name:  "delete-build",
 			Usage: "delete a build",
 			Flags: append([]cli.Flag{
 				appIDFlag,
