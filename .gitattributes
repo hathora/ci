@@ -1,1 +1,2 @@
-/internal/cloudapi/sdk/* linguist-generated
+/internal/sdk/* linguist-generated
+/internal/sdk/doc.go !linguist-generated

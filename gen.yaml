@@ -27,5 +27,5 @@ go:
   inputModelSuffix: input
   maxMethodParams: 4
   outputModelSuffix: output
-  packageName: cloudapi
+  packageName: github.com/hathora/ci/internal/sdk
   responseFormat: envelope

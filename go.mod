@@ -1,9 +1,10 @@
-// todo: use the hathora cli module path once we have it
 module github.com/hathora/ci
 
 go 1.22.2
 
 require (
+	github.com/cenkalti/backoff/v4 v4.3.0
+	github.com/ericlagergren/decimal v0.0.0-20240411145413-00de7ca16731
 	github.com/stretchr/testify v1.9.0
 	github.com/urfave/cli/v2 v2.27.2
 	go.uber.org/zap v1.27.0

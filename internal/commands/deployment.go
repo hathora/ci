@@ -19,7 +19,6 @@ var Deployment = &cli.Command{
 			Name:  "get-deployment-info",
 			Usage: "get a deployment by id",
 			Flags: append([]cli.Flag{
-				appIDFlag,
 				deploymentIDFlag,
 			}, globalFlags...),
 			Action: func(cCtx *cli.Context) error {
@@ -30,9 +29,7 @@ var Deployment = &cli.Command{
 		{
 			Name:  "get-latest-deployment",
 			Usage: "get the latest deployment",
-			Flags: append([]cli.Flag{
-				appIDFlag,
-			}, globalFlags...),
+			Flags: append([]cli.Flag{}, globalFlags...),
 			Action: func(cCtx *cli.Context) error {
 				zap.L().Info("Getting the latest deployment...")
 				return nil
@@ -41,9 +38,7 @@ var Deployment = &cli.Command{
 		{
 			Name:  "get-deployments",
 			Usage: "get all deployments",
-			Flags: append([]cli.Flag{
-				appIDFlag,
-			}, globalFlags...),
+			Flags: append([]cli.Flag{		}, globalFlags...),
 			Action: func(cCtx *cli.Context) error {
 				zap.L().Info("Getting all deployments...")
 				return nil
@@ -53,7 +48,6 @@ var Deployment = &cli.Command{
 			Name:  "create-deployment",
 			Usage: "create a deployment",
 			Flags: append([]cli.Flag{
-				appIDFlag,
 				buildIDFlag,
 				&cli.BoolFlag{
 					Name:     "idle-timeout-enabled",

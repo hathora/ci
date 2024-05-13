@@ -2,11 +2,21 @@ package commands
 
 import (
 	"context"
-	"github.com/hathora/ci/internal/cloudapi/sdk"
+	"github.com/hathora/ci/internal/sdk"
+	"github.com/hathora/ci/internal/sdk/pkg/models/operations"
+	"github.com/hathora/ci/internal/sdk/pkg/models/shared"
 	"github.com/hathora/ci/internal/setup"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 )
+
+func logBuild(build shared.Build) {
+	zap.L().Info("",	zap.Any("Build", build))
+}
+
+func logBuildP(build *shared.Build) {
+	logBuild(*build)
+}
 
 var Build = &cli.Command{
 	Name:  "build",
@@ -16,26 +26,19 @@ var Build = &cli.Command{
 			Name:  "get-build-info",
 			Usage: "get a build",
 			Flags: append([]cli.Flag{
-				appIDFlag,
 				buildIDFlag,
 			}, globalFlags...),
 			Action: func(cCtx *cli.Context) error {
-				zap.L().Info("Getting a build...")
+				token, baseUrl, appID, _ := getCommonFlagValues(cCtx)
+				buildID := cCtx.Int(buildIDFlag.Name)
+				sdk := setup.SDK(token, baseUrl)
 
-				// init the sdk
-				token := cCtx.String(tokenFlag.Name)
-				url := cCtx.String(hathoraCloudEndpointFlag.Name)
-				sdk := setup.SDK(token, url)
-
-				// call the API
-				// TODO figure out the correct context
-				build, err := sdk.BuildV2.GetBuildInfo(context.Background(), cCtx.Int(buildIDFlag.Name), To(cCtx.String(appIDFlag.Name)))
+				res, err := sdk.BuildV2.GetBuildInfo(context.Background(), buildID, appID)
 				if err != nil {
 					return err
 				}
 
-				// handle the response
-				zap.L().Debug("logging build")
+				logBuildP(res.Build)
 
 				return nil
 			},
@@ -43,11 +46,25 @@ var Build = &cli.Command{
 		{
 			Name:  "get-builds",
 			Usage: "get all builds",
-			Flags: append([]cli.Flag{
-				appIDFlag,
-			}, globalFlags...),
+			Flags: append([]cli.Flag{}, globalFlags...),
 			Action: func(cCtx *cli.Context) error {
-				zap.L().Info("Getting all builds...")
+				token, baseUrl, appID, _ := getCommonFlagValues(cCtx)
+				sdk := setup.SDK(token, baseUrl)
+
+				res, err := sdk.BuildV2.GetBuilds(context.Background(), appID)
+				if err != nil {
+					return err
+				}
+
+				if len(res.Builds) == 0 {
+					zap.L().Info("You have no builds")
+					return nil
+				}
+
+				for _, build := range res.Builds {
+					logBuild(build)
+				}
+
 				return nil
 			},
 		},
@@ -55,11 +72,22 @@ var Build = &cli.Command{
 			Name:  "create-build",
 			Usage: "create a build",
 			Flags: append([]cli.Flag{
-				appIDFlag,
 				buildTagFlag,
 			}, globalFlags...),
 			Action: func(cCtx *cli.Context) error {
-				zap.L().Info("Creating a build...")
+				token, baseUrl, appID, _ := getCommonFlagValues(cCtx)
+				buildTag := sdk.String(cCtx.String(buildTagFlag.Name))
+				sdk := setup.SDK(token, baseUrl)
+
+				res, err := sdk.BuildV2.CreateBuild(
+					context.Background(),
+					shared.CreateBuildParams{BuildTag: buildTag},
+					appID)
+				if err != nil {
+					return err
+				}
+
+				logBuildP(res.Build)
 				return nil
 			},
 		},
@@ -67,7 +95,6 @@ var Build = &cli.Command{
 			Name:  "run-build",
 			Usage: "run a build by id",
 			Flags: append([]cli.Flag{
-				appIDFlag,
 				buildIDFlag,
 				&cli.StringFlag{
 					Name:     "binary-path",
@@ -78,7 +105,32 @@ var Build = &cli.Command{
 				},
 			}, globalFlags...),
 			Action: func(cCtx *cli.Context) error {
-				zap.L().Info("Running a build...")
+				token, baseUrl, appID, _ := getCommonFlagValues(cCtx)
+				buildID := cCtx.Int(buildIDFlag.Name)
+				filePath := cCtx.String("binary-path")
+				sdk := setup.SDK(token, baseUrl)
+
+				file, err := EnforceTar(filePath)
+				if err != nil {
+					return err
+				}
+
+				res, err := sdk.BuildV2.RunBuild(
+					context.Background(),
+					buildID,
+					operations.RunBuildRequestBody{
+						File: operations.RunBuildFile{
+							FileName: "build.tgz",
+							Content: file,
+						},
+					},
+					appID)
+				if err != nil {
+					return err
+				}
+
+				// TODO stream response to zap logger
+				zap.L().Info("Status Code", zap.Int("code", res.StatusCode))
 				return nil
 			},
 		},
@@ -86,11 +138,19 @@ var Build = &cli.Command{
 			Name:  "delete-build",
 			Usage: "delete a build",
 			Flags: append([]cli.Flag{
-				appIDFlag,
-				buildTagFlag,
+				buildIDFlag,
 			}, globalFlags...),
 			Action: func(cCtx *cli.Context) error {
-				zap.L().Info("Deleting a build...")
+				token, baseUrl, appID, _ := getCommonFlagValues(cCtx)
+				buildId := cCtx.Int(buildIDFlag.Name)
+				sdk := setup.SDK(token, baseUrl)
+
+				_, err := sdk.BuildV2.DeleteBuild(context.Background(), buildId, appID)
+				if err != nil {
+					return err
+				}
+				zap.L().Info("Build successfully deleted")
+
 				return nil
 			},
 		},

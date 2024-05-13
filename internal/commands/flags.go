@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"github.com/hathora/ci/internal/sdk"
 	"github.com/urfave/cli/v2"
 )
 
@@ -68,6 +69,7 @@ var (
 	}
 
 	globalFlags = []cli.Flag{
+		appIDFlag,
 		hathoraCloudEndpointFlag,
 		tokenFlag,
 		outputTypeFlag,
@@ -75,3 +77,12 @@ var (
 
 	allowedOutputTypes = []string{"text", "json"}
 )
+
+func getCommonFlagValues(context *cli.Context) (token string, baseUrl string, appID *string, outputType string) {
+	token = context.String(tokenFlag.Name)
+	baseUrl = context.String(hathoraCloudEndpointFlag.Name)
+	appID = sdk.String(context.String(appIDFlag.Name))
+	outputType = context.String(outputTypeFlag.Name)
+
+	return token, baseUrl, appID, outputType
+}
