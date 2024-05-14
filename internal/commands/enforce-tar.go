@@ -2,6 +2,7 @@ package commands
 
 import (
 	"github.com/hathora/ci/internal/compress"
+	"go.uber.org/zap"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -30,7 +31,7 @@ func isTGZ(filePath string) (bool, error) {
 
 	fileType := http.DetectContentType(buff)
 
-	return fileType == "application/gzip", nil
+	return fileType == "application/gzip" || fileType == "application/x-gzip", nil
 }
 
 func RequireTGZ(srcFolder string) (*compress.TGZFile, error) {
@@ -40,6 +41,7 @@ func RequireTGZ(srcFolder string) (*compress.TGZFile, error) {
 	}
 
 	if isFileTGZ {
+		zap.L().Debug(srcFolder + " is already a tar gzip file")
 		content, err := os.ReadFile(srcFolder)
 		if err != nil {
 			return nil, err
@@ -51,8 +53,9 @@ func RequireTGZ(srcFolder string) (*compress.TGZFile, error) {
 		}
 
 		return file, nil
-
 	}
+
+	zap.L().Debug(srcFolder + " is not a tar gzip file. Archiving and compressing now.")
 
 	return compress.ArchiveTGZ(srcFolder)
 }
