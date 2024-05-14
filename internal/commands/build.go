@@ -1,7 +1,8 @@
 package commands
 
 import (
-	"context"
+	"encoding/json"
+	"fmt"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/pkg/models/operations"
 	"github.com/hathora/ci/internal/sdk/pkg/models/shared"
@@ -12,10 +13,6 @@ import (
 
 func logBuild(build shared.Build) {
 	zap.L().Info("",	zap.Any("Build", build))
-}
-
-func logBuildP(build *shared.Build) {
-	logBuild(*build)
 }
 
 var Build = &cli.Command{
@@ -33,14 +30,18 @@ var Build = &cli.Command{
 				buildID := cCtx.Int(buildIDFlag.Name)
 				sdk := setup.SDK(token, baseUrl)
 
-				res, err := sdk.BuildV2.GetBuildInfo(context.Background(), buildID, appID)
+				res, err := sdk.BuildV2.GetBuildInfo(cCtx.Context, buildID, appID)
 				if err != nil {
-					return err
+					return fmt.Errorf("failed to get build info from API: %w", err)
 				}
 
-				logBuildP(res.Build)
+				// TODO this on other commands
+				jsonBytes, err := json.Marshal(res.Build)
+				if err != nil {
+					return fmt.Errorf("failed to marshal build: %w", err)
+				}
 
-				return nil
+				return cli.Exit(string(jsonBytes), 0)
 			},
 		},
 		{
@@ -51,21 +52,21 @@ var Build = &cli.Command{
 				token, baseUrl, appID, _ := getCommonFlagValues(cCtx)
 				sdk := setup.SDK(token, baseUrl)
 
-				res, err := sdk.BuildV2.GetBuilds(context.Background(), appID)
+				res, err := sdk.BuildV2.GetBuilds(cCtx.Context, appID)
 				if err != nil {
-					return err
+					return fmt.Errorf("failed to get builds from API: %w", err)
 				}
 
 				if len(res.Builds) == 0 {
-					zap.L().Info("You have no builds")
-					return nil
+					return cli.Exit("No builds were found", 1)
 				}
 
-				for _, build := range res.Builds {
-					logBuild(build)
+				jsonBytes, err := json.Marshal(res.Builds)
+				if err != nil {
+					return fmt.Errorf("failed to marshal builds: %w", err)
 				}
 
-				return nil
+				return cli.Exit(string(jsonBytes), 0)
 			},
 		},
 		{
@@ -80,15 +81,19 @@ var Build = &cli.Command{
 				sdk := setup.SDK(token, baseUrl)
 
 				res, err := sdk.BuildV2.CreateBuild(
-					context.Background(),
+					cCtx.Context,
 					shared.CreateBuildParams{BuildTag: buildTag},
 					appID)
 				if err != nil {
-					return err
+					return fmt.Errorf("failed to create a build in the API: %w", err)
 				}
 
-				logBuildP(res.Build)
-				return nil
+				jsonBytes, err := json.Marshal(res.Build)
+				if err != nil {
+					return fmt.Errorf("failed to marshal build: %w", err)
+				}
+
+				return cli.Exit(string(jsonBytes), 0)
 			},
 		},
 		{
@@ -110,28 +115,28 @@ var Build = &cli.Command{
 				filePath := cCtx.String("binary-path")
 				sdk := setup.SDK(token, baseUrl)
 
-				file, err := EnforceTar(filePath)
+				file, err := RequireTGZ(filePath)
 				if err != nil {
-					return err
+					return fmt.Errorf("failed to get tgz file: %w", err)
 				}
 
-				res, err := sdk.BuildV2.RunBuild(
-					context.Background(),
+				zap.L().Debug("using archive file", zap.Any("file", file))
+
+				_, err = sdk.BuildV2.RunBuild(
+					cCtx.Context,
 					buildID,
 					operations.RunBuildRequestBody{
 						File: operations.RunBuildFile{
-							FileName: "build.tgz",
-							Content: file,
+							FileName: file.Name,
+							Content:  file.Content,
 						},
 					},
 					appID)
 				if err != nil {
-					return err
+					return fmt.Errorf("failed to run a build in the API: %w", err)
 				}
 
-				// TODO stream response to zap logger
-				zap.L().Info("Status Code", zap.Int("code", res.StatusCode))
-				return nil
+				return cli.Exit("Successfully ran build", 0)
 			},
 		},
 		{
@@ -145,13 +150,12 @@ var Build = &cli.Command{
 				buildId := cCtx.Int(buildIDFlag.Name)
 				sdk := setup.SDK(token, baseUrl)
 
-				_, err := sdk.BuildV2.DeleteBuild(context.Background(), buildId, appID)
+				_, err := sdk.BuildV2.DeleteBuild(cCtx.Context, buildId, appID)
 				if err != nil {
-					return err
+					return fmt.Errorf("failed to delete a build from API: %w", err)
 				}
-				zap.L().Info("Build successfully deleted")
 
-				return nil
+				return cli.Exit("Successfully deleted build", 0)
 			},
 		},
 	},

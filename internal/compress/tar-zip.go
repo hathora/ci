@@ -8,7 +8,13 @@ import (
 	"path/filepath"
 )
 
-func TarZip(srcFolder string) (file []byte, err error) {
+type TGZFile struct {
+	Content []byte
+	Name string
+	Path string
+}
+
+func ArchiveTGZ(srcFolder string) (*TGZFile, error) {
 	destFile := filepath.Clean(srcFolder) + ".tgz"
 	tarGzFile, err := os.Create(destFile)
 	if err != nil {
@@ -35,27 +41,40 @@ func TarZip(srcFolder string) (file []byte, err error) {
 		if err != nil {
 			return err
 		}
-		
+
 		header.Name = relPath
 
 		if err := tarWriter.WriteHeader(header); err != nil {
 			return err
 		}
 
-		if !info.IsDir() {
-			file, err := os.Open(filePath)
-			if err != nil {
-				return err
-			}
-			defer file.Close()
+		if info.IsDir() {
+			return nil
+		}
 
-			if _, err := io.Copy(tarWriter, file); err != nil {
-				return err
-			}
+		file, err := os.Open(filePath)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+
+		if _, err := io.Copy(tarWriter, file); err != nil {
+			return err
 		}
 
 		return nil
 	})
 	
-	return os.ReadFile(destFile)
+	content, err := os.ReadFile(destFile)
+	if err != nil {
+		return nil, err
+	}
+
+	file := &TGZFile{
+		Content: content,
+		Name: filepath.Base(destFile),
+		Path: destFile,
+	}
+
+	return file, nil
 }

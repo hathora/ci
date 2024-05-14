@@ -38,6 +38,7 @@
 
 # localonly
 **/localonly.md
+.env
 
 # scratch space
 **/tmp/
