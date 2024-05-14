@@ -11,10 +11,6 @@ import (
 	"go.uber.org/zap"
 )
 
-func logBuild(build shared.Build) {
-	zap.L().Info("",	zap.Any("Build", build))
-}
-
 var Build = &cli.Command{
 	Name:  "build",
 	Usage: "options for builds",
@@ -35,13 +31,13 @@ var Build = &cli.Command{
 					return fmt.Errorf("failed to get build info from API: %w", err)
 				}
 
-				// TODO this on other commands
 				jsonBytes, err := json.Marshal(res.Build)
 				if err != nil {
 					return fmt.Errorf("failed to marshal build: %w", err)
 				}
 
-				return cli.Exit(string(jsonBytes), 0)
+				fmt.Println(string(jsonBytes))
+				return nil
 			},
 		},
 		{
@@ -66,7 +62,8 @@ var Build = &cli.Command{
 					return fmt.Errorf("failed to marshal builds: %w", err)
 				}
 
-				return cli.Exit(string(jsonBytes), 0)
+				fmt.Println(string(jsonBytes))
+				return nil
 			},
 		},
 		{
@@ -93,7 +90,8 @@ var Build = &cli.Command{
 					return fmt.Errorf("failed to marshal build: %w", err)
 				}
 
-				return cli.Exit(string(jsonBytes), 0)
+				fmt.Println(string(jsonBytes))
+				return nil
 			},
 		},
 		{
@@ -136,7 +134,9 @@ var Build = &cli.Command{
 					return fmt.Errorf("failed to run a build in the API: %w", err)
 				}
 
-				return cli.Exit("Successfully ran build", 0)
+				fmt.Println(`{ "status": "Success", "message": "Build run complete." }`)
+
+				return nil
 			},
 		},
 		{
@@ -155,7 +155,9 @@ var Build = &cli.Command{
 					return fmt.Errorf("failed to delete a build from API: %w", err)
 				}
 
-				return cli.Exit("Successfully deleted build", 0)
+				fmt.Println(`{ "status": "Success", "message": "Build deleted successfully." }`)
+
+				return nil
 			},
 		},
 	},
