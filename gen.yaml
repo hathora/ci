@@ -19,11 +19,11 @@ go:
   imports:
     option: openapi
     paths:
-      callbacks: pkg/models/callbacks
-      errors: pkg/models/sdkerrors
-      operations: pkg/models/operations
-      shared: pkg/models/shared
-      webhooks: pkg/models/webhooks
+      callbacks: models/callbacks
+      errors: models/sdkerrors
+      operations: models/operations
+      shared: models/shared
+      webhooks: models/webhooks
   inputModelSuffix: input
   maxMethodParams: 4
   outputModelSuffix: output
