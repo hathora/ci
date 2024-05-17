@@ -1,0 +1,9 @@
+# InviteStatusAccepted
+
+
+## Fields
+
+| Field                                                                                    | Type                                                                                     | Required                                                                                 | Description                                                                              | Example                                                                                  |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `UserID`                                                                                 | *string*                                                                                 | :heavy_check_mark:                                                                       | System generated unique identifier for a user. Not guaranteed to have a specific format. | auth0\|646bdf96f7fb73d04c8c84db                                                          |
+| `Type`                                                                                   | [shared.InviteStatusAcceptedType](../../models/shared/invitestatusacceptedtype.md)       | :heavy_check_mark:                                                                       | N/A                                                                                      |                                                                                          |

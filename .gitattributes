@@ -1,0 +1,2 @@
+/internal/sdk/* linguist-generated
+/internal/sdk/doc.go !linguist-generated
