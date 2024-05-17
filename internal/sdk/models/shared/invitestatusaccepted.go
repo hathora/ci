@@ -16,7 +16,6 @@ const (
 func (e InviteStatusAcceptedType) ToPointer() *InviteStatusAcceptedType {
 	return &e
 }
-
 func (e *InviteStatusAcceptedType) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {

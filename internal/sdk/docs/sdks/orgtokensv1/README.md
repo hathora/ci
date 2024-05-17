@@ -35,9 +35,8 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
-
+    
     ctx := context.Background()
     res, err := s.OrgTokensV1.GetOrgTokens(ctx, orgID)
     if err != nil {
@@ -89,13 +88,12 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
 
     createOrgToken := shared.CreateOrgToken{
         Name: "ci-token",
     }
-
+    
     ctx := context.Background()
     res, err := s.OrgTokensV1.CreateOrgToken(ctx, orgID, createOrgToken)
     if err != nil {
@@ -148,11 +146,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
 
     var orgTokenID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
-
+    
     ctx := context.Background()
     res, err := s.OrgTokensV1.RevokeOrgToken(ctx, orgID, orgTokenID)
     if err != nil {

@@ -36,9 +36,8 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.DeploymentV2.GetDeployments(ctx, appID)
     if err != nil {
@@ -90,9 +89,8 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.DeploymentV2.GetLatestDeployment(ctx, appID)
     if err != nil {
@@ -144,11 +142,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var deploymentID int = 1
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.DeploymentV2.GetDeploymentInfo(ctx, deploymentID, appID)
     if err != nil {
@@ -201,7 +198,6 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var buildID int = 1
 
     deploymentConfigV2 := shared.DeploymentConfigV2{
@@ -227,7 +223,7 @@ func main() {
     }
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.DeploymentV2.CreateDeployment(ctx, buildID, deploymentConfigV2, appID)
     if err != nil {

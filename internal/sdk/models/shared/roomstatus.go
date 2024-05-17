@@ -28,7 +28,6 @@ const (
 func (e RoomStatus) ToPointer() *RoomStatus {
 	return &e
 }
-
 func (e *RoomStatus) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {

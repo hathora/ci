@@ -21,8 +21,8 @@ package main
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/sdk"
-	"context"
 	"github.com/hathora/ci/internal/sdk/models/operations"
+	"context"
 	"log"
 )
 
@@ -34,10 +34,12 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-    ctx := context.Background()
-    res, err := s.MetricsV1.GetMetrics(ctx, operations.GetMetricsRequest{
+    request := operations.GetMetricsRequest{
         ProcessID: "cbfcddd2-0006-43ae-996c-995fff7bed2e",
-    })
+    }
+    
+    ctx := context.Background()
+    res, err := s.MetricsV1.GetMetrics(ctx, request)
     if err != nil {
         log.Fatal(err)
     }

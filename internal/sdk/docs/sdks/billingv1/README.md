@@ -34,6 +34,8 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
+
+    
     ctx := context.Background()
     res, err := s.BillingV1.GetBalance(ctx)
     if err != nil {
@@ -82,6 +84,8 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
+
+    
     ctx := context.Background()
     res, err := s.BillingV1.GetPaymentMethod(ctx)
     if err != nil {
@@ -130,10 +134,12 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-    ctx := context.Background()
-    res, err := s.BillingV1.InitStripeCustomerPortalURL(ctx, shared.CustomerPortalURL{
+    request := shared.CustomerPortalURL{
         ReturnURL: "<value>",
-    })
+    }
+    
+    ctx := context.Background()
+    res, err := s.BillingV1.InitStripeCustomerPortalURL(ctx, request)
     if err != nil {
         log.Fatal(err)
     }
@@ -181,6 +187,8 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
+
+    
     ctx := context.Background()
     res, err := s.BillingV1.GetInvoices(ctx)
     if err != nil {

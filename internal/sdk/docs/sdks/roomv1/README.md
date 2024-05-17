@@ -39,7 +39,6 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     createRoomParams := shared.CreateRoomParams{
         RoomConfig: sdk.String("{\"name\":\"my-room\"}"),
         Region: shared.RegionChicago,
@@ -48,7 +47,7 @@ func main() {
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var roomID *string = sdk.String("2swovpy1fnunu")
-
+    
     ctx := context.Background()
     res, err := s.RoomV1.CreateRoomDeprecated(ctx, createRoomParams, appID, roomID)
     if err != nil {
@@ -102,11 +101,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.RoomV1.GetRoomInfoDeprecated(ctx, roomID, appID)
     if err != nil {
@@ -159,11 +157,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.RoomV1.GetActiveRoomsForProcessDeprecated(ctx, processID, appID)
     if err != nil {
@@ -216,11 +213,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.RoomV1.GetInactiveRoomsForProcessDeprecated(ctx, processID, appID)
     if err != nil {
@@ -273,11 +269,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.RoomV1.DestroyRoomDeprecated(ctx, roomID, appID)
     if err != nil {
@@ -330,11 +325,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.RoomV1.SuspendRoomDeprecated(ctx, roomID, appID)
     if err != nil {
@@ -383,11 +377,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.RoomV1.GetConnectionInfoDeprecated(ctx, roomID, appID)
     if err != nil {

@@ -26,8 +26,8 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/sdk/models/operations"
+	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
 	"log"
 )
@@ -37,6 +37,9 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
+    security := operations.CreatePrivateLobbySecurity{
+            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
+        }
 
     requestBody := operations.CreatePrivateLobbyRequestBody{
         InitialConfig: shared.LobbyInitialConfig{},
@@ -46,13 +49,9 @@ func main() {
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var roomID *string = sdk.String("2swovpy1fnunu")
-
-    operationSecurity := operations.CreatePrivateLobbySecurity{
-            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
-        }
-
+    
     ctx := context.Background()
-    res, err := s.LobbyV2.CreatePrivateLobby(ctx, operationSecurity, requestBody, appID, roomID)
+    res, err := s.LobbyV2.CreatePrivateLobby(ctx, security, requestBody, appID, roomID)
     if err != nil {
         log.Fatal(err)
     }
@@ -92,8 +91,8 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/sdk/models/operations"
+	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
 	"log"
 )
@@ -103,6 +102,9 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
+    security := operations.CreatePublicLobbySecurity{
+            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
+        }
 
     requestBody := operations.CreatePublicLobbyRequestBody{
         InitialConfig: shared.LobbyInitialConfig{},
@@ -112,13 +114,9 @@ func main() {
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var roomID *string = sdk.String("2swovpy1fnunu")
-
-    operationSecurity := operations.CreatePublicLobbySecurity{
-            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
-        }
-
+    
     ctx := context.Background()
-    res, err := s.LobbyV2.CreatePublicLobby(ctx, operationSecurity, requestBody, appID, roomID)
+    res, err := s.LobbyV2.CreatePublicLobby(ctx, security, requestBody, appID, roomID)
     if err != nil {
         log.Fatal(err)
     }
@@ -158,8 +156,8 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/sdk/models/operations"
+	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
 	"log"
 )
@@ -169,6 +167,9 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
+    security := operations.CreateLocalLobbySecurity{
+            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
+        }
 
     requestBody := operations.CreateLocalLobbyRequestBody{
         InitialConfig: shared.LobbyInitialConfig{},
@@ -178,13 +179,9 @@ func main() {
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var roomID *string = sdk.String("2swovpy1fnunu")
-
-    operationSecurity := operations.CreateLocalLobbySecurity{
-            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
-        }
-
+    
     ctx := context.Background()
-    res, err := s.LobbyV2.CreateLocalLobby(ctx, operationSecurity, requestBody, appID, roomID)
+    res, err := s.LobbyV2.CreateLocalLobby(ctx, security, requestBody, appID, roomID)
     if err != nil {
         log.Fatal(err)
     }
@@ -226,8 +223,8 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/sdk/models/operations"
+	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
 	"log"
 )
@@ -237,6 +234,9 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
+    security := operations.CreateLobbyDeprecatedSecurity{
+            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
+        }
 
     createLobbyParams := shared.CreateLobbyParams{
         Visibility: shared.LobbyVisibilityPrivate,
@@ -247,13 +247,9 @@ func main() {
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var roomID *string = sdk.String("2swovpy1fnunu")
-
-    operationSecurity := operations.CreateLobbyDeprecatedSecurity{
-            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
-        }
-
+    
     ctx := context.Background()
-    res, err := s.LobbyV2.CreateLobbyDeprecated(ctx, operationSecurity, createLobbyParams, appID, roomID)
+    res, err := s.LobbyV2.CreateLobbyDeprecated(ctx, security, createLobbyParams, appID, roomID)
     if err != nil {
         log.Fatal(err)
     }
@@ -305,11 +301,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var region *shared.Region = shared.RegionFrankfurt.ToPointer()
-
+    
     ctx := context.Background()
     res, err := s.LobbyV2.ListActivePublicLobbiesDeprecatedV2(ctx, appID, region)
     if err != nil {
@@ -359,11 +354,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.LobbyV2.GetLobbyInfo(ctx, roomID, appID)
     if err != nil {
@@ -418,7 +412,6 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var roomID string = "2swovpy1fnunu"
 
     setLobbyStateParams := shared.SetLobbyStateParams{
@@ -426,7 +419,7 @@ func main() {
     }
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.LobbyV2.SetLobbyState(ctx, roomID, setLobbyStateParams, appID)
     if err != nil {

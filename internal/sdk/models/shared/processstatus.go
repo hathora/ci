@@ -21,7 +21,6 @@ const (
 func (e ProcessStatus) ToPointer() *ProcessStatus {
 	return &e
 }
-
 func (e *ProcessStatus) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {

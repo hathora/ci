@@ -4,6 +4,7 @@ package shared
 
 import (
 	"errors"
+	"fmt"
 	"github.com/hathora/ci/internal/sdk/internal/utils"
 )
 
@@ -42,21 +43,21 @@ func CreateConnectionInfoActiveConnectionInfo(activeConnectionInfo ActiveConnect
 
 func (u *ConnectionInfo) UnmarshalJSON(data []byte) error {
 
-	startingConnectionInfo := StartingConnectionInfo{}
+	var startingConnectionInfo StartingConnectionInfo = StartingConnectionInfo{}
 	if err := utils.UnmarshalJSON(data, &startingConnectionInfo, "", true, true); err == nil {
 		u.StartingConnectionInfo = &startingConnectionInfo
 		u.Type = ConnectionInfoTypeStartingConnectionInfo
 		return nil
 	}
 
-	activeConnectionInfo := ActiveConnectionInfo{}
+	var activeConnectionInfo ActiveConnectionInfo = ActiveConnectionInfo{}
 	if err := utils.UnmarshalJSON(data, &activeConnectionInfo, "", true, true); err == nil {
 		u.ActiveConnectionInfo = &activeConnectionInfo
 		u.Type = ConnectionInfoTypeActiveConnectionInfo
 		return nil
 	}
 
-	return errors.New("could not unmarshal into supported union types")
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for ConnectionInfo", string(data))
 }
 
 func (u ConnectionInfo) MarshalJSON() ([]byte, error) {
@@ -68,5 +69,5 @@ func (u ConnectionInfo) MarshalJSON() ([]byte, error) {
 		return utils.MarshalJSON(u.ActiveConnectionInfo, "", true)
 	}
 
-	return nil, errors.New("could not marshal union type: all fields are null")
+	return nil, errors.New("could not marshal union type ConnectionInfo: all fields are null")
 }

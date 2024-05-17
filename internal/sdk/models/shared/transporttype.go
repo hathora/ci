@@ -19,7 +19,6 @@ const (
 func (e TransportType) ToPointer() *TransportType {
 	return &e
 }
-
 func (e *TransportType) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {

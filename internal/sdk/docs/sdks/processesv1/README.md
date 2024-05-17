@@ -37,11 +37,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var region *shared.Region = shared.RegionTokyo.ToPointer()
-
+    
     ctx := context.Background()
     res, err := s.ProcessesV1.GetRunningProcesses(ctx, appID, region)
     if err != nil {
@@ -96,11 +95,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var region *shared.Region = shared.RegionSydney.ToPointer()
-
+    
     ctx := context.Background()
     res, err := s.ProcessesV1.GetStoppedProcesses(ctx, appID, region)
     if err != nil {
@@ -155,11 +153,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.ProcessesV1.GetProcessInfoDeprecated(ctx, processID, appID)
     if err != nil {

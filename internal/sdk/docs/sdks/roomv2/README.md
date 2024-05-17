@@ -40,7 +40,6 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     createRoomParams := shared.CreateRoomParams{
         RoomConfig: sdk.String("{\"name\":\"my-room\"}"),
         Region: shared.RegionSaoPaulo,
@@ -49,7 +48,7 @@ func main() {
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var roomID *string = sdk.String("2swovpy1fnunu")
-
+    
     ctx := context.Background()
     res, err := s.RoomV2.CreateRoom(ctx, createRoomParams, appID, roomID)
     if err != nil {
@@ -103,11 +102,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.RoomV2.GetRoomInfo(ctx, roomID, appID)
     if err != nil {
@@ -160,11 +158,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.RoomV2.GetActiveRoomsForProcess(ctx, processID, appID)
     if err != nil {
@@ -217,11 +214,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.RoomV2.GetInactiveRoomsForProcess(ctx, processID, appID)
     if err != nil {
@@ -274,11 +270,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.RoomV2.DestroyRoom(ctx, roomID, appID)
     if err != nil {
@@ -333,11 +328,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.RoomV2.SuspendRoomV2Deprecated(ctx, roomID, appID)
     if err != nil {
@@ -386,11 +380,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.RoomV2.GetConnectionInfo(ctx, roomID, appID)
     if err != nil {
@@ -441,7 +434,6 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var roomID string = "2swovpy1fnunu"
 
     updateRoomConfigParams := shared.UpdateRoomConfigParams{
@@ -449,7 +441,7 @@ func main() {
     }
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.RoomV2.UpdateRoomConfig(ctx, roomID, updateRoomConfigParams, appID)
     if err != nil {

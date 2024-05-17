@@ -19,7 +19,6 @@ const (
 func (e BuildStatus) ToPointer() *BuildStatus {
 	return &e
 }
-
 func (e *BuildStatus) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {

@@ -23,8 +23,8 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/sdk/models/operations"
+	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
 	"log"
 )
@@ -34,6 +34,9 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
+    security := operations.CreateLobbySecurity{
+            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
+        }
 
     createLobbyV3Params := shared.CreateLobbyV3Params{
         Visibility: shared.LobbyVisibilityPrivate,
@@ -46,13 +49,9 @@ func main() {
     var shortCode *string = sdk.String("LFG4")
 
     var roomID *string = sdk.String("2swovpy1fnunu")
-
-    operationSecurity := operations.CreateLobbySecurity{
-            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
-        }
-
+    
     ctx := context.Background()
-    res, err := s.LobbyV3.CreateLobby(ctx, operationSecurity, createLobbyV3Params, appID, shortCode, roomID)
+    res, err := s.LobbyV3.CreateLobby(ctx, security, createLobbyV3Params, appID, shortCode, roomID)
     if err != nil {
         log.Fatal(err)
     }
@@ -103,11 +102,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var region *shared.Region = shared.RegionSeattle.ToPointer()
-
+    
     ctx := context.Background()
     res, err := s.LobbyV3.ListActivePublicLobbies(ctx, appID, region)
     if err != nil {
@@ -155,11 +153,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.LobbyV3.GetLobbyInfoByRoomID(ctx, roomID, appID)
     if err != nil {
@@ -208,11 +205,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var shortCode string = "LFG4"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.LobbyV3.GetLobbyInfoByShortCode(ctx, shortCode, appID)
     if err != nil {

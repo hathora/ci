@@ -3,23 +3,28 @@ id: 1e3ae5b6-42eb-4f19-8f71-1e276b9f1d77
 management:
   docChecksum: dd06123495cdc97e070fd867f254e823
   docVersion: 0.0.1
-  speakeasyVersion: 1.279.2
-  generationVersion: 2.322.5
+  speakeasyVersion: 1.293.1
+  generationVersion: 2.333.3
   releaseVersion: 0.2.1
-  configChecksum: 7b2e31729c591a0dc2becf4711fdbed9
+  configChecksum: 59921bc939ac46ec92f7ac06f017f825
 features:
   go:
+    additionalDependencies: 0.1.0
     constsAndDefaults: 0.1.4
-    core: 3.4.7
+    core: 3.4.8
     deprecations: 2.81.1
     downloadStreams: 0.1.1
     flattening: 2.81.1
     globalSecurity: 2.82.9
+    globalSecurityCallbacks: 0.1.0
     globalServerURLs: 2.82.2
     globals: 2.82.2
+    intellisenseMarkdownSupport: 0.1.0
     methodSecurity: 2.82.2
+    nullables: 0.1.0
     responseFormat: 0.1.1
-    unions: 2.85.4
+    sdkHooks: 0.1.0
+    unions: 2.85.8
 generatedFiles:
   - appv1.go
   - authv1.go

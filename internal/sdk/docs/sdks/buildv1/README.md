@@ -39,9 +39,8 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.BuildV1.GetBuildsDeprecated(ctx, appID)
     if err != nil {
@@ -95,11 +94,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var buildID int = 1
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.BuildV1.GetBuildInfoDeprecated(ctx, buildID, appID)
     if err != nil {
@@ -154,13 +152,12 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     createBuildParams := shared.CreateBuildParams{
         BuildTag: sdk.String("0.1.14-14c793"),
     }
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.BuildV1.CreateBuildDeprecated(ctx, createBuildParams, appID)
     if err != nil {
@@ -216,7 +213,6 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var buildID int = 1
 
     requestBody := operations.RunBuildDeprecatedRequestBody{
@@ -227,7 +223,7 @@ func main() {
     }
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.BuildV1.RunBuildDeprecated(ctx, buildID, requestBody, appID)
     if err != nil {
@@ -283,11 +279,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var buildID int = 1
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.BuildV1.DeleteBuildDeprecated(ctx, buildID, appID)
     if err != nil {

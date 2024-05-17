@@ -4,6 +4,7 @@ package shared
 
 import (
 	"errors"
+	"fmt"
 	"github.com/hathora/ci/internal/sdk/internal/utils"
 )
 
@@ -63,35 +64,35 @@ func CreateOrganizationInviteStatusInviteStatusRescinded(inviteStatusRescinded I
 
 func (u *OrganizationInviteStatus) UnmarshalJSON(data []byte) error {
 
-	inviteStatusPending := InviteStatusPending{}
+	var inviteStatusPending InviteStatusPending = InviteStatusPending{}
 	if err := utils.UnmarshalJSON(data, &inviteStatusPending, "", true, true); err == nil {
 		u.InviteStatusPending = &inviteStatusPending
 		u.Type = OrganizationInviteStatusTypeInviteStatusPending
 		return nil
 	}
 
-	inviteStatusAccepted := InviteStatusAccepted{}
+	var inviteStatusAccepted InviteStatusAccepted = InviteStatusAccepted{}
 	if err := utils.UnmarshalJSON(data, &inviteStatusAccepted, "", true, true); err == nil {
 		u.InviteStatusAccepted = &inviteStatusAccepted
 		u.Type = OrganizationInviteStatusTypeInviteStatusAccepted
 		return nil
 	}
 
-	inviteStatusRejected := InviteStatusRejected{}
+	var inviteStatusRejected InviteStatusRejected = InviteStatusRejected{}
 	if err := utils.UnmarshalJSON(data, &inviteStatusRejected, "", true, true); err == nil {
 		u.InviteStatusRejected = &inviteStatusRejected
 		u.Type = OrganizationInviteStatusTypeInviteStatusRejected
 		return nil
 	}
 
-	inviteStatusRescinded := InviteStatusRescinded{}
+	var inviteStatusRescinded InviteStatusRescinded = InviteStatusRescinded{}
 	if err := utils.UnmarshalJSON(data, &inviteStatusRescinded, "", true, true); err == nil {
 		u.InviteStatusRescinded = &inviteStatusRescinded
 		u.Type = OrganizationInviteStatusTypeInviteStatusRescinded
 		return nil
 	}
 
-	return errors.New("could not unmarshal into supported union types")
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for OrganizationInviteStatus", string(data))
 }
 
 func (u OrganizationInviteStatus) MarshalJSON() ([]byte, error) {
@@ -111,5 +112,5 @@ func (u OrganizationInviteStatus) MarshalJSON() ([]byte, error) {
 		return utils.MarshalJSON(u.InviteStatusRescinded, "", true)
 	}
 
-	return nil, errors.New("could not marshal union type: all fields are null")
+	return nil, errors.New("could not marshal union type OrganizationInviteStatus: all fields are null")
 }

@@ -42,7 +42,6 @@ const (
 func (e DeploymentTransportType) ToPointer() *DeploymentTransportType {
 	return &e
 }
-
 func (e *DeploymentTransportType) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {

@@ -14,6 +14,7 @@ generation:
 go:
   version: 0.2.1
   additionalDependencies: {}
+  allowUnknownFieldsInWeakUnions: false
   clientServerStatusCodesAsErrors: true
   flattenGlobalSecurity: false
   imports:
@@ -26,6 +27,7 @@ go:
       webhooks: models/webhooks
   inputModelSuffix: input
   maxMethodParams: 4
+  methodArguments: require-security-and-request
   outputModelSuffix: output
   packageName: github.com/hathora/ci/internal/sdk
   responseFormat: envelope

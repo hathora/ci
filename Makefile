@@ -12,7 +12,12 @@ clean: ## Delete all built binaries.
 
 .PHONY: build
 build: ## Build the command binaries.
-env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/cloud-ci cmd/cloud-ci/run.go
+	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/cloud-ci cmd/cloud-ci/run.go
+
+.PHONY: sdk-clean
+sdk-clean: ## Re-generate the SDK using speakeasyapi.dev
+	rm -rf ./sdk
+	go generate ./...
 
 .PHONY: lint
 lint: ## Lints the project, logging any warnings or errors without modifying any files.

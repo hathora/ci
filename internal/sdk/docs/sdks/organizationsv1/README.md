@@ -32,13 +32,12 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
 
     createUserInvite := shared.CreateUserInvite{
         UserEmail: "<value>",
     }
-
+    
     ctx := context.Background()
     res, err := s.OrganizationsV1.InviteUser(ctx, orgID, createUserInvite)
     if err != nil {
@@ -89,13 +88,12 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
 
     rescindUserInvite := shared.RescindUserInvite{
         UserEmail: "<value>",
     }
-
+    
     ctx := context.Background()
     res, err := s.OrganizationsV1.RescindInvite(ctx, orgID, rescindUserInvite)
     if err != nil {
@@ -146,9 +144,8 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
-
+    
     ctx := context.Background()
     res, err := s.OrganizationsV1.GetOrgPendingInvites(ctx, orgID)
     if err != nil {
@@ -198,6 +195,8 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
+
+    
     ctx := context.Background()
     res, err := s.OrganizationsV1.GetUserPendingInvites(ctx)
     if err != nil {
@@ -246,9 +245,8 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
-
+    
     ctx := context.Background()
     res, err := s.OrganizationsV1.AcceptInvite(ctx, orgID)
     if err != nil {
@@ -298,9 +296,8 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
-
+    
     ctx := context.Background()
     res, err := s.OrganizationsV1.RejectInvite(ctx, orgID)
     if err != nil {

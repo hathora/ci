@@ -37,6 +37,8 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
+
+    
     ctx := context.Background()
     res, err := s.AppV1.GetApps(ctx)
     if err != nil {
@@ -86,11 +88,13 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-    ctx := context.Background()
-    res, err := s.AppV1.CreateApp(ctx, shared.AppConfig{
+    request := shared.AppConfig{
         AuthConfiguration: shared.AuthConfiguration{},
         AppName: "minecraft",
-    })
+    }
+    
+    ctx := context.Background()
+    res, err := s.AppV1.CreateApp(ctx, request)
     if err != nil {
         log.Fatal(err)
     }
@@ -140,14 +144,13 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     appConfig := shared.AppConfig{
         AuthConfiguration: shared.AuthConfiguration{},
         AppName: "minecraft",
     }
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.AppV1.UpdateApp(ctx, appConfig, appID)
     if err != nil {
@@ -200,9 +203,8 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.AppV1.GetAppInfo(ctx, appID)
     if err != nil {
@@ -254,9 +256,8 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.AppV1.DeleteApp(ctx, appID)
     if err != nil {

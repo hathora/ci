@@ -38,7 +38,6 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var follow *bool = sdk.Bool(true)
@@ -46,7 +45,7 @@ func main() {
     var tailLines *int = sdk.Int(100)
 
     var region *shared.Region = shared.RegionTokyo.ToPointer()
-
+    
     ctx := context.Background()
     res, err := s.LogV1.GetLogsForApp(ctx, appID, follow, tailLines, region)
     if err != nil {
@@ -101,7 +100,6 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
@@ -109,7 +107,7 @@ func main() {
     var follow *bool = sdk.Bool(true)
 
     var tailLines *int = sdk.Int(100)
-
+    
     ctx := context.Background()
     res, err := s.LogV1.GetLogsForProcess(ctx, processID, appID, follow, tailLines)
     if err != nil {
@@ -164,11 +162,10 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
+    
     ctx := context.Background()
     res, err := s.LogV1.DownloadLogForProcess(ctx, processID, appID)
     if err != nil {
@@ -223,7 +220,6 @@ func main() {
         sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
     )
 
-
     var deploymentID int = 1
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
@@ -231,7 +227,7 @@ func main() {
     var follow *bool = sdk.Bool(true)
 
     var tailLines *int = sdk.Int(100)
-
+    
     ctx := context.Background()
     res, err := s.LogV1.GetLogsForDeployment(ctx, deploymentID, appID, follow, tailLines)
     if err != nil {
