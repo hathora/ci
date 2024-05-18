@@ -10,20 +10,31 @@ import (
 )
 
 func main() {
-	_, cleanupLogger := setup.Logger()
-	defer cleanupLogger()
-
+	var cleanup []func()
 	app := &cli.App{
-		EnableBashCompletion: true,
-		Suggest:              true,
+		EnableBashCompletion:   true,
+		Suggest:                true,
+		UseShortOptionHandling: true,
+		SliceFlagSeparator:     ",",
+		Before: func(c *cli.Context) error {
+			cfg := commands.GlobalConfigFrom(c)
+			_, cleanupLogger := setup.Logger(cfg.Verbosity)
+			cleanup = append(cleanup, cleanupLogger)
+			return nil
+		},
 		Commands: []*cli.Command{
 			commands.Build,
 			commands.Deployment,
 		},
+		After: func(c *cli.Context) error {
+			for _, fn := range cleanup {
+				fn()
+			}
+			return nil
+		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		cleanupLogger()
 		log.Fatal(err)
 	}
 }

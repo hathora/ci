@@ -5,10 +5,11 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func Logger() (*zap.Logger, func()) {
+func Logger(verbosity int) (*zap.Logger, func()) {
 	encoderCfg := zap.NewProductionEncoderConfig()
-	encoderCfg.TimeKey = "timestamp"
+	encoderCfg.TimeKey = "time"
 	encoderCfg.EncodeTime = zapcore.RFC3339TimeEncoder
+	encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
 
 	config := zap.Config{
 		Level:             zap.NewAtomicLevelAt(zap.InfoLevel),
@@ -31,5 +32,23 @@ func Logger() (*zap.Logger, func()) {
 
 	return logger, func() {
 		_ = logger.Sync()
+	}
+}
+
+func LevelFromVerbosity(verbosity int) zapcore.Level {
+	switch verbosity {
+	case 0:
+		return zap.WarnLevel
+	case 1:
+		return zap.InfoLevel
+	case 2:
+		return zap.DebugLevel
+	case 3:
+		return zap.DebugLevel
+	default:
+		if verbosity < 0 {
+			return LevelFromVerbosity(0)
+		}
+		return LevelFromVerbosity(3)
 	}
 }
