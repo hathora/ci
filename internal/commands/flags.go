@@ -18,6 +18,13 @@ var (
 		},
 	}
 
+	outputPrettyFlag = &cli.BoolFlag{
+		Name:     "pretty",
+		Usage:    "enable pretty output, if relevant for the output type",
+		Value:    true,
+		Category: "Global:",
+	}
+
 	appIDFlag = &cli.StringFlag{
 		Name:     "app-id",
 		Aliases:  []string{"a"},
@@ -64,6 +71,7 @@ var (
 		hathoraCloudEndpointFlag,
 		tokenFlag,
 		outputTypeFlag,
+		outputPrettyFlag,
 		verboseFlag,
 		verbosityFlag,
 	}

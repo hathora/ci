@@ -2,9 +2,9 @@ package commands
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/hathora/ci/internal/archive"
-	"github.com/hathora/ci/internal/output"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/operations"
 	"github.com/hathora/ci/internal/sdk/models/shared"
@@ -31,7 +31,7 @@ var Build = &cli.Command{
 					return fmt.Errorf("failed to get build info: %w", err)
 				}
 
-				return output.As(build.OutputType, res.Build)
+				return build.Output.Write(res.Build, os.Stdout)
 			},
 		},
 		{
@@ -52,7 +52,7 @@ var Build = &cli.Command{
 					return fmt.Errorf("no builds found")
 				}
 
-				return output.As(build.OutputType, res.Builds)
+				return build.Output.Write(res.Builds, os.Stdout)
 			},
 		},
 		{
@@ -76,19 +76,19 @@ var Build = &cli.Command{
 					return fmt.Errorf("failed to create a build: %w", err)
 				}
 
-				return output.As(build.OutputType, res.Build)
+				return build.Output.Write(res.Build, os.Stdout)
 			},
 		},
 		{
 			Name:    "run",
 			Aliases: []string{"run-build"},
 			Usage:   "run a build by id",
-			Flags:   subcommandFlags(buildIDFlag, binaryPathFlag),
+			Flags:   subcommandFlags(buildIDFlag, fileFlag),
 			Action: func(cCtx *cli.Context) error {
 				zap.L().Debug("running a build...")
 				build := OneBuildConfigFrom(cCtx)
 
-				filePath := cCtx.String("binary-path")
+				filePath := cCtx.String(fileFlag.Name)
 				file, err := archive.RequireTGZ(filePath)
 				if err != nil {
 					return fmt.Errorf("no tgz file available for run: %w", err)
@@ -111,11 +111,11 @@ var Build = &cli.Command{
 					return fmt.Errorf("failed to run build: %w", err)
 				}
 
-				return output.As(build.OutputType, &DefaultResult{
+				return build.Output.Write(&DefaultResult{
 					Success: true,
 					Message: "Build ran successfully",
 					Code:    res.StatusCode,
-				})
+				}, os.Stdout)
 			},
 		},
 		{
@@ -132,11 +132,11 @@ var Build = &cli.Command{
 					return fmt.Errorf("failed to delete build: %w", err)
 				}
 
-				return output.As(build.OutputType, &DefaultResult{
+				return build.Output.Write(&DefaultResult{
 					Success: true,
 					Message: "Build deleted successfully",
 					Code:    res.StatusCode,
-				})
+				}, os.Stdout)
 			},
 		},
 	},
@@ -158,18 +158,17 @@ var (
 	}
 
 	buildTagFlag = &cli.StringFlag{
-		Name:     "build-tag",
-		Aliases:  []string{"bt"},
-		EnvVars:  buildFlagEnvVar("TAG"),
-		Usage:    "tag to associate an external version with a build",
-		Required: true,
+		Name:    "build-tag",
+		Aliases: []string{"bt"},
+		EnvVars: buildFlagEnvVar("TAG"),
+		Usage:   "tag to associate an external version with a build",
 	}
 
-	binaryPathFlag = &cli.StringFlag{
-		Name:     "binary-path",
-		Aliases:  []string{"bp"},
-		EnvVars:  buildFlagEnvVar("BINARY_PATH"),
-		Usage:    "path to the built game server binary",
+	fileFlag = &cli.StringFlag{
+		Name:     "file",
+		Aliases:  []string{"f"},
+		EnvVars:  buildFlagEnvVar("FILE"),
+		Usage:    "filepath of the built game server binary or archive",
 		Required: true,
 	}
 )

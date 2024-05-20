@@ -46,12 +46,12 @@ func ConfigFromCLI[T LoadableConfig](key any, cCtx *cli.Context) T {
 }
 
 type GlobalConfig struct {
-	Token      string
-	BaseURL    string
-	AppID      *string
-	OutputType output.Type
-	Verbosity  int
-	Context    context.Context
+	Token     string
+	BaseURL   string
+	AppID     *string
+	Output    output.FormatWriter
+	Verbosity int
+	Context   context.Context
 }
 
 func (c *GlobalConfig) Load(cCtx *cli.Context) {
@@ -63,7 +63,12 @@ func (c *GlobalConfig) Load(cCtx *cli.Context) {
 	} else {
 		c.AppID = &appID
 	}
-	c.OutputType = output.ParseOutputType(cCtx.String(outputTypeFlag.Name))
+	switch output.ParseOutputType(cCtx.String(outputTypeFlag.Name)) {
+	case output.JSON:
+		c.Output = output.JSONFormat(cCtx.Bool(outputPrettyFlag.Name))
+	default:
+		c.Output = output.TextFormat()
+	}
 	verboseCount := cCtx.Count(verboseFlag.Name)
 	verbosity := cCtx.Int(verbosityFlag.Name)
 	c.Verbosity = int(math.Max(float64(verbosity), float64(verboseCount)))

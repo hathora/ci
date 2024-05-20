@@ -2,8 +2,8 @@ package commands
 
 import (
 	"fmt"
+	"os"
 
-	"github.com/hathora/ci/internal/output"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/setup"
@@ -40,7 +40,7 @@ var Deployment = &cli.Command{
 					return fmt.Errorf("failed to get deployment info: %w", err)
 				}
 
-				return output.As(deployment.OutputType, res.DeploymentV2)
+				return deployment.Output.Write(res.DeploymentV2, os.Stdout)
 			},
 		},
 		{
@@ -57,7 +57,7 @@ var Deployment = &cli.Command{
 					return fmt.Errorf("failed to get the latest deployment: %w", err)
 				}
 
-				return output.As(deployment.OutputType, res.DeploymentV2)
+				return deployment.Output.Write(res.DeploymentV2, os.Stdout)
 			},
 		},
 		{
@@ -78,7 +78,7 @@ var Deployment = &cli.Command{
 					return fmt.Errorf("no deployments found")
 				}
 
-				return output.As(deployment.OutputType, res.DeploymentV2s)
+				return deployment.Output.Write(res.DeploymentV2s, os.Stdout)
 			},
 		},
 		{
@@ -138,7 +138,7 @@ var Deployment = &cli.Command{
 					return fmt.Errorf("failed to create a deployment: %w", err)
 				}
 
-				return output.As(deployment.OutputType, res.DeploymentV2)
+				return deployment.Output.Write(res.DeploymentV2, os.Stdout)
 			},
 		},
 	},
@@ -198,7 +198,8 @@ var (
 
 	additionalContainerPortsFlag = &cli.StringSliceFlag{
 		Name:    "additional-container-ports",
-		EnvVars: deploymentEnvVar("ADDITIONAL_CONTAINER_PORTS"),
+		Aliases: []string{"additional-container-port"},
+		EnvVars: append(deploymentEnvVar("ADDITIONAL_CONTAINER_PORTS"), deploymentEnvVar("ADDITIONAL_CONTAINER_PORT")...),
 		Usage:   "additional server ports",
 	}
 
