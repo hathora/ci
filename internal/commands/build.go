@@ -1,8 +1,9 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
+	"os"
+
 	"github.com/hathora/ci/internal/archive"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/operations"
@@ -11,154 +12,236 @@ import (
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 )
+
 var Build = &cli.Command{
 	Name:  "build",
 	Usage: "options for builds",
 	Subcommands: []*cli.Command{
 		{
-			Name:  "get-build-info",
-			Usage: "get a build",
-			Flags: append([]cli.Flag{
-				buildIDFlag,
-			}, globalFlags...),
+			Name:    infoCommandName,
+			Aliases: []string{"get-build-info"},
+			Usage:   "get a build",
+			Flags:   subcommandFlags(buildIDFlag),
 			Action: func(cCtx *cli.Context) error {
-				token, baseUrl, appID, _ := getCommonFlagValues(cCtx)
-				buildID := cCtx.Int(buildIDFlag.Name)
-				sdk := setup.SDK(token, baseUrl)
-
-				res, err := sdk.BuildV2.GetBuildInfo(cCtx.Context, buildID, appID)
+				zap.L().Debug("getting build info...")
+				build, err := OneBuildConfigFrom(cCtx)
 				if err != nil {
-					return fmt.Errorf("failed to get build info from API: %w", err)
+					return err
 				}
 
-				jsonBytes, err := json.Marshal(res.Build)
+				res, err := build.SDK.BuildV2.GetBuildInfo(build.Context, build.BuildID, build.AppID)
 				if err != nil {
-					return fmt.Errorf("failed to marshal build: %w", err)
+					return fmt.Errorf("failed to get build info: %w", err)
 				}
 
-				fmt.Println(string(jsonBytes))
-				return nil
+				return build.Output.Write(res.Build, os.Stdout)
 			},
 		},
 		{
-			Name:  "get-builds",
-			Usage: "get all builds",
-			Flags: append([]cli.Flag{}, globalFlags...),
+			Name:    listCommandName,
+			Aliases: []string{"get-builds"},
+			Usage:   "get all builds",
+			Flags:   subcommandFlags(),
 			Action: func(cCtx *cli.Context) error {
-				token, baseUrl, appID, _ := getCommonFlagValues(cCtx)
-				sdk := setup.SDK(token, baseUrl)
-
-				res, err := sdk.BuildV2.GetBuilds(cCtx.Context, appID)
+				zap.L().Debug("getting builds...")
+				build, err := BuildConfigFrom(cCtx)
 				if err != nil {
-					return fmt.Errorf("failed to get builds from API: %w", err)
+					return err
+				}
+
+				res, err := build.SDK.BuildV2.GetBuilds(cCtx.Context, build.AppID)
+				if err != nil {
+					return fmt.Errorf("failed to get builds: %w", err)
 				}
 
 				if len(res.Builds) == 0 {
-					return cli.Exit("No builds were found", 1)
+					return fmt.Errorf("no builds found")
 				}
 
-				jsonBytes, err := json.Marshal(res.Builds)
-				if err != nil {
-					return fmt.Errorf("failed to marshal builds: %w", err)
-				}
-
-				fmt.Println(string(jsonBytes))
-				return nil
+				return build.Output.Write(res.Builds, os.Stdout)
 			},
 		},
 		{
-			Name:  "create-build",
-			Usage: "create a build",
-			Flags: append([]cli.Flag{
-				buildTagFlag,
-			}, globalFlags...),
+			Name:    createCommandName,
+			Aliases: []string{"create-build"},
+			Usage:   "create a build",
+			Flags:   subcommandFlags(buildTagFlag),
 			Action: func(cCtx *cli.Context) error {
-				token, baseUrl, appID, _ := getCommonFlagValues(cCtx)
+				zap.L().Debug("creating a build...")
+				build, err := BuildConfigFrom(cCtx)
+				if err != nil {
+					return err
+				}
 				buildTag := sdk.String(cCtx.String(buildTagFlag.Name))
-				sdk := setup.SDK(token, baseUrl)
 
-				res, err := sdk.BuildV2.CreateBuild(
+				res, err := build.SDK.BuildV2.CreateBuild(
 					cCtx.Context,
-					shared.CreateBuildParams{BuildTag: buildTag},
-					appID)
+					shared.CreateBuildParams{
+						BuildTag: buildTag,
+					},
+					build.AppID,
+				)
 				if err != nil {
-					return fmt.Errorf("failed to create a build in the API: %w", err)
+					return fmt.Errorf("failed to create a build: %w", err)
 				}
 
-				jsonBytes, err := json.Marshal(res.Build)
-				if err != nil {
-					return fmt.Errorf("failed to marshal build: %w", err)
-				}
-
-				fmt.Println(string(jsonBytes))
-				return nil
+				return build.Output.Write(res.Build, os.Stdout)
 			},
 		},
 		{
-			Name:  "run-build",
-			Usage: "run a build by id",
-			Flags: append([]cli.Flag{
-				buildIDFlag,
-				&cli.StringFlag{
-					Name:     "binary-path",
-					Aliases:  []string{"bp"},
-					EnvVars:  []string{"HATHORA_BUILD_BINARY_PATH"},
-					Usage:    "path to the built game server binary",
-					Required: true,
-				},
-			}, globalFlags...),
+			Name:    "run",
+			Aliases: []string{"run-build"},
+			Usage:   "run a build by id",
+			Flags:   subcommandFlags(buildIDFlag, fileFlag),
 			Action: func(cCtx *cli.Context) error {
-				token, baseUrl, appID, _ := getCommonFlagValues(cCtx)
-				buildID := cCtx.Int(buildIDFlag.Name)
-				filePath := cCtx.String("binary-path")
-				sdk := setup.SDK(token, baseUrl)
+				zap.L().Debug("running a build...")
+				build, err := OneBuildConfigFrom(cCtx)
+				if err != nil {
+					return err
+				}
 
+				filePath := cCtx.String(fileFlag.Name)
 				file, err := archive.RequireTGZ(filePath)
 				if err != nil {
-					return fmt.Errorf("failed to get tgz file: %w", err)
+					return fmt.Errorf("no tgz file available for run: %w", err)
 				}
 
 				zap.L().Debug("using archive file", zap.Any("file", file))
 
-				_, err = sdk.BuildV2.RunBuild(
+				res, err := build.SDK.BuildV2.RunBuild(
 					cCtx.Context,
-					buildID,
+					build.BuildID,
 					operations.RunBuildRequestBody{
 						File: operations.RunBuildFile{
 							FileName: file.Name,
 							Content:  file.Content,
 						},
 					},
-					appID)
+					build.AppID,
+				)
 				if err != nil {
-					return fmt.Errorf("failed to run a build in the API: %w", err)
+					return fmt.Errorf("failed to run build: %w", err)
 				}
 
-				fmt.Println(`{ "status": "Success", "message": "Build run complete." }`)
-
-				return nil
+				return build.Output.Write(&DefaultResult{
+					Success: true,
+					Message: "Build ran successfully",
+					Code:    res.StatusCode,
+				}, os.Stdout)
 			},
 		},
 		{
-			Name:  "delete-build",
-			Usage: "delete a build",
-			Flags: append([]cli.Flag{
-				buildIDFlag,
-			}, globalFlags...),
+			Name:    deleteCommandName,
+			Aliases: []string{"delete-build"},
+			Usage:   "delete a build",
+			Flags:   subcommandFlags(buildIDFlag),
 			Action: func(cCtx *cli.Context) error {
-				token, baseUrl, appID, _ := getCommonFlagValues(cCtx)
-				buildId := cCtx.Int(buildIDFlag.Name)
-				sdk := setup.SDK(token, baseUrl)
-
-				_, err := sdk.BuildV2.DeleteBuild(cCtx.Context, buildId, appID)
+				zap.L().Debug("deleting a build...")
+				build, err := OneBuildConfigFrom(cCtx)
 				if err != nil {
-					return fmt.Errorf("failed to delete a build from API: %w", err)
+					return err
 				}
 
-				fmt.Println(`{ "status": "Success", "message": "Build deleted successfully." }`)
+				res, err := build.SDK.BuildV2.DeleteBuild(cCtx.Context, build.BuildID, build.AppID)
+				if err != nil {
+					return fmt.Errorf("failed to delete build: %w", err)
+				}
 
-				return nil
+				return build.Output.Write(&DefaultResult{
+					Success: true,
+					Message: "Build deleted successfully",
+					Code:    res.StatusCode,
+				}, os.Stdout)
 			},
 		},
 	},
+}
+
+func buildFlagEnvVar(name string) []string {
+	return []string{fmt.Sprintf("%s%s", buildFlagEnvVarPrefix, name)}
+}
+
+var (
+	buildFlagEnvVarPrefix = fmt.Sprintf("%s%s", globalFlagEnvVarPrefix, "BUILD_")
+
+	buildIDFlag = &cli.IntFlag{
+		Name:     "build-id",
+		Aliases:  []string{"b"},
+		EnvVars:  buildFlagEnvVar("ID"),
+		Usage:    "the ID of the build in Hathora",
+		Required: true,
+	}
+
+	buildTagFlag = &cli.StringFlag{
+		Name:    "build-tag",
+		Aliases: []string{"bt"},
+		EnvVars: buildFlagEnvVar("TAG"),
+		Usage:   "tag to associate an external version with a build",
+	}
+
+	fileFlag = &cli.StringFlag{
+		Name:     "file",
+		Aliases:  []string{"f"},
+		EnvVars:  buildFlagEnvVar("FILE"),
+		Usage:    "filepath of the built game server binary or archive",
+		Required: true,
+	}
+)
+
+var (
+	buildConfigKey = struct{}{}
+)
+
+type BuildConfig struct {
+	*GlobalConfig
+	SDK *sdk.SDK
+}
+
+var _ LoadableConfig = (*BuildConfig)(nil)
+
+func (c *BuildConfig) Load(cCtx *cli.Context) error {
+	global, err := GlobalConfigFrom(cCtx)
+	if err != nil {
+		return err
+	}
+	c.GlobalConfig = global
+	c.SDK = setup.SDK(c.Token, c.BaseURL, c.Verbosity)
+	return nil
+}
+
+func (c *BuildConfig) New() LoadableConfig {
+	return &BuildConfig{}
+}
+
+func BuildConfigFrom(cCtx *cli.Context) (*BuildConfig, error) {
+	return ConfigFromCLI[*BuildConfig](buildConfigKey, cCtx)
+}
+
+var (
+	oneBuildConfigKey = struct{}{}
+)
+
+type OneBuildConfig struct {
+	*BuildConfig
+	BuildID int
+}
+
+var _ LoadableConfig = (*OneBuildConfig)(nil)
+
+func (c *OneBuildConfig) Load(cCtx *cli.Context) error {
+	build, err := BuildConfigFrom(cCtx)
+	if err != nil {
+		return err
+	}
+	c.BuildConfig = build
+	c.BuildID = cCtx.Int(buildIDFlag.Name)
+	return nil
+}
+
+func (c *OneBuildConfig) New() LoadableConfig {
+	return &OneBuildConfig{}
+}
+
+func OneBuildConfigFrom(cCtx *cli.Context) (*OneBuildConfig, error) {
+	return ConfigFromCLI[*OneBuildConfig](oneBuildConfigKey, cCtx)
 }

@@ -1,59 +1,56 @@
 package commands
 
 import (
-	"github.com/hathora/ci/internal/sdk"
 	"github.com/urfave/cli/v2"
 )
 
 var (
-	buildIDFlag = &cli.IntFlag{
-		Name:     "build-id",
-		Aliases:  []string{"b"},
-		EnvVars:  []string{"HATHORA_BUILD_ID"},
-		Usage:    "the ID of the build in Hathora",
-		Required: true,
-	}
-
-	buildTagFlag = &cli.StringFlag{
-		Name:     "build-tag",
-		Aliases:  []string{"bt"},
-		EnvVars:  []string{"HATHORA_APP_TAG"},
-		Usage:    "tag to associate an external version with a build",
-		Required: true,
-	}
-
-	deploymentIDFlag = &cli.IntFlag{
-		Name:     "deployment-id",
-		Aliases:  []string{"d"},
-		EnvVars:  []string{"HATHORA_DEPLOYMENT_ID"},
-		Usage:    "the ID of the deployment in Hathora",
-		Required: true,
-	}
-
 	// common flags
 	outputTypeFlag = &cli.StringFlag{
-		Name:     "output-type",
+		Name:     "output",
 		Aliases:  []string{"o"},
+		EnvVars:  globalFlagEnvVar("OUTPUT"),
 		Usage:    "the format of the output",
 		Value:    allowedOutputTypes[0],
 		Category: "Global:",
 		Action: func(ctx *cli.Context, v string) error {
-			return requireValidEnumValue(v, allowedOutputTypes, "output-type")
+			return requireValidEnumValue(v, allowedOutputTypes, "output")
 		},
+	}
+
+	outputPrettyFlag = &cli.BoolFlag{
+		Name:     "pretty",
+		Usage:    "enable pretty output, if relevant for the output type",
+		Value:    true,
+		Category: "Global:",
 	}
 
 	appIDFlag = &cli.StringFlag{
 		Name:     "app-id",
 		Aliases:  []string{"a"},
-		EnvVars:  []string{"HATHORA_APP_ID"},
+		EnvVars:  globalFlagEnvVar("APP_ID"),
 		Usage:    "the ID of the app in Hathora",
-		Required: true,
+		Category: "Global:",
+	}
+
+	verboseFlag = &cli.BoolFlag{
+		Name:     "verbose",
+		Aliases:  []string{"v"},
+		Usage:    "enable verbose logging",
+		Category: "Global:",
+	}
+
+	verbosityFlag = &cli.IntFlag{
+		Name:     "verbosity",
+		EnvVars:  globalFlagEnvVar("VERBOSITY"),
+		Usage:    "set the logging verbosity level",
+		Value:    0,
 		Category: "Global:",
 	}
 
 	hathoraCloudEndpointFlag = &cli.StringFlag{
 		Name:        "hathora-cloud-endpoint",
-		EnvVars:     []string{"HATHORA_CLOUD_ENDPOINT"},
+		EnvVars:     globalFlagEnvVar("CLOUD_ENDPOINT"),
 		Usage:       "override the default API base url",
 		DefaultText: "https://api.hathora.dev",
 		Category:    "Global:",
@@ -62,27 +59,32 @@ var (
 	tokenFlag = &cli.StringFlag{
 		Name:     "token",
 		Aliases:  []string{"t"},
-		EnvVars:  []string{"HATHORA_TOKEN"},
+		EnvVars:  globalFlagEnvVar("TOKEN"),
 		Usage:    "the access token for authenticating with the API",
 		Category: "Global:",
-		Required: true,
 	}
 
-	globalFlags = []cli.Flag{
+	GlobalFlags = []cli.Flag{
 		appIDFlag,
 		hathoraCloudEndpointFlag,
 		tokenFlag,
 		outputTypeFlag,
+		outputPrettyFlag,
+		verboseFlag,
+		verbosityFlag,
 	}
 
 	allowedOutputTypes = []string{"text", "json"}
 )
 
-func getCommonFlagValues(context *cli.Context) (token string, baseUrl string, appID *string, outputType string) {
-	token = context.String(tokenFlag.Name)
-	baseUrl = context.String(hathoraCloudEndpointFlag.Name)
-	appID = sdk.String(context.String(appIDFlag.Name))
-	outputType = context.String(outputTypeFlag.Name)
+var (
+	globalFlagEnvVarPrefix = "HATHORA_"
+)
 
-	return token, baseUrl, appID, outputType
+func globalFlagEnvVar(name string) []string {
+	return []string{globalFlagEnvVarPrefix + name}
+}
+
+func subcommandFlags(flags ...cli.Flag) []cli.Flag {
+	return flags
 }

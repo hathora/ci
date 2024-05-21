@@ -17,7 +17,7 @@ build: ## Build the command binaries.
 .PHONY: sdk-clean
 sdk-clean: ## Re-generate the SDK using speakeasyapi.dev
 	rm -rf ./sdk
-	go generate ./...
+	go generate ./...	
 
 .PHONY: lint
 lint: ## Lints the project, logging any warnings or errors without modifying any files.
