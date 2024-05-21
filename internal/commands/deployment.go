@@ -29,7 +29,10 @@ var Deployment = &cli.Command{
 			Flags:   subcommandFlags(deploymentIDFlag),
 			Action: func(cCtx *cli.Context) error {
 				zap.L().Debug("getting deployment info...")
-				deployment := OneDeploymentConfigFrom(cCtx)
+				deployment, err := OneDeploymentConfigFrom(cCtx)
+				if err != nil {
+					return err
+				}
 
 				res, err := deployment.SDK.DeploymentV2.GetDeploymentInfo(
 					deployment.Context,
@@ -50,7 +53,10 @@ var Deployment = &cli.Command{
 			Flags:   subcommandFlags(),
 			Action: func(cCtx *cli.Context) error {
 				zap.L().Debug("getting the latest deployment...")
-				deployment := DeploymentConfigFrom(cCtx)
+				deployment, err := DeploymentConfigFrom(cCtx)
+				if err != nil {
+					return err
+				}
 
 				res, err := deployment.SDK.DeploymentV2.GetLatestDeployment(deployment.Context, deployment.AppID)
 				if err != nil {
@@ -67,7 +73,10 @@ var Deployment = &cli.Command{
 			Flags:   subcommandFlags(),
 			Action: func(cCtx *cli.Context) error {
 				zap.L().Debug("getting all deployments...")
-				deployment := DeploymentConfigFrom(cCtx)
+				deployment, err := DeploymentConfigFrom(cCtx)
+				if err != nil {
+					return err
+				}
 
 				res, err := deployment.SDK.DeploymentV2.GetDeployments(deployment.Context, deployment.AppID)
 				if err != nil {
@@ -98,7 +107,10 @@ var Deployment = &cli.Command{
 			),
 			Action: func(cCtx *cli.Context) error {
 				zap.L().Debug("creating a deployment...")
-				deployment := DeploymentConfigFrom(cCtx)
+				deployment, err := DeploymentConfigFrom(cCtx)
+				if err != nil {
+					return err
+				}
 				buildID := cCtx.Int(buildIDFlag.Name)
 				idleTimeoutEnabled := cCtx.Bool(idleTimeoutFlag.Name)
 				roomsPerProcess := cCtx.Int(roomsPerProcessFlag.Name)
@@ -254,16 +266,26 @@ var (
 
 type DeploymentConfig struct {
 	*GlobalConfig
-	SDK   *sdk.SDK
-	AppID *string
+	SDK *sdk.SDK
 }
 
-func (c *DeploymentConfig) Load(cCtx *cli.Context) {
-	c.GlobalConfig = GlobalConfigFrom(cCtx)
+var _ LoadableConfig = (*DeploymentConfig)(nil)
+
+func (c *DeploymentConfig) Load(cCtx *cli.Context) error {
+	global, err := GlobalConfigFrom(cCtx)
+	if err != nil {
+		return err
+	}
+	c.GlobalConfig = global
 	c.SDK = setup.SDK(c.Token, c.BaseURL, c.Verbosity)
+	return nil
 }
 
-func DeploymentConfigFrom(cCtx *cli.Context) *DeploymentConfig {
+func (c *DeploymentConfig) New() LoadableConfig {
+	return &DeploymentConfig{}
+}
+
+func DeploymentConfigFrom(cCtx *cli.Context) (*DeploymentConfig, error) {
 	return ConfigFromCLI[*DeploymentConfig](deploymentConfigKey, cCtx)
 }
 
@@ -276,11 +298,22 @@ type OneDeploymentConfig struct {
 	DeploymentID int
 }
 
-func (c *OneDeploymentConfig) Load(cCtx *cli.Context) {
-	c.DeploymentConfig = DeploymentConfigFrom(cCtx)
+var _ LoadableConfig = (*OneDeploymentConfig)(nil)
+
+func (c *OneDeploymentConfig) Load(cCtx *cli.Context) error {
+	deployment, err := DeploymentConfigFrom(cCtx)
+	if err != nil {
+		return err
+	}
+	c.DeploymentConfig = deployment
 	c.DeploymentID = cCtx.Int(deploymentIDFlag.Name)
+	return nil
 }
 
-func OneDeploymentConfigFrom(cCtx *cli.Context) *OneDeploymentConfig {
+func (c *OneDeploymentConfig) New() LoadableConfig {
+	return &OneDeploymentConfig{}
+}
+
+func OneDeploymentConfigFrom(cCtx *cli.Context) (*OneDeploymentConfig, error) {
 	return ConfigFromCLI[*OneDeploymentConfig](oneDeploymentConfigKey, cCtx)
 }

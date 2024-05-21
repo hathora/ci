@@ -19,18 +19,14 @@ type jsonOutputWriter struct {
 var _ FormatWriter = (*jsonOutputWriter)(nil)
 
 func (j *jsonOutputWriter) Write(value any, writer io.Writer) error {
-	var jsonBytes []byte
-	var err error
-
+	encoder := json.NewEncoder(writer)
 	if j.Pretty {
-		jsonBytes, err = json.MarshalIndent(value, "", "  ")
-	} else {
-		jsonBytes, err = json.Marshal(value)
+		encoder.SetIndent("", "  ")
 	}
+	err := encoder.Encode(value)
 	if err != nil {
 		return fmt.Errorf("failed to json-serialize output value %w", err)
 	}
 
-	_, err = writer.Write(jsonBytes)
-	return err
+	return nil
 }

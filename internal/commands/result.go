@@ -9,9 +9,9 @@ type DefaultResult struct {
 }
 
 func (r *DefaultResult) MarshalJSON() ([]byte, error) {
-	status := "Success"
+	status := "success"
 	if !r.Success {
-		status = "Failure"
+		status = "failure"
 	}
 
 	alias := struct {

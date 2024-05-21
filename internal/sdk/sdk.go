@@ -191,9 +191,9 @@ func New(opts ...SDKOption) *SDK {
 		sdkConfiguration: sdkConfiguration{
 			Language:          "go",
 			OpenAPIDocVersion: "0.0.1",
-			SDKVersion:        "0.2.1",
+			SDKVersion:        "0.2.2",
 			GenVersion:        "2.333.3",
-			UserAgent:         "speakeasy-sdk/go 0.2.1 2.333.3 0.0.1 github.com/hathora/ci/internal/sdk",
+			UserAgent:         "speakeasy-sdk/go 0.2.2 2.333.3 0.0.1 github.com/hathora/ci/internal/sdk",
 			Globals:           globals.Globals{},
 			Hooks:             hooks.New(),
 		},

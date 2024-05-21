@@ -24,7 +24,10 @@ var Build = &cli.Command{
 			Flags:   subcommandFlags(buildIDFlag),
 			Action: func(cCtx *cli.Context) error {
 				zap.L().Debug("getting build info...")
-				build := OneBuildConfigFrom(cCtx)
+				build, err := OneBuildConfigFrom(cCtx)
+				if err != nil {
+					return err
+				}
 
 				res, err := build.SDK.BuildV2.GetBuildInfo(build.Context, build.BuildID, build.AppID)
 				if err != nil {
@@ -41,7 +44,10 @@ var Build = &cli.Command{
 			Flags:   subcommandFlags(),
 			Action: func(cCtx *cli.Context) error {
 				zap.L().Debug("getting builds...")
-				build := BuildConfigFrom(cCtx)
+				build, err := BuildConfigFrom(cCtx)
+				if err != nil {
+					return err
+				}
 
 				res, err := build.SDK.BuildV2.GetBuilds(cCtx.Context, build.AppID)
 				if err != nil {
@@ -62,7 +68,10 @@ var Build = &cli.Command{
 			Flags:   subcommandFlags(buildTagFlag),
 			Action: func(cCtx *cli.Context) error {
 				zap.L().Debug("creating a build...")
-				build := BuildConfigFrom(cCtx)
+				build, err := BuildConfigFrom(cCtx)
+				if err != nil {
+					return err
+				}
 				buildTag := sdk.String(cCtx.String(buildTagFlag.Name))
 
 				res, err := build.SDK.BuildV2.CreateBuild(
@@ -86,7 +95,10 @@ var Build = &cli.Command{
 			Flags:   subcommandFlags(buildIDFlag, fileFlag),
 			Action: func(cCtx *cli.Context) error {
 				zap.L().Debug("running a build...")
-				build := OneBuildConfigFrom(cCtx)
+				build, err := OneBuildConfigFrom(cCtx)
+				if err != nil {
+					return err
+				}
 
 				filePath := cCtx.String(fileFlag.Name)
 				file, err := archive.RequireTGZ(filePath)
@@ -125,7 +137,10 @@ var Build = &cli.Command{
 			Flags:   subcommandFlags(buildIDFlag),
 			Action: func(cCtx *cli.Context) error {
 				zap.L().Debug("deleting a build...")
-				build := OneBuildConfigFrom(cCtx)
+				build, err := OneBuildConfigFrom(cCtx)
+				if err != nil {
+					return err
+				}
 
 				res, err := build.SDK.BuildV2.DeleteBuild(cCtx.Context, build.BuildID, build.AppID)
 				if err != nil {
@@ -179,16 +194,26 @@ var (
 
 type BuildConfig struct {
 	*GlobalConfig
-	SDK   *sdk.SDK
-	AppID *string
+	SDK *sdk.SDK
 }
 
-func (c *BuildConfig) Load(cCtx *cli.Context) {
-	c.GlobalConfig = GlobalConfigFrom(cCtx)
+var _ LoadableConfig = (*BuildConfig)(nil)
+
+func (c *BuildConfig) Load(cCtx *cli.Context) error {
+	global, err := GlobalConfigFrom(cCtx)
+	if err != nil {
+		return err
+	}
+	c.GlobalConfig = global
 	c.SDK = setup.SDK(c.Token, c.BaseURL, c.Verbosity)
+	return nil
 }
 
-func BuildConfigFrom(cCtx *cli.Context) *BuildConfig {
+func (c *BuildConfig) New() LoadableConfig {
+	return &BuildConfig{}
+}
+
+func BuildConfigFrom(cCtx *cli.Context) (*BuildConfig, error) {
 	return ConfigFromCLI[*BuildConfig](buildConfigKey, cCtx)
 }
 
@@ -201,11 +226,22 @@ type OneBuildConfig struct {
 	BuildID int
 }
 
-func (c *OneBuildConfig) Load(cCtx *cli.Context) {
-	c.BuildConfig = BuildConfigFrom(cCtx)
+var _ LoadableConfig = (*OneBuildConfig)(nil)
+
+func (c *OneBuildConfig) Load(cCtx *cli.Context) error {
+	build, err := BuildConfigFrom(cCtx)
+	if err != nil {
+		return err
+	}
+	c.BuildConfig = build
 	c.BuildID = cCtx.Int(buildIDFlag.Name)
+	return nil
 }
 
-func OneBuildConfigFrom(cCtx *cli.Context) *OneBuildConfig {
+func (c *OneBuildConfig) New() LoadableConfig {
+	return &OneBuildConfig{}
+}
+
+func OneBuildConfigFrom(cCtx *cli.Context) (*OneBuildConfig, error) {
 	return ConfigFromCLI[*OneBuildConfig](oneBuildConfigKey, cCtx)
 }

@@ -30,7 +30,6 @@ var (
 		Aliases:  []string{"a"},
 		EnvVars:  globalFlagEnvVar("APP_ID"),
 		Usage:    "the ID of the app in Hathora",
-		Required: true,
 		Category: "Global:",
 	}
 
@@ -63,7 +62,6 @@ var (
 		EnvVars:  globalFlagEnvVar("TOKEN"),
 		Usage:    "the access token for authenticating with the API",
 		Category: "Global:",
-		Required: true,
 	}
 
 	GlobalFlags = []cli.Flag{
@@ -88,5 +86,5 @@ func globalFlagEnvVar(name string) []string {
 }
 
 func subcommandFlags(flags ...cli.Flag) []cli.Flag {
-	return append(GlobalFlags, flags...)
+	return flags
 }
