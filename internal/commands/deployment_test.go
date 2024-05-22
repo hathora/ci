@@ -19,7 +19,7 @@ func Test_DeploymentCommands_HelpText(t *testing.T) {
 	// t.Parallel()
 
 	app := commands.App()
-	err := app.Run(context.Background(), []string{"cloud-ci", "deployment", "--help"})
+	err := app.Run(context.Background(), []string{"ci", "deployment", "--help"})
 	assert.Nil(t, err, "command returned an error")
 }
 
@@ -317,7 +317,7 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 			h := mock.Hathora(t, mock.RespondsWithStatus(tt.responseStatus), mock.RespondsWithJSON([]byte(tt.responseBody)))
 			app := commands.App()
 			staticArgs := []string{
-				"cloud-ci",
+				"ci",
 				"--app-id",
 				"test-app-id",
 				"--token",

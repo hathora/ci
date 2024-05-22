@@ -3,6 +3,10 @@
 SHELL = /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
 
+TARGETOS ?= darwin
+TARGETARCH ?= arm64
+BUILD_VERSION ?= $(shell git describe --tags --always --dirty)
+
 .PHONY: all
 all: build
 ##@ Build
@@ -12,7 +16,11 @@ clean: ## Delete all built binaries.
 
 .PHONY: build
 build: ## Build the command binaries.
-	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/cloud-ci cmd/cloud-ci/run.go
+	CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
+    go build \
+        -o bin/hathora-cli-${TARGETOS}-${TARGETARCH} \
+        -ldflags "-X 'github.com/hathora/ci/internal/commands.BuildVersion=${BUILD_VERSION}'" \
+        cmd/run.go
 
 .PHONY: sdk-clean
 sdk-clean: ## Re-generate the SDK using speakeasyapi.dev
