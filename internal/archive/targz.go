@@ -57,7 +57,11 @@ func ArchiveTGZ(srcFolder string) (*TGZFile, error) {
 	tarWriter := tar.NewWriter(gzipWriter)
 	defer tarWriter.Close()
 
-	ignoreMatchers, err := getIgnoreMatchers(srcFolder, filepath.Join(srcFolder, ".dockerignore"), filepath.Join(srcFolder, ".gitignore"))
+	ignoreMatchers, err := getIgnoreMatchers(
+		srcFolder,
+		filepath.Join(srcFolder, ".dockerignore"),
+		filepath.Join(srcFolder, ".gitignore"))
+
 	if err != nil {
 		return nil, err
 	}
