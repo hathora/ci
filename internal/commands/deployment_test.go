@@ -19,7 +19,7 @@ func Test_DeploymentCommands_HelpText(t *testing.T) {
 	// t.Parallel()
 
 	app := commands.App()
-	err := app.Run([]string{"cloud-ci", "deployment", "--help"})
+	err := app.Run(context.Background(), []string{"cloud-ci", "deployment", "--help"})
 	assert.Nil(t, err, "command returned an error")
 }
 
@@ -327,7 +327,7 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 				"deployment",
 			}
 			testArgs := strings.Fields(tt.command)
-			err := app.RunContext(context.Background(), append(staticArgs, testArgs...))
+			err := app.Run(context.Background(), append(staticArgs, testArgs...))
 			assert.Nil(t, err, "command returned an error")
 			request, body := h.ReceivedRequest()
 			if tt.expectRequest != nil {

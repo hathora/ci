@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -9,27 +10,27 @@ import (
 	"github.com/hathora/ci/internal/sdk/models/operations"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/setup"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 	"go.uber.org/zap"
 )
 
 var Build = &cli.Command{
 	Name:  "build",
 	Usage: "options for builds",
-	Subcommands: []*cli.Command{
+	Commands: []*cli.Command{
 		{
 			Name:    infoCommandName,
 			Aliases: []string{"get-build-info"},
 			Usage:   "get a build",
 			Flags:   subcommandFlags(buildIDFlag),
-			Action: func(cCtx *cli.Context) error {
+			Action: func(ctx context.Context, cmd *cli.Command) error {
 				zap.L().Debug("getting build info...")
-				build, err := OneBuildConfigFrom(cCtx)
+				build, err := OneBuildConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
 
-				res, err := build.SDK.BuildV2.GetBuildInfo(build.Context, build.BuildID, build.AppID)
+				res, err := build.SDK.BuildV2.GetBuildInfo(ctx, build.BuildID, build.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to get build info: %w", err)
 				}
@@ -42,14 +43,14 @@ var Build = &cli.Command{
 			Aliases: []string{"get-builds"},
 			Usage:   "get all builds",
 			Flags:   subcommandFlags(),
-			Action: func(cCtx *cli.Context) error {
+			Action: func(ctx context.Context, cmd *cli.Command) error {
 				zap.L().Debug("getting builds...")
-				build, err := BuildConfigFrom(cCtx)
+				build, err := BuildConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
 
-				res, err := build.SDK.BuildV2.GetBuilds(cCtx.Context, build.AppID)
+				res, err := build.SDK.BuildV2.GetBuilds(ctx, build.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to get builds: %w", err)
 				}
@@ -66,16 +67,16 @@ var Build = &cli.Command{
 			Aliases: []string{"create-build"},
 			Usage:   "create a build",
 			Flags:   subcommandFlags(buildTagFlag),
-			Action: func(cCtx *cli.Context) error {
+			Action: func(ctx context.Context, cmd *cli.Command) error {
 				zap.L().Debug("creating a build...")
-				build, err := BuildConfigFrom(cCtx)
+				build, err := BuildConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
-				buildTag := sdk.String(cCtx.String(buildTagFlag.Name))
+				buildTag := sdk.String(cmd.String(buildTagFlag.Name))
 
 				res, err := build.SDK.BuildV2.CreateBuild(
-					cCtx.Context,
+					ctx,
 					shared.CreateBuildParams{
 						BuildTag: buildTag,
 					},
@@ -93,14 +94,14 @@ var Build = &cli.Command{
 			Aliases: []string{"run-build"},
 			Usage:   "run a build by id",
 			Flags:   subcommandFlags(buildIDFlag, fileFlag),
-			Action: func(cCtx *cli.Context) error {
+			Action: func(ctx context.Context, cmd *cli.Command) error {
 				zap.L().Debug("running a build...")
-				build, err := OneBuildConfigFrom(cCtx)
+				build, err := OneBuildConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
 
-				filePath := cCtx.String(fileFlag.Name)
+				filePath := cmd.String(fileFlag.Name)
 				file, err := archive.RequireTGZ(filePath)
 				if err != nil {
 					return fmt.Errorf("no tgz file available for run: %w", err)
@@ -109,7 +110,7 @@ var Build = &cli.Command{
 				zap.L().Debug("using archive file", zap.Any("file", file))
 
 				res, err := build.SDK.BuildV2.RunBuild(
-					cCtx.Context,
+					ctx,
 					build.BuildID,
 					operations.RunBuildRequestBody{
 						File: operations.RunBuildFile{
@@ -135,14 +136,14 @@ var Build = &cli.Command{
 			Aliases: []string{"delete-build"},
 			Usage:   "delete a build",
 			Flags:   subcommandFlags(buildIDFlag),
-			Action: func(cCtx *cli.Context) error {
+			Action: func(ctx context.Context, cmd *cli.Command) error {
 				zap.L().Debug("deleting a build...")
-				build, err := OneBuildConfigFrom(cCtx)
+				build, err := OneBuildConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
 
-				res, err := build.SDK.BuildV2.DeleteBuild(cCtx.Context, build.BuildID, build.AppID)
+				res, err := build.SDK.BuildV2.DeleteBuild(ctx, build.BuildID, build.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to delete build: %w", err)
 				}
@@ -157,39 +158,39 @@ var Build = &cli.Command{
 	},
 }
 
-func buildFlagEnvVar(name string) []string {
-	return []string{fmt.Sprintf("%s%s", buildFlagEnvVarPrefix, name)}
+func buildFlagEnvVar(name string) string {
+	return buildFlagEnvVarPrefix + name
 }
 
 var (
-	buildFlagEnvVarPrefix = fmt.Sprintf("%s%s", globalFlagEnvVarPrefix, "BUILD_")
+	buildFlagEnvVarPrefix = globalFlagEnvVarPrefix + "BUILD_"
 
 	buildIDFlag = &cli.IntFlag{
-		Name:     "build-id",
-		Aliases:  []string{"b"},
-		EnvVars:  buildFlagEnvVar("ID"),
-		Usage:    "the ID of the build in Hathora",
-		Required: true,
+		Name:       "build-id",
+		Aliases:    []string{"b"},
+		Sources:    cli.EnvVars(buildFlagEnvVar("ID")),
+		Usage:      "the ID of the build in Hathora",
+		Persistent: true,
 	}
 
 	buildTagFlag = &cli.StringFlag{
 		Name:    "build-tag",
 		Aliases: []string{"bt"},
-		EnvVars: buildFlagEnvVar("TAG"),
+		Sources: cli.EnvVars(buildFlagEnvVar("TAG")),
 		Usage:   "tag to associate an external version with a build",
 	}
 
 	fileFlag = &cli.StringFlag{
 		Name:     "file",
 		Aliases:  []string{"f"},
-		EnvVars:  buildFlagEnvVar("FILE"),
+		Sources:  cli.EnvVars(buildFlagEnvVar("FILE")),
 		Usage:    "filepath of the built game server binary or archive",
 		Required: true,
 	}
 )
 
 var (
-	buildConfigKey = struct{}{}
+	buildConfigKey = "commands.BuildConfig.DI"
 )
 
 type BuildConfig struct {
@@ -199,8 +200,8 @@ type BuildConfig struct {
 
 var _ LoadableConfig = (*BuildConfig)(nil)
 
-func (c *BuildConfig) Load(cCtx *cli.Context) error {
-	global, err := GlobalConfigFrom(cCtx)
+func (c *BuildConfig) Load(cmd *cli.Command) error {
+	global, err := GlobalConfigFrom(cmd)
 	if err != nil {
 		return err
 	}
@@ -213,12 +214,12 @@ func (c *BuildConfig) New() LoadableConfig {
 	return &BuildConfig{}
 }
 
-func BuildConfigFrom(cCtx *cli.Context) (*BuildConfig, error) {
-	return ConfigFromCLI[*BuildConfig](buildConfigKey, cCtx)
+func BuildConfigFrom(cmd *cli.Command) (*BuildConfig, error) {
+	return ConfigFromCLI[*BuildConfig](buildConfigKey, cmd)
 }
 
 var (
-	oneBuildConfigKey = struct{}{}
+	oneBuildConfigKey = "commands.OneBuildConfig.DI"
 )
 
 type OneBuildConfig struct {
@@ -228,13 +229,13 @@ type OneBuildConfig struct {
 
 var _ LoadableConfig = (*OneBuildConfig)(nil)
 
-func (c *OneBuildConfig) Load(cCtx *cli.Context) error {
-	build, err := BuildConfigFrom(cCtx)
+func (c *OneBuildConfig) Load(cmd *cli.Command) error {
+	build, err := BuildConfigFrom(cmd)
 	if err != nil {
 		return err
 	}
 	c.BuildConfig = build
-	c.BuildID = cCtx.Int(buildIDFlag.Name)
+	c.BuildID = int(cmd.Int(buildIDFlag.Name))
 	return nil
 }
 
@@ -242,6 +243,6 @@ func (c *OneBuildConfig) New() LoadableConfig {
 	return &OneBuildConfig{}
 }
 
-func OneBuildConfigFrom(cCtx *cli.Context) (*OneBuildConfig, error) {
-	return ConfigFromCLI[*OneBuildConfig](oneBuildConfigKey, cCtx)
+func OneBuildConfigFrom(cmd *cli.Command) (*OneBuildConfig, error) {
+	return ConfigFromCLI[*OneBuildConfig](oneBuildConfigKey, cmd)
 }
