@@ -1,24 +1,28 @@
 package commands
 
 import (
+	"context"
+
 	"github.com/hathora/ci/internal/setup"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
-func App() *cli.App {
+func App() *cli.Command {
 	var cleanup []func()
-	return &cli.App{
+	return &cli.Command{
 		Name:                   "cloud-ci",
-		EnableBashCompletion:   true,
+		Aliases:                []string{"hathora-ci", "ci"},
+		EnableShellCompletion:  true,
 		Suggest:                true,
 		UseShortOptionHandling: true,
 		SliceFlagSeparator:     ",",
+		Usage:                  "a CLI tool for for CI/CD workflows to manage deployments and builds in hathora.dev",
 		Flags:                  GlobalFlags,
-		Before: func(c *cli.Context) error {
-			if isCallForHelp(c) {
+		Before: func(ctx context.Context, cmd *cli.Command) error {
+			if isCallForHelp(cmd) {
 				return nil
 			}
-			cfg, err := GlobalConfigFrom(c)
+			cfg, err := GlobalConfigFrom(cmd)
 			if err != nil {
 				return err
 			}
@@ -30,7 +34,7 @@ func App() *cli.App {
 			Build,
 			Deployment,
 		},
-		After: func(c *cli.Context) error {
+		After: func(ctx context.Context, c *cli.Command) error {
 			for _, fn := range cleanup {
 				fn()
 			}

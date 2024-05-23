@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -8,34 +9,34 @@ import (
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/setup"
 	"github.com/hathora/ci/internal/shorthand"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 	"go.uber.org/zap"
 )
 
 var (
 	allowedTransportTypes = []string{"tcp", "udp", "tls"}
-	maxRoomsPerProcess    = 10000
-	maxPort               = 65535
+	maxRoomsPerProcess    = int64(10000)
+	maxPort               = int64(65535)
 )
 
 var Deployment = &cli.Command{
 	Name:  "deployment",
 	Usage: "options for deployments",
-	Subcommands: []*cli.Command{
+	Commands: []*cli.Command{
 		{
 			Name:    infoCommandName,
 			Aliases: []string{"get-deployment-info"},
 			Usage:   "get a deployment by id",
 			Flags:   subcommandFlags(deploymentIDFlag),
-			Action: func(cCtx *cli.Context) error {
+			Action: func(ctx context.Context, cmd *cli.Command) error {
 				zap.L().Debug("getting deployment info...")
-				deployment, err := OneDeploymentConfigFrom(cCtx)
+				deployment, err := OneDeploymentConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
 
 				res, err := deployment.SDK.DeploymentV2.GetDeploymentInfo(
-					deployment.Context,
+					ctx,
 					deployment.DeploymentID,
 					deployment.AppID,
 				)
@@ -51,14 +52,14 @@ var Deployment = &cli.Command{
 			Aliases: []string{"get-latest-deployment"},
 			Usage:   "get the latest deployment",
 			Flags:   subcommandFlags(),
-			Action: func(cCtx *cli.Context) error {
+			Action: func(ctx context.Context, cmd *cli.Command) error {
 				zap.L().Debug("getting the latest deployment...")
-				deployment, err := DeploymentConfigFrom(cCtx)
+				deployment, err := DeploymentConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
 
-				res, err := deployment.SDK.DeploymentV2.GetLatestDeployment(deployment.Context, deployment.AppID)
+				res, err := deployment.SDK.DeploymentV2.GetLatestDeployment(ctx, deployment.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to get the latest deployment: %w", err)
 				}
@@ -71,14 +72,14 @@ var Deployment = &cli.Command{
 			Aliases: []string{"get-deployments"},
 			Usage:   "get all deployments",
 			Flags:   subcommandFlags(),
-			Action: func(cCtx *cli.Context) error {
+			Action: func(ctx context.Context, cmd *cli.Command) error {
 				zap.L().Debug("getting all deployments...")
-				deployment, err := DeploymentConfigFrom(cCtx)
+				deployment, err := DeploymentConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
 
-				res, err := deployment.SDK.DeploymentV2.GetDeployments(deployment.Context, deployment.AppID)
+				res, err := deployment.SDK.DeploymentV2.GetDeployments(ctx, deployment.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to get deployments: %w", err)
 				}
@@ -105,21 +106,21 @@ var Deployment = &cli.Command{
 				additionalContainerPortsFlag,
 				envVarsFlag,
 			),
-			Action: func(cCtx *cli.Context) error {
+			Action: func(ctx context.Context, cmd *cli.Command) error {
 				zap.L().Debug("creating a deployment...")
-				deployment, err := DeploymentConfigFrom(cCtx)
+				deployment, err := DeploymentConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
-				buildID := cCtx.Int(buildIDFlag.Name)
-				idleTimeoutEnabled := cCtx.Bool(idleTimeoutFlag.Name)
-				roomsPerProcess := cCtx.Int(roomsPerProcessFlag.Name)
-				transportType := shared.TransportType(cCtx.String(transportTypeFlag.Name))
-				containerPort := cCtx.Int(containerPortFlag.Name)
-				requestedMemory := cCtx.Float64(requestedMemoryFlag.Name)
-				requestedCPU := cCtx.Float64(requestedCPUFlag.Name)
-				addlPorts := cCtx.StringSlice(additionalContainerPortsFlag.Name)
-				envVars := cCtx.StringSlice(envVarsFlag.Name)
+				buildID := cmd.Int(buildIDFlag.Name)
+				idleTimeoutEnabled := cmd.Bool(idleTimeoutFlag.Name)
+				roomsPerProcess := cmd.Int(roomsPerProcessFlag.Name)
+				transportType := shared.TransportType(cmd.String(transportTypeFlag.Name))
+				containerPort := cmd.Int(containerPortFlag.Name)
+				requestedMemory := cmd.Float(requestedMemoryFlag.Name)
+				requestedCPU := cmd.Float(requestedCPUFlag.Name)
+				addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
+				envVars := cmd.StringSlice(envVarsFlag.Name)
 
 				additionalContainerPorts, err := parseContainerPorts(addlPorts)
 				if err != nil {
@@ -132,13 +133,13 @@ var Deployment = &cli.Command{
 				}
 
 				res, err := deployment.SDK.DeploymentV2.CreateDeployment(
-					deployment.Context,
-					buildID,
+					ctx,
+					int(buildID),
 					shared.DeploymentConfigV2{
 						IdleTimeoutEnabled:       idleTimeoutEnabled,
-						RoomsPerProcess:          roomsPerProcess,
+						RoomsPerProcess:          int(roomsPerProcess),
 						TransportType:            transportType,
-						ContainerPort:            containerPort,
+						ContainerPort:            int(containerPort),
 						RequestedMemoryMB:        requestedMemory,
 						RequestedCPU:             requestedCPU,
 						AdditionalContainerPorts: additionalContainerPorts,
@@ -156,8 +157,8 @@ var Deployment = &cli.Command{
 	},
 }
 
-func deploymentEnvVar(name string) []string {
-	return []string{fmt.Sprintf("%s%s", deploymentFlagEnvVarPrefix, name)}
+func deploymentEnvVar(name string) string {
+	return fmt.Sprintf("%s%s", deploymentFlagEnvVarPrefix, name)
 }
 
 var (
@@ -166,44 +167,44 @@ var (
 	deploymentIDFlag = &cli.IntFlag{
 		Name:     "deployment-id",
 		Aliases:  []string{"d"},
-		EnvVars:  deploymentEnvVar("ID"),
+		Sources:  cli.EnvVars(deploymentEnvVar("ID")),
 		Usage:    "the ID of the deployment in Hathora",
 		Required: true,
 	}
 
 	idleTimeoutFlag = &cli.BoolFlag{
 		Name:     "idle-timeout-enabled",
-		EnvVars:  deploymentEnvVar("IDLE_TIMEOUT_ENABLED"),
+		Sources:  cli.EnvVars(deploymentEnvVar("IDLE_TIMEOUT_ENABLED")),
 		Usage:    "option to shut down processes that have had no new connections or rooms for five minutes",
 		Required: true,
 	}
 
 	roomsPerProcessFlag = &cli.IntFlag{
 		Name:     "rooms-per-process",
-		EnvVars:  deploymentEnvVar("ROOMS_PER_PROCESS"),
+		Sources:  cli.EnvVars(deploymentEnvVar("ROOMS_PER_PROCESS")),
 		Usage:    "how many rooms can be scheduled in a process",
 		Required: true,
-		Action: func(ctx *cli.Context, v int) error {
+		Action: func(ctx context.Context, cmd *cli.Command, v int64) error {
 			return requireIntInRange(v, 1, maxRoomsPerProcess, "rooms-per-process")
 		},
 	}
 
 	transportTypeFlag = &cli.StringFlag{
 		Name:     "transport-type",
-		EnvVars:  deploymentEnvVar("TRANSPORT_TYPE"),
+		Sources:  cli.EnvVars(deploymentEnvVar("TRANSPORT_TYPE")),
 		Usage:    "the underlying communication protocol to the exposed port",
 		Required: true,
-		Action: func(ctx *cli.Context, v string) error {
+		Action: func(ctx context.Context, cmd *cli.Command, v string) error {
 			return requireValidEnumValue(v, allowedTransportTypes, "transport-type")
 		},
 	}
 
 	containerPortFlag = &cli.IntFlag{
 		Name:     "container-port",
-		EnvVars:  deploymentEnvVar("CONTAINER_PORT"),
+		Sources:  cli.EnvVars(deploymentEnvVar("CONTAINER_PORT")),
 		Usage:    "default server port",
 		Required: true,
-		Action: func(ctx *cli.Context, v int) error {
+		Action: func(ctx context.Context, cmd *cli.Command, v int64) error {
 			return requireIntInRange(v, 1, maxPort, "container-port")
 		},
 	}
@@ -211,26 +212,26 @@ var (
 	additionalContainerPortsFlag = &cli.StringSliceFlag{
 		Name:    "additional-container-ports",
 		Aliases: []string{"additional-container-port"},
-		EnvVars: append(deploymentEnvVar("ADDITIONAL_CONTAINER_PORTS"), deploymentEnvVar("ADDITIONAL_CONTAINER_PORT")...),
+		Sources: cli.EnvVars(deploymentEnvVar("ADDITIONAL_CONTAINER_PORTS"), deploymentEnvVar("ADDITIONAL_CONTAINER_PORT")),
 		Usage:   "additional server ports",
 	}
 
 	envVarsFlag = &cli.StringSliceFlag{
 		Name:    "env",
-		EnvVars: deploymentEnvVar("ENV"),
+		Sources: cli.EnvVars(deploymentEnvVar("ENV")),
 		Usage:   "environment variables",
 	}
 
-	requestedMemoryFlag = &cli.Float64Flag{
+	requestedMemoryFlag = &cli.FloatFlag{
 		Name:     "requested-memory-mb",
-		EnvVars:  deploymentEnvVar("REQUESTED_MEMORY_MB"),
+		Sources:  cli.EnvVars(deploymentEnvVar("REQUESTED_MEMORY_MB")),
 		Usage:    "the amount of memory allocated to your process in MB",
 		Required: true,
 	}
 
-	requestedCPUFlag = &cli.Float64Flag{
+	requestedCPUFlag = &cli.FloatFlag{
 		Name:     "requested-cpu",
-		EnvVars:  deploymentEnvVar("REQUESTED_CPU"),
+		Sources:  cli.EnvVars(deploymentEnvVar("REQUESTED_CPU")),
 		Usage:    "the number of cores allocated to your process",
 		Required: true,
 	}
@@ -261,7 +262,7 @@ func parseEnvVars(envVars []string) ([]shared.DeploymentConfigV2Env, error) {
 }
 
 var (
-	deploymentConfigKey = struct{}{}
+	deploymentConfigKey = "commands.DeploymentConfig.DI"
 )
 
 type DeploymentConfig struct {
@@ -271,8 +272,8 @@ type DeploymentConfig struct {
 
 var _ LoadableConfig = (*DeploymentConfig)(nil)
 
-func (c *DeploymentConfig) Load(cCtx *cli.Context) error {
-	global, err := GlobalConfigFrom(cCtx)
+func (c *DeploymentConfig) Load(cmd *cli.Command) error {
+	global, err := GlobalConfigFrom(cmd)
 	if err != nil {
 		return err
 	}
@@ -285,12 +286,12 @@ func (c *DeploymentConfig) New() LoadableConfig {
 	return &DeploymentConfig{}
 }
 
-func DeploymentConfigFrom(cCtx *cli.Context) (*DeploymentConfig, error) {
-	return ConfigFromCLI[*DeploymentConfig](deploymentConfigKey, cCtx)
+func DeploymentConfigFrom(cmd *cli.Command) (*DeploymentConfig, error) {
+	return ConfigFromCLI[*DeploymentConfig](deploymentConfigKey, cmd)
 }
 
 var (
-	oneDeploymentConfigKey = struct{}{}
+	oneDeploymentConfigKey = "commands.OneDeploymentConfig.DI"
 )
 
 type OneDeploymentConfig struct {
@@ -300,13 +301,13 @@ type OneDeploymentConfig struct {
 
 var _ LoadableConfig = (*OneDeploymentConfig)(nil)
 
-func (c *OneDeploymentConfig) Load(cCtx *cli.Context) error {
-	deployment, err := DeploymentConfigFrom(cCtx)
+func (c *OneDeploymentConfig) Load(cmd *cli.Command) error {
+	deployment, err := DeploymentConfigFrom(cmd)
 	if err != nil {
 		return err
 	}
 	c.DeploymentConfig = deployment
-	c.DeploymentID = cCtx.Int(deploymentIDFlag.Name)
+	c.DeploymentID = int(cmd.Int(deploymentIDFlag.Name))
 	return nil
 }
 
@@ -314,6 +315,6 @@ func (c *OneDeploymentConfig) New() LoadableConfig {
 	return &OneDeploymentConfig{}
 }
 
-func OneDeploymentConfigFrom(cCtx *cli.Context) (*OneDeploymentConfig, error) {
-	return ConfigFromCLI[*OneDeploymentConfig](oneDeploymentConfigKey, cCtx)
+func OneDeploymentConfigFrom(cmd *cli.Command) (*OneDeploymentConfig, error) {
+	return ConfigFromCLI[*OneDeploymentConfig](oneDeploymentConfigKey, cmd)
 }
