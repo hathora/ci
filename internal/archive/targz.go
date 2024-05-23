@@ -44,11 +44,12 @@ func shouldIgnoreFilepath(filepath string, isDir bool, matchers []gitignore.Igno
 	return anyMatches
 }
 
-func ArchiveTGZ(srcFolder string) (*TGZFile, error) {
+func ArchiveTGZ(srcFolder string) (string, error) {
 	destinationFile := filepath.Clean(srcFolder) + ".tgz"
-	tarGzFile, err := os.Create(destinationFile)
+	tarGzFile, err := os.Create(destFile)
+
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	defer tarGzFile.Close()
 
@@ -171,5 +172,21 @@ func RequireTGZ(srcFolder string) (*TGZFile, error) {
 
 	zap.L().Debug(srcFolder + " is not a tar gzip file. Archiving and compressing now.")
 
-	return ArchiveTGZ(srcFolder)
+	destFile, err := ArchiveTGZ(srcFolder)
+	if err != nil {
+		return nil, err
+	}
+
+	content, err := os.ReadFile(destFile)
+	if err != nil {
+		return nil, err
+	}
+
+	file := &TGZFile{
+		Content: content,
+		Name:    filepath.Base(destFile),
+		Path:    destFile,
+	}
+
+	return file, nil
 }
