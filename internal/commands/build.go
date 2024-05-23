@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"github.com/urfave/cli/v2/altsrc"
 	"os"
 
 	"github.com/hathora/ci/internal/archive"
@@ -164,28 +165,28 @@ func buildFlagEnvVar(name string) []string {
 var (
 	buildFlagEnvVarPrefix = fmt.Sprintf("%s%s", globalFlagEnvVarPrefix, "BUILD_")
 
-	buildIDFlag = &cli.IntFlag{
+	buildIDFlag = altsrc.NewIntFlag(&cli.IntFlag{
 		Name:     "build-id",
 		Aliases:  []string{"b"},
 		EnvVars:  buildFlagEnvVar("ID"),
 		Usage:    "the ID of the build in Hathora",
 		Required: true,
-	}
+	})
 
-	buildTagFlag = &cli.StringFlag{
+	buildTagFlag = altsrc.NewStringFlag(&cli.StringFlag{
 		Name:    "build-tag",
 		Aliases: []string{"bt"},
 		EnvVars: buildFlagEnvVar("TAG"),
 		Usage:   "tag to associate an external version with a build",
-	}
+	})
 
-	fileFlag = &cli.StringFlag{
+	fileFlag = altsrc.NewStringFlag(&cli.StringFlag{
 		Name:     "file",
 		Aliases:  []string{"f"},
 		EnvVars:  buildFlagEnvVar("FILE"),
 		Usage:    "filepath of the built game server binary or archive",
 		Required: true,
-	}
+	})
 )
 
 var (

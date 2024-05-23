@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/urfave/cli/v2/altsrc"
 	"math"
 
 	"github.com/hathora/ci/internal/output"
@@ -50,6 +51,15 @@ func ConfigFromCLI[T LoadableConfig](key any, cCtx *cli.Context) (T, error) {
 		cfg.SetContext(cCtx.Context)
 	}
 	return cfg, nil
+}
+
+func SetFlagsFromFile (cCtx *cli.Context, flags []cli.Flag) error {
+	if cCtx.IsSet(configFileFlag.Name) {
+		if err := altsrc.InitInputSourceWithContext(flags, altsrc.NewYamlSourceFromFlagFunc(configFileFlag.Name))(cCtx); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 type GlobalConfig struct {
@@ -101,10 +111,17 @@ var (
 )
 
 func GlobalConfigFrom(cCtx *cli.Context) (*GlobalConfig, error) {
+	if cCtx.IsSet(configFileFlag.Name) {
+		if err := altsrc.InitInputSourceWithContext(GlobalFlags, altsrc.NewYamlSourceFromFlagFunc(configFileFlag.Name))(cCtx); err != nil {
+			return nil, err
+		}
+	}
+
 	cfg, err := ConfigFromCLI[*GlobalConfig](globalConfigKey, cCtx)
 	if err != nil {
 		return nil, err
 	}
+
 	if cfg.AppID == nil || *cfg.AppID == "" {
 		return nil, fmt.Errorf("%w %s", ErrMissingRequiredFlag, appIDFlag.Name)
 	}
