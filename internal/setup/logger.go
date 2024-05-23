@@ -12,7 +12,7 @@ func Logger(verbosity int) (*zap.Logger, func()) {
 	encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
 
 	config := zap.Config{
-		Level:             zap.NewAtomicLevelAt(zap.InfoLevel),
+		Level:             zap.NewAtomicLevelAt(LevelFromVerbosity(verbosity)),
 		Development:       false,
 		DisableCaller:     true,
 		DisableStacktrace: false,
