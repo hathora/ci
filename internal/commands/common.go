@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	altsrc "github.com/urfave/cli-altsrc/v3"
 	"math"
 
 	"github.com/hathora/ci/internal/output"
@@ -19,6 +20,24 @@ var (
 type LoadableConfig interface {
 	New() LoadableConfig
 	Load(cmd *cli.Command) error
+}
+
+func EnvVarSource(key string) cli.ValueSourceChain {
+	return cli.EnvVars(globalFlagEnvVar(key))
+}
+
+func ConfigFileSource(key string) cli.ValueSourceChain {
+	return 	altsrc.YAML("config." + key, "/Users/matthew/Documents/hathora/config.yaml")
+}
+
+func CombineSources(sources ...cli.ValueSourceChain) cli.ValueSourceChain {
+	var combinedSources cli.ValueSourceChain
+
+	for _,source := range sources {
+		combinedSources.Append(source)
+	}
+
+	return combinedSources
 }
 
 func configFromMetadata[T LoadableConfig](key string, md map[string]any) (T, bool) {

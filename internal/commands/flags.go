@@ -10,7 +10,7 @@ var (
 	outputTypeFlag = &cli.StringFlag{
 		Name:       "output",
 		Aliases:    []string{"o"},
-		Sources:    cli.EnvVars(globalFlagEnvVar("OUTPUT")),
+		Sources:    CombineSources(EnvVarSource("OUTPUT"), ConfigFileSource("output")),
 		Usage:      "the format of the output",
 		Value:      allowedOutputTypes[0],
 		Persistent: true,
@@ -31,9 +31,10 @@ var (
 	appIDFlag = &cli.StringFlag{
 		Name:       "app-id",
 		Aliases:    []string{"a"},
-		Sources:    cli.EnvVars(globalFlagEnvVar("APP_ID")),
+		Sources:    CombineSources(EnvVarSource("APP_ID"), ConfigFileSource("app-id")),
 		Usage:      "the ID of the app in Hathora",
 		Category:   "Global:",
+		Required:   true,
 		Persistent: true,
 	}
 
@@ -47,7 +48,7 @@ var (
 
 	verbosityFlag = &cli.IntFlag{
 		Name:       "verbosity",
-		Sources:    cli.EnvVars(globalFlagEnvVar("VERBOSITY")),
+		Sources:    CombineSources(EnvVarSource("VERBOSITY"), ConfigFileSource("verbosity")),
 		Usage:      "set the logging verbosity level",
 		Value:      0,
 		Category:   "Global:",
@@ -56,7 +57,7 @@ var (
 
 	hathoraCloudEndpointFlag = &cli.StringFlag{
 		Name:        "hathora-cloud-endpoint",
-		Sources:     cli.EnvVars(globalFlagEnvVar("CLOUD_ENDPOINT")),
+		Sources:     CombineSources(EnvVarSource("CLOUD_ENDPOINT"), ConfigFileSource("hathora-cloud-endpoint")),
 		Usage:       "override the default API base url",
 		DefaultText: "https://api.hathora.dev",
 		Category:    "Global:",
@@ -66,9 +67,10 @@ var (
 	tokenFlag = &cli.StringFlag{
 		Name:       "token",
 		Aliases:    []string{"t"},
-		Sources:    cli.EnvVars(globalFlagEnvVar("TOKEN")),
+		Sources:    CombineSources(EnvVarSource("TOKEN"), ConfigFileSource("token")),
 		Usage:      "the access token for authenticating with the API",
 		Category:   "Global:",
+		Required:   true,
 		Persistent: true,
 	}
 
