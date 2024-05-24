@@ -12,29 +12,16 @@ type FlagInitializedValueSource interface {
 	Initialize(*cli.Command) error
 }
 
-func InitializeValueSourcesFromFlags(ctx context.Context, cmd *cli.Command) error {
+func InitializeValueSourcesFromFlags(ctx context.Context, cmd *cli.Command, args []string) error {
 	var err error
 	for _, flag := range cmd.Flags {
-		sources := getSourcesFromFlag(flag)
-		for _, source := range sources {
-			if flagInitialized, ok := source.(FlagInitializedValueSource); ok {
-				err = errors.Join(err, flagInitialized.Initialize(cmd))
-				if err != nil {
-					continue
-				}
-				for _, name := range flag.Names() {
-					if value, ok := flagInitialized.Lookup(); ok {
-						err = errors.Join(err, cmd.Set(name, value))
-					}
-				}
-			}
-		}
+		err = errors.Join(err, initializeFlagSources(cmd, flag, args))
 	}
 
 	for _, sub := range cmd.Commands {
 		oldBefore := sub.Before
 		sub.Before = func(ctx context.Context, cmd *cli.Command) error {
-			err := InitializeValueSourcesFromFlags(ctx, cmd)
+			err := InitializeValueSourcesFromFlags(ctx, cmd, args)
 			if err != nil {
 				return err
 			}
@@ -45,6 +32,70 @@ func InitializeValueSourcesFromFlags(ctx context.Context, cmd *cli.Command) erro
 
 			return nil
 		}
+	}
+
+	return err
+}
+
+func initializeFlagSources(cmd *cli.Command, flag cli.Flag, args []string) error {
+	var err error
+	sources := getSourcesFromFlag(flag)
+
+	// arg is explicitly set on the command line
+	for _, flagName := range flag.Names() {
+		shortName := "-" + flagName
+		longName := "--" + flagName
+		for _, arg := range args {
+			if arg == shortName || arg == longName {
+				return nil
+			}
+		}
+	}
+
+	firstSourceValuePrecident := len(sources) + 1
+	var firstPrecidentSourceValue string
+	firstFlagInitializedValuePrecident := len(sources) + 1
+	var firstPrecidentFlagInitializedValue string
+
+	for i, source := range sources {
+		if _, alreadyResolved := source.Lookup(); alreadyResolved {
+			if firstPrecidentSourceValue == "" {
+				firstSourceValuePrecident = i
+			}
+			break
+		}
+		// don't keep looking for flag initialized values if a higher precident value is already set
+		if firstPrecidentFlagInitializedValue != "" {
+			continue
+		}
+		if flagInitialized, ok := source.(FlagInitializedValueSource); ok {
+			initErr := flagInitialized.Initialize(cmd)
+			if initErr != nil {
+				err = errors.Join(err, initErr)
+				continue
+			}
+			if value, ok := flagInitialized.Lookup(); ok {
+				firstPrecidentFlagInitializedValue = value
+				firstFlagInitializedValuePrecident = i
+			}
+		}
+	}
+
+	// if no flag initialized values are set, then there is nothing to do
+	if firstPrecidentFlagInitializedValue == "" {
+		return nil
+	}
+
+	// if the highest precident source value is before the highest precident flag initialized value
+	//   then the source value should win
+	if firstSourceValuePrecident < firstFlagInitializedValuePrecident {
+		return nil
+	}
+
+	// if the highest precident flag initialized value is before the highest precident source value
+	//   then the flag initialized value should win
+	for _, name := range flag.Names() {
+		err = errors.Join(err, cmd.Set(name, firstPrecidentFlagInitializedValue))
 	}
 
 	return err

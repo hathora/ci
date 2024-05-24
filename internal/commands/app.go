@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"os"
 
 	"github.com/hathora/ci/internal/commands/altsrc"
 	"github.com/hathora/ci/internal/setup"
@@ -23,7 +24,7 @@ func App() *cli.Command {
 			if isCallForHelp(cmd) {
 				return nil
 			}
-			err := altsrc.InitializeValueSourcesFromFlags(ctx, cmd)
+			err := altsrc.InitializeValueSourcesFromFlags(ctx, cmd, os.Args[1:])
 			if err != nil {
 				return err
 			}
