@@ -23,7 +23,6 @@ func getIgnoreMatchers(srcFolder string, filepaths ...string) ([]gitignore.Ignor
 	for _, path := range filepaths {
 		matcher, err := gitignore.NewGitIgnore(filepath.Join(srcFolder, path), ".")
 		if err != nil {
-			zap.L().Error("ERROR 1: " + path)
 			return nil, err
 		}
 
