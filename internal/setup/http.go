@@ -7,10 +7,12 @@ import (
 )
 
 func HTTPClient(loggingVerbosity int) sdk.HTTPClient {
-	if loggingVerbosity < 2 {
-		return cleanhttp.DefaultClient()
-	}
 	client := cleanhttp.DefaultClient()
+	client.Transport = httputil.ContentTypeRoundTripper(client.Transport)
+	if loggingVerbosity < 2 {
+		return client
+	}
+
 	client.Transport = httputil.LoggingRoundTripper(client.Transport, loggingVerbosity)
 	return client
 }
