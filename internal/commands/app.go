@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 
+	"github.com/hathora/ci/internal/commands/altsrc"
 	"github.com/hathora/ci/internal/setup"
 	"github.com/urfave/cli/v3"
 )
@@ -21,6 +22,10 @@ func App() *cli.Command {
 		Before: func(ctx context.Context, cmd *cli.Command) error {
 			if isCallForHelp(cmd) {
 				return nil
+			}
+			err := altsrc.InitializeValueSourcesFromFlags(ctx, cmd)
+			if err != nil {
+				return err
 			}
 			cfg, err := GlobalConfigFrom(cmd)
 			if err != nil {
