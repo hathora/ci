@@ -8,6 +8,7 @@ const (
 	UnknownType Type = iota
 	JSON
 	Text
+	Value
 )
 
 func (o Type) String() string {
@@ -22,6 +23,10 @@ func (o Type) String() string {
 }
 
 func ParseOutputType(s string) Type {
+	if strings.HasPrefix(s, "value=") {
+		return Value
+	}
+
 	switch strings.ToLower(s) {
 	case "json":
 		return JSON

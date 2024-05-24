@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"math"
+	"strings"
 
 	"github.com/hathora/ci/internal/output"
 	"github.com/urfave/cli/v3"
@@ -73,6 +74,8 @@ func (c *GlobalConfig) Load(cmd *cli.Command) error {
 		c.Output = output.JSONFormat(cmd.Bool(outputPrettyFlag.Name))
 	case output.Text:
 		c.Output = output.TextFormat()
+	case output.Value:
+		c.Output = output.ValueFormat(strings.Split(outputType, "=")[1])
 	default:
 		return fmt.Errorf("unsupported output type: %s", outputType)
 	}
