@@ -112,7 +112,7 @@ var Build = &cli.Command{
 					return fmt.Errorf("failed to run build: %w", err)
 				}
 
-				err = output.StreamOutput(runRes.Stream, os.Stdout)
+				err = output.StreamOutput(runRes.Stream, os.Stderr)
 
 				if err != nil {
 					return fmt.Errorf("failed to stream output to console: %w", err)
