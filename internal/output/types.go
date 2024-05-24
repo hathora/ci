@@ -23,11 +23,12 @@ func (o Type) String() string {
 }
 
 func ParseOutputType(s string) Type {
-	if strings.HasPrefix(s, "value=") {
+	lowercaseOutputType := strings.ToLower(s)
+	if strings.HasPrefix(lowercaseOutputType, "value=") {
 		return Value
 	}
 
-	switch strings.ToLower(s) {
+	switch lowercaseOutputType {
 	case "json":
 		return JSON
 	case "text":

@@ -75,7 +75,11 @@ func (c *GlobalConfig) Load(cmd *cli.Command) error {
 	case output.Text:
 		c.Output = output.TextFormat()
 	case output.Value:
-		c.Output = output.ValueFormat(strings.Split(outputType, "=")[1])
+		splitValue := strings.Split(outputType, "=")
+		if len(splitValue) != 2 {
+			return fmt.Errorf("invalid value format: %s", outputType)
+		}
+		c.Output = output.ValueFormat(splitValue[1])
 	default:
 		return fmt.Errorf("unsupported output type: %s", outputType)
 	}
