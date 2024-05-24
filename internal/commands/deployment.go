@@ -123,8 +123,8 @@ var Deployment = &cli.Command{
 				addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
 				envVars := cmd.StringSlice(envVarsFlag.Name)
 
-				if requestedCPU != (requestedMemory / 2000) {
-					return fmt.Errorf("invalid memory: %s and cpu: %s requested-memory-mb must be a 2000:1 ratio to requested-cpu",
+				if requestedCPU != (requestedMemory / 2048) {
+					return fmt.Errorf("invalid memory: %s and cpu: %s requested-memory-mb must be a 2048:1 ratio to requested-cpu",
 						strconv.FormatFloat(requestedMemory, 'f', -1, 64),
 						strconv.FormatFloat(requestedCPU, 'f', -1, 64))
 				}
@@ -235,7 +235,7 @@ var (
 		Usage:    "the amount of memory allocated to your process in MB",
 		Required: true,
 		Action: func(ctx context.Context, cmd *cli.Command, v float64) error {
-			return requireFloatInRange(v, 1000, 8000, "requested-memory-mb")
+			return requireFloatInRange(v, 1024, 8192, "requested-memory-mb")
 		},
 	}
 
