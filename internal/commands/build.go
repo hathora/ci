@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"github.com/hathora/ci/internal/output"
 	"os"
 
 	"github.com/hathora/ci/internal/archive"
@@ -66,7 +67,7 @@ var Build = &cli.Command{
 			Name:    createCommandName,
 			Aliases: []string{"create-build"},
 			Usage:   "create a build",
-			Flags:   subcommandFlags(buildTagFlag),
+			Flags:   subcommandFlags(buildTagFlag, fileFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				zap.L().Debug("creating a build...")
 				build, err := BuildConfigFrom(cmd)
@@ -75,7 +76,7 @@ var Build = &cli.Command{
 				}
 				buildTag := sdk.String(cmd.String(buildTagFlag.Name))
 
-				res, err := build.SDK.BuildV2.CreateBuild(
+				createRes, err := build.SDK.BuildV2.CreateBuild(
 					ctx,
 					shared.CreateBuildParams{
 						BuildTag: buildTag,
@@ -86,21 +87,7 @@ var Build = &cli.Command{
 					return fmt.Errorf("failed to create a build: %w", err)
 				}
 
-				return build.Output.Write(res.Build, os.Stdout)
-			},
-		},
-		{
-			Name:    "run",
-			Aliases: []string{"run-build"},
-			Usage:   "run a build by id",
-			Flags:   subcommandFlags(buildIDFlag, fileFlag),
-			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("running a build...")
-				build, err := OneBuildConfigFrom(cmd)
-				if err != nil {
-					return err
-				}
-
+				buildID := createRes.Build.BuildID
 				filePath := cmd.String(fileFlag.Name)
 				file, err := archive.RequireTGZ(filePath)
 				if err != nil {
@@ -109,9 +96,9 @@ var Build = &cli.Command{
 
 				zap.L().Debug("using archive file", zap.Any("file", file))
 
-				res, err := build.SDK.BuildV2.RunBuild(
+				runRes, err := build.SDK.BuildV2.RunBuild(
 					ctx,
-					build.BuildID,
+					buildID,
 					operations.RunBuildRequestBody{
 						File: operations.RunBuildFile{
 							FileName: file.Name,
@@ -120,15 +107,18 @@ var Build = &cli.Command{
 					},
 					build.AppID,
 				)
+
 				if err != nil {
 					return fmt.Errorf("failed to run build: %w", err)
 				}
 
-				return build.Output.Write(&DefaultResult{
-					Success: true,
-					Message: "Build ran successfully",
-					Code:    res.StatusCode,
-				}, os.Stdout)
+				err = output.StreamOutput(runRes.Stream, os.Stdout)
+
+				if err != nil {
+					return fmt.Errorf("failed to stream output to console: %w", err)
+				}
+
+				return nil
 			},
 		},
 		{
