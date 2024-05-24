@@ -46,7 +46,7 @@ func shouldIgnoreFilepath(filepath string, isDir bool, matchers []gitignore.Igno
 
 func ArchiveTGZ(srcFolder string) (string, error) {
 	destinationFile := filepath.Clean(srcFolder) + ".tgz"
-	tarGzFile, err := os.Create(destFile)
+	tarGzFile, err := os.Create(destinationFile)
 
 	if err != nil {
 		return "", err
@@ -64,7 +64,7 @@ func ArchiveTGZ(srcFolder string) (string, error) {
 		filepath.Join(srcFolder, ".gitignore"))
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	err = filepath.Walk(srcFolder, func(filePath string, info os.FileInfo, err error) error {
@@ -109,18 +109,7 @@ func ArchiveTGZ(srcFolder string) (string, error) {
 		return nil
 	})
 
-	content, err := os.ReadFile(destinationFile)
-	if err != nil {
-		return nil, err
-	}
-
-	file := &TGZFile{
-		Content: content,
-		Name:    filepath.Base(destinationFile),
-		Path:    destinationFile,
-	}
-
-	return file, nil
+	return destinationFile, nil
 }
 
 func isTGZ(filePath string) (bool, error) {
