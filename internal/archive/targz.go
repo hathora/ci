@@ -3,11 +3,12 @@ package archive
 import (
 	"archive/tar"
 	"compress/gzip"
-	"github.com/monochromegane/go-gitignore"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/monochromegane/go-gitignore"
 
 	"go.uber.org/zap"
 )
@@ -109,6 +110,10 @@ func ArchiveTGZ(srcFolder string) (string, error) {
 
 		return nil
 	})
+
+	if err != nil {
+		return "", err
+	}
 
 	return destinationFile, nil
 }

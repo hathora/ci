@@ -67,6 +67,14 @@ var (
 		Persistent: true,
 	}
 
+	configFlag = &cli.StringFlag{
+		Name:       "config",
+		Aliases:    []string{"c"},
+		Usage:      "path to the configuration file",
+		Category:   "Global:",
+		Persistent: true,
+	}
+
 	GlobalFlags = []cli.Flag{
 		appIDFlag,
 		hathoraCloudEndpointFlag,
@@ -75,6 +83,7 @@ var (
 		outputPrettyFlag,
 		verboseFlag,
 		verbosityFlag,
+		configFlag,
 	}
 )
 

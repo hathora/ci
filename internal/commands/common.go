@@ -7,6 +7,7 @@ import (
 
 	"github.com/hathora/ci/internal/output"
 	"github.com/urfave/cli/v3"
+	"go.uber.org/zap"
 )
 
 var (
@@ -56,6 +57,7 @@ type GlobalConfig struct {
 	AppID     *string
 	Output    output.FormatWriter
 	Verbosity int
+	Log       *zap.Logger
 }
 
 func (c *GlobalConfig) Load(cmd *cli.Command) error {
@@ -87,6 +89,7 @@ func (c *GlobalConfig) Load(cmd *cli.Command) error {
 	verboseCount := cmd.Count(verboseFlag.Name)
 	verbosity := cmd.Int(verbosityFlag.Name)
 	c.Verbosity = int(math.Max(float64(verbosity), float64(verboseCount)))
+	c.Log = zap.L().With(zap.String("app.id", appID))
 	return nil
 }
 
