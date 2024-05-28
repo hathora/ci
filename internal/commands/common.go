@@ -90,6 +90,18 @@ func (c *GlobalConfig) New() LoadableConfig {
 	return &GlobalConfig{}
 }
 
+func setFlagWithDefault[T any](cmd *cli.Command, flagName string, flagValue T, previousValue T, usePreviousDeployment bool, isRequired bool) (T, error) {
+	if cmd.IsSet(flagName) {
+		return flagValue, nil
+	} else if usePreviousDeployment {
+		return previousValue, nil
+	} else if isRequired {
+		return flagValue, fmt.Errorf("flag %s is required", flagName)
+	} else {
+		return flagValue, nil
+	}
+}
+
 var (
 	globalConfigKey = "commands.GlobalConfig.DI"
 )

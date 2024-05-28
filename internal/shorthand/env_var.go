@@ -22,3 +22,18 @@ func ParseDeploymentEnvVar(s string) (*shared.DeploymentConfigV2Env, error) {
 		Value: strings.TrimSpace(parts[1]),
 	}, nil
 }
+
+func MapEnvToEnvConfig(input []shared.DeploymentV2Env) []shared.DeploymentConfigV2Env {
+	output := make([]shared.DeploymentConfigV2Env, 0)
+
+	for _, config := range input {
+		newEnvVar := shared.DeploymentConfigV2Env{
+			Name: config.Name,
+			Value: config.Value,
+		}
+
+		output = append(output, newEnvVar)
+	}
+
+	return output
+}

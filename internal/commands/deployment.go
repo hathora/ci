@@ -106,12 +106,14 @@ var Deployment = &cli.Command{
 				requestedCPUFlag,
 				additionalContainerPortsFlag,
 				envVarsFlag,
+				usePreviousDeploymentSettingsFlag,
 			),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				deployment, err := DeploymentConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
+<<<<<<< HEAD
 
 				buildID := cmd.Int(buildIDFlag.Name)
 				deployment.Log = deployment.Log.With(zap.Int64("build.id", buildID))
@@ -133,13 +135,132 @@ var Deployment = &cli.Command{
 				}
 
 				additionalContainerPorts, err := parseContainerPorts(addlPorts)
+=======
+
+				usePreviousDeploymentSettings := cmd.Bool(usePreviousDeploymentSettingsFlag.Name)
+
+				var previousDeployment *shared.DeploymentV2
+
+				if usePreviousDeploymentSettings {
+					res, err := deployment.SDK.DeploymentV2.GetLatestDeployment(ctx, deployment.AppID)
+					if err != nil {
+						return fmt.Errorf("unable to retrieve previous deployment: %w", err)
+					}
+
+					previousDeployment = res.DeploymentV2
+				} else {
+					previousDeployment = &shared.DeploymentV2{}
+				}
+
+				buildID, err := setFlagWithDefault(
+					cmd,
+					buildIDFlag.Name,
+					cmd.Int(buildIDFlag.Name),
+					int64(previousDeployment.BuildID),
+					usePreviousDeploymentSettings,
+					true)
+				if err != nil {
+					return err
+				}
+
+				roomsPerProcess, err := setFlagWithDefault(
+					cmd,
+					roomsPerProcessFlag.Name,
+					cmd.Int(roomsPerProcessFlag.Name),
+					int64(previousDeployment.RoomsPerProcess),
+					usePreviousDeploymentSettings,
+					true)
+				if err != nil {
+					return err
+				}
+
+				idleTimeoutEnabled, err := setFlagWithDefault(
+					cmd,
+					idleTimeoutFlag.Name,
+					cmd.Bool(idleTimeoutFlag.Name),
+					previousDeployment.IdleTimeoutEnabled,
+					usePreviousDeploymentSettings,
+					true)
+				if err != nil {
+					return err
+				}
+
+				transportType, err := setFlagWithDefault(
+					cmd,
+					transportTypeFlag.Name,
+					cmd.String(transportTypeFlag.Name),
+					string(previousDeployment.DefaultContainerPort.TransportType),
+					usePreviousDeploymentSettings,
+					true)
+				if err != nil {
+					return err
+				}
+
+				containerPort, err := setFlagWithDefault(
+					cmd,
+					containerPortFlag.Name,
+					cmd.Int(containerPortFlag.Name),
+					int64(previousDeployment.DefaultContainerPort.Port),
+					usePreviousDeploymentSettings,
+					true)
+				if err != nil {
+					return err
+				}
+
+				requestedMemory, err := setFlagWithDefault(
+					cmd,
+					requestedMemoryFlag.Name,
+					cmd.Float(requestedMemoryFlag.Name),
+					previousDeployment.RequestedMemoryMB,
+					usePreviousDeploymentSettings,
+					true)
+				if err != nil {
+					return err
+				}
+
+				requestedCPU, err := setFlagWithDefault(
+					cmd,
+					requestedCPUFlag.Name,
+					cmd.Float(requestedCPUFlag.Name),
+					previousDeployment.RequestedCPU,
+					usePreviousDeploymentSettings,
+					true)
+				if err != nil {
+					return err
+				}
+
+				addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
+				parsedAddlPorts, err := parseContainerPorts(addlPorts)
+>>>>>>> b9705b3 (adding flag to pull previous deploy settings)
 				if err != nil {
 					return fmt.Errorf("invalid additional container ports: %w", err)
 				}
+				additionalContainerPorts, err := setFlagWithDefault(
+					cmd,
+					additionalContainerPortsFlag.Name,
+					parsedAddlPorts,
+					previousDeployment.AdditionalContainerPorts,
+					usePreviousDeploymentSettings,
+					false)
+				if err != nil {
+					return err
+				}
 
+				envVars := cmd.StringSlice(envVarsFlag.Name)
 				env, err := parseEnvVars(envVars)
 				if err != nil {
 					return fmt.Errorf("invalid environment variables: %w", err)
+				}
+
+				usedEnvVars, err := setFlagWithDefault(
+					cmd,
+					envVarsFlag.Name,
+					env,
+					shorthand.MapEnvToEnvConfig(previousDeployment.Env),
+					usePreviousDeploymentSettings,
+					false)
+				if err != nil {
+					return err
 				}
 
 				res, err := deployment.SDK.DeploymentV2.CreateDeployment(
@@ -148,12 +269,12 @@ var Deployment = &cli.Command{
 					shared.DeploymentConfigV2{
 						IdleTimeoutEnabled:       idleTimeoutEnabled,
 						RoomsPerProcess:          int(roomsPerProcess),
-						TransportType:            transportType,
+						TransportType:            shared.TransportType(transportType),
 						ContainerPort:            int(containerPort),
 						RequestedMemoryMB:        requestedMemory,
 						RequestedCPU:             requestedCPU,
 						AdditionalContainerPorts: additionalContainerPorts,
-						Env:                      env,
+						Env:                      usedEnvVars,
 					},
 					deployment.AppID,
 				)
@@ -183,37 +304,33 @@ var (
 	}
 
 	idleTimeoutFlag = &cli.BoolFlag{
-		Name:     "idle-timeout-enabled",
-		Sources:  cli.EnvVars(deploymentEnvVar("IDLE_TIMEOUT_ENABLED")),
-		Usage:    "option to shut down processes that have had no new connections or rooms for five minutes",
-		Required: true,
+		Name:    "idle-timeout-enabled",
+		Sources: cli.EnvVars(deploymentEnvVar("IDLE_TIMEOUT_ENABLED")),
+		Usage:   "option to shut down processes that have had no new connections or rooms for five minutes",
 	}
 
 	roomsPerProcessFlag = &cli.IntFlag{
-		Name:     "rooms-per-process",
-		Sources:  cli.EnvVars(deploymentEnvVar("ROOMS_PER_PROCESS")),
-		Usage:    "how many rooms can be scheduled in a process",
-		Required: true,
+		Name:    "rooms-per-process",
+		Sources: cli.EnvVars(deploymentEnvVar("ROOMS_PER_PROCESS")),
+		Usage:   "how many rooms can be scheduled in a process",
 		Action: func(ctx context.Context, cmd *cli.Command, v int64) error {
 			return requireIntInRange(v, 1, maxRoomsPerProcess, "rooms-per-process")
 		},
 	}
 
 	transportTypeFlag = &cli.StringFlag{
-		Name:     "transport-type",
-		Sources:  cli.EnvVars(deploymentEnvVar("TRANSPORT_TYPE")),
-		Usage:    "the underlying communication protocol to the exposed port",
-		Required: true,
+		Name:    "transport-type",
+		Sources: cli.EnvVars(deploymentEnvVar("TRANSPORT_TYPE")),
+		Usage:   "the underlying communication protocol to the exposed port",
 		Action: func(ctx context.Context, cmd *cli.Command, v string) error {
 			return requireValidEnumValue(v, allowedTransportTypes, "transport-type")
 		},
 	}
 
 	containerPortFlag = &cli.IntFlag{
-		Name:     "container-port",
-		Sources:  cli.EnvVars(deploymentEnvVar("CONTAINER_PORT")),
-		Usage:    "default server port",
-		Required: true,
+		Name:    "container-port",
+		Sources: cli.EnvVars(deploymentEnvVar("CONTAINER_PORT")),
+		Usage:   "default server port",
 		Action: func(ctx context.Context, cmd *cli.Command, v int64) error {
 			return requireIntInRange(v, 1, maxPort, "container-port")
 		},
@@ -259,6 +376,12 @@ var (
 
 			return nil
 		},
+	}
+
+	usePreviousDeploymentSettingsFlag = &cli.BoolFlag{
+		Name:    "use-previous-settings",
+		Sources: cli.EnvVars(deploymentEnvVar("USE_PREVIOUS_DEPLOYMENT_SETTINGS")),
+		Usage:   "whether or not to use the previous deployments settings",
 	}
 )
 
