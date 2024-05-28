@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/hathora/ci/internal/archive"
+	"github.com/hathora/ci/internal/commands/altsrc"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/operations"
 	"github.com/hathora/ci/internal/sdk/models/shared"
@@ -24,11 +25,11 @@ var Build = &cli.Command{
 			Usage:   "get a build",
 			Flags:   subcommandFlags(buildIDFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("getting build info...")
 				build, err := OneBuildConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
+				build.Log.Debug("getting build info...")
 
 				res, err := build.SDK.BuildV2.GetBuildInfo(ctx, build.BuildID, build.AppID)
 				if err != nil {
@@ -44,11 +45,11 @@ var Build = &cli.Command{
 			Usage:   "get all builds",
 			Flags:   subcommandFlags(),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("getting builds...")
 				build, err := BuildConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
+				build.Log.Debug("getting all builds...")
 
 				res, err := build.SDK.BuildV2.GetBuilds(ctx, build.AppID)
 				if err != nil {
@@ -68,11 +69,12 @@ var Build = &cli.Command{
 			Usage:   "create a build",
 			Flags:   subcommandFlags(buildTagFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("creating a build...")
 				build, err := BuildConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
+				build.Log.Debug("creating a build...")
+
 				buildTag := sdk.String(cmd.String(buildTagFlag.Name))
 
 				res, err := build.SDK.BuildV2.CreateBuild(
@@ -95,11 +97,11 @@ var Build = &cli.Command{
 			Usage:   "run a build by id",
 			Flags:   subcommandFlags(buildIDFlag, fileFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("running a build...")
 				build, err := OneBuildConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
+				build.Log.Debug("running a build...")
 
 				filePath := cmd.String(fileFlag.Name)
 				file, err := archive.RequireTGZ(filePath)
@@ -107,7 +109,7 @@ var Build = &cli.Command{
 					return fmt.Errorf("no tgz file available for run: %w", err)
 				}
 
-				zap.L().Debug("using archive file", zap.Any("file", file))
+				build.Log.Debug("using archive file", zap.Any("file", file))
 
 				res, err := build.SDK.BuildV2.RunBuild(
 					ctx,
@@ -137,11 +139,11 @@ var Build = &cli.Command{
 			Usage:   "delete a build",
 			Flags:   subcommandFlags(buildIDFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("deleting a build...")
 				build, err := OneBuildConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
+				build.Log.Debug("deleting a build...")
 
 				res, err := build.SDK.BuildV2.DeleteBuild(ctx, build.BuildID, build.AppID)
 				if err != nil {
@@ -166,9 +168,12 @@ var (
 	buildFlagEnvVarPrefix = globalFlagEnvVarPrefix + "BUILD_"
 
 	buildIDFlag = &cli.IntFlag{
-		Name:       "build-id",
-		Aliases:    []string{"b"},
-		Sources:    cli.EnvVars(buildFlagEnvVar("ID")),
+		Name:    "build-id",
+		Aliases: []string{"b"},
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(buildFlagEnvVar("ID")),
+			altsrc.File(configFlag.Name, "build.id"),
+		),
 		Usage:      "the ID of the build in Hathora",
 		Persistent: true,
 	}
@@ -176,14 +181,18 @@ var (
 	buildTagFlag = &cli.StringFlag{
 		Name:    "build-tag",
 		Aliases: []string{"bt"},
-		Sources: cli.EnvVars(buildFlagEnvVar("TAG")),
-		Usage:   "tag to associate an external version with a build",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(buildFlagEnvVar("TAG")),
+		),
+		Usage: "tag to associate an external version with a build",
 	}
 
 	fileFlag = &cli.StringFlag{
-		Name:     "file",
-		Aliases:  []string{"f"},
-		Sources:  cli.EnvVars(buildFlagEnvVar("FILE")),
+		Name:    "file",
+		Aliases: []string{"f"},
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(buildFlagEnvVar("FILE")),
+		),
 		Usage:    "filepath of the built game server binary or archive",
 		Required: true,
 	}
@@ -236,6 +245,7 @@ func (c *OneBuildConfig) Load(cmd *cli.Command) error {
 	}
 	c.BuildConfig = build
 	c.BuildID = int(cmd.Int(buildIDFlag.Name))
+	c.Log = c.Log.With(zap.Int("build.id", c.BuildID))
 	return nil
 }
 

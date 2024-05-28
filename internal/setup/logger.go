@@ -7,8 +7,7 @@ import (
 
 func Logger(verbosity int) (*zap.Logger, func()) {
 	encoderCfg := zap.NewProductionEncoderConfig()
-	encoderCfg.TimeKey = "time"
-	encoderCfg.EncodeTime = zapcore.RFC3339TimeEncoder
+	encoderCfg.TimeKey = zapcore.OmitKey
 	encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
 
 	config := zap.Config{
