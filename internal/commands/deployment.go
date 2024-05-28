@@ -123,7 +123,7 @@ var Deployment = &cli.Command{
 				addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
 				envVars := cmd.StringSlice(envVarsFlag.Name)
 
-				if requestedCPU != (requestedMemory / 2048) {
+				if requestedMemory != (requestedCPU * 2048) {
 					return fmt.Errorf("invalid memory: %s and cpu: %s requested-memory-mb must be a 2048:1 ratio to requested-cpu",
 						strconv.FormatFloat(requestedMemory, 'f', -1, 64),
 						strconv.FormatFloat(requestedCPU, 'f', -1, 64))
