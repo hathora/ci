@@ -169,9 +169,15 @@ func (fvs *fileValueSource) populateFileCache() error {
 
 	switch fvs.fileType {
 	case "json": // json is a subset of yaml
-		fvs.cache.populateYAML()
+		err := fvs.cache.populateYAML()
+		if err != nil {
+			return err
+		}
 	case "yaml":
-		fvs.cache.populateYAML()
+		err := fvs.cache.populateYAML()
+		if err != nil {
+			return err
+		}
 	default:
 		return fmt.Errorf("unsupported file type %q", fvs.fileType)
 	}
