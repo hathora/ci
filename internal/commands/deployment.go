@@ -239,7 +239,7 @@ var (
 			deploymentEnvVar("ADDITIONAL_CONTAINER_PORTS")),
 			cli.EnvVar(deploymentEnvVar("ADDITIONAL_CONTAINER_PORT")),
 			altsrc.File(configFlag.Name, "deployment.additional-container-ports"),
-			altsrc.File(configFlag.Name, "deployment.additional-container-ports"),
+			altsrc.File(configFlag.Name, "deployment.additional-container-port"),
 		),
 		Usage: "additional server ports",
 	}

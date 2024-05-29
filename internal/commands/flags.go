@@ -33,8 +33,8 @@ var (
 	}
 
 	appIDFlag = &cli.StringFlag{
-		Name:       "app-id",
-		Aliases:    []string{"a"},
+		Name:    "app-id",
+		Aliases: []string{"a"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("APP_ID")),
 			altsrc.File(configFlag.Name, "app.id"),
@@ -53,7 +53,7 @@ var (
 	}
 
 	verbosityFlag = &cli.IntFlag{
-		Name:       "verbosity",
+		Name: "verbosity",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(globalFlagEnvVar("VERBOSITY")),
 			altsrc.File(configFlag.Name, "global.verbosity"),
@@ -65,7 +65,7 @@ var (
 	}
 
 	hathoraCloudEndpointFlag = &cli.StringFlag{
-		Name:        "hathora-cloud-endpoint",
+		Name: "hathora-cloud-endpoint",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(globalFlagEnvVar("CLOUD_ENDPOINT")),
 			altsrc.File(configFlag.Name, "global.cloud-endpoint"),

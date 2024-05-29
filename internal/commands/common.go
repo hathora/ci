@@ -121,7 +121,7 @@ type Release struct {
 	URL         string `json:"html_url"`
 }
 
-func handleNewVersionAvailable(currentVersion string) error {
+func handleNewVersionAvailable(currentVersion string) {
 	url := "https://api.github.com/repos/hathora/ci/releases/latest"
 
 	resp, err := http.Get(url)
@@ -144,6 +144,4 @@ func handleNewVersionAvailable(currentVersion string) error {
 	if versionDiff > 0 {
 		zap.L().Warn("A new version of hathora-ci is available for download.")
 	}
-
-	return nil
 }
