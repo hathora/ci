@@ -30,11 +30,11 @@ var Deployment = &cli.Command{
 			Usage:   "get a deployment by id",
 			Flags:   subcommandFlags(deploymentIDFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("getting deployment info...")
 				deployment, err := OneDeploymentConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
+				deployment.Log.Debug("getting deployment info...")
 
 				res, err := deployment.SDK.DeploymentV2.GetDeploymentInfo(
 					ctx,
@@ -54,11 +54,11 @@ var Deployment = &cli.Command{
 			Usage:   "get the latest deployment",
 			Flags:   subcommandFlags(),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("getting the latest deployment...")
 				deployment, err := DeploymentConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
+				deployment.Log.Debug("getting the latest deployment...")
 
 				res, err := deployment.SDK.DeploymentV2.GetLatestDeployment(ctx, deployment.AppID)
 				if err != nil {
@@ -74,11 +74,11 @@ var Deployment = &cli.Command{
 			Usage:   "get all deployments",
 			Flags:   subcommandFlags(),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("getting all deployments...")
 				deployment, err := DeploymentConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
+				deployment.Log.Debug("getting all deployments...")
 
 				res, err := deployment.SDK.DeploymentV2.GetDeployments(ctx, deployment.AppID)
 				if err != nil {
@@ -108,12 +108,15 @@ var Deployment = &cli.Command{
 				envVarsFlag,
 			),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("creating a deployment...")
 				deployment, err := DeploymentConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
+
 				buildID := cmd.Int(buildIDFlag.Name)
+				deployment.Log = deployment.Log.With(zap.Int64("build.id", buildID))
+				deployment.Log.Debug("creating a deployment...")
+
 				idleTimeoutEnabled := cmd.Bool(idleTimeoutFlag.Name)
 				roomsPerProcess := cmd.Int(roomsPerProcessFlag.Name)
 				transportType := shared.TransportType(cmd.String(transportTypeFlag.Name))
@@ -330,6 +333,7 @@ func (c *OneDeploymentConfig) Load(cmd *cli.Command) error {
 	}
 	c.DeploymentConfig = deployment
 	c.DeploymentID = int(cmd.Int(deploymentIDFlag.Name))
+	c.Log = c.Log.With(zap.Int("deployment.id", c.DeploymentID))
 	return nil
 }
 
