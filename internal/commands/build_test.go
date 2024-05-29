@@ -19,7 +19,7 @@ func Test_BuildCommands_HelpText(t *testing.T) {
 	// t.Parallel()
 
 	app := commands.App()
-	err := app.Run(context.Background(), []string{"cloud-ci", "build", "--help"})
+	err := app.Run(context.Background(), []string{"ci", "build", "--help"})
 	assert.Nil(t, err, "command returned an error")
 }
 
@@ -206,7 +206,7 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 			h := mock.Hathora(t, mock.RespondsWithStatus(tt.responseStatus), mock.RespondsWithJSON([]byte(tt.responseBody)))
 			app := commands.App()
 			staticArgs := []string{
-				"cloud-ci",
+				"ci",
 				"--app-id",
 				"test-app-id",
 				"--token",
@@ -335,7 +335,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 			h := mock.Hathora(t, mock.RespondsWithStatus(tt.responseStatus), mock.RespondsWithJSON([]byte(tt.responseBody)))
 			app := commands.App()
 			staticArgs := []string{
-				"cloud-ci",
+				"ci",
 				"--hathora-cloud-endpoint",
 				h.Endpoint,
 			}
