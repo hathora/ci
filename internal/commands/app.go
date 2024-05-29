@@ -31,10 +31,15 @@ func App() *cli.Command {
 		Flags:                  GlobalFlags,
 		Version:                BuildVersion,
 		Before: func(ctx context.Context, cmd *cli.Command) error {
+			err := handleNewVersionAvailable(BuildVersion)
+			if err != nil {
+				return err
+			}
+
 			if isCallForHelp(cmd) {
 				return nil
 			}
-			err := altsrc.InitializeValueSourcesFromFlags(ctx, cmd, os.Args[1:])
+			err = altsrc.InitializeValueSourcesFromFlags(ctx, cmd, os.Args[1:])
 			if err != nil {
 				return err
 			}

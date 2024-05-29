@@ -183,6 +183,7 @@ var (
 		Aliases: []string{"bt"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("TAG")),
+			altsrc.File(configFlag.Name, "build.tag"),
 		),
 		Usage: "tag to associate an external version with a build",
 	}
@@ -192,6 +193,7 @@ var (
 		Aliases: []string{"f"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("FILE")),
+			altsrc.File(configFlag.Name, "build.file"),
 		),
 		Usage:    "filepath of the built game server binary or archive",
 		Required: true,

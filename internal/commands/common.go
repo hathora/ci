@@ -1,8 +1,11 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
+	"go/version"
 	"math"
+	"net/http"
 
 	"github.com/hathora/ci/internal/output"
 	"github.com/urfave/cli/v3"
@@ -109,4 +112,38 @@ func isCallForHelp(cmd *cli.Command) bool {
 		}
 	}
 	return false
+}
+
+type Release struct {
+	TagName     string `json:"tag_name"`
+	Name        string `json:"name"`
+	PublishedAt string `json:"published_at"`
+	URL         string `json:"html_url"`
+}
+
+func handleNewVersionAvailable(currentVersion string) error {
+	url := "https://api.github.com/repos/hathora/ci/releases/latest"
+
+	resp, err := http.Get(url)
+	if err != nil {
+		zap.L().Warn("unable to fetch latest version number")
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		zap.L().Warn("unable to fetch latest version number")
+	}
+
+	var release Release
+	if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
+		zap.L().Warn("unable to decode the latest version number")
+	}
+
+	versionDiff := version.Compare(release.TagName, currentVersion)
+
+	if versionDiff > 0 {
+		zap.L().Warn("A new version of hathora-ci is available for download.")
+	}
+
+	return nil
 }

@@ -1,2 +1,11 @@
 build:
-  id: 1
+  id: 11
+app:
+  id: app-a4030980-0016-4a0a-b476-bb52b7a2d37c
+deployment:
+  idle-timeout-enabled: true
+  rooms-per-process: 1
+  transport-type: tcp
+  container-port: 8090
+  requested-memory-mb: 1024
+  requested-cpu: 0.5
