@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/shared"
@@ -29,11 +30,11 @@ var Deployment = &cli.Command{
 			Usage:   "get a deployment by id",
 			Flags:   subcommandFlags(deploymentIDFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("getting deployment info...")
 				deployment, err := OneDeploymentConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
+				deployment.Log.Debug("getting deployment info...")
 
 				res, err := deployment.SDK.DeploymentV2.GetDeploymentInfo(
 					ctx,
@@ -53,11 +54,11 @@ var Deployment = &cli.Command{
 			Usage:   "get the latest deployment",
 			Flags:   subcommandFlags(),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("getting the latest deployment...")
 				deployment, err := DeploymentConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
+				deployment.Log.Debug("getting the latest deployment...")
 
 				res, err := deployment.SDK.DeploymentV2.GetLatestDeployment(ctx, deployment.AppID)
 				if err != nil {
@@ -73,11 +74,11 @@ var Deployment = &cli.Command{
 			Usage:   "get all deployments",
 			Flags:   subcommandFlags(),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("getting all deployments...")
 				deployment, err := DeploymentConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
+				deployment.Log.Debug("getting all deployments...")
 
 				res, err := deployment.SDK.DeploymentV2.GetDeployments(ctx, deployment.AppID)
 				if err != nil {
@@ -107,12 +108,15 @@ var Deployment = &cli.Command{
 				envVarsFlag,
 			),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("creating a deployment...")
 				deployment, err := DeploymentConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
+
 				buildID := cmd.Int(buildIDFlag.Name)
+				deployment.Log = deployment.Log.With(zap.Int64("build.id", buildID))
+				deployment.Log.Debug("creating a deployment...")
+
 				idleTimeoutEnabled := cmd.Bool(idleTimeoutFlag.Name)
 				roomsPerProcess := cmd.Int(roomsPerProcessFlag.Name)
 				transportType := shared.TransportType(cmd.String(transportTypeFlag.Name))
@@ -121,6 +125,12 @@ var Deployment = &cli.Command{
 				requestedCPU := cmd.Float(requestedCPUFlag.Name)
 				addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
 				envVars := cmd.StringSlice(envVarsFlag.Name)
+
+				if requestedMemory != (requestedCPU * 2048) {
+					return fmt.Errorf("invalid memory: %s and cpu: %s requested-memory-mb must be a 2048:1 ratio to requested-cpu",
+						strconv.FormatFloat(requestedMemory, 'f', -1, 64),
+						strconv.FormatFloat(requestedCPU, 'f', -1, 64))
+				}
 
 				additionalContainerPorts, err := parseContainerPorts(addlPorts)
 				if err != nil {
@@ -227,6 +237,9 @@ var (
 		Sources:  cli.EnvVars(deploymentEnvVar("REQUESTED_MEMORY_MB")),
 		Usage:    "the amount of memory allocated to your process in MB",
 		Required: true,
+		Action: func(ctx context.Context, cmd *cli.Command, v float64) error {
+			return requireFloatInRange(v, 1024, 8192, "requested-memory-mb")
+		},
 	}
 
 	requestedCPUFlag = &cli.FloatFlag{
@@ -234,6 +247,18 @@ var (
 		Sources:  cli.EnvVars(deploymentEnvVar("REQUESTED_CPU")),
 		Usage:    "the number of cores allocated to your process",
 		Required: true,
+		Action: func(ctx context.Context, cmd *cli.Command, v float64) error {
+			rangeErr := requireFloatInRange(v, 0.5, 4, "requested-cpu")
+			if rangeErr != nil {
+				return rangeErr
+			}
+			decimalErr := requireMaxDecimals(v, 1, "requested-cpu")
+			if decimalErr != nil {
+				return decimalErr
+			}
+
+			return nil
+		},
 	}
 )
 
@@ -308,6 +333,7 @@ func (c *OneDeploymentConfig) Load(cmd *cli.Command) error {
 	}
 	c.DeploymentConfig = deployment
 	c.DeploymentID = int(cmd.Int(deploymentIDFlag.Name))
+	c.Log = c.Log.With(zap.Int("deployment.id", c.DeploymentID))
 	return nil
 }
 

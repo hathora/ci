@@ -44,7 +44,7 @@ func (h *loggingRoundTripper) beforeRequest(req *http.Request) {
 				"request",
 				zap.String("http.method", req.Method),
 				zap.Stringer("http.url", req.URL),
-				zap.Binary("http.request.dump", reqDump),
+				zap.String("http.request.dump", string(reqDump)),
 			)
 			return
 		}
@@ -67,7 +67,7 @@ func (h *loggingRoundTripper) afterSuccess(res *http.Response) {
 				zap.String("http.method", res.Request.Method),
 				zap.Stringer("http.url", res.Request.URL),
 				zap.Int("http.status", res.StatusCode),
-				zap.Binary("response.dump", resDump),
+				zap.String("http.response.dump", string(resDump)),
 			)
 			return
 		}

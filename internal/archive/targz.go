@@ -3,11 +3,12 @@ package archive
 import (
 	"archive/tar"
 	"compress/gzip"
-	"github.com/monochromegane/go-gitignore"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/monochromegane/go-gitignore"
 
 	"go.uber.org/zap"
 )
@@ -23,7 +24,8 @@ func getIgnoreMatchers(srcFolder string, filepaths ...string) ([]gitignore.Ignor
 	for _, path := range filepaths {
 		matcher, err := gitignore.NewGitIgnore(filepath.Join(srcFolder, path), ".")
 		if err != nil {
-			return nil, err
+			zap.L().Debug("Did not file a " + path + " file. Skipping.")
+			continue
 		}
 
 		matchers = append(matchers, matcher)
@@ -108,6 +110,10 @@ func ArchiveTGZ(srcFolder string) (string, error) {
 
 		return nil
 	})
+
+	if err != nil {
+		return "", err
+	}
 
 	return destinationFile, nil
 }
