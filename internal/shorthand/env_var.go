@@ -27,12 +27,7 @@ func MapEnvToEnvConfig(input []shared.DeploymentV2Env) []shared.DeploymentConfig
 	output := make([]shared.DeploymentConfigV2Env, 0)
 
 	for _, config := range input {
-		newEnvVar := shared.DeploymentConfigV2Env{
-			Name: config.Name,
-			Value: config.Value,
-		}
-
-		output = append(output, newEnvVar)
+		output = append(output, shared.DeploymentConfigV2Env(config))
 	}
 
 	return output
