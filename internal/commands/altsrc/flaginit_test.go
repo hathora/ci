@@ -214,7 +214,10 @@ func Test_InitializeFlagSources(t *testing.T) {
 				},
 			}
 
-			cmd.Run(context.Background(), append([]string{"test"}, tt.args...))
+			err := cmd.Run(context.Background(), append([]string{"test"}, tt.args...))
+			if err != nil {
+				return 
+			}
 
 			assert.Equal(t, fmt.Sprintf("%v", tt.expectValue), flagValue)
 		})
