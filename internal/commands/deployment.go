@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -16,8 +17,8 @@ import (
 
 var (
 	allowedTransportTypes = []string{"tcp", "udp", "tls"}
-	maxRoomsPerProcess    = int64(10000)
-	maxPort               = int64(65535)
+	maxRoomsPerProcess    = 10000
+	maxPort               = 65535
 )
 
 var Deployment = &cli.Command{
@@ -106,175 +107,41 @@ var Deployment = &cli.Command{
 				requestedCPUFlag,
 				additionalContainerPortsFlag,
 				envVarsFlag,
-				usePreviousDeploymentSettingsFlag,
+				fromLatestFlag,
 			),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				deployment, err := DeploymentConfigFrom(cmd)
+				zap.L().Debug("creating a deployment...")
+				deployment, err := CreateDeploymentConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
-<<<<<<< HEAD
 
-				buildID := cmd.Int(buildIDFlag.Name)
-				deployment.Log = deployment.Log.With(zap.Int64("build.id", buildID))
-				deployment.Log.Debug("creating a deployment...")
-
-				idleTimeoutEnabled := cmd.Bool(idleTimeoutFlag.Name)
-				roomsPerProcess := cmd.Int(roomsPerProcessFlag.Name)
-				transportType := shared.TransportType(cmd.String(transportTypeFlag.Name))
-				containerPort := cmd.Int(containerPortFlag.Name)
-				requestedMemory := cmd.Float(requestedMemoryFlag.Name)
-				requestedCPU := cmd.Float(requestedCPUFlag.Name)
-				addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
-				envVars := cmd.StringSlice(envVarsFlag.Name)
-
-				if requestedMemory != (requestedCPU * 2048) {
-					return fmt.Errorf("invalid memory: %s and cpu: %s requested-memory-mb must be a 2048:1 ratio to requested-cpu",
-						strconv.FormatFloat(requestedMemory, 'f', -1, 64),
-						strconv.FormatFloat(requestedCPU, 'f', -1, 64))
-				}
-
-				additionalContainerPorts, err := parseContainerPorts(addlPorts)
-=======
-
-				usePreviousDeploymentSettings := cmd.Bool(usePreviousDeploymentSettingsFlag.Name)
-
-				var previousDeployment *shared.DeploymentV2
-
-				if usePreviousDeploymentSettings {
+				useLatest := cmd.Bool(fromLatestFlag.Name)
+				if useLatest {
 					res, err := deployment.SDK.DeploymentV2.GetLatestDeployment(ctx, deployment.AppID)
 					if err != nil {
-						return fmt.Errorf("unable to retrieve previous deployment: %w", err)
+						return fmt.Errorf("unable to retrieve latest deployment: %w", err)
 					}
 
-					previousDeployment = res.DeploymentV2
-				} else {
-					previousDeployment = &shared.DeploymentV2{}
+					deployment.Merge(res.DeploymentV2)
 				}
 
-				buildID, err := setFlagWithDefault(
-					cmd,
-					buildIDFlag.Name,
-					cmd.Int(buildIDFlag.Name),
-					int64(previousDeployment.BuildID),
-					usePreviousDeploymentSettings,
-					true)
-				if err != nil {
-					return err
-				}
-
-				roomsPerProcess, err := setFlagWithDefault(
-					cmd,
-					roomsPerProcessFlag.Name,
-					cmd.Int(roomsPerProcessFlag.Name),
-					int64(previousDeployment.RoomsPerProcess),
-					usePreviousDeploymentSettings,
-					true)
-				if err != nil {
-					return err
-				}
-
-				idleTimeoutEnabled, err := setFlagWithDefault(
-					cmd,
-					idleTimeoutFlag.Name,
-					cmd.Bool(idleTimeoutFlag.Name),
-					previousDeployment.IdleTimeoutEnabled,
-					usePreviousDeploymentSettings,
-					true)
-				if err != nil {
-					return err
-				}
-
-				transportType, err := setFlagWithDefault(
-					cmd,
-					transportTypeFlag.Name,
-					cmd.String(transportTypeFlag.Name),
-					string(previousDeployment.DefaultContainerPort.TransportType),
-					usePreviousDeploymentSettings,
-					true)
-				if err != nil {
-					return err
-				}
-
-				containerPort, err := setFlagWithDefault(
-					cmd,
-					containerPortFlag.Name,
-					cmd.Int(containerPortFlag.Name),
-					int64(previousDeployment.DefaultContainerPort.Port),
-					usePreviousDeploymentSettings,
-					true)
-				if err != nil {
-					return err
-				}
-
-				requestedMemory, err := setFlagWithDefault(
-					cmd,
-					requestedMemoryFlag.Name,
-					cmd.Float(requestedMemoryFlag.Name),
-					previousDeployment.RequestedMemoryMB,
-					usePreviousDeploymentSettings,
-					true)
-				if err != nil {
-					return err
-				}
-
-				requestedCPU, err := setFlagWithDefault(
-					cmd,
-					requestedCPUFlag.Name,
-					cmd.Float(requestedCPUFlag.Name),
-					previousDeployment.RequestedCPU,
-					usePreviousDeploymentSettings,
-					true)
-				if err != nil {
-					return err
-				}
-
-				addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
-				parsedAddlPorts, err := parseContainerPorts(addlPorts)
->>>>>>> b9705b3 (adding flag to pull previous deploy settings)
-				if err != nil {
-					return fmt.Errorf("invalid additional container ports: %w", err)
-				}
-				additionalContainerPorts, err := setFlagWithDefault(
-					cmd,
-					additionalContainerPortsFlag.Name,
-					parsedAddlPorts,
-					previousDeployment.AdditionalContainerPorts,
-					usePreviousDeploymentSettings,
-					false)
-				if err != nil {
-					return err
-				}
-
-				envVars := cmd.StringSlice(envVarsFlag.Name)
-				env, err := parseEnvVars(envVars)
-				if err != nil {
-					return fmt.Errorf("invalid environment variables: %w", err)
-				}
-
-				usedEnvVars, err := setFlagWithDefault(
-					cmd,
-					envVarsFlag.Name,
-					env,
-					shorthand.MapEnvToEnvConfig(previousDeployment.Env),
-					usePreviousDeploymentSettings,
-					false)
-				if err != nil {
+				if err := deployment.Validate(); err != nil {
 					return err
 				}
 
 				res, err := deployment.SDK.DeploymentV2.CreateDeployment(
 					ctx,
-					int(buildID),
+					deployment.BuildID,
 					shared.DeploymentConfigV2{
-						IdleTimeoutEnabled:       idleTimeoutEnabled,
-						RoomsPerProcess:          int(roomsPerProcess),
-						TransportType:            shared.TransportType(transportType),
-						ContainerPort:            int(containerPort),
-						RequestedMemoryMB:        requestedMemory,
-						RequestedCPU:             requestedCPU,
-						AdditionalContainerPorts: additionalContainerPorts,
-						Env:                      usedEnvVars,
+						IdleTimeoutEnabled:       *deployment.IdleTimeoutEnabled,
+						RoomsPerProcess:          deployment.RoomsPerProcess,
+						TransportType:            deployment.TransportType,
+						ContainerPort:            deployment.ContainerPort,
+						RequestedMemoryMB:        deployment.RequestedMemoryMB,
+						RequestedCPU:             deployment.RequestedCPU,
+						AdditionalContainerPorts: deployment.AdditionalContainerPorts,
+						Env:                      deployment.Env,
 					},
 					deployment.AppID,
 				)
@@ -313,27 +180,18 @@ var (
 		Name:    "rooms-per-process",
 		Sources: cli.EnvVars(deploymentEnvVar("ROOMS_PER_PROCESS")),
 		Usage:   "how many rooms can be scheduled in a process",
-		Action: func(ctx context.Context, cmd *cli.Command, v int64) error {
-			return requireIntInRange(v, 1, maxRoomsPerProcess, "rooms-per-process")
-		},
 	}
 
 	transportTypeFlag = &cli.StringFlag{
 		Name:    "transport-type",
 		Sources: cli.EnvVars(deploymentEnvVar("TRANSPORT_TYPE")),
 		Usage:   "the underlying communication protocol to the exposed port",
-		Action: func(ctx context.Context, cmd *cli.Command, v string) error {
-			return requireValidEnumValue(v, allowedTransportTypes, "transport-type")
-		},
 	}
 
 	containerPortFlag = &cli.IntFlag{
 		Name:    "container-port",
 		Sources: cli.EnvVars(deploymentEnvVar("CONTAINER_PORT")),
 		Usage:   "default server port",
-		Action: func(ctx context.Context, cmd *cli.Command, v int64) error {
-			return requireIntInRange(v, 1, maxPort, "container-port")
-		},
 	}
 
 	additionalContainerPortsFlag = &cli.StringSliceFlag{
@@ -350,38 +208,21 @@ var (
 	}
 
 	requestedMemoryFlag = &cli.FloatFlag{
-		Name:     "requested-memory-mb",
-		Sources:  cli.EnvVars(deploymentEnvVar("REQUESTED_MEMORY_MB")),
-		Usage:    "the amount of memory allocated to your process in MB",
-		Required: true,
-		Action: func(ctx context.Context, cmd *cli.Command, v float64) error {
-			return requireFloatInRange(v, 1024, 8192, "requested-memory-mb")
-		},
+		Name:    "requested-memory-mb",
+		Sources: cli.EnvVars(deploymentEnvVar("REQUESTED_MEMORY_MB")),
+		Usage:   "the amount of memory allocated to your process in MB",
 	}
 
 	requestedCPUFlag = &cli.FloatFlag{
-		Name:     "requested-cpu",
-		Sources:  cli.EnvVars(deploymentEnvVar("REQUESTED_CPU")),
-		Usage:    "the number of cores allocated to your process",
-		Required: true,
-		Action: func(ctx context.Context, cmd *cli.Command, v float64) error {
-			rangeErr := requireFloatInRange(v, 0.5, 4, "requested-cpu")
-			if rangeErr != nil {
-				return rangeErr
-			}
-			decimalErr := requireMaxDecimals(v, 1, "requested-cpu")
-			if decimalErr != nil {
-				return decimalErr
-			}
-
-			return nil
-		},
+		Name:    "requested-cpu",
+		Sources: cli.EnvVars(deploymentEnvVar("REQUESTED_CPU")),
+		Usage:   "the number of cores allocated to your process",
 	}
 
-	usePreviousDeploymentSettingsFlag = &cli.BoolFlag{
-		Name:    "use-previous-settings",
-		Sources: cli.EnvVars(deploymentEnvVar("USE_PREVIOUS_DEPLOYMENT_SETTINGS")),
-		Usage:   "whether or not to use the previous deployments settings",
+	fromLatestFlag = &cli.BoolFlag{
+		Name:    "from-latest",
+		Sources: cli.EnvVars(deploymentEnvVar("FROM_LATEST")),
+		Usage:   "whether to use settings from the latest deployment; if set, other flags applied will act as overrides",
 	}
 )
 
@@ -466,4 +307,155 @@ func (c *OneDeploymentConfig) New() LoadableConfig {
 
 func OneDeploymentConfigFrom(cmd *cli.Command) (*OneDeploymentConfig, error) {
 	return ConfigFromCLI[*OneDeploymentConfig](oneDeploymentConfigKey, cmd)
+}
+
+var (
+	createDeploymentConfigKey = "commands.CreateDeploymentConfig.DI"
+)
+
+type CreateDeploymentConfig struct {
+	*DeploymentConfig
+	BuildID                  int
+	IdleTimeoutEnabled       *bool
+	RoomsPerProcess          int
+	TransportType            shared.TransportType
+	ContainerPort            int
+	RequestedMemoryMB        float64
+	RequestedCPU             float64
+	AdditionalContainerPorts []shared.ContainerPort
+	Env                      []shared.DeploymentConfigV2Env
+}
+
+var _ LoadableConfig = (*CreateDeploymentConfig)(nil)
+
+func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
+	deployment, err := DeploymentConfigFrom(cmd)
+	if err != nil {
+		return err
+	}
+
+	c.DeploymentConfig = deployment
+	c.BuildID = int(cmd.Int(buildIDFlag.Name))
+	if cmd.IsSet(idleTimeoutFlag.Name) {
+		idleTimeoutEnabled := cmd.Bool(idleTimeoutFlag.Name)
+		c.IdleTimeoutEnabled = &idleTimeoutEnabled
+	}
+	c.RoomsPerProcess = int(cmd.Int(roomsPerProcessFlag.Name))
+	c.TransportType = shared.TransportType(cmd.String(transportTypeFlag.Name))
+	c.ContainerPort = int(cmd.Int(containerPortFlag.Name))
+	c.RequestedMemoryMB = cmd.Float(requestedMemoryFlag.Name)
+	c.RequestedCPU = cmd.Float(requestedCPUFlag.Name)
+
+	addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
+	parsedAddlPorts, err := parseContainerPorts(addlPorts)
+	if err != nil {
+		return fmt.Errorf("invalid additional container ports: %w", err)
+	}
+	c.AdditionalContainerPorts = parsedAddlPorts
+
+	envVars := cmd.StringSlice(envVarsFlag.Name)
+	env, err := parseEnvVars(envVars)
+	if err != nil {
+		return fmt.Errorf("invalid environment variables: %w", err)
+	}
+	c.Env = env
+
+	return nil
+}
+
+func (c *CreateDeploymentConfig) Merge(latest *shared.DeploymentV2) {
+	if latest == nil {
+		return
+	}
+
+	if c.BuildID == 0 {
+		c.BuildID = latest.BuildID
+	}
+
+	if c.IdleTimeoutEnabled == nil {
+		c.IdleTimeoutEnabled = &latest.IdleTimeoutEnabled
+	}
+
+	if c.RoomsPerProcess == 0 {
+		c.RoomsPerProcess = latest.RoomsPerProcess
+	}
+
+	if c.TransportType == "" {
+		c.TransportType = latest.DefaultContainerPort.TransportType
+	}
+
+	if c.ContainerPort == 0 {
+		c.ContainerPort = latest.DefaultContainerPort.Port
+	}
+
+	if c.RequestedMemoryMB == 0 {
+		c.RequestedMemoryMB = latest.RequestedMemoryMB
+	}
+
+	if c.RequestedCPU == 0 {
+		c.RequestedCPU = latest.RequestedCPU
+	}
+
+	if len(c.AdditionalContainerPorts) == 0 {
+		c.AdditionalContainerPorts = latest.AdditionalContainerPorts
+	}
+
+	if len(c.Env) == 0 {
+		c.Env = shorthand.MapEnvToEnvConfig(latest.Env)
+	}
+}
+
+func (c *CreateDeploymentConfig) Validate() error {
+	var err error
+	if c.BuildID == 0 {
+		err = errors.Join(err, fmt.Errorf("build ID is required"))
+	}
+
+	if c.IdleTimeoutEnabled == nil {
+		err = errors.Join(err, fmt.Errorf("idle timeout enabled is required"))
+	}
+
+	if c.RoomsPerProcess == 0 {
+		err = errors.Join(err, fmt.Errorf("rooms per process is required"))
+	}
+
+	err = errors.Join(err, requireIntInRange(c.RoomsPerProcess, 1, maxRoomsPerProcess, roomsPerProcessFlag.Name))
+
+	if c.TransportType == "" {
+		err = errors.Join(err, fmt.Errorf("transport type is required"))
+	}
+	err = errors.Join(err, requireValidEnumValue(c.TransportType, allowedTransportTypes, transportTypeFlag.Name))
+
+	if c.ContainerPort == 0 {
+		err = errors.Join(err, fmt.Errorf("container port is required"))
+	}
+	err = errors.Join(err, requireIntInRange(c.ContainerPort, 1, maxPort, containerPortFlag.Name))
+
+	if c.RequestedMemoryMB == 0 {
+		err = errors.Join(err, fmt.Errorf("requested memory is required"))
+	}
+	err = errors.Join(err, requireFloatInRange(c.RequestedMemoryMB, 1024, 8192, requestedMemoryFlag.Name))
+	if c.RequestedCPU == 0 {
+		err = errors.Join(err, fmt.Errorf("requested CPU is required"))
+	}
+
+	err = errors.Join(err, requireFloatInRange(c.RequestedCPU, 0.5, 4, requestedCPUFlag.Name))
+	err = errors.Join(err, requireMaxDecimals(c.RequestedCPU, 1, requestedCPUFlag.Name))
+
+	if c.RequestedMemoryMB != (c.RequestedCPU * 2048) {
+		err = errors.Join(err,
+			fmt.Errorf("invalid memory: %s and cpu: %s requested-memory-mb must be a 2048:1 ratio to requested-cpu",
+				strconv.FormatFloat(c.RequestedMemoryMB, 'f', -1, 64),
+				strconv.FormatFloat(c.RequestedCPU, 'f', -1, 64)))
+	}
+
+	return err
+}
+
+func (c *CreateDeploymentConfig) New() LoadableConfig {
+	return &CreateDeploymentConfig{}
+}
+
+func CreateDeploymentConfigFrom(cmd *cli.Command) (*CreateDeploymentConfig, error) {
+	return ConfigFromCLI[*CreateDeploymentConfig](createDeploymentConfigKey, cmd)
 }

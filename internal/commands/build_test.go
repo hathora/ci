@@ -15,8 +15,7 @@ import (
 )
 
 func Test_BuildCommands_HelpText(t *testing.T) {
-	// urfave cli is not currently thread safe
-	// t.Parallel()
+	t.Parallel()
 
 	app := commands.App()
 	err := app.Run(context.Background(), []string{"ci", "build", "--help"})
@@ -28,8 +27,7 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 		t.Skip("skipping integration test in short mode")
 	}
 
-	// urfave cli is not currently thread safe
-	// t.Parallel()
+	t.Parallel()
 
 	tests := []struct {
 		name           string
@@ -228,6 +226,12 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 }
 
 func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	t.Parallel()
+
 	tests := []struct {
 		name           string
 		command        string
@@ -340,6 +344,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 				h.Endpoint,
 			}
 			testArgs := strings.Fields(tt.command)
+			t.Log(append(staticArgs, testArgs...))
 			err := app.Run(context.Background(), append(staticArgs, testArgs...))
 			assert.Nil(t, err, "command returned an error")
 			request, body := h.ReceivedRequest()
