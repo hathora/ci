@@ -15,7 +15,7 @@ func StreamOutput(reader io.ReadCloser, writer io.Writer) error {
 		}
 
 		if n > 0 {
-			_, err = fmt.Fprintf(writer, "%v\n", string(buffer[:n]))
+			_, err = fmt.Fprintf(writer, "%s\n", string(buffer[:n]))
 			if err != nil {
 				return err
 			}
