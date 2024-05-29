@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"context"
-
 	"github.com/urfave/cli/v3"
 )
 
@@ -12,12 +10,9 @@ var (
 		Aliases:    []string{"o"},
 		Sources:    cli.EnvVars(globalFlagEnvVar("OUTPUT")),
 		Usage:      "the format of the output",
-		Value:      allowedOutputTypes[0],
+		Value:      "json",
 		Persistent: true,
 		Category:   "Global:",
-		Action: func(ctx context.Context, cmd *cli.Command, v string) error {
-			return requireValidEnumValue(v, allowedOutputTypes, "output")
-		},
 	}
 
 	outputPrettyFlag = &cli.BoolFlag{
@@ -90,8 +85,6 @@ var (
 		verbosityFlag,
 		configFlag,
 	}
-
-	allowedOutputTypes = []string{"text", "json"}
 )
 
 var (
