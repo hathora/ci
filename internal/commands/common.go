@@ -72,7 +72,7 @@ func (c *GlobalConfig) Load(cmd *cli.Command) error {
 	c.BaseURL = cmd.String(hathoraCloudEndpointFlag.Name)
 	appID := cmd.String(appIDFlag.Name)
 	if appID == "" {
-		return fmt.Errorf("app-id is required")
+		c.AppID = nil
 	} else {
 		c.AppID = &appID
 	}

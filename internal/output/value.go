@@ -1,7 +1,6 @@
 package output
 
 import (
-	"errors"
 	"fmt"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"io"
@@ -71,6 +70,6 @@ func getBuildValue(build shared.Build, key string) (any, error) {
 	case "buildid":
 		return build.BuildID, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("key %s not supported", key))
+		return nil, fmt.Errorf(fmt.Sprintf("key %s not supported", key))
 	}
 }
