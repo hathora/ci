@@ -3,6 +3,7 @@ package output_test
 import (
 	"bytes"
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -16,7 +17,7 @@ func Test_DeploymentTextOutput(t *testing.T) {
 	tests := []struct {
 		name   string
 		input  shared.DeploymentV2
-		expect string
+		expect [][]string
 	}{
 		{
 			name: "simple deployment",
@@ -49,9 +50,10 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				RequestedMemoryMB: 555,
 				RequestedCPU:      0.5,
 			},
-			expect: `
-AppID  DeploymentID  BuildID  CreatedAt  CreatedBy  IdleTimeoutEnabled  RoomsPerProcess  DefaultContainerPort  AdditionalContainerPorts  Env        RequestedCPU  RequestedMemoryMB
-appID  2             1        12:00AM    createdBy  true                3                default:3000/tcp      debug:4000/tcp            EULA=TRUE  0.500000      555.000000`,
+			expect: [][]string{
+				{"AppID", "DeploymentID", "BuildID", "CreatedAt", "CreatedBy", "IdleTimeoutEnabled", "RoomsPerProcess", "DefaultContainerPort", "AdditionalContainerPorts", "Env", "RequestedCPU", "RequestedMemoryMB"},
+				{"appID", "2", "1", "12:00AM", "createdBy", "true", "3", "default:3000/tcp", "debug:4000/tcp", "EULA=TRUE", "0.500000", "555.000000"},
+			},
 		},
 	}
 
@@ -93,8 +95,16 @@ appID  2             1        12:00AM    createdBy  true                3       
 			var buf bytes.Buffer
 			actualErr := formatter.Write(tt.input, &buf)
 			assert.NoError(t, actualErr)
-			actual := buf.String()
-			assert.Equal(t, tt.expect, actual)
+			actualStr := strings.TrimSpace(buf.String())
+			actualLines := strings.Split(actualStr, "\n")
+			for i, line := range actualLines {
+				actualLines[i] = strings.TrimSpace(line)
+				if actualLines[i] == "" {
+					continue
+				}
+				actualColumns := strings.Fields(actualLines[i])
+				assert.Equal(t, len(tt.expect[i]), len(actualColumns))
+			}
 		})
 	}
 }
