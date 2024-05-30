@@ -1,6 +1,8 @@
 package commands
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type DefaultResult struct {
 	Success bool   `json:"-"`
@@ -15,11 +17,13 @@ func (r *DefaultResult) MarshalJSON() ([]byte, error) {
 	}
 
 	alias := struct {
-		*DefaultResult
-		Status string `json:"status"`
+		Message string `json:"message"`
+		Status  string `json:"status"`
+		Code    int    `json:"code"`
 	}{
-		DefaultResult: r,
-		Status:        status,
+		Message: r.Message,
+		Status:  status,
+		Code:    r.Code,
 	}
 
 	return json.Marshal(alias)
