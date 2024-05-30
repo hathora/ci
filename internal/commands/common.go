@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go/version"
 	"math"
+	"strings"
 	"time"
 
 	"net/http"
@@ -82,6 +83,12 @@ func (c *GlobalConfig) Load(cmd *cli.Command) error {
 		c.Output = output.JSONFormat(cmd.Bool(outputPrettyFlag.Name))
 	case output.Text:
 		c.Output = BuildTextFormatter()
+	case output.Value:
+		splitValue := strings.Split(outputType, "=")
+		if len(splitValue) != 2 {
+			return fmt.Errorf("invalid value format: %s", outputType)
+		}
+		c.Output = output.ValueFormat(splitValue[1])
 	default:
 		return fmt.Errorf("unsupported output type: %s", outputType)
 	}

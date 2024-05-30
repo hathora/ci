@@ -62,8 +62,8 @@ func ArchiveTGZ(srcFolder string) (string, error) {
 
 	ignoreMatchers, err := getIgnoreMatchers(
 		srcFolder,
-		filepath.Join(srcFolder, ".dockerignore"),
-		filepath.Join(srcFolder, ".gitignore"))
+		".dockerignore",
+		".gitignore")
 
 	if err != nil {
 		return "", err
