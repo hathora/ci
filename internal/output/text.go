@@ -14,6 +14,7 @@ import (
 func TextFormat(opts ...TextFormatterOption) FormatWriter {
 	registry := &textFormatterRegistry{
 		FieldOrders: make(map[string][]string),
+		OmitFields:  make(map[string][]string),
 		Formatters:  make(map[string]formatter),
 	}
 
@@ -30,6 +31,7 @@ type formatter func(any) string
 
 type textFormatterRegistry struct {
 	FieldOrders map[string][]string
+	OmitFields  map[string][]string
 	Formatters  map[string]formatter
 }
 
@@ -39,6 +41,13 @@ func WithFieldOrder[T any](empty T, fields ...string) TextFormatterOption {
 	return func(r *textFormatterRegistry) {
 		typeKey := reflect.TypeOf(empty).String()
 		r.FieldOrders[typeKey] = fields
+	}
+}
+
+func WithoutFields[T any](empty T, fields ...string) TextFormatterOption {
+	return func(r *textFormatterRegistry) {
+		typeKey := reflect.TypeOf(empty).String()
+		r.OmitFields[typeKey] = fields
 	}
 }
 
@@ -65,11 +74,15 @@ func (t *textOutputWriter) Write(value any, writer io.Writer) error {
 
 	switch v.Kind() {
 	case reflect.Slice:
+		if v.Len() == 0 {
+			return nil
+		}
+		elemType := valueType.Elem()
+		err := t.printFieldNames(v.Index(0), elemType, tw)
+		if err != nil {
+			return err
+		}
 		for i := 0; i < v.Len(); i++ {
-			err := t.printFieldNames(v.Index(i), valueType, tw)
-			if err != nil {
-				return err
-			}
 			err = t.printFieldValues(v.Index(i), tw)
 			if err != nil {
 				return err
@@ -84,6 +97,11 @@ func (t *textOutputWriter) Write(value any, writer io.Writer) error {
 		if err != nil {
 			return err
 		}
+	case reflect.Ptr:
+		if v.IsNil() {
+			return nil
+		}
+		return t.Write(v.Elem().Interface(), writer)
 	default:
 		return fmt.Errorf("unsupported type: %s", v.Kind())
 	}
@@ -96,6 +114,12 @@ func (t *textOutputWriter) printFieldNames(v reflect.Value, valueType reflect.Ty
 	var fieldNames []string
 
 	for i := 0; i < v.NumField(); i++ {
+		fieldName := valueType.Field(i).Name
+		omissions, hasOmissions := t.registry.OmitFields[valueType.String()]
+		if hasOmissions && slices.Contains(omissions, fieldName) {
+			continue
+		}
+
 		fieldNames = append(fieldNames, valueType.Field(i).Name)
 	}
 
@@ -136,7 +160,13 @@ func (t *textOutputWriter) printFieldValues(v reflect.Value, writer io.Writer) e
 
 	valueType := v.Type()
 	for i := 0; i < v.NumField(); i++ {
-		fieldNames = append(fieldNames, valueType.Field(i).Name)
+		fieldName := valueType.Field(i).Name
+		omissions, hasOmissions := t.registry.OmitFields[valueType.String()]
+		if hasOmissions && slices.Contains(omissions, fieldName) {
+			continue
+		}
+
+		fieldNames = append(fieldNames, fieldName)
 	}
 
 	sort.Slice(fieldNames, func(i, j int) bool {
