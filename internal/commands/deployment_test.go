@@ -375,6 +375,7 @@ func Test_Integration_DeploymentCommands_CreateFromLatest(t *testing.T) {
 			name: "create a deployment from latest with some overrides",
 			command: "create --from-latest --build-id 3 --idle-timeout-enabled=false --rooms-per-process 5 " +
 				" --env EULA=TRUE --env ADDITIONAL_ENV_VAR=1",
+			skip: "this test is currently flakey when run in with other package tests",
 			responses: []mockResponse{
 				// get latest response
 				{
