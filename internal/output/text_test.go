@@ -51,8 +51,8 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				RequestedCPU:      0.5,
 			},
 			expect: [][]string{
-				{"DeploymentID", "BuildID", "CreatedAt", "CreatedBy", "IdleTimeoutEnabled", "RoomsPerProcess", "DefaultContainerPort", "AdditionalContainerPorts", "Env", "RequestedCPU", "RequestedMemoryMB"},
-				{"2", "1", "2021-01-01T00:00:00Z", "createdBy", "true", "3", "default:3000/tcp", "debug:4000/tcp", "EULA=TRUE", "0.5", "555"},
+				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "DefaultContainerPort", "AdditionalContainerPorts", "Env", "RequestedCPU", "RequestedMemoryMB"},
+				{"2", "1", "2021-01-01T00:00:00Z", "true", "3", "default:3000/tcp", "debug:4000/tcp", "EULA=TRUE", "0.5", "555"},
 			},
 		},
 		{
@@ -87,8 +87,8 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				RequestedCPU:      0.5,
 			},
 			expect: [][]string{
-				{"DeploymentID", "BuildID", "CreatedAt", "CreatedBy", "IdleTimeoutEnabled", "RoomsPerProcess", "DefaultContainerPort", "AdditionalContainerPorts", "Env", "RequestedCPU", "RequestedMemoryMB"},
-				{"2", "1", "2021-01-01T00:00:00Z", "createdBy", "true", "3", "default:3000/tcp", "debug:4000/tcp", "EULA=TRUE", "0.5", "555"},
+				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "DefaultContainerPort", "AdditionalContainerPorts", "Env", "RequestedCPU", "RequestedMemoryMB"},
+				{"2", "1", "2021-01-01T00:00:00Z", "true", "3", "default:3000/tcp", "debug:4000/tcp", "EULA=TRUE", "0.5", "555"},
 			},
 		},
 		{
@@ -154,9 +154,9 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				},
 			},
 			expect: [][]string{
-				{"DeploymentID", "BuildID", "CreatedAt", "CreatedBy", "IdleTimeoutEnabled", "RoomsPerProcess", "DefaultContainerPort", "AdditionalContainerPorts", "Env", "RequestedCPU", "RequestedMemoryMB"},
-				{"2", "1", "2021-01-01T00:00:00Z", "createdBy", "true", "3", "default:3000/tcp", "debug:4000/tcp", "EULA=TRUE", "0.5", "555"},
-				{"2", "1", "2021-01-01T00:00:00Z", "createdBy", "true", "3", "default:3000/tcp", "debug:4000/tcp", "EULA=TRUE", "0.5", "555"},
+				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "DefaultContainerPort", "AdditionalContainerPorts", "Env", "RequestedCPU", "RequestedMemoryMB"},
+				{"2", "1", "2021-01-01T00:00:00Z", "true", "3", "default:3000/tcp", "debug:4000/tcp", "EULA=TRUE", "0.5", "555"},
+				{"2", "1", "2021-01-01T00:00:00Z", "true", "3", "default:3000/tcp", "debug:4000/tcp", "EULA=TRUE", "0.5", "555"},
 			},
 		},
 	}
@@ -202,8 +202,8 @@ func Test_BuildTextOutput(t *testing.T) {
 				FinishedAt: nil,
 			},
 			expect: [][]string{
-				{"BuildID", "BuildTag", "CreatedAt", "CreatedBy", "Status", "ImageSize", "StartedAt", "FinishedAt"},
-				{"1", "v1.0.0", "2021-01-01T00:00:00Z", "createdBy", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
+				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt"},
+				{"1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
 			},
 		},
 		{
@@ -220,8 +220,8 @@ func Test_BuildTextOutput(t *testing.T) {
 				FinishedAt: nil,
 			},
 			expect: [][]string{
-				{"BuildID", "BuildTag", "CreatedAt", "CreatedBy", "Status", "ImageSize", "StartedAt", "FinishedAt"},
-				{"1", "v1.0.0", "2021-01-01T00:00:00Z", "createdBy", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
+				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt"},
+				{"1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
 			},
 		},
 		{
@@ -251,9 +251,9 @@ func Test_BuildTextOutput(t *testing.T) {
 				},
 			},
 			expect: [][]string{
-				{"BuildID", "BuildTag", "CreatedAt", "CreatedBy", "Status", "ImageSize", "StartedAt", "FinishedAt"},
-				{"1", "v1.0.0", "2021-01-01T00:00:00Z", "createdBy", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
-				{"1", "v1.0.0", "2021-01-01T00:00:00Z", "createdBy", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
+				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt"},
+				{"1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
+				{"1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
 			},
 		},
 	}
