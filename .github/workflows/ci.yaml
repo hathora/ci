@@ -131,7 +131,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: hathora-cli-${{ matrix.os }}-${{ matrix.arch }}
+          name: hathora-ci-${{ matrix.os }}-${{ matrix.arch }}
           path: bin/hathora-ci-*
 
   release:
