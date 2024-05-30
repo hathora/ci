@@ -22,10 +22,41 @@ func (h *HathoraIntegration) ReceivedRequest() (*http.Request, *json.RawMessage)
 	if h == nil || h.mock == nil {
 		return nil, nil
 	}
-	return h.mock.capturedRequest, h.mock.capturedRequestBody
+	requestIndex := len(h.mock.capturedRequests) - 1
+	if requestIndex < 0 {
+		return nil, nil
+	}
+	return h.mock.capturedRequests[requestIndex], h.mock.capturedRequestBodies[requestIndex]
 }
 
-func Hathora(t *testing.T, opts ...mockHathoraOption) *HathoraIntegration {
+func (h *HathoraIntegration) ReceivedRequests() ([]*http.Request, []*json.RawMessage) {
+	if h == nil || h.mock == nil {
+		return nil, nil
+	}
+
+	return h.mock.capturedRequests, h.mock.capturedRequestBodies
+}
+
+func (h *HathoraIntegration) ReceivedRequestCount() int {
+	if h == nil || h.mock == nil {
+		return 0
+	}
+	return len(h.mock.capturedRequests)
+}
+
+func (h *HathoraIntegration) ReceivedNthRequest(index int) (*http.Request, *json.RawMessage) {
+	if h == nil || h.mock == nil {
+		return nil, nil
+	}
+
+	if index < 0 || index >= len(h.mock.capturedRequests) {
+		return nil, nil
+	}
+
+	return h.mock.capturedRequests[index], h.mock.capturedRequestBodies[index]
+}
+
+func Hathora(t *testing.T, opts ...HathoraOption) *HathoraIntegration {
 	t.Helper()
 	m := &mockHathora{
 		t: t,
@@ -46,52 +77,57 @@ func Hathora(t *testing.T, opts ...mockHathoraOption) *HathoraIntegration {
 }
 
 type mockHathora struct {
-	t                   *testing.T
-	capturedRequest     *http.Request
-	capturedRequestBody *json.RawMessage
-	cannedResponse      []byte
-	cannedStatus        int
+	t                     *testing.T
+	capturedRequests      []*http.Request
+	capturedRequestBodies []*json.RawMessage
+	nextResponseIndex     int
+	cannedResponses       [][]byte
+	cannedStatuses        []int
 }
 
-type mockHathoraOption func(*mockHathora)
+type HathoraOption func(*mockHathora)
 
-func RespondsWithJSON(response []byte) mockHathoraOption {
+func RespondsWithJSON(response []byte) HathoraOption {
 	return func(m *mockHathora) {
 		m.t.Helper()
-		m.cannedResponse = response
+		m.cannedResponses = append(m.cannedResponses, response)
 	}
 }
 
-func RespondsWithStatus(status int) mockHathoraOption {
+func RespondsWithStatus(status int) HathoraOption {
 	return func(m *mockHathora) {
 		m.t.Helper()
-		m.cannedStatus = status
+		m.cannedStatuses = append(m.cannedStatuses, status)
 	}
 }
 
-func RespondsWithJSONObject(response any) mockHathoraOption {
+func RespondsWithJSONObject(response any) HathoraOption {
 	return func(m *mockHathora) {
 		m.t.Helper()
 		body, err := json.Marshal(response)
 		if err != nil {
 			require.NoError(m.t, err, "harness failed to marshal response")
 		}
-		m.cannedResponse = body
+		m.cannedResponses = append(m.cannedResponses, body)
 	}
 }
 
 func (m *mockHathora) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	m.t.Helper()
-	m.capturedRequest = r
-	m.capturedRequestBody = nil
+	m.capturedRequests = append(m.capturedRequests, r)
 	body, err := io.ReadAll(r.Body)
 	require.NoError(m.t, err, "failed to read request body")
 	jsonBody := json.RawMessage(body)
-	m.capturedRequestBody = &jsonBody
+	m.capturedRequestBodies = append(m.capturedRequestBodies, &jsonBody)
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(m.cannedStatus)
+	w.WriteHeader(m.cannedStatuses[m.nextResponseIndex])
 
-	_, err = w.Write(m.cannedResponse)
+	_, err = w.Write(m.cannedResponses[m.nextResponseIndex])
 	require.NoError(m.t, err, "failed to write mock response")
+	// don't increment if we're at the end of the responses list
+	if m.nextResponseIndex < len(m.cannedResponses)-1 && m.nextResponseIndex < len(m.cannedStatuses)-1 {
+		m.nextResponseIndex++
+		return
+	}
 }
