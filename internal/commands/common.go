@@ -1,9 +1,13 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
+	"go/version"
 	"math"
 	"time"
+
+	"net/http"
 
 	"github.com/dustin/go-humanize"
 	"github.com/hathora/ci/internal/output"
@@ -67,7 +71,7 @@ func (c *GlobalConfig) Load(cmd *cli.Command) error {
 	c.BaseURL = cmd.String(hathoraCloudEndpointFlag.Name)
 	appID := cmd.String(appIDFlag.Name)
 	if appID == "" {
-		c.AppID = nil
+		return fmt.Errorf("app-id is required")
 	} else {
 		c.AppID = &appID
 	}
@@ -174,4 +178,36 @@ func BuildTextFormatter() output.FormatWriter {
 			},
 		),
 	)
+}
+
+type Release struct {
+	TagName     string `json:"tag_name"`
+	Name        string `json:"name"`
+	PublishedAt string `json:"published_at"`
+	URL         string `json:"html_url"`
+}
+
+func handleNewVersionAvailable(currentVersion string) {
+	url := "https://api.github.com/repos/hathora/ci/releases/latest"
+
+	resp, err := http.Get(url)
+	if err != nil {
+		zap.L().Warn("unable to fetch latest version number")
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		zap.L().Warn("unable to fetch latest version number")
+	}
+
+	var release Release
+	if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
+		zap.L().Warn("unable to decode the latest version number")
+	}
+
+	versionDiff := version.Compare(release.TagName, currentVersion)
+
+	if versionDiff > 0 {
+		zap.L().Warn("A new version of hathora-ci is available for download.")
+	}
 }

@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"github.com/hathora/ci/internal/commands/altsrc"
 	"os"
 	"strconv"
 
@@ -183,37 +184,49 @@ var (
 	}
 
 	idleTimeoutFlag = &cli.BoolFlag{
-		Name:     "idle-timeout-enabled",
-		Sources:  cli.EnvVars(deploymentEnvVar("IDLE_TIMEOUT_ENABLED")),
+		Name: "idle-timeout-enabled",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(deploymentEnvVar("IDLE_TIMEOUT_ENABLED")),
+			altsrc.File(configFlag.Name, "deployment.idle-timeout-enabled"),
+		),
 		Usage:    "option to shut down processes that have had no new connections or rooms for five minutes",
-		Required: true,
+		Persistent: true,
 	}
 
 	roomsPerProcessFlag = &cli.IntFlag{
-		Name:     "rooms-per-process",
-		Sources:  cli.EnvVars(deploymentEnvVar("ROOMS_PER_PROCESS")),
+		Name: "rooms-per-process",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(deploymentEnvVar("ROOMS_PER_PROCESS")),
+			altsrc.File(configFlag.Name, "deployment.rooms-per-process"),
+		),
 		Usage:    "how many rooms can be scheduled in a process",
-		Required: true,
+		Persistent: true,
 		Action: func(ctx context.Context, cmd *cli.Command, v int64) error {
 			return requireIntInRange(v, 1, maxRoomsPerProcess, "rooms-per-process")
 		},
 	}
 
 	transportTypeFlag = &cli.StringFlag{
-		Name:     "transport-type",
-		Sources:  cli.EnvVars(deploymentEnvVar("TRANSPORT_TYPE")),
+		Name: "transport-type",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(deploymentEnvVar("TRANSPORT_TYPE")),
+			altsrc.File(configFlag.Name, "deployment.transport-type"),
+		),
 		Usage:    "the underlying communication protocol to the exposed port",
-		Required: true,
+		Persistent: true,
 		Action: func(ctx context.Context, cmd *cli.Command, v string) error {
 			return requireValidEnumValue(v, allowedTransportTypes, "transport-type")
 		},
 	}
 
 	containerPortFlag = &cli.IntFlag{
-		Name:     "container-port",
-		Sources:  cli.EnvVars(deploymentEnvVar("CONTAINER_PORT")),
+		Name: "container-port",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(deploymentEnvVar("CONTAINER_PORT")),
+			altsrc.File(configFlag.Name, "deployment.container-port"),
+		),
 		Usage:    "default server port",
-		Required: true,
+		Persistent: true,
 		Action: func(ctx context.Context, cmd *cli.Command, v int64) error {
 			return requireIntInRange(v, 1, maxPort, "container-port")
 		},
@@ -222,8 +235,11 @@ var (
 	additionalContainerPortsFlag = &cli.StringSliceFlag{
 		Name:    "additional-container-ports",
 		Aliases: []string{"additional-container-port"},
-		Sources: cli.EnvVars(deploymentEnvVar("ADDITIONAL_CONTAINER_PORTS"), deploymentEnvVar("ADDITIONAL_CONTAINER_PORT")),
-		Usage:   "additional server ports",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(deploymentEnvVar("ADDITIONAL_CONTAINER_PORTS")),
+			altsrc.File(configFlag.Name, "deployment.additional-container-ports"),
+		),
+		Usage: "additional server ports",
 	}
 
 	envVarsFlag = &cli.StringSliceFlag{
@@ -233,20 +249,26 @@ var (
 	}
 
 	requestedMemoryFlag = &cli.FloatFlag{
-		Name:     "requested-memory-mb",
-		Sources:  cli.EnvVars(deploymentEnvVar("REQUESTED_MEMORY_MB")),
+		Name: "requested-memory-mb",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(deploymentEnvVar("REQUESTED_MEMORY_MB")),
+			altsrc.File(configFlag.Name, "deployment.requested-memory-mb"),
+		),
 		Usage:    "the amount of memory allocated to your process in MB",
-		Required: true,
+		Persistent: true,
 		Action: func(ctx context.Context, cmd *cli.Command, v float64) error {
 			return requireFloatInRange(v, 1024, 8192, "requested-memory-mb")
 		},
 	}
 
 	requestedCPUFlag = &cli.FloatFlag{
-		Name:     "requested-cpu",
-		Sources:  cli.EnvVars(deploymentEnvVar("REQUESTED_CPU")),
+		Name: "requested-cpu",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(deploymentEnvVar("REQUESTED_CPU")),
+			altsrc.File(configFlag.Name, "deployment.requested-cpu"),
+		),
 		Usage:    "the number of cores allocated to your process",
-		Required: true,
+		Persistent: true,
 		Action: func(ctx context.Context, cmd *cli.Command, v float64) error {
 			rangeErr := requireFloatInRange(v, 0.5, 4, "requested-cpu")
 			if rangeErr != nil {
