@@ -33,6 +33,7 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				DefaultContainerPort: shared.ContainerPort{
 					TransportType: "tcp",
 					Port:          3000,
+					Name:          "default",
 				},
 				CreatedAt:    ts,
 				CreatedBy:    "createdBy",
@@ -45,7 +46,12 @@ func Test_DeploymentTextOutput(t *testing.T) {
 						Value: "TRUE",
 					},
 				},
+				RequestedMemoryMB: 555,
+				RequestedCPU:      0.5,
 			},
+			expect: `
+AppID  DeploymentID  BuildID  CreatedAt  CreatedBy  IdleTimeoutEnabled  RoomsPerProcess  DefaultContainerPort  AdditionalContainerPorts  Env        RequestedCPU  RequestedMemoryMB
+appID  2             1        12:00AM    createdBy  true                3                default:3000/tcp      debug:4000/tcp            EULA=TRUE  0.500000      555.000000`,
 		},
 	}
 
@@ -54,6 +60,7 @@ func Test_DeploymentTextOutput(t *testing.T) {
 			var deployment shared.DeploymentV2
 			var envVar shared.DeploymentV2Env
 			var containerPort shared.ContainerPort
+			var timestamp time.Time
 			formatter := output.TextFormat(
 				output.WithFieldOrder(deployment,
 					"AppID",
@@ -77,11 +84,16 @@ func Test_DeploymentTextOutput(t *testing.T) {
 						return fmt.Sprintf("%s:%d/%s", cp.Name, cp.Port, cp.TransportType)
 					},
 				),
+				output.WithFormatter(timestamp,
+					func(t time.Time) string {
+						return t.Format(time.Kitchen)
+					},
+				),
 			)
 			var buf bytes.Buffer
 			actualErr := formatter.Write(tt.input, &buf)
 			assert.NoError(t, actualErr)
-			actual := string(buf.Bytes())
+			actual := buf.String()
 			assert.Equal(t, tt.expect, actual)
 		})
 	}
