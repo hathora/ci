@@ -61,24 +61,6 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 				"buildId": 1,
 				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 			}`,
-			expectOutput: `{
-				"buildTag": "0.1.14-14c793",
-				"regionalContainerTags": [
-					{
-						"containerTag": "string",
-						"region": "Seattle"
-					}
-				],
-				"imageSize": 0,
-				"status": "created",
-				"deletedAt": "2019-08-24T14:15:22Z",
-				"finishedAt": "2019-08-24T14:15:22Z",
-				"startedAt": "2019-08-24T14:15:22Z",
-				"createdAt": "2019-08-24T14:15:22Z",
-				"createdBy": "google-oauth2|107030234048588177467",
-				"buildId": 1,
-				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
 				assert.Equal(t, "/builds/v2/test-app-id/info/1", r.URL.Path, "request path should contain app id and build id")
@@ -109,26 +91,6 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 					"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 				}
 			]`,
-			expectOutput: `[
-				{
-					"buildTag": "0.1.14-14c793",
-					"regionalContainerTags": [
-					{
-						"containerTag": "string",
-						"region": "Seattle"
-					}
-					],
-					"imageSize": 0,
-					"status": "created",
-					"deletedAt": "2019-08-24T14:15:22Z",
-					"finishedAt": "2019-08-24T14:15:22Z",
-					"startedAt": "2019-08-24T14:15:22Z",
-					"createdAt": "2019-08-24T14:15:22Z",
-					"createdBy": "google-oauth2|107030234048588177467",
-					"buildId": 1,
-					"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-				}
-			]`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
 				assert.Equal(t, "/builds/v2/test-app-id/list", r.URL.Path, "request path should contain app id")
@@ -140,24 +102,6 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 			command:        "create --build-tag test-build-tag",
 			responseStatus: http.StatusCreated,
 			responseBody: `{
-				"buildTag": "0.1.14-14c793",
-				"regionalContainerTags": [
-					{
-						"containerTag": "string",
-						"region": "Seattle"
-					}
-				],
-				"imageSize": 0,
-				"status": "created",
-				"deletedAt": "2019-08-24T14:15:22Z",
-				"finishedAt": "2019-08-24T14:15:22Z",
-				"startedAt": "2019-08-24T14:15:22Z",
-				"createdAt": "2019-08-24T14:15:22Z",
-				"createdBy": "google-oauth2|107030234048588177467",
-				"buildId": 1,
-				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-			}`,
-			expectOutput: `{
 				"buildTag": "0.1.14-14c793",
 				"regionalContainerTags": [
 					{
@@ -258,24 +202,6 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 				"buildId": 1,
 				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 			}`,
-			expectOutput: `{
-				"buildTag": "0.1.14-14c793",
-				"regionalContainerTags": [
-					{
-						"containerTag": "string",
-						"region": "Seattle"
-					}
-				],
-				"imageSize": 0,
-				"status": "created",
-				"deletedAt": "2019-08-24T14:15:22Z",
-				"finishedAt": "2019-08-24T14:15:22Z",
-				"startedAt": "2019-08-24T14:15:22Z",
-				"createdAt": "2019-08-24T14:15:22Z",
-				"createdBy": "google-oauth2|107030234048588177467",
-				"buildId": 1,
-				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
 				assert.Equal(t, "/builds/v2/test-app-id/info/1", r.URL.Path, "request path should contain app id and build id")
@@ -287,24 +213,6 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 			command:        "build info --build-id 1 --app-id test-app-id --token test-token -vvv",
 			responseStatus: http.StatusOK,
 			responseBody: `{
-				"buildTag": "0.1.14-14c793",
-				"regionalContainerTags": [
-					{
-						"containerTag": "string",
-						"region": "Seattle"
-					}
-				],
-				"imageSize": 0,
-				"status": "created",
-				"deletedAt": "2019-08-24T14:15:22Z",
-				"finishedAt": "2019-08-24T14:15:22Z",
-				"startedAt": "2019-08-24T14:15:22Z",
-				"createdAt": "2019-08-24T14:15:22Z",
-				"createdBy": "google-oauth2|107030234048588177467",
-				"buildId": 1,
-				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-			}`,
-			expectOutput: `{
 				"buildTag": "0.1.14-14c793",
 				"regionalContainerTags": [
 					{
