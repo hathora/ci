@@ -1,2 +1,9 @@
 build:
-  id: 1
+  id: 11
+deployment:
+  idle-timeout-enabled: true
+  rooms-per-process: 1
+  transport-type: tcp
+  container-port: 8090
+  requested-memory-mb: 1024
+  requested-cpu: 0.5

@@ -31,6 +31,8 @@ func App() *cli.Command {
 		Flags:                  GlobalFlags,
 		Version:                BuildVersion,
 		Before: func(ctx context.Context, cmd *cli.Command) error {
+			handleNewVersionAvailable(BuildVersion)
+
 			if isCallForHelp(cmd) {
 				return nil
 			}

@@ -43,11 +43,11 @@ vet: ## Run vet on all code with the go vet command.
 ##@ Tests
 .PHONY: test
 test: ## Unit test all modules.
-	go test -v -race ./...
+	go test -v -parallel=1 -race ./...
 
 .PHONY: test-short
 test-short: ## Unit test all modules in short mode.
-	go test -v -race -short ./...
+	go test -v -parallel=1 -race -short ./...
 
 ##@ Misc.
 # The help target prints out all targets with their descriptions organized

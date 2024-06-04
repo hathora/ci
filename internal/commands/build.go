@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"github.com/hathora/ci/internal/output"
 	"os"
 
 	"github.com/hathora/ci/internal/archive"
@@ -67,7 +68,7 @@ var Build = &cli.Command{
 			Name:    createCommandName,
 			Aliases: []string{"create-build"},
 			Usage:   "create a build",
-			Flags:   subcommandFlags(buildTagFlag),
+			Flags:   subcommandFlags(buildTagFlag, fileFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				build, err := BuildConfigFrom(cmd)
 				if err != nil {
@@ -77,7 +78,7 @@ var Build = &cli.Command{
 
 				buildTag := sdk.String(cmd.String(buildTagFlag.Name))
 
-				res, err := build.SDK.BuildV2.CreateBuild(
+				createRes, err := build.SDK.BuildV2.CreateBuild(
 					ctx,
 					shared.CreateBuildParams{
 						BuildTag: buildTag,
@@ -88,32 +89,15 @@ var Build = &cli.Command{
 					return fmt.Errorf("failed to create a build: %w", err)
 				}
 
-				return build.Output.Write(res.Build, os.Stdout)
-			},
-		},
-		{
-			Name:    "run",
-			Aliases: []string{"run-build"},
-			Usage:   "run a build by id",
-			Flags:   subcommandFlags(buildIDFlag, fileFlag),
-			Action: func(ctx context.Context, cmd *cli.Command) error {
-				build, err := OneBuildConfigFrom(cmd)
-				if err != nil {
-					return err
-				}
-				build.Log.Debug("running a build...")
-
 				filePath := cmd.String(fileFlag.Name)
 				file, err := archive.RequireTGZ(filePath)
 				if err != nil {
 					return fmt.Errorf("no tgz file available for run: %w", err)
 				}
 
-				build.Log.Debug("using archive file", zap.Any("file", file))
-
-				res, err := build.SDK.BuildV2.RunBuild(
+				runRes, err := build.SDK.BuildV2.RunBuild(
 					ctx,
-					build.BuildID,
+					createRes.Build.BuildID,
 					operations.RunBuildRequestBody{
 						File: operations.RunBuildFile{
 							FileName: file.Name,
@@ -122,15 +106,18 @@ var Build = &cli.Command{
 					},
 					build.AppID,
 				)
+
 				if err != nil {
 					return fmt.Errorf("failed to run build: %w", err)
 				}
 
-				return build.Output.Write(&DefaultResult{
-					Success: true,
-					Message: "Build ran successfully",
-					Code:    res.StatusCode,
-				}, os.Stdout)
+				err = output.StreamOutput(runRes.Stream, os.Stderr)
+
+				if err != nil {
+					return fmt.Errorf("failed to stream output to console: %w", err)
+				}
+
+				return build.Output.Write(createRes.Build, os.Stdout)
 			},
 		},
 		{
@@ -183,6 +170,7 @@ var (
 		Aliases: []string{"bt"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("TAG")),
+			altsrc.File(configFlag.Name, "build.tag"),
 		),
 		Usage: "tag to associate an external version with a build",
 	}
@@ -192,6 +180,7 @@ var (
 		Aliases: []string{"f"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("FILE")),
+			altsrc.File(configFlag.Name, "build.file"),
 		),
 		Usage:    "filepath of the built game server binary or archive",
 		Required: true,
