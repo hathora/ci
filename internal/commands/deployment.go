@@ -213,7 +213,7 @@ var (
 
 	additionalContainerPortsFlag = &cli.StringSliceFlag{
 		Name:    "additional-container-ports",
-		Aliases: []string{"additional-container-port"},
+		Aliases: []string{"additional-container-ports"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("ADDITIONAL_CONTAINER_PORTS")),
 			altsrc.File(configFlag.Name, "deployment.additional-container-ports"),
