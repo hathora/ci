@@ -25,6 +25,6 @@ func StreamOutput(reader io.ReadCloser, writer io.Writer) error {
 			break
 		}
 	}
-	
+
 	return nil
 }

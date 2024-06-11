@@ -112,6 +112,7 @@ var Build = &cli.Command{
 					return fmt.Errorf("failed to run build: %w", err)
 				}
 
+				zap.L().Debug("streaming build output to console...")
 				err = output.StreamOutput(runRes.Stream, os.Stderr)
 
 				if err != nil {

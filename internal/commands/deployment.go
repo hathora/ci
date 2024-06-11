@@ -178,6 +178,7 @@ var (
 			cli.EnvVar(deploymentEnvVar("IDLE_TIMEOUT_ENABLED")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.idle-timeout-enabled"),
 		),
+		Value:      false,
 		Usage:      "option to shut down processes that have had no new connections or rooms for five minutes",
 		Persistent: true,
 	}

@@ -32,7 +32,7 @@ var (
 		Name:    "app-id",
 		Aliases: []string{"a"},
 		Sources: cli.NewValueSourceChain(
-			cli.EnvVar(buildFlagEnvVar("APP_ID")),
+			cli.EnvVar(globalFlagEnvVar("APP_ID")),
 			altsrc.ConfigFile(configFlag.Name, "app.id"),
 		),
 		Usage:      "the ID of the app in Hathora",

@@ -25,7 +25,7 @@ func getIgnoreMatchers(srcFolder string, filepaths ...string) ([]gitignore.Ignor
 	for _, path := range filepaths {
 		matcher, err := gitignore.NewGitIgnore(filepath.Join(srcFolder, path), ".")
 		if err != nil {
-			zap.L().Debug("Did not file a " + path + " file. Skipping.")
+			zap.L().Debug("Could not find a " + path + " file. " + path + " matcher will not be used.")
 			continue
 		}
 
@@ -64,7 +64,8 @@ func ArchiveTGZ(srcFolder string) (string, error) {
 	ignoreMatchers, err := getIgnoreMatchers(
 		srcFolder,
 		".dockerignore",
-		".gitignore")
+		".gitignore",
+	)
 
 	if err != nil {
 		return "", err
