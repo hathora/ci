@@ -3,10 +3,11 @@ package shorthand_test
 import (
 	"testing"
 
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"github.com/hathora/ci/internal/shorthand"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/shorthand"
 )
 
 func Test_ContainerPortShorthand(t *testing.T) {

@@ -3,13 +3,14 @@ package archive
 import (
 	"archive/tar"
 	"compress/gzip"
+	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
+	"slices"
 
+	"github.com/h2non/filetype"
 	"github.com/monochromegane/go-gitignore"
-
 	"go.uber.org/zap"
 )
 
@@ -118,6 +119,10 @@ func ArchiveTGZ(srcFolder string) (string, error) {
 	return destinationFile, nil
 }
 
+var (
+	supportedFileExtensions = []string{".tgz", ".tar.gz", ".tar.tgz"}
+)
+
 func isTGZ(filePath string) (bool, error) {
 	fileInfo, err := os.Stat(filePath)
 	if err != nil {
@@ -136,12 +141,20 @@ func isTGZ(filePath string) (bool, error) {
 
 	buff := make([]byte, 512)
 	if _, err = file.Read(buff); err != nil {
-		return false, err
+		return false, fmt.Errorf("could not read file: %s", filePath)
 	}
 
-	fileType := http.DetectContentType(buff)
+	if filetype.IsArchive(buff) {
+		fileExt := filepath.Ext(filePath)
+		if !slices.Contains(supportedFileExtensions, fileExt) {
+			err := fmt.Errorf("unsupported archive file extension: %s", fileExt)
+			return false, err
+		}
 
-	return fileType == "application/gzip" || fileType == "application/x-gzip", nil
+		return true, nil
+	}
+
+	return false, nil
 }
 
 func RequireTGZ(srcFolder string) (*TGZFile, error) {
@@ -151,7 +164,7 @@ func RequireTGZ(srcFolder string) (*TGZFile, error) {
 	}
 
 	if isFileTGZ {
-		zap.L().Debug(srcFolder + " is already a tar gzip file")
+		zap.L().Debug(srcFolder + " is already a gzipped tar archive")
 		content, err := os.ReadFile(srcFolder)
 		if err != nil {
 			return nil, err
@@ -165,7 +178,7 @@ func RequireTGZ(srcFolder string) (*TGZFile, error) {
 		return file, nil
 	}
 
-	zap.L().Debug(srcFolder + " is not a tar gzip file. Archiving and compressing now.")
+	zap.L().Debug(srcFolder + " is not a gzipped tar archive. Archiving and compressing now.")
 
 	destFile, err := ArchiveTGZ(srcFolder)
 	if err != nil {

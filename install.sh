@@ -4,7 +4,7 @@ set -e
 
 REPO_OWNER="hathora"
 REPO_NAME="ci"
-BINARY_NAME="hathora-ci"
+BINARY_NAME="hathora"
 
 # Get the latest release tag from GitHub
 LATEST_RELEASE=$(curl -s https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest | grep "tag_name" | cut -d '"' -f 4)

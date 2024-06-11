@@ -11,7 +11,15 @@ type contentTypeRoundTripper struct {
 // RoundTrip This is a stop gap until speakeasy respects that empty content type == octet-stream
 func (c *contentTypeRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	res, err := c.underlying.RoundTrip(req)
-	if res.Header.Get("content-type") == ""  {
+	if err != nil {
+		return res, err
+	}
+
+	if res.Header == nil {
+		return res, err
+	}
+
+	if res.Header.Get("content-type") == "" {
 		res.Header.Set("content-type", "application/octet-stream")
 	}
 

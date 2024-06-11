@@ -82,11 +82,21 @@ func (h *loggingRoundTripper) afterSuccess(res *http.Response) {
 }
 
 func (h *loggingRoundTripper) afterError(res *http.Response, err error) {
+	method := "unknown"
+	url := "unknown"
+	status := 0
+
+	if res != nil && res.Request != nil {
+		method = res.Request.Method
+		url = res.Request.URL.String()
+		status = res.StatusCode
+	}
+
 	h.logger.Debug(
 		"response",
-		zap.String("http.method", res.Request.Method),
-		zap.Stringer("http.url", res.Request.URL),
-		zap.Int("http.status", res.StatusCode),
+		zap.String("http.method", method),
+		zap.String("http.url", url),
+		zap.Int("http.status", status),
 		zap.Error(err),
 	)
 }

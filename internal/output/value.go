@@ -2,9 +2,10 @@ package output
 
 import (
 	"fmt"
-	"github.com/hathora/ci/internal/sdk/models/shared"
 	"io"
 	"strings"
+
+	"github.com/hathora/ci/internal/sdk/models/shared"
 )
 
 func ValueFormat(field string) FormatWriter {

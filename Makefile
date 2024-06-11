@@ -9,6 +9,7 @@ BUILD_VERSION ?= $(shell git describe --always --dirty)
 
 .PHONY: all
 all: build
+
 ##@ Build
 .PHONY: clean
 clean: ## Delete all built binaries.
@@ -18,7 +19,7 @@ clean: ## Delete all built binaries.
 build: ## Build the command binaries.
 	CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
     go build \
-        -o bin/hathora-ci-${TARGETOS}-${TARGETARCH} \
+        -o bin/hathora-${TARGETOS}-${TARGETARCH} \
         -ldflags "-X 'github.com/hathora/ci/internal/commands.BuildVersion=${BUILD_VERSION}'" \
         cmd/run.go
 

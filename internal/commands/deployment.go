@@ -4,16 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/hathora/ci/internal/commands/altsrc"
 	"os"
 	"strconv"
 
+	"github.com/urfave/cli/v3"
+	"go.uber.org/zap"
+
+	"github.com/hathora/ci/internal/commands/altsrc"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/setup"
 	"github.com/hathora/ci/internal/shorthand"
-	"github.com/urfave/cli/v3"
-	"go.uber.org/zap"
 )
 
 var (
@@ -175,7 +176,7 @@ var (
 		Name: "idle-timeout-enabled",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("IDLE_TIMEOUT_ENABLED")),
-			altsrc.File(configFlag.Name, "deployment.idle-timeout-enabled"),
+			altsrc.ConfigFile(configFlag.Name, "deployment.idle-timeout-enabled"),
 		),
 		Usage:      "option to shut down processes that have had no new connections or rooms for five minutes",
 		Persistent: true,
@@ -185,7 +186,7 @@ var (
 		Name: "rooms-per-process",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("ROOMS_PER_PROCESS")),
-			altsrc.File(configFlag.Name, "deployment.rooms-per-process"),
+			altsrc.ConfigFile(configFlag.Name, "deployment.rooms-per-process"),
 		),
 		Usage:      "how many rooms can be scheduled in a process",
 		Persistent: true,
@@ -195,7 +196,7 @@ var (
 		Name: "transport-type",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("TRANSPORT_TYPE")),
-			altsrc.File(configFlag.Name, "deployment.transport-type"),
+			altsrc.ConfigFile(configFlag.Name, "deployment.transport-type"),
 		),
 		Usage:      "the underlying communication protocol to the exposed port",
 		Persistent: true,
@@ -205,17 +206,17 @@ var (
 		Name: "container-port",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("CONTAINER_PORT")),
-			altsrc.File(configFlag.Name, "deployment.container-port"),
+			altsrc.ConfigFile(configFlag.Name, "deployment.container-port"),
 		),
 		Usage:      "default server port",
 		Persistent: true,
 	}
 
 	additionalContainerPortsFlag = &cli.StringSliceFlag{
-		Name:    "additional-container-ports",
+		Name: "additional-container-ports",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("ADDITIONAL_CONTAINER_PORTS")),
-			altsrc.File(configFlag.Name, "deployment.additional-container-ports"),
+			altsrc.ConfigFile(configFlag.Name, "deployment.additional-container-ports"),
 		),
 		Usage: "additional server ports",
 	}
@@ -230,7 +231,7 @@ var (
 		Name: "requested-memory-mb",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("REQUESTED_MEMORY_MB")),
-			altsrc.File(configFlag.Name, "deployment.requested-memory-mb"),
+			altsrc.ConfigFile(configFlag.Name, "deployment.requested-memory-mb"),
 		),
 		Usage:      "the amount of memory allocated to your process in MB",
 		Persistent: true,
@@ -240,7 +241,7 @@ var (
 		Name: "requested-cpu",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("REQUESTED_CPU")),
-			altsrc.File(configFlag.Name, "deployment.requested-cpu"),
+			altsrc.ConfigFile(configFlag.Name, "deployment.requested-cpu"),
 		),
 		Usage:      "the number of cores allocated to your process",
 		Persistent: true,

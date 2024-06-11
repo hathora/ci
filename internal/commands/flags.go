@@ -1,9 +1,9 @@
 package commands
 
 import (
-	"github.com/hathora/ci/internal/commands/altsrc"
-
 	"github.com/urfave/cli/v3"
+
+	"github.com/hathora/ci/internal/commands/altsrc"
 )
 
 var (
@@ -12,10 +12,10 @@ var (
 		Aliases: []string{"o"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(globalFlagEnvVar("OUTPUT")),
-			altsrc.File(configFlag.Name, "global.output"),
+			altsrc.ConfigFile(configFlag.Name, "global.output"),
 		),
-		Usage:      "the format of the output",
-		Value:      "json",
+		Usage:      "the format of the output. Supported values: (json, text, value=buildId)",
+		Value:      "text",
 		Persistent: true,
 		Category:   "Global:",
 	}
@@ -33,7 +33,7 @@ var (
 		Aliases: []string{"a"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("APP_ID")),
-			altsrc.File(configFlag.Name, "app.id"),
+			altsrc.ConfigFile(configFlag.Name, "app.id"),
 		),
 		Usage:      "the ID of the app in Hathora",
 		Category:   "Global:",
@@ -52,7 +52,7 @@ var (
 		Name: "verbosity",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(globalFlagEnvVar("VERBOSITY")),
-			altsrc.File(configFlag.Name, "global.verbosity"),
+			altsrc.ConfigFile(configFlag.Name, "global.verbosity"),
 		),
 		Usage:      "set the logging verbosity level",
 		Value:      0,
@@ -64,7 +64,7 @@ var (
 		Name: "hathora-cloud-endpoint",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(globalFlagEnvVar("CLOUD_ENDPOINT")),
-			altsrc.File(configFlag.Name, "global.cloud-endpoint"),
+			altsrc.ConfigFile(configFlag.Name, "global.cloud-endpoint"),
 		),
 		Usage:       "override the default API base url",
 		DefaultText: "https://api.hathora.dev",

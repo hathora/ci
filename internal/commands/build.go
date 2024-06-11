@@ -3,17 +3,18 @@ package commands
 import (
 	"context"
 	"fmt"
-	"github.com/hathora/ci/internal/output"
 	"os"
+
+	"github.com/urfave/cli/v3"
+	"go.uber.org/zap"
 
 	"github.com/hathora/ci/internal/archive"
 	"github.com/hathora/ci/internal/commands/altsrc"
+	"github.com/hathora/ci/internal/output"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/operations"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/setup"
-	"github.com/urfave/cli/v3"
-	"go.uber.org/zap"
 )
 
 var Build = &cli.Command{
@@ -158,8 +159,9 @@ var (
 		Name:    "build-id",
 		Aliases: []string{"b"},
 		Sources: cli.NewValueSourceChain(
+			cli.Files("/dev/stdin").Chain[0],
 			cli.EnvVar(buildFlagEnvVar("ID")),
-			altsrc.File(configFlag.Name, "build.id"),
+			altsrc.ConfigFile(configFlag.Name, "build.id"),
 		),
 		Usage:      "the ID of the build in Hathora",
 		Persistent: true,
@@ -170,7 +172,7 @@ var (
 		Aliases: []string{"bt"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("TAG")),
-			altsrc.File(configFlag.Name, "build.tag"),
+			altsrc.ConfigFile(configFlag.Name, "build.tag"),
 		),
 		Usage: "tag to associate an external version with a build",
 	}
@@ -180,7 +182,7 @@ var (
 		Aliases: []string{"f"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("FILE")),
-			altsrc.File(configFlag.Name, "build.file"),
+			altsrc.ConfigFile(configFlag.Name, "build.file"),
 		),
 		Usage:    "filepath of the built game server binary or archive",
 		Required: true,

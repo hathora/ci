@@ -23,6 +23,6 @@ FROM gcr.io/distroless/static-debian12:nonroot
 ARG TARGETOS
 ARG TARGETARCH
 
-COPY --from=builder /app/bin/hathora-ci-${TARGETOS}-${TARGETARCH} /hathora-ci
+COPY --from=builder /app/bin/hathora-${TARGETOS}-${TARGETARCH} /hathora
 
 ENTRYPOINT ["/hathora-ci"]

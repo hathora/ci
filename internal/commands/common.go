@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"go/version"
 	"math"
+	"net/http"
 	"strings"
 	"time"
 
-	"net/http"
-
 	"github.com/dustin/go-humanize"
-	"github.com/hathora/ci/internal/output"
-	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/urfave/cli/v3"
 	"go.uber.org/zap"
+
+	"github.com/hathora/ci/internal/output"
+	"github.com/hathora/ci/internal/sdk/models/shared"
 )
 
 var (
