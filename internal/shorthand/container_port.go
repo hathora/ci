@@ -1,13 +1,13 @@
 package shorthand
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
 
 	"github.com/hathora/ci/internal/sdk/models/shared"
-	"go.uber.org/multierr"
 )
 
 var (
@@ -43,9 +43,9 @@ func ParseContainerPort(s string) (*shared.ContainerPort, error) {
 			candidate := matches[i]
 			foundPort, portErr := strconv.Atoi(candidate)
 			port = foundPort
-			err = multierr.Append(err, portErr)
+			err = errors.Join(err, portErr)
 			if port < minPort || port > maxPort {
-				err = multierr.Append(err, fmt.Errorf("port outside of valid range (%d,%d): %d", minPort, maxPort, port))
+				err = errors.Join(err, fmt.Errorf("port outside of valid range (%d,%d): %d", minPort, maxPort, port))
 			}
 		case "transport":
 			candidate := matches[i]
@@ -57,12 +57,12 @@ func ParseContainerPort(s string) (*shared.ContainerPort, error) {
 			case "tls":
 				transportType = shared.TransportTypeTLS
 			default:
-				err = multierr.Append(err, fmt.Errorf("invalid transport type: %s", candidate))
+				err = errors.Join(err, fmt.Errorf("invalid transport type: %s", candidate))
 			}
 		case "name":
 			name = matches[i]
 			if !nameAllowedChars.MatchString(name) {
-				err = multierr.Append(err, fmt.Errorf("invalid name: %s", name))
+				err = errors.Join(err, fmt.Errorf("invalid name: %s", name))
 			}
 		}
 	}

@@ -9,7 +9,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func File(fileFlag string, valuePath string) cli.ValueSource {
+func ConfigFile(fileFlag string, valuePath string) cli.ValueSource {
 	return &fileValueSource{
 		fileFlag:  fileFlag,
 		valuePath: valuePath,

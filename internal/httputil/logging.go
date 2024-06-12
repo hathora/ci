@@ -38,7 +38,14 @@ func LoggingRoundTripper(underlying http.RoundTripper, verbosity int) http.Round
 func (h *loggingRoundTripper) beforeRequest(req *http.Request) {
 	// if the verbosity is all the way up, dump outgoing request bodies to logs
 	if h.verbosity > 2 {
-		reqDump, err := httputil.DumpRequestOut(req, true)
+		var reqDump []byte
+		var err error
+		if req.ContentLength < 2048 {
+			reqDump, err = httputil.DumpRequestOut(req, false)
+		} else {
+			reqDump = []byte("...large request omitted...")
+		}
+
 		if err == nil {
 			h.logger.Debug(
 				"request",
@@ -60,7 +67,14 @@ func (h *loggingRoundTripper) beforeRequest(req *http.Request) {
 func (h *loggingRoundTripper) afterSuccess(res *http.Response) {
 	// if the verbosity is all the way up, dump outgoing response bodies to logs
 	if h.verbosity > 2 {
-		resDump, err := httputil.DumpResponse(res, true)
+		var resDump []byte
+		var err error
+		if res.ContentLength < 2048 {
+			resDump, err = httputil.DumpResponse(res, false)
+		} else {
+			resDump = []byte("...large response omitted...")
+		}
+
 		if err == nil {
 			h.logger.Debug(
 				"response",
@@ -82,11 +96,21 @@ func (h *loggingRoundTripper) afterSuccess(res *http.Response) {
 }
 
 func (h *loggingRoundTripper) afterError(res *http.Response, err error) {
+	method := "unknown"
+	url := "unknown"
+	status := 0
+
+	if res != nil && res.Request != nil {
+		method = res.Request.Method
+		url = res.Request.URL.String()
+		status = res.StatusCode
+	}
+
 	h.logger.Debug(
 		"response",
-		zap.String("http.method", res.Request.Method),
-		zap.Stringer("http.url", res.Request.URL),
-		zap.Int("http.status", res.StatusCode),
+		zap.String("http.method", method),
+		zap.String("http.url", url),
+		zap.Int("http.status", status),
 		zap.Error(err),
 	)
 }

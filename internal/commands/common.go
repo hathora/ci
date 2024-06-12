@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"go/version"
 	"math"
+	"net/http"
 	"strings"
 	"time"
 
-	"net/http"
-
 	"github.com/dustin/go-humanize"
-	"github.com/hathora/ci/internal/output"
-	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/urfave/cli/v3"
 	"go.uber.org/zap"
+
+	"github.com/hathora/ci/internal/output"
+	"github.com/hathora/ci/internal/sdk/models/shared"
 )
 
 var (
@@ -93,7 +93,9 @@ func (c *GlobalConfig) Load(cmd *cli.Command) error {
 		return fmt.Errorf("unsupported output type: %s", outputType)
 	}
 
-	verboseCount := cmd.Count(verboseFlag.Name)
+	// we subtract 1 because the flag is counted an additional time for the
+	// --verbose alias
+	verboseCount := cmd.Count(verboseFlag.Name) - 1
 	verbosity := cmd.Int(verbosityFlag.Name)
 	c.Verbosity = int(math.Max(float64(verbosity), float64(verboseCount)))
 	c.Log = zap.L().With(zap.String("app.id", appID))

@@ -4,9 +4,10 @@ import (
 	"context"
 	"os"
 
+	"github.com/urfave/cli/v3"
+
 	"github.com/hathora/ci/internal/commands/altsrc"
 	"github.com/hathora/ci/internal/setup"
-	"github.com/urfave/cli/v3"
 )
 
 var (
@@ -21,8 +22,7 @@ func App() *cli.Command {
 
 	var cleanup []func()
 	return &cli.Command{
-		Name:                   "hathora-ci",
-		Aliases:                []string{"ci"},
+		Name:                   "hathora",
 		EnableShellCompletion:  true,
 		Suggest:                true,
 		UseShortOptionHandling: true,
@@ -50,6 +50,7 @@ func App() *cli.Command {
 		},
 		Commands: []*cli.Command{
 			Build,
+			Deploy,
 			Deployment,
 		},
 		After: func(ctx context.Context, c *cli.Command) error {

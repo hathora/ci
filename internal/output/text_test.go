@@ -6,10 +6,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/hathora/ci/internal/commands"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/shared"
-	"github.com/stretchr/testify/assert"
 )
 
 func Test_DeploymentTextOutput(t *testing.T) {

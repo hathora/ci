@@ -1,4 +1,4 @@
-$repoOwner = "hathora-ci"
+$repoOwner = "hathora"
 $repoName = "ci"
 $binaryName = "hathora"
 
@@ -17,7 +17,7 @@ if ($arch -eq "AMD64") {
 }
 
 # Set the download URL for the Windows binary based on the architecture
-$downloadUrl = "https://github.com/$repoOwner/$repoName/releases/download/$latestRelease/$binaryName-windows-$arch.exe"
+$downloadUrl = "https://github.com/$repoOwner/$repoName/releases/download/$latestRelease/$binaryName-windows-$arch"
 
 # Set the install directory
 $installDir = "$env:LOCALAPPDATA\Microsoft\WindowsApps"

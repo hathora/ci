@@ -18,7 +18,7 @@ func Test_BuildCommands_HelpText(t *testing.T) {
 	t.Parallel()
 
 	app := commands.App()
-	err := app.Run(context.Background(), []string{"ci", "build", "--help"})
+	err := app.Run(context.Background(), []string{"hathora", "build", "--help"})
 	assert.Nil(t, err, "command returned an error")
 }
 
@@ -97,8 +97,8 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 			},
 		},
 		{
-			name:           "create a build",
-			command:        "create --build-tag test-build-tag --file TODO",
+			name:    "create a build",
+			command: "create --build-tag test-build-tag --file TODO",
 			// TODO setup the file input and mocks for multiple http responses
 			skip:           true,
 			responseStatus: http.StatusCreated,
@@ -154,7 +154,8 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 			h := mock.Hathora(t, mock.RespondsWithStatus(tt.responseStatus), mock.RespondsWithJSON([]byte(tt.responseBody)))
 			app := commands.App()
 			staticArgs := []string{
-				"ci",
+				"hathora",
+				"-vvv",
 				"--app-id",
 				"test-app-id",
 				"--token",
@@ -192,7 +193,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 	}{
 		{
 			name:           "use global args after domain-level command",
-			command:        "build --app-id test-app-id --token test-token -vvv info --build-id 1",
+			command:        "build --app-id test-app-id --token test-token info --build-id 1",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"buildTag": "0.1.14-14c793",
@@ -220,7 +221,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 		},
 		{
 			name:           "use global args after action-level command",
-			command:        "build info --build-id 1 --app-id test-app-id --token test-token -vvv",
+			command:        "build info --build-id 1 --app-id test-app-id --token test-token",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"buildTag": "0.1.14-14c793",
@@ -253,7 +254,8 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 			h := mock.Hathora(t, mock.RespondsWithStatus(tt.responseStatus), mock.RespondsWithJSON([]byte(tt.responseBody)))
 			app := commands.App()
 			staticArgs := []string{
-				"ci",
+				"hathora",
+				"-vvv",
 				"--hathora-cloud-endpoint",
 				h.Endpoint,
 			}

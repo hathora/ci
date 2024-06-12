@@ -2,6 +2,7 @@ package setup
 
 import (
 	"github.com/hashicorp/go-cleanhttp"
+
 	"github.com/hathora/ci/internal/httputil"
 	"github.com/hathora/ci/internal/sdk"
 )

@@ -4,22 +4,31 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/hathora/ci/internal/commands/altsrc"
 	"os"
 	"strconv"
 
+	"github.com/urfave/cli/v3"
+	"go.uber.org/zap"
+
+	"github.com/hathora/ci/internal/commands/altsrc"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/setup"
 	"github.com/hathora/ci/internal/shorthand"
-	"github.com/urfave/cli/v3"
-	"go.uber.org/zap"
 )
 
 var (
 	allowedTransportTypes = []string{"tcp", "udp", "tls"}
+	minRoomsPerProcess    = 1
 	maxRoomsPerProcess    = 10000
+	minPort               = 1
 	maxPort               = 65535
+	minCPU                = 0.5
+	maxCPUDecimalPlaces   = 1
+	maxCPU                = float64(4)
+	minMemoryMB           = float64(1024)
+	maxMemoryMB           = float64(8192)
+	memoryMBPerCPU        = float64(2048)
 )
 
 var Deployment = &cli.Command{
@@ -175,8 +184,9 @@ var (
 		Name: "idle-timeout-enabled",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("IDLE_TIMEOUT_ENABLED")),
-			altsrc.File(configFlag.Name, "deployment.idle-timeout-enabled"),
+			altsrc.ConfigFile(configFlag.Name, "deployment.idle-timeout-enabled"),
 		),
+		Value:      false,
 		Usage:      "option to shut down processes that have had no new connections or rooms for five minutes",
 		Persistent: true,
 	}
@@ -185,7 +195,7 @@ var (
 		Name: "rooms-per-process",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("ROOMS_PER_PROCESS")),
-			altsrc.File(configFlag.Name, "deployment.rooms-per-process"),
+			altsrc.ConfigFile(configFlag.Name, "deployment.rooms-per-process"),
 		),
 		Usage:      "how many rooms can be scheduled in a process",
 		Persistent: true,
@@ -195,7 +205,7 @@ var (
 		Name: "transport-type",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("TRANSPORT_TYPE")),
-			altsrc.File(configFlag.Name, "deployment.transport-type"),
+			altsrc.ConfigFile(configFlag.Name, "deployment.transport-type"),
 		),
 		Usage:      "the underlying communication protocol to the exposed port",
 		Persistent: true,
@@ -205,17 +215,17 @@ var (
 		Name: "container-port",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("CONTAINER_PORT")),
-			altsrc.File(configFlag.Name, "deployment.container-port"),
+			altsrc.ConfigFile(configFlag.Name, "deployment.container-port"),
 		),
 		Usage:      "default server port",
 		Persistent: true,
 	}
 
 	additionalContainerPortsFlag = &cli.StringSliceFlag{
-		Name:    "additional-container-ports",
+		Name: "additional-container-ports",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("ADDITIONAL_CONTAINER_PORTS")),
-			altsrc.File(configFlag.Name, "deployment.additional-container-ports"),
+			altsrc.ConfigFile(configFlag.Name, "deployment.additional-container-ports"),
 		),
 		Usage: "additional server ports",
 	}
@@ -230,7 +240,7 @@ var (
 		Name: "requested-memory-mb",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("REQUESTED_MEMORY_MB")),
-			altsrc.File(configFlag.Name, "deployment.requested-memory-mb"),
+			altsrc.ConfigFile(configFlag.Name, "deployment.requested-memory-mb"),
 		),
 		Usage:      "the amount of memory allocated to your process in MB",
 		Persistent: true,
@@ -240,7 +250,7 @@ var (
 		Name: "requested-cpu",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("REQUESTED_CPU")),
-			altsrc.File(configFlag.Name, "deployment.requested-cpu"),
+			altsrc.ConfigFile(configFlag.Name, "deployment.requested-cpu"),
 		),
 		Usage:      "the number of cores allocated to your process",
 		Persistent: true,
@@ -372,6 +382,7 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 	c.ContainerPort = int(cmd.Int(containerPortFlag.Name))
 	c.RequestedMemoryMB = cmd.Float(requestedMemoryFlag.Name)
 	c.RequestedCPU = cmd.Float(requestedCPUFlag.Name)
+	c.IdleTimeoutEnabled = sdk.Bool(cmd.Bool(idleTimeoutFlag.Name))
 
 	addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
 	parsedAddlPorts, err := parseContainerPorts(addlPorts)
@@ -446,7 +457,7 @@ func (c *CreateDeploymentConfig) Validate() error {
 		err = errors.Join(err, fmt.Errorf("rooms per process is required"))
 	}
 
-	err = errors.Join(err, requireIntInRange(c.RoomsPerProcess, 1, maxRoomsPerProcess, roomsPerProcessFlag.Name))
+	err = errors.Join(err, requireIntInRange(c.RoomsPerProcess, minRoomsPerProcess, maxRoomsPerProcess, roomsPerProcessFlag.Name))
 
 	if c.TransportType == "" {
 		err = errors.Join(err, fmt.Errorf("transport type is required"))
@@ -456,24 +467,26 @@ func (c *CreateDeploymentConfig) Validate() error {
 	if c.ContainerPort == 0 {
 		err = errors.Join(err, fmt.Errorf("container port is required"))
 	}
-	err = errors.Join(err, requireIntInRange(c.ContainerPort, 1, maxPort, containerPortFlag.Name))
+	err = errors.Join(err, requireIntInRange(c.ContainerPort, minPort, maxPort, containerPortFlag.Name))
 
 	if c.RequestedMemoryMB == 0 {
 		err = errors.Join(err, fmt.Errorf("requested memory is required"))
 	}
-	err = errors.Join(err, requireFloatInRange(c.RequestedMemoryMB, 1024, 8192, requestedMemoryFlag.Name))
+	err = errors.Join(err, requireFloatInRange(c.RequestedMemoryMB, minMemoryMB, maxMemoryMB, requestedMemoryFlag.Name))
 	if c.RequestedCPU == 0 {
 		err = errors.Join(err, fmt.Errorf("requested CPU is required"))
 	}
 
-	err = errors.Join(err, requireFloatInRange(c.RequestedCPU, 0.5, 4, requestedCPUFlag.Name))
-	err = errors.Join(err, requireMaxDecimals(c.RequestedCPU, 1, requestedCPUFlag.Name))
+	err = errors.Join(err, requireFloatInRange(c.RequestedCPU, minCPU, maxCPU, requestedCPUFlag.Name))
+	err = errors.Join(err, requireMaxDecimals(c.RequestedCPU, maxCPUDecimalPlaces, requestedCPUFlag.Name))
 
-	if c.RequestedMemoryMB != (c.RequestedCPU * 2048) {
+	if c.RequestedMemoryMB != (c.RequestedCPU * memoryMBPerCPU) {
 		err = errors.Join(err,
-			fmt.Errorf("invalid memory: %s and cpu: %s requested-memory-mb must be a 2048:1 ratio to requested-cpu",
+			fmt.Errorf("invalid memory: %s and cpu: %s requested-memory-mb must be a %s:1 ratio to requested-cpu",
 				strconv.FormatFloat(c.RequestedMemoryMB, 'f', -1, 64),
-				strconv.FormatFloat(c.RequestedCPU, 'f', -1, 64)))
+				strconv.FormatFloat(c.RequestedCPU, 'f', -1, 64),
+				strconv.FormatFloat(memoryMBPerCPU, 'f', -1, 64),
+			))
 	}
 
 	return err
