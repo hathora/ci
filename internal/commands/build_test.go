@@ -192,7 +192,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 	}{
 		{
 			name:           "use global args after domain-level command",
-			command:        "build --app-id test-app-id --token test-token -vvv info --build-id 1",
+			command:        "build --app-id test-app-id --token test-token info --build-id 1",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"buildTag": "0.1.14-14c793",
@@ -220,7 +220,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 		},
 		{
 			name:           "use global args after action-level command",
-			command:        "build info --build-id 1 --app-id test-app-id --token test-token -vvv",
+			command:        "build info --build-id 1 --app-id test-app-id --token test-token",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"buildTag": "0.1.14-14c793",
