@@ -65,56 +65,52 @@ func (h *loggingRoundTripper) beforeRequest(req *http.Request) {
 }
 
 func (h *loggingRoundTripper) afterSuccess(res *http.Response) {
-	go func() {
-		// if the verbosity is all the way up, dump outgoing response bodies to logs
-		if h.verbosity > 2 {
-			var resDump []byte
-			var err error
-			if res.ContentLength < 2048 {
-				resDump, err = httputil.DumpResponse(res, false)
-			} else {
-				resDump = []byte("...large response omitted...")
-			}
-
-			if err == nil {
-				h.logger.Debug(
-					"response",
-					zap.String("http.method", res.Request.Method),
-					zap.Stringer("http.url", res.Request.URL),
-					zap.Int("http.status", res.StatusCode),
-					zap.String("http.response.dump", string(resDump)),
-				)
-				return
-			}
+	// if the verbosity is all the way up, dump outgoing response bodies to logs
+	if h.verbosity > 2 {
+		var resDump []byte
+		var err error
+		if res.ContentLength < 2048 {
+			resDump, err = httputil.DumpResponse(res, false)
+		} else {
+			resDump = []byte("...large response omitted...")
 		}
 
-		h.logger.Debug(
-			"response",
-			zap.String("http.method", res.Request.Method),
-			zap.Stringer("http.url", res.Request.URL),
-			zap.Int("http.status", res.StatusCode),
-		)
-	}()
+		if err == nil {
+			h.logger.Debug(
+				"response",
+				zap.String("http.method", res.Request.Method),
+				zap.Stringer("http.url", res.Request.URL),
+				zap.Int("http.status", res.StatusCode),
+				zap.String("http.response.dump", string(resDump)),
+			)
+			return
+		}
+	}
+
+	h.logger.Debug(
+		"response",
+		zap.String("http.method", res.Request.Method),
+		zap.Stringer("http.url", res.Request.URL),
+		zap.Int("http.status", res.StatusCode),
+	)
 }
 
 func (h *loggingRoundTripper) afterError(res *http.Response, err error) {
-	go func() {
-		method := "unknown"
-		url := "unknown"
-		status := 0
+	method := "unknown"
+	url := "unknown"
+	status := 0
 
-		if res != nil && res.Request != nil {
-			method = res.Request.Method
-			url = res.Request.URL.String()
-			status = res.StatusCode
-		}
+	if res != nil && res.Request != nil {
+		method = res.Request.Method
+		url = res.Request.URL.String()
+		status = res.StatusCode
+	}
 
-		h.logger.Debug(
-			"response",
-			zap.String("http.method", method),
-			zap.String("http.url", url),
-			zap.Int("http.status", status),
-			zap.Error(err),
-		)
-	}()
+	h.logger.Debug(
+		"response",
+		zap.String("http.method", method),
+		zap.String("http.url", url),
+		zap.Int("http.status", status),
+		zap.Error(err),
+	)
 }

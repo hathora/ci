@@ -93,7 +93,9 @@ func (c *GlobalConfig) Load(cmd *cli.Command) error {
 		return fmt.Errorf("unsupported output type: %s", outputType)
 	}
 
-	verboseCount := cmd.Count(verboseFlag.Name)
+	// we subtract 1 because the flag is counted an additional time for the
+	// --verbose alias
+	verboseCount := cmd.Count(verboseFlag.Name) - 1
 	verbosity := cmd.Int(verbosityFlag.Name)
 	c.Verbosity = int(math.Max(float64(verbosity), float64(verboseCount)))
 	c.Log = zap.L().With(zap.String("app.id", appID))

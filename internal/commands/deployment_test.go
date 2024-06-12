@@ -220,6 +220,7 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 			app := commands.App()
 			staticArgs := []string{
 				"hathora",
+				"-vvv",
 				"--app-id",
 				"test-app-id",
 				"--token",
@@ -511,6 +512,7 @@ func Test_Integration_DeploymentCommands_CreateFromLatest(t *testing.T) {
 			app := commands.App()
 			staticArgs := []string{
 				"hathora",
+				"-vvv",
 				"--app-id",
 				"test-app-id",
 				"--token",
@@ -626,6 +628,7 @@ func Test_Integration_DeploymentCommands_CreateFromLatestWithBadMemToCPURatio(t 
 			app := commands.App()
 			staticArgs := []string{
 				"hathora",
+				"-vvv",
 				"--app-id",
 				"test-app-id",
 				"--token",

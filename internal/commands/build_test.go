@@ -155,6 +155,7 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 			app := commands.App()
 			staticArgs := []string{
 				"hathora",
+				"-vvv",
 				"--app-id",
 				"test-app-id",
 				"--token",
@@ -254,6 +255,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 			app := commands.App()
 			staticArgs := []string{
 				"hathora",
+				"-vvv",
 				"--hathora-cloud-endpoint",
 				h.Endpoint,
 			}
