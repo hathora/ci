@@ -15,6 +15,7 @@ import (
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/setup"
 	"github.com/hathora/ci/internal/shorthand"
+	"github.com/hathora/ci/internal/workaround"
 )
 
 var (
@@ -172,7 +173,7 @@ func deploymentEnvVar(name string) string {
 var (
 	deploymentFlagEnvVarPrefix = fmt.Sprintf("%s%s", globalFlagEnvVarPrefix, "DEPLOYMENT_")
 
-	deploymentIDFlag = &cli.IntFlag{
+	deploymentIDFlag = &workaround.IntFlag{
 		Name:     "deployment-id",
 		Aliases:  []string{"d"},
 		Sources:  cli.EnvVars(deploymentEnvVar("ID")),
@@ -191,7 +192,7 @@ var (
 		Persistent: true,
 	}
 
-	roomsPerProcessFlag = &cli.IntFlag{
+	roomsPerProcessFlag = &workaround.IntFlag{
 		Name: "rooms-per-process",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("ROOMS_PER_PROCESS")),
@@ -211,7 +212,7 @@ var (
 		Persistent: true,
 	}
 
-	containerPortFlag = &cli.IntFlag{
+	containerPortFlag = &workaround.IntFlag{
 		Name: "container-port",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("CONTAINER_PORT")),
@@ -236,7 +237,7 @@ var (
 		Usage:   "environment variables",
 	}
 
-	requestedMemoryFlag = &cli.FloatFlag{
+	requestedMemoryFlag = &workaround.FloatFlag{
 		Name: "requested-memory-mb",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("REQUESTED_MEMORY_MB")),
@@ -246,7 +247,7 @@ var (
 		Persistent: true,
 	}
 
-	requestedCPUFlag = &cli.FloatFlag{
+	requestedCPUFlag = &workaround.FloatFlag{
 		Name: "requested-cpu",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("REQUESTED_CPU")),

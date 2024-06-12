@@ -26,7 +26,6 @@ func App() *cli.Command {
 		EnableShellCompletion:  true,
 		Suggest:                true,
 		UseShortOptionHandling: true,
-		CustomHelpTemplate:     cli.CommandHelpTemplate,
 		SliceFlagSeparator:     ",",
 		Usage:                  "a CLI tool for for CI/CD workflows to manage deployments and builds in hathora.dev",
 		Flags:                  GlobalFlags,

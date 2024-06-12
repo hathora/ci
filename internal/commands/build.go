@@ -15,6 +15,7 @@ import (
 	"github.com/hathora/ci/internal/sdk/models/operations"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/setup"
+	"github.com/hathora/ci/internal/workaround"
 )
 
 var Build = &cli.Command{
@@ -159,7 +160,7 @@ func buildFlagEnvVar(name string) string {
 var (
 	buildFlagEnvVarPrefix = globalFlagEnvVarPrefix + "BUILD_"
 
-	buildIDFlag = &cli.IntFlag{
+	buildIDFlag = &workaround.IntFlag{
 		Name:    "build-id",
 		Aliases: []string{"b"},
 		Sources: cli.NewValueSourceChain(
