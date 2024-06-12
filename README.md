@@ -41,7 +41,15 @@ TARGETOS=linux TARGETARCH=amd64 make build
 The binary will be available in the `bin` directory.
 
 ```sh
-./bin/hathora-ci* --help
+./bin/hathora-* --help
+```
+
+### Rebuilding binaries
+
+To quickly rebuild a CLI binary, you can use:
+
+````sh
+make clean && make build
 ```
 
 ### Regenerating the SDK
@@ -50,4 +58,4 @@ The SDK can be regenerated based on the OpenAPI spec hosted at `https://hathora.
 
 ```sh
 make sdk-clean
-```
+````
