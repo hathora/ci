@@ -15,6 +15,7 @@ import (
 	"github.com/hathora/ci/internal/sdk/models/operations"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/setup"
+	"github.com/hathora/ci/internal/workaround"
 )
 
 var Build = &cli.Command{
@@ -159,11 +160,10 @@ func buildFlagEnvVar(name string) string {
 var (
 	buildFlagEnvVarPrefix = globalFlagEnvVarPrefix + "BUILD_"
 
-	buildIDFlag = &cli.IntFlag{
+	buildIDFlag = &workaround.IntFlag{
 		Name:    "build-id",
 		Aliases: []string{"b"},
 		Sources: cli.NewValueSourceChain(
-			cli.Files("/dev/stdin").Chain[0],
 			cli.EnvVar(buildFlagEnvVar("ID")),
 			altsrc.ConfigFile(configFlag.Name, "build.id"),
 		),
@@ -188,8 +188,9 @@ var (
 			cli.EnvVar(buildFlagEnvVar("FILE")),
 			altsrc.ConfigFile(configFlag.Name, "build.file"),
 		),
-		Usage:    "filepath of the built game server binary or archive",
-		Required: true,
+		Usage:     "filepath of the built game server binary or archive",
+		Required:  true,
+		TakesFile: true,
 	}
 )
 
