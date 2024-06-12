@@ -48,7 +48,7 @@ The binary will be available in the `bin` directory.
 
 To quickly rebuild a CLI binary, you can use:
 
-````sh
+```sh
 make clean && make build
 ```
 
@@ -58,4 +58,4 @@ The SDK can be regenerated based on the OpenAPI spec hosted at `https://hathora.
 
 ```sh
 make sdk-clean
-````
+```
