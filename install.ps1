@@ -19,8 +19,6 @@ if ($arch -eq "AMD64") {
 # Set the download URL for the Windows binary based on the architecture
 $downloadUrl = "https://github.com/$repoOwner/$repoName/releases/download/$latestRelease/$binaryName-windows-$arch"
 
-echo $downloadUrl
-
 # Set the install directory
 $installDir = "$env:LOCALAPPDATA\Microsoft\WindowsApps"
 

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/urfave/cli/v3"
 	"go.uber.org/zap"
@@ -481,10 +482,10 @@ func (c *CreateDeploymentConfig) Validate() error {
 
 	if c.RequestedMemoryMB != (c.RequestedCPU * memoryMBPerCPU) {
 		err = errors.Join(err,
-			fmt.Errorf("invalid memory: %f and cpu: %f requested-memory-mb must be a %f:1 ratio to requested-cpu",
-				c.RequestedMemoryMB,
-				c.RequestedCPU,
-				memoryMBPerCPU,
+			fmt.Errorf("invalid memory: %s and cpu: %s requested-memory-mb must be a %s:1 ratio to requested-cpu",
+				strconv.FormatFloat(c.RequestedMemoryMB, 'f', -1, 64),
+				strconv.FormatFloat(c.RequestedCPU, 'f', -1, 64),
+				strconv.FormatFloat(memoryMBPerCPU, 'f', -1, 64),
 			))
 	}
 
