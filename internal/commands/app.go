@@ -50,6 +50,7 @@ func App() *cli.Command {
 		},
 		Commands: []*cli.Command{
 			Build,
+			Deploy,
 			Deployment,
 		},
 		After: func(ctx context.Context, c *cli.Command) error {

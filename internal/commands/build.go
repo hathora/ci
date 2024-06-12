@@ -71,55 +71,16 @@ var Build = &cli.Command{
 			Usage:   "create a build",
 			Flags:   subcommandFlags(buildTagFlag, fileFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
-				build, err := BuildConfigFrom(cmd)
+				build, err := CreateBuildConfigFrom(cmd)
 				if err != nil {
 					return err
 				}
-				build.Log.Debug("creating a build...")
-
-				buildTag := sdk.String(cmd.String(buildTagFlag.Name))
-
-				createRes, err := build.SDK.BuildV2.CreateBuild(
-					ctx,
-					shared.CreateBuildParams{
-						BuildTag: buildTag,
-					},
-					build.AppID,
-				)
+				created, err := doBuildCreate(ctx, build)
 				if err != nil {
-					return fmt.Errorf("failed to create a build: %w", err)
+					return err
 				}
 
-				filePath := cmd.String(fileFlag.Name)
-				file, err := archive.RequireTGZ(filePath)
-				if err != nil {
-					return fmt.Errorf("no tgz file available for run: %w", err)
-				}
-
-				runRes, err := build.SDK.BuildV2.RunBuild(
-					ctx,
-					createRes.Build.BuildID,
-					operations.RunBuildRequestBody{
-						File: operations.RunBuildFile{
-							FileName: file.Name,
-							Content:  file.Content,
-						},
-					},
-					build.AppID,
-				)
-
-				if err != nil {
-					return fmt.Errorf("failed to run build: %w", err)
-				}
-
-				zap.L().Debug("streaming build output to console...")
-				err = output.StreamOutput(runRes.Stream, os.Stderr)
-
-				if err != nil {
-					return fmt.Errorf("failed to stream output to console: %w", err)
-				}
-
-				return build.Output.Write(createRes.Build, os.Stdout)
+				return build.Output.Write(created, os.Stdout)
 			},
 		},
 		{
@@ -147,6 +108,48 @@ var Build = &cli.Command{
 			},
 		},
 	},
+}
+
+func doBuildCreate(ctx context.Context, build *CreateBuildConfig) (*shared.Build, error) {
+	createRes, err := build.SDK.BuildV2.CreateBuild(
+		ctx,
+		shared.CreateBuildParams{
+			BuildTag: sdk.String(build.BuildTag),
+		},
+		build.AppID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create a build: %w", err)
+	}
+
+	file, err := archive.RequireTGZ(build.FilePath)
+	if err != nil {
+		return nil, fmt.Errorf("no build file available for run: %w", err)
+	}
+
+	runRes, err := build.SDK.BuildV2.RunBuild(
+		ctx,
+		createRes.Build.BuildID,
+		operations.RunBuildRequestBody{
+			File: operations.RunBuildFile{
+				FileName: file.Name,
+				Content:  file.Content,
+			},
+		},
+		build.AppID,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to run build: %w", err)
+	}
+
+	zap.L().Debug("streaming build output to console...")
+	err = output.StreamOutput(runRes.Stream, os.Stderr)
+	if err != nil {
+		zap.L().Error("failed to stream output to console", zap.Error(err))
+	}
+
+	return createRes.Build, nil
 }
 
 func buildFlagEnvVar(name string) string {
@@ -217,6 +220,38 @@ func (c *BuildConfig) New() LoadableConfig {
 
 func BuildConfigFrom(cmd *cli.Command) (*BuildConfig, error) {
 	return ConfigFromCLI[*BuildConfig](buildConfigKey, cmd)
+}
+
+var (
+	createBuildConfigKey = "commands.CreateBuildConfig.DI"
+)
+
+type CreateBuildConfig struct {
+	*BuildConfig
+	BuildTag string
+	FilePath string
+}
+
+var _ LoadableConfig = (*CreateBuildConfig)(nil)
+
+func (c *CreateBuildConfig) Load(cmd *cli.Command) error {
+	build, err := BuildConfigFrom(cmd)
+	if err != nil {
+		return err
+	}
+	c.BuildConfig = build
+	c.BuildTag = cmd.String(buildTagFlag.Name)
+	c.FilePath = cmd.String(fileFlag.Name)
+	c.Log = c.Log.With(zap.String("build.tag", c.BuildTag))
+	return nil
+}
+
+func (c *CreateBuildConfig) New() LoadableConfig {
+	return &CreateBuildConfig{}
+}
+
+func CreateBuildConfigFrom(cmd *cli.Command) (*CreateBuildConfig, error) {
+	return ConfigFromCLI[*CreateBuildConfig](createBuildConfigKey, cmd)
 }
 
 var (

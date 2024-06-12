@@ -36,34 +36,32 @@ func LoggingRoundTripper(underlying http.RoundTripper, verbosity int) http.Round
 }
 
 func (h *loggingRoundTripper) beforeRequest(req *http.Request) {
-	go func() {
-		// if the verbosity is all the way up, dump outgoing request bodies to logs
-		if h.verbosity > 2 {
-			var reqDump []byte
-			var err error
-			if req.ContentLength < 2048 {
-				reqDump, err = httputil.DumpRequestOut(req, true)
-			} else {
-				reqDump = []byte("...large request omitted...")
-			}
-
-			if err == nil {
-				h.logger.Debug(
-					"request",
-					zap.String("http.method", req.Method),
-					zap.Stringer("http.url", req.URL),
-					zap.String("http.request.dump", string(reqDump)),
-				)
-				return
-			}
+	// if the verbosity is all the way up, dump outgoing request bodies to logs
+	if h.verbosity > 2 {
+		var reqDump []byte
+		var err error
+		if req.ContentLength < 2048 {
+			reqDump, err = httputil.DumpRequestOut(req, false)
+		} else {
+			reqDump = []byte("...large request omitted...")
 		}
 
-		h.logger.Debug(
-			"request",
-			zap.String("method", req.Method),
-			zap.Stringer("url", req.URL),
-		)
-	}()
+		if err == nil {
+			h.logger.Debug(
+				"request",
+				zap.String("http.method", req.Method),
+				zap.Stringer("http.url", req.URL),
+				zap.String("http.request.dump", string(reqDump)),
+			)
+			return
+		}
+	}
+
+	h.logger.Debug(
+		"request",
+		zap.String("method", req.Method),
+		zap.Stringer("url", req.URL),
+	)
 }
 
 func (h *loggingRoundTripper) afterSuccess(res *http.Response) {
@@ -73,7 +71,7 @@ func (h *loggingRoundTripper) afterSuccess(res *http.Response) {
 			var resDump []byte
 			var err error
 			if res.ContentLength < 2048 {
-				resDump, err = httputil.DumpResponse(res, true)
+				resDump, err = httputil.DumpResponse(res, false)
 			} else {
 				resDump = []byte("...large response omitted...")
 			}

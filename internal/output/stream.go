@@ -1,29 +1,24 @@
 package output
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 )
 
 func StreamOutput(reader io.ReadCloser, writer io.Writer) error {
-	buffer := make([]byte, 1024)
+	scanner := bufio.NewScanner(reader)
 
-	for {
-		n, err := reader.Read(buffer)
-		if err != nil && err != io.EOF {
+	for scanner.Scan() {
+		line := scanner.Text()
+		_, err := fmt.Fprintln(writer, line)
+		if err != nil {
 			return err
 		}
+	}
 
-		if n > 0 {
-			_, err = fmt.Fprintf(writer, "%s\n", string(buffer[:n]))
-			if err != nil {
-				return err
-			}
-		}
-
-		if err == io.EOF {
-			break
-		}
+	if err := scanner.Err(); err != nil {
+		return err
 	}
 
 	return nil
