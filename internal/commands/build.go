@@ -163,7 +163,6 @@ var (
 		Name:    "build-id",
 		Aliases: []string{"b"},
 		Sources: cli.NewValueSourceChain(
-			cli.Files("/dev/stdin").Chain[0],
 			cli.EnvVar(buildFlagEnvVar("ID")),
 			altsrc.ConfigFile(configFlag.Name, "build.id"),
 		),
@@ -188,8 +187,9 @@ var (
 			cli.EnvVar(buildFlagEnvVar("FILE")),
 			altsrc.ConfigFile(configFlag.Name, "build.file"),
 		),
-		Usage:    "filepath of the built game server binary or archive",
-		Required: true,
+		Usage:     "filepath of the built game server binary or archive",
+		Required:  true,
+		TakesFile: true,
 	}
 )
 
