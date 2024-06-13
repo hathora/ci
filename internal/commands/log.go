@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	minTailLines = 0
+	minTailLines = 1
 	maxTailLines = 5000
 )
 
@@ -38,8 +38,6 @@ var Log = &cli.Command{
 		}
 
 		log.Log.Debug("Getting build server logs...")
-
-		// validate
 
 		res, err := log.SDK.LogV1.GetLogsForProcess(
 			ctx,
