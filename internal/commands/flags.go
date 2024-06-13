@@ -14,7 +14,7 @@ var (
 			cli.EnvVar(globalFlagEnvVar("OUTPUT")),
 			altsrc.ConfigFile(configFlag.Name, "global.output"),
 		),
-		Usage:      "the format of the output. Supported values: (json, text, value=buildId)",
+		Usage:      "the `<format>` of the output. Supported values: (json, text, value=buildId)",
 		Value:      "text",
 		Persistent: true,
 		Category:   "Global:",
@@ -22,7 +22,7 @@ var (
 
 	outputPrettyFlag = &cli.BoolFlag{
 		Name:       "pretty",
-		Usage:      "enable pretty output, if relevant for the output type",
+		Usage:      "enable pretty output (json only)",
 		Value:      true,
 		Category:   "Global:",
 		Persistent: true,
@@ -35,9 +35,10 @@ var (
 			cli.EnvVar(globalFlagEnvVar("APP_ID")),
 			altsrc.ConfigFile(configFlag.Name, "app.id"),
 		),
-		Usage:      "the ID of the app in Hathora",
+		Usage:      "the `<id>` of the app in Hathora",
 		Category:   "Global:",
 		Persistent: true,
+		Required:   true,
 	}
 
 	verboseFlag = &cli.BoolFlag{
@@ -54,7 +55,7 @@ var (
 			cli.EnvVar(globalFlagEnvVar("VERBOSITY")),
 			altsrc.ConfigFile(configFlag.Name, "global.verbosity"),
 		),
-		Usage:      "set the logging verbosity level",
+		Usage:      "set the logging verbosity `<level>` (0-3)",
 		Value:      0,
 		Category:   "Global:",
 		Persistent: true,
@@ -66,7 +67,7 @@ var (
 			cli.EnvVar(globalFlagEnvVar("CLOUD_ENDPOINT")),
 			altsrc.ConfigFile(configFlag.Name, "global.cloud-endpoint"),
 		),
-		Usage:       "override the default API base url",
+		Usage:       "override the default API base `<url>`",
 		DefaultText: "https://api.hathora.dev",
 		Category:    "Global:",
 		Persistent:  true,
@@ -76,15 +77,16 @@ var (
 		Name:       "token",
 		Aliases:    []string{"t"},
 		Sources:    cli.EnvVars(globalFlagEnvVar("TOKEN")),
-		Usage:      "the access token for authenticating with the API",
+		Usage:      "`<access-token>` for authenticating with the API",
 		Category:   "Global:",
 		Persistent: true,
+		Required:   true,
 	}
 
 	configFlag = &cli.StringFlag{
 		Name:       "config",
 		Aliases:    []string{"c"},
-		Usage:      "path to the configuration file",
+		Usage:      "`<path>` to the configuration file",
 		Category:   "Global:",
 		Persistent: true,
 	}
@@ -110,5 +112,5 @@ func globalFlagEnvVar(name string) string {
 }
 
 func subcommandFlags(flags ...cli.Flag) []cli.Flag {
-	return flags
+	return append(flags, GlobalFlags...)
 }

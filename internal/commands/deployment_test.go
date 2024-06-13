@@ -216,6 +216,7 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 			if tt.skip != "" {
 				t.Skip(tt.skip)
 			}
+
 			h := mock.Hathora(t, mock.RespondsWithStatus(tt.responseStatus), mock.RespondsWithJSON([]byte(tt.responseBody)))
 			app := commands.App()
 			staticArgs := []string{

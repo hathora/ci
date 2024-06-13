@@ -30,6 +30,8 @@ var Build = &cli.Command{
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				build, err := OneBuildConfigFrom(cmd)
 				if err != nil {
+					//nolint:errcheck
+					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
 				build.Log.Debug("getting build info...")
@@ -50,6 +52,8 @@ var Build = &cli.Command{
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				build, err := BuildConfigFrom(cmd)
 				if err != nil {
+					//nolint:errcheck
+					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
 				build.Log.Debug("getting all builds...")
@@ -74,6 +78,8 @@ var Build = &cli.Command{
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				build, err := CreateBuildConfigFrom(cmd)
 				if err != nil {
+					//nolint:errcheck
+					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
 				created, err := doBuildCreate(ctx, build)
@@ -92,6 +98,8 @@ var Build = &cli.Command{
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				build, err := OneBuildConfigFrom(cmd)
 				if err != nil {
+					//nolint:errcheck
+					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
 				build.Log.Debug("deleting a build...")
@@ -167,7 +175,8 @@ var (
 			cli.EnvVar(buildFlagEnvVar("ID")),
 			altsrc.ConfigFile(configFlag.Name, "build.id"),
 		),
-		Usage:      "the ID of the build in Hathora",
+		Usage:      "the `<id>` of the build in Hathora",
+		Category:   "Build:",
 		Persistent: true,
 	}
 
@@ -178,7 +187,8 @@ var (
 			cli.EnvVar(buildFlagEnvVar("TAG")),
 			altsrc.ConfigFile(configFlag.Name, "build.tag"),
 		),
-		Usage: "tag to associate an external version with a build",
+		Category: "Build:",
+		Usage:    "`<tag>` or external version to associate with the build",
 	}
 
 	fileFlag = &cli.StringFlag{
@@ -188,9 +198,10 @@ var (
 			cli.EnvVar(buildFlagEnvVar("FILE")),
 			altsrc.ConfigFile(configFlag.Name, "build.file"),
 		),
-		Usage:     "filepath of the built game server binary or archive",
-		Required:  true,
+		Usage:     "`<path>` to the built game server binary or archive",
+		Category:  "Build:",
 		TakesFile: true,
+		Value:     ".", // default to current working directory
 	}
 )
 

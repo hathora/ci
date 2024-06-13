@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strconv"
 
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/shared"
@@ -29,9 +28,12 @@ var Deploy = &cli.Command{
 		envVarsFlag,
 		idleTimeoutFlag,
 	),
+	UsageText: `hathora deploy [options]`,
 	Action: func(ctx context.Context, cmd *cli.Command) error {
 		deploy, err := DeployConfigFrom(cmd)
 		if err != nil {
+			//nolint:errcheck
+			cli.ShowSubcommandHelp(cmd)
 			return err
 		}
 
@@ -46,6 +48,8 @@ var Deploy = &cli.Command{
 		}
 
 		if err := deploy.Validate(); err != nil {
+			//nolint:errcheck
+			cli.ShowSubcommandHelp(cmd)
 			return err
 		}
 
@@ -167,44 +171,35 @@ func (c *DeployConfig) Merge(latest *shared.DeploymentV2) {
 func (c *DeployConfig) Validate() error {
 	var err error
 
-	if c.IdleTimeoutEnabled == nil {
-		err = errors.Join(err, fmt.Errorf("idle timeout enabled is required"))
-	}
-
 	if c.RoomsPerProcess == 0 {
-		err = errors.Join(err, fmt.Errorf("rooms per process is required"))
+		err = errors.Join(err, missingRequiredFlag(roomsPerProcessFlag.Name))
 	}
 
 	err = errors.Join(err, requireIntInRange(c.RoomsPerProcess, minRoomsPerProcess, maxRoomsPerProcess, roomsPerProcessFlag.Name))
 
 	if c.TransportType == "" {
-		err = errors.Join(err, fmt.Errorf("transport type is required"))
+		err = errors.Join(err, missingRequiredFlag(transportTypeFlag.Name))
 	}
 	err = errors.Join(err, requireValidEnumValue(c.TransportType, allowedTransportTypes, transportTypeFlag.Name))
 
 	if c.ContainerPort == 0 {
-		err = errors.Join(err, fmt.Errorf("container port is required"))
+		err = errors.Join(err, missingRequiredFlag(containerPortFlag.Name))
 	}
 	err = errors.Join(err, requireIntInRange(c.ContainerPort, minPort, maxPort, containerPortFlag.Name))
 
 	if c.RequestedMemoryMB == 0 {
-		err = errors.Join(err, fmt.Errorf("requested memory is required"))
+		err = errors.Join(err, missingRequiredFlag(requestedMemoryFlag.Name))
 	}
 	err = errors.Join(err, requireFloatInRange(c.RequestedMemoryMB, minMemoryMB, maxMemoryMB, requestedMemoryFlag.Name))
 	if c.RequestedCPU == 0 {
-		err = errors.Join(err, fmt.Errorf("requested CPU is required"))
+		err = errors.Join(err, missingRequiredFlag(requestedCPUFlag.Name))
 	}
 
 	err = errors.Join(err, requireFloatInRange(c.RequestedCPU, minCPU, maxCPU, requestedCPUFlag.Name))
 	err = errors.Join(err, requireMaxDecimals(c.RequestedCPU, maxCPUDecimalPlaces, requestedCPUFlag.Name))
 
 	if c.RequestedMemoryMB != (c.RequestedCPU * memoryMBPerCPU) {
-		err = errors.Join(err,
-			fmt.Errorf("invalid memory: %s and cpu: %s requested-memory-mb must be a %s:1 ratio to requested-cpu",
-				strconv.FormatFloat(c.RequestedMemoryMB, 'f', -1, 64),
-				strconv.FormatFloat(c.RequestedCPU, 'f', -1, 64),
-				strconv.FormatFloat(memoryMBPerCPU, 'f', -1, 64),
-			))
+		err = errors.Join(err, invalidMemoryToCPURatio(c.RequestedMemoryMB, c.RequestedCPU))
 	}
 
 	return err
