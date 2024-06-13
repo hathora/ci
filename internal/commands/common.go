@@ -134,7 +134,6 @@ func BuildTextFormatter() output.FormatWriter {
 	var envVar shared.DeploymentV2Env
 	var containerPort shared.ContainerPort
 	var timestamp time.Time
-	var float float64
 	var long int64
 	return output.TextFormat(
 		output.WithFieldOrder(build,
@@ -153,10 +152,16 @@ func BuildTextFormatter() output.FormatWriter {
 			"CreatedAt",
 			"IdleTimeoutEnabled",
 			"RoomsPerProcess",
+			"RequestedCPU",
+			"RequestedMemoryMB",
 			"DefaultContainerPort",
 			"AdditionalContainerPorts",
 			"Env",
 		),
+		output.RenameField(deployment, "RequestedMemoryMB", "RequestedMemory"),
+		output.WithPropertyFormatter(deployment, "RequestedMemoryMB", func(f float64) string {
+			return humanize.IBytes((uint64)(f * 1024 * 1024))
+		}),
 		output.WithoutFields(deployment, "AppID", "CreatedBy"),
 		output.WithFormatter(envVar,
 			func(e shared.DeploymentV2Env) string {
@@ -173,11 +178,6 @@ func BuildTextFormatter() output.FormatWriter {
 				// TODO: consider using this human-friendly time format
 				// return humanize.Time(t)
 				return t.Format(time.RFC3339)
-			},
-		),
-		output.WithFormatter(float,
-			func(f float64) string {
-				return humanize.Ftoa(f)
 			},
 		),
 		// TODO: this should not be how we generally handle all int64s, so we may want support for targeted formatters by field name

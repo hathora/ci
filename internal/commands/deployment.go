@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strconv"
 
 	"github.com/urfave/cli/v3"
 	"go.uber.org/zap"
@@ -44,6 +43,8 @@ var Deployment = &cli.Command{
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				deployment, err := OneDeploymentConfigFrom(cmd)
 				if err != nil {
+					//nolint:errcheck
+					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
 				deployment.Log.Debug("getting deployment info...")
@@ -68,6 +69,8 @@ var Deployment = &cli.Command{
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				deployment, err := DeploymentConfigFrom(cmd)
 				if err != nil {
+					//nolint:errcheck
+					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
 				deployment.Log.Debug("getting the latest deployment...")
@@ -88,6 +91,8 @@ var Deployment = &cli.Command{
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				deployment, err := DeploymentConfigFrom(cmd)
 				if err != nil {
+					//nolint:errcheck
+					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
 				deployment.Log.Debug("getting all deployments...")
@@ -124,6 +129,8 @@ var Deployment = &cli.Command{
 				zap.L().Debug("creating a deployment...")
 				deployment, err := CreateDeploymentConfigFrom(cmd)
 				if err != nil {
+					//nolint:errcheck
+					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
 
@@ -138,6 +145,8 @@ var Deployment = &cli.Command{
 				}
 
 				if err := deployment.Validate(); err != nil {
+					//nolint:errcheck
+					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
 
@@ -177,8 +186,9 @@ var (
 		Name:     "deployment-id",
 		Aliases:  []string{"d"},
 		Sources:  cli.EnvVars(deploymentEnvVar("ID")),
-		Usage:    "the ID of the deployment in Hathora",
+		Usage:    "the `<id>` of the deployment in Hathora",
 		Required: true,
+		Category: "Deployment:",
 	}
 
 	idleTimeoutFlag = &cli.BoolFlag{
@@ -188,8 +198,9 @@ var (
 			altsrc.ConfigFile(configFlag.Name, "deployment.idle-timeout-enabled"),
 		),
 		Value:      false,
-		Usage:      "option to shut down processes that have had no new connections or rooms for five minutes",
+		Usage:      "whether to shut down processes that have had no new connections or rooms for five minutes",
 		Persistent: true,
+		Category:   "Deployment:",
 	}
 
 	roomsPerProcessFlag = &workaround.IntFlag{
@@ -198,8 +209,9 @@ var (
 			cli.EnvVar(deploymentEnvVar("ROOMS_PER_PROCESS")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.rooms-per-process"),
 		),
-		Usage:      "how many rooms can be scheduled in a process",
+		Usage:      "`<count>` of the rooms that can be scheduled in a process",
 		Persistent: true,
+		Category:   "Deployment:",
 	}
 
 	transportTypeFlag = &cli.StringFlag{
@@ -208,8 +220,9 @@ var (
 			cli.EnvVar(deploymentEnvVar("TRANSPORT_TYPE")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.transport-type"),
 		),
-		Usage:      "the underlying communication protocol to the exposed port",
+		Usage:      "`<protocol>` for the exposed port to use (tcp, udp, tls)",
 		Persistent: true,
+		Category:   "Deployment:",
 	}
 
 	containerPortFlag = &workaround.IntFlag{
@@ -218,8 +231,9 @@ var (
 			cli.EnvVar(deploymentEnvVar("CONTAINER_PORT")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.container-port"),
 		),
-		Usage:      "default server port",
+		Usage:      "`<port>` to expose on the deployed container",
 		Persistent: true,
+		Category:   "Deployment:",
 	}
 
 	additionalContainerPortsFlag = &cli.StringSliceFlag{
@@ -228,13 +242,15 @@ var (
 			cli.EnvVar(deploymentEnvVar("ADDITIONAL_CONTAINER_PORTS")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.additional-container-ports"),
 		),
-		Usage: "additional server ports",
+		Usage:    "additional `<port>` to expose; format: name:port/protocol",
+		Category: "Deployment:",
 	}
 
 	envVarsFlag = &cli.StringSliceFlag{
-		Name:    "env",
-		Sources: cli.EnvVars(deploymentEnvVar("ENV")),
-		Usage:   "environment variables",
+		Name:     "env",
+		Sources:  cli.EnvVars(deploymentEnvVar("ENV")),
+		Usage:    "`<KEY=VALUE>` formatted environment variables",
+		Category: "Deployment:",
 	}
 
 	requestedMemoryFlag = &workaround.FloatFlag{
@@ -243,8 +259,9 @@ var (
 			cli.EnvVar(deploymentEnvVar("REQUESTED_MEMORY_MB")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.requested-memory-mb"),
 		),
-		Usage:      "the amount of memory allocated to your process in MB",
+		Usage:      "`<memory-in-mb>` to allocate to your process",
 		Persistent: true,
+		Category:   "Deployment:",
 	}
 
 	requestedCPUFlag = &workaround.FloatFlag{
@@ -253,14 +270,16 @@ var (
 			cli.EnvVar(deploymentEnvVar("REQUESTED_CPU")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.requested-cpu"),
 		),
-		Usage:      "the number of cores allocated to your process",
+		Usage:      "`<cores>` to allocate to your process",
 		Persistent: true,
+		Category:   "Deployment:",
 	}
 
 	fromLatestFlag = &cli.BoolFlag{
-		Name:    "from-latest",
-		Sources: cli.EnvVars(deploymentEnvVar("FROM_LATEST")),
-		Usage:   "whether to use settings from the latest deployment; if set, other flags applied will act as overrides",
+		Name:     "from-latest",
+		Sources:  cli.EnvVars(deploymentEnvVar("FROM_LATEST")),
+		Usage:    "whether to use settings from the latest deployment; if true other flags act as overrides",
+		Category: "Deployment:",
 	}
 )
 
@@ -447,47 +466,38 @@ func (c *CreateDeploymentConfig) Merge(latest *shared.DeploymentV2) {
 func (c *CreateDeploymentConfig) Validate() error {
 	var err error
 	if c.BuildID == 0 {
-		err = errors.Join(err, fmt.Errorf("build ID is required"))
-	}
-
-	if c.IdleTimeoutEnabled == nil {
-		err = errors.Join(err, fmt.Errorf("idle timeout enabled is required"))
+		err = errors.Join(err, missingRequiredFlag(buildIDFlag.Name))
 	}
 
 	if c.RoomsPerProcess == 0 {
-		err = errors.Join(err, fmt.Errorf("rooms per process is required"))
+		err = errors.Join(err, missingRequiredFlag(roomsPerProcessFlag.Name))
 	}
 
 	err = errors.Join(err, requireIntInRange(c.RoomsPerProcess, minRoomsPerProcess, maxRoomsPerProcess, roomsPerProcessFlag.Name))
 
 	if c.TransportType == "" {
-		err = errors.Join(err, fmt.Errorf("transport type is required"))
+		err = errors.Join(err, missingRequiredFlag(transportTypeFlag.Name))
 	}
 	err = errors.Join(err, requireValidEnumValue(c.TransportType, allowedTransportTypes, transportTypeFlag.Name))
 
 	if c.ContainerPort == 0 {
-		err = errors.Join(err, fmt.Errorf("container port is required"))
+		err = errors.Join(err, missingRequiredFlag(containerPortFlag.Name))
 	}
 	err = errors.Join(err, requireIntInRange(c.ContainerPort, minPort, maxPort, containerPortFlag.Name))
 
 	if c.RequestedMemoryMB == 0 {
-		err = errors.Join(err, fmt.Errorf("requested memory is required"))
+		err = errors.Join(err, missingRequiredFlag(requestedMemoryFlag.Name))
 	}
 	err = errors.Join(err, requireFloatInRange(c.RequestedMemoryMB, minMemoryMB, maxMemoryMB, requestedMemoryFlag.Name))
 	if c.RequestedCPU == 0 {
-		err = errors.Join(err, fmt.Errorf("requested CPU is required"))
+		err = errors.Join(err, missingRequiredFlag(requestedCPUFlag.Name))
 	}
 
 	err = errors.Join(err, requireFloatInRange(c.RequestedCPU, minCPU, maxCPU, requestedCPUFlag.Name))
 	err = errors.Join(err, requireMaxDecimals(c.RequestedCPU, maxCPUDecimalPlaces, requestedCPUFlag.Name))
 
 	if c.RequestedMemoryMB != (c.RequestedCPU * memoryMBPerCPU) {
-		err = errors.Join(err,
-			fmt.Errorf("invalid memory: %s and cpu: %s requested-memory-mb must be a %s:1 ratio to requested-cpu",
-				strconv.FormatFloat(c.RequestedMemoryMB, 'f', -1, 64),
-				strconv.FormatFloat(c.RequestedCPU, 'f', -1, 64),
-				strconv.FormatFloat(memoryMBPerCPU, 'f', -1, 64),
-			))
+		err = errors.Join(err, invalidMemoryToCPURatio(c.RequestedMemoryMB, c.RequestedCPU))
 	}
 
 	return err
