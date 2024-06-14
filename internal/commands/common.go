@@ -252,9 +252,17 @@ func handleNewVersionAvailable(currentVersion string) {
 		zap.L().Warn("unable to decode the latest version number")
 	}
 
-	versionDiff := version.Compare(release.TagName, currentVersion)
+	prefixedVersion := "go" + currentVersion
+	showLatest := false
+	if !version.IsValid(prefixedVersion) {
+		zap.L().Warn("You are using a development version of the hathora cli.")
+		showLatest = true
+	} else if version.Compare("go"+release.TagName, prefixedVersion) > 0 {
+		zap.L().Warn("You are using an outdated version of the hathora cli.")
+		showLatest = true
+	}
 
-	if versionDiff > 0 {
-		zap.L().Warn("A new version of hathora-ci is available for download.")
+	if showLatest {
+		zap.L().Warn("Version " + release.TagName + " is available for download.")
 	}
 }

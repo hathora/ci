@@ -42,21 +42,22 @@ func App() *cli.Command {
 		Version:                       BuildVersion,
 		CustomRootCommandHelpTemplate: cli.SubcommandHelpTemplate,
 		Before: func(ctx context.Context, cmd *cli.Command) error {
-			handleNewVersionAvailable(BuildVersion)
-
-			if isCallForHelp(cmd) {
-				return nil
-			}
-			err := altsrc.InitializeValueSourcesFromFlags(ctx, cmd, os.Args[1:])
-			if err != nil {
-				return err
-			}
 			cfg, err := VerbosityConfigFrom(cmd)
 			if err != nil {
 				return err
 			}
 			_, cleanupLogger := setup.Logger(cfg.Verbosity)
 			cleanup = append(cleanup, cleanupLogger)
+			handleNewVersionAvailable(BuildVersion)
+
+			if isCallForHelp(cmd) {
+				return nil
+			}
+
+			err = altsrc.InitializeValueSourcesFromFlags(ctx, cmd, os.Args[1:])
+			if err != nil {
+				return err
+			}
 			return nil
 		},
 		Commands: []*cli.Command{
