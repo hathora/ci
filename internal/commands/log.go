@@ -4,14 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
+
+	"github.com/urfave/cli/v3"
+	"go.uber.org/zap"
+
 	"github.com/hathora/ci/internal/commands/altsrc"
 	"github.com/hathora/ci/internal/output"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/setup"
 	"github.com/hathora/ci/internal/workaround"
-	"github.com/urfave/cli/v3"
-	"go.uber.org/zap"
-	"os"
 )
 
 var (
@@ -24,7 +26,7 @@ var Log = &cli.Command{
 	Usage: "view live process logs",
 	Flags: subcommandFlags(followFlag, processIDFlag, tailLinesFlag),
 	Action: func(ctx context.Context, cmd *cli.Command) error {
-		log, err := OneLogConfigFrom(cmd)
+		log, err := ProcessLogConfigFrom(cmd)
 		if err != nil {
 			//nolint:errcheck
 			cli.ShowSubcommandHelp(cmd)
@@ -129,19 +131,19 @@ func LogConfigFrom(cmd *cli.Command) (*LogConfig, error) {
 }
 
 var (
-	oneLogConfigKey = "commands.OneLogConfig.DI"
+	processLogConfigKey = "commands.ProcessLogConfig.DI"
 )
 
-type OneLogConfig struct {
+type ProcessLogConfig struct {
 	*LogConfig
 	Follow    bool
 	TailLines int
 	ProcessID string
 }
 
-var _ LoadableConfig = (*OneLogConfig)(nil)
+var _ LoadableConfig = (*ProcessLogConfig)(nil)
 
-func (c *OneLogConfig) Load(cmd *cli.Command) error {
+func (c *ProcessLogConfig) Load(cmd *cli.Command) error {
 	log, err := LogConfigFrom(cmd)
 	if err != nil {
 		return err
@@ -153,13 +155,13 @@ func (c *OneLogConfig) Load(cmd *cli.Command) error {
 	return nil
 }
 
-func (c *OneLogConfig) New() LoadableConfig { return &OneLogConfig{} }
+func (c *ProcessLogConfig) New() LoadableConfig { return &ProcessLogConfig{} }
 
-func OneLogConfigFrom(cmd *cli.Command) (*OneLogConfig, error) {
-	return ConfigFromCLI[*OneLogConfig](oneDeploymentConfigKey, cmd)
+func ProcessLogConfigFrom(cmd *cli.Command) (*ProcessLogConfig, error) {
+	return ConfigFromCLI[*ProcessLogConfig](processLogConfigKey, cmd)
 }
 
-func (c *OneLogConfig) Validate() error {
+func (c *ProcessLogConfig) Validate() error {
 	var err error
 	err = errors.Join(err, requireIntInRange(c.TailLines, minTailLines, maxTailLines, tailLinesFlag.Name))
 
