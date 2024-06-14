@@ -3,74 +3,51 @@ package output
 import (
 	"fmt"
 	"io"
+	"reflect"
 	"strings"
-
-	"github.com/hathora/ci/internal/sdk/models/shared"
 )
 
-func ValueFormat(field string) FormatWriter {
-	return &valueOutputWriter{
-		Field: field,
+func ValueFormat(empty any, field string) (FormatWriter, error) {
+	tType := reflect.TypeOf(empty)
+	for i := 0; i < tType.NumField(); i++ {
+		structField := tType.Field(i)
+		jsonTag := structField.Tag.Get("json")
+		tagName := strings.Split(jsonTag, ",")[0]
+
+		if tagName == "-" {
+			continue
+		}
+
+		if tagName == field {
+			return &valueOutputWriter{
+				outputType: tType,
+				field:      structField.Name,
+			}, nil
+		}
 	}
+
+	return nil, fmt.Errorf("field \"%s\" not supported for output type: %s", field, tType.Name())
 }
 
 type valueOutputWriter struct {
-	Field string
+	outputType reflect.Type
+	field      string
 }
 
 var _ FormatWriter = (*valueOutputWriter)(nil)
 
 func (j *valueOutputWriter) Write(value any, writer io.Writer) error {
-	buildPtr, test := value.(*shared.Build)
-	if test {
-		found, err := getBuildValuePtr(buildPtr, j.Field)
-		if err != nil {
-			return err
-		}
-		_, err = fmt.Fprintf(writer, "%v\n", found)
-		return err
+	v := reflect.ValueOf(value)
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
 	}
 
-	build, test := value.(shared.Build)
-	if test {
-		found, err := getBuildValue(build, j.Field)
-		if err != nil {
-			return err
-		}
-		_, err = fmt.Fprintf(writer, "%v\n", found)
-		return err
+	fieldValue := v.FieldByName(j.field)
+	if !fieldValue.IsValid() {
+		return fmt.Errorf("field %s not found", j.field)
 	}
 
-	builds, test := value.([]shared.Build)
-	if test {
-		for _, b := range builds {
-			found, err := getBuildValue(b, j.Field)
-			if err != nil {
-				return err
-			}
-			_, err = fmt.Fprintf(writer, "%v\n", found)
-			if err != nil {
-				return err
-			}
-		}
+	fmt.Fprintln(writer, fieldValue.Interface())
 
-		return nil
-	}
-
-	// default to just writing the text
-	_, err := fmt.Fprintf(writer, "%v\n", value)
-	return err
-}
-
-func getBuildValuePtr(build *shared.Build, key string) (any, error) {
-	return getBuildValue(*build, key)
-}
-
-func getBuildValue(build shared.Build, key string) (any, error) {
-	switch strings.ToLower(key) {
-	case "buildid":
-		return build.BuildID, nil
-	default:
-		return nil, fmt.Errorf(fmt.Sprintf("key %s not supported", key))
-	}
+	return nil
 }

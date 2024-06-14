@@ -47,7 +47,7 @@ func shouldIgnoreFilepath(filepath string, isDir bool, matchers []gitignore.Igno
 	return anyMatches
 }
 
-func ArchiveTGZ(srcFolder string) (string, error) {
+func CreateTGZ(srcFolder string) (string, error) {
 	fileName := filepath.Base(filepath.Clean(srcFolder))
 	destinationFile := fmt.Sprintf("%s.*.tgz", fileName)
 	tarGzFile, err := os.CreateTemp("", destinationFile)
@@ -82,21 +82,22 @@ func ArchiveTGZ(srcFolder string) (string, error) {
 		}
 
 		if shouldIgnoreFilepath(relPath, info.IsDir(), ignoreMatchers) {
+			zap.L().Debug("Ignoring file: " + relPath)
 			return nil
 		}
 
-		header, err := tar.FileInfoHeader(info, relPath)
+		header, err := tar.FileInfoHeader(info, "")
 		if err != nil {
 			return err
 		}
-
-		header.Name = relPath
+		header.Name = filepath.ToSlash(relPath)
 
 		if err := tarWriter.WriteHeader(header); err != nil {
 			return err
 		}
 
 		if info.IsDir() {
+			zap.L().Debug("Including directory reference: " + relPath)
 			return nil
 		}
 
@@ -106,10 +107,15 @@ func ArchiveTGZ(srcFolder string) (string, error) {
 		}
 		defer file.Close()
 
-		if _, err := io.Copy(tarWriter, file); err != nil {
-			return err
+		written, err := io.Copy(tarWriter, file)
+		if err != nil {
+			return fmt.Errorf("error copying file content for %s: %w", filePath, err)
+		}
+		if written != info.Size() {
+			return fmt.Errorf("expected to write %d bytes but wrote %d bytes for file %s", info.Size(), written, filePath)
 		}
 
+		zap.L().Debug("Inlcluding file: " + relPath)
 		return nil
 	})
 
@@ -181,7 +187,7 @@ func RequireTGZ(srcFolder string) (*TGZFile, error) {
 
 	zap.L().Debug(srcFolder + " is not a gzipped tar archive. Archiving and compressing now.")
 
-	destFile, err := ArchiveTGZ(srcFolder)
+	destFile, err := CreateTGZ(srcFolder)
 	if err != nil {
 		return nil, err
 	}

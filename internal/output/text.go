@@ -267,6 +267,32 @@ func (t *textOutputWriter) printFieldValue(parentType, propertyName string, v re
 	}
 
 	switch v.Kind() {
+	case reflect.Slice:
+		for i := 0; i < v.Len(); i++ {
+			if i > 0 {
+				fmt.Fprintf(writer, ",")
+			}
+			propertyName = fmt.Sprintf("%s[%d]", propertyName, i)
+			err := t.printFieldValue(parentType, propertyName, v.Index(i), writer)
+			if err != nil {
+				return err
+			}
+		}
+	case reflect.Ptr:
+		if v.IsNil() {
+			fmt.Fprintf(writer, "null")
+		} else {
+			return t.printFieldValue(parentType, propertyName, v.Elem(), writer)
+		}
+	default:
+		return printValue(v, writer)
+	}
+
+	return nil
+}
+
+func printValue(v reflect.Value, writer io.Writer) error {
+	switch v.Kind() {
 	case reflect.String:
 		fmt.Fprintf(writer, "%s", v.String())
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
@@ -282,15 +308,13 @@ func (t *textOutputWriter) printFieldValue(parentType, propertyName string, v re
 			if i > 0 {
 				fmt.Fprintf(writer, ",")
 			}
-			elementFieldName := fmt.Sprintf("%s[%d]", propertyName, i)
-			err := t.printFieldValue(parentType, elementFieldName, v.Index(i), writer)
+			err := printValue(v.Index(i), writer)
 			if err != nil {
 				return err
 			}
 		}
 	case reflect.Struct:
 		fmt.Fprintf(writer, "{")
-		typeName := v.Type().String()
 		for i := 0; i < v.NumField(); i++ {
 			if i > 0 {
 				fmt.Fprintf(writer, ",")
@@ -298,7 +322,7 @@ func (t *textOutputWriter) printFieldValue(parentType, propertyName string, v re
 			name := v.Type().Field(i).Name
 			fmt.Fprintf(writer, "%s:", name)
 			field := v.Field(i)
-			err := t.printFieldValue(typeName, propertyName, field, writer)
+			err := printValue(field, writer)
 			if err != nil {
 				return err
 			}
@@ -308,7 +332,7 @@ func (t *textOutputWriter) printFieldValue(parentType, propertyName string, v re
 		if v.IsNil() {
 			fmt.Fprintf(writer, "null")
 		} else {
-			return t.printFieldValue(parentType, propertyName, v.Elem(), writer)
+			return printValue(v.Elem(), writer)
 		}
 	default:
 		if stringer, ok := v.Interface().(fmt.Stringer); ok {

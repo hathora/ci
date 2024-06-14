@@ -28,6 +28,6 @@ Invoke-WebRequest -Uri $downloadUrl -OutFile "$binaryName.exe"
 
 # Install the binary
 Write-Host "Installing $binaryName to $installDir..."
-Move-Item -Path "$binaryName.exe" -Destination $installDir
+Move-Item -Path "$binaryName.exe" -Destination $installDir -Force
 
 Write-Host "Installation complete!"

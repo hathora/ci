@@ -2,6 +2,7 @@ package commands
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"go/version"
 	"math"
@@ -58,48 +59,67 @@ func ConfigFromCLI[T LoadableConfig](key string, cmd *cli.Command) (T, error) {
 	return cfg, nil
 }
 
-type GlobalConfig struct {
-	Token     string
-	BaseURL   string
-	AppID     *string
-	Output    output.FormatWriter
+type VerbosityConfig struct {
 	Verbosity int
 	Log       *zap.Logger
 }
 
-func (c *GlobalConfig) Load(cmd *cli.Command) error {
-	c.Token = cmd.String(tokenFlag.Name)
-	c.BaseURL = cmd.String(hathoraCloudEndpointFlag.Name)
-	appID := cmd.String(appIDFlag.Name)
-	if appID == "" {
-		c.AppID = nil
-	} else {
-		c.AppID = &appID
-	}
-
-	outputType := cmd.String(outputTypeFlag.Name)
-	switch output.ParseOutputType(outputType) {
-	case output.JSON:
-		c.Output = output.JSONFormat(cmd.Bool(outputPrettyFlag.Name))
-	case output.Text:
-		c.Output = BuildTextFormatter()
-	case output.Value:
-		splitValue := strings.Split(outputType, "=")
-		if len(splitValue) != 2 {
-			return fmt.Errorf("invalid value format: %s", outputType)
-		}
-		c.Output = output.ValueFormat(splitValue[1])
-	default:
-		return fmt.Errorf("unsupported output type: %s", outputType)
-	}
-
+func (c *VerbosityConfig) Load(cmd *cli.Command) error {
 	// we subtract 1 because the flag is counted an additional time for the
 	// --verbose alias
 	verboseCount := cmd.Count(verboseFlag.Name) - 1
 	verbosity := cmd.Int(verbosityFlag.Name)
 	c.Verbosity = int(math.Max(float64(verbosity), float64(verboseCount)))
-	c.Log = zap.L().With(zap.String("app.id", appID))
 	return nil
+}
+
+func (c *VerbosityConfig) New() LoadableConfig {
+	return &VerbosityConfig{}
+}
+
+var (
+	verbosityConfigKey = "commands.VerbosityConfig.DI"
+)
+
+func VerbosityConfigFrom(cmd *cli.Command) (*VerbosityConfig, error) {
+	cfg, err := ConfigFromCLI[*VerbosityConfig](verbosityConfigKey, cmd)
+	if err != nil {
+		return nil, err
+	}
+	return cfg, nil
+}
+
+type GlobalConfig struct {
+	*VerbosityConfig
+	Token   string
+	BaseURL string
+	AppID   *string
+}
+
+func (c *GlobalConfig) Load(cmd *cli.Command) error {
+	verbosityConfig, err := VerbosityConfigFrom(cmd)
+	if err != nil {
+		return err
+	}
+	c.VerbosityConfig = verbosityConfig
+	c.Token = cmd.String(tokenFlag.Name)
+	if c.Token == "" {
+		err = errors.Join(err, missingRequiredFlag(tokenFlag.Name))
+	}
+	c.BaseURL = cmd.String(hathoraCloudEndpointFlag.Name)
+	if c.BaseURL == "" {
+		err = errors.Join(err, missingRequiredFlag(hathoraCloudEndpointFlag.Name))
+	}
+
+	appID := cmd.String(appIDFlag.Name)
+	if appID == "" {
+		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+	} else {
+		c.AppID = &appID
+	}
+	c.Log = zap.L().With(zap.String("app.id", appID))
+
+	return err
 }
 
 func (c *GlobalConfig) New() LoadableConfig {
@@ -120,11 +140,29 @@ func GlobalConfigFrom(cmd *cli.Command) (*GlobalConfig, error) {
 
 func isCallForHelp(cmd *cli.Command) bool {
 	for _, arg := range cmd.Args().Slice() {
-		if arg == "--help" || arg == "-h" {
+		if arg == "--help" || arg == "-h" || arg == "help" {
 			return true
 		}
 	}
 	return false
+}
+
+func OutputFormatterFor(cmd *cli.Command, outputType any) (output.FormatWriter, error) {
+	outputFmt := cmd.String(outputFlag.Name)
+	switch output.ParseOutputType(outputFmt) {
+	case output.JSON:
+		return output.JSONFormat(cmd.Bool(outputPrettyFlag.Name)), nil
+	case output.Text:
+		return BuildTextFormatter(), nil
+	case output.Value:
+		fieldName := strings.TrimSuffix(outputFmt, "Value")
+		if len(fieldName) == 0 {
+			return nil, fmt.Errorf("invalid value format: %s", outputType)
+		}
+		return output.ValueFormat(outputType, fieldName)
+	default:
+		return nil, fmt.Errorf("unsupported output type: %s", outputType)
+	}
 }
 
 func BuildTextFormatter() output.FormatWriter {

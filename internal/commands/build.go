@@ -82,7 +82,7 @@ var Build = &cli.Command{
 					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
-				created, err := doBuildCreate(ctx, build)
+				created, err := doBuildCreate(ctx, build.SDK, build.AppID, build.BuildTag, build.FilePath)
 				if err != nil {
 					return err
 				}
@@ -119,24 +119,24 @@ var Build = &cli.Command{
 	},
 }
 
-func doBuildCreate(ctx context.Context, build *CreateBuildConfig) (*shared.Build, error) {
-	createRes, err := build.SDK.BuildV2.CreateBuild(
+func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTag, filePath string) (*shared.Build, error) {
+	createRes, err := hathora.BuildV2.CreateBuild(
 		ctx,
 		shared.CreateBuildParams{
-			BuildTag: sdk.String(build.BuildTag),
+			BuildTag: sdk.String(buildTag),
 		},
-		build.AppID,
+		appID,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a build: %w", err)
 	}
 
-	file, err := archive.RequireTGZ(build.FilePath)
+	file, err := archive.RequireTGZ(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("no build file available for run: %w", err)
 	}
 
-	runRes, err := build.SDK.BuildV2.RunBuild(
+	runRes, err := hathora.BuildV2.RunBuild(
 		ctx,
 		createRes.Build.BuildID,
 		operations.RunBuildRequestBody{
@@ -145,7 +145,7 @@ func doBuildCreate(ctx context.Context, build *CreateBuildConfig) (*shared.Build
 				Content:  file.Content,
 			},
 		},
-		build.AppID,
+		appID,
 	)
 
 	if err != nil {
@@ -211,7 +211,8 @@ var (
 
 type BuildConfig struct {
 	*GlobalConfig
-	SDK *sdk.SDK
+	SDK    *sdk.SDK
+	Output output.FormatWriter
 }
 
 var _ LoadableConfig = (*BuildConfig)(nil)
@@ -223,6 +224,12 @@ func (c *BuildConfig) Load(cmd *cli.Command) error {
 	}
 	c.GlobalConfig = global
 	c.SDK = setup.SDK(c.Token, c.BaseURL, c.Verbosity)
+	var build shared.Build
+	output, err := OutputFormatterFor(cmd, build)
+	if err != nil {
+		return err
+	}
+	c.Output = output
 	return nil
 }
 
