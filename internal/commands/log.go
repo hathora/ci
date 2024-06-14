@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 
@@ -52,7 +51,7 @@ var Log = &cli.Command{
 			return fmt.Errorf("failed to get logs: %w", err)
 		}
 
-		err = output.StreamOutput(res.Stream, os.Stderr)
+		err = output.StreamOutput(res.Stream, os.Stdout)
 		if err != nil {
 			zap.L().Error("failed to stream output to console", zap.Error(err))
 		}
@@ -73,7 +72,7 @@ var (
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(logFlagEnvVar("FOLLOW")),
 			altsrc.ConfigFile(configFlag.Name, "log.follow")),
-		Usage:      "to streams logs in real time",
+		Usage:      "whether to stream logs in real time",
 		Value:      false,
 		Category:   "Log:",
 		Persistent: true,
@@ -87,7 +86,7 @@ var (
 			altsrc.ConfigFile(configFlag.Name, "log.process-id"),
 		),
 		Category: "Log:",
-		Usage:    "system generated unique identifier to a runtime instance of your game server",
+		Usage:    "`<id>` of the runtime instance of your game server",
 	}
 
 	tailLinesFlag = &workaround.IntFlag{
@@ -96,7 +95,7 @@ var (
 			cli.EnvVar(buildFlagEnvVar("TAIL_LINES")),
 			altsrc.ConfigFile(configFlag.Name, "log.tail-lines"),
 		),
-		Usage:      "number of lines to return from most recent logs history.",
+		Usage:      "`<number>` of lines to return from the most recent log history",
 		Value:      100,
 		Category:   "Log:",
 		Persistent: true,
@@ -162,8 +161,5 @@ func ProcessLogConfigFrom(cmd *cli.Command) (*ProcessLogConfig, error) {
 }
 
 func (c *ProcessLogConfig) Validate() error {
-	var err error
-	err = errors.Join(err, requireIntInRange(c.TailLines, minTailLines, maxTailLines, tailLinesFlag.Name))
-
-	return err
+	return requireIntInRange(c.TailLines, minTailLines, maxTailLines, tailLinesFlag.Name)
 }
