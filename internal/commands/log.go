@@ -87,7 +87,7 @@ var (
 			altsrc.ConfigFile(configFlag.Name, "log.process-id"),
 		),
 		Category: "Log:",
-		Usage:    "System generated unique identifier to a runtime instance of your game server",
+		Usage:    "system generated unique identifier to a runtime instance of your game server",
 	}
 
 	tailLinesFlag = &workaround.IntFlag{
@@ -96,7 +96,7 @@ var (
 			cli.EnvVar(buildFlagEnvVar("TAIL_LINES")),
 			altsrc.ConfigFile(configFlag.Name, "log.tail-lines"),
 		),
-		Usage:      "Number of lines to return from most recent logs history.",
+		Usage:      "number of lines to return from most recent logs history.",
 		Value:      100,
 		Category:   "Log:",
 		Persistent: true,
