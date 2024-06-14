@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/shorthand"
 	"github.com/urfave/cli/v3"
+	"go.uber.org/zap"
 )
 
 var Deploy = &cli.Command{
@@ -53,7 +53,7 @@ var Deploy = &cli.Command{
 			return err
 		}
 
-		createdBuild, err := doBuildCreate(ctx, deploy.CreateBuildConfig)
+		createdBuild, err := doBuildCreate(ctx, deploy.SDK, deploy.AppID, deploy.BuildTag, deploy.FilePath)
 		if err != nil {
 			return err
 		}
@@ -86,46 +86,23 @@ var (
 )
 
 type DeployConfig struct {
-	*CreateBuildConfig
-	IdleTimeoutEnabled       *bool
-	RoomsPerProcess          int
-	TransportType            shared.TransportType
-	ContainerPort            int
-	RequestedMemoryMB        float64
-	RequestedCPU             float64
-	AdditionalContainerPorts []shared.ContainerPort
-	Env                      []shared.DeploymentConfigV2Env
+	*CreateDeploymentConfig
+	BuildTag string
+	FilePath string
 }
 
 var _ LoadableConfig = (*DeployConfig)(nil)
 
 func (c *DeployConfig) Load(cmd *cli.Command) error {
-	build, err := CreateBuildConfigFrom(cmd)
+	deployment, err := CreateDeploymentConfigFrom(cmd)
 	if err != nil {
 		return err
 	}
-	c.CreateBuildConfig = build
+	c.CreateDeploymentConfig = deployment
 
-	c.RoomsPerProcess = int(cmd.Int(roomsPerProcessFlag.Name))
-	c.TransportType = shared.TransportType(cmd.String(transportTypeFlag.Name))
-	c.ContainerPort = int(cmd.Int(containerPortFlag.Name))
-	c.RequestedMemoryMB = cmd.Float(requestedMemoryFlag.Name)
-	c.RequestedCPU = cmd.Float(requestedCPUFlag.Name)
-	c.IdleTimeoutEnabled = sdk.Bool(cmd.Bool(idleTimeoutFlag.Name))
-
-	addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
-	parsedAddlPorts, err := parseContainerPorts(addlPorts)
-	if err != nil {
-		return fmt.Errorf("invalid additional container ports: %w", err)
-	}
-	c.AdditionalContainerPorts = parsedAddlPorts
-
-	envVars := cmd.StringSlice(envVarsFlag.Name)
-	env, err := parseEnvVars(envVars)
-	if err != nil {
-		return fmt.Errorf("invalid environment variables: %w", err)
-	}
-	c.Env = env
+	c.BuildTag = cmd.String(buildTagFlag.Name)
+	c.FilePath = cmd.String(fileFlag.Name)
+	c.Log = c.Log.With(zap.String("build.tag", c.BuildTag))
 
 	return nil
 }

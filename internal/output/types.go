@@ -24,7 +24,7 @@ func (o Type) String() string {
 
 func ParseOutputType(s string) Type {
 	lowercaseOutputType := strings.ToLower(s)
-	if strings.HasPrefix(lowercaseOutputType, "value=") {
+	if strings.HasSuffix(lowercaseOutputType, "value") {
 		return Value
 	}
 	switch lowercaseOutputType {

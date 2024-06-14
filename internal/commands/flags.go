@@ -7,17 +7,18 @@ import (
 )
 
 var (
-	outputTypeFlag = &cli.StringFlag{
+	outputFlag = &cli.StringFlag{
 		Name:    "output",
 		Aliases: []string{"o"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(globalFlagEnvVar("OUTPUT")),
 			altsrc.ConfigFile(configFlag.Name, "global.output"),
 		),
-		Usage:      "the `<format>` of the output. Supported values: (json, text, value=buildId)",
-		Value:      "text",
-		Persistent: true,
-		Category:   "Global:",
+		Usage:       "the `<format>` of the output. Supported values: (json, text, buildIdValue)",
+		Value:       "text",
+		DefaultText: "text",
+		Persistent:  true,
+		Category:    "Global:",
 	}
 
 	outputPrettyFlag = &cli.BoolFlag{
@@ -38,7 +39,6 @@ var (
 		Usage:      "the `<id>` of the app in Hathora",
 		Category:   "Global:",
 		Persistent: true,
-		Required:   true,
 	}
 
 	verboseFlag = &cli.BoolFlag{
@@ -68,6 +68,7 @@ var (
 			altsrc.ConfigFile(configFlag.Name, "global.cloud-endpoint"),
 		),
 		Usage:       "override the default API base `<url>`",
+		Value:       "https://api.hathora.dev",
 		DefaultText: "https://api.hathora.dev",
 		Category:    "Global:",
 		Persistent:  true,
@@ -80,7 +81,6 @@ var (
 		Usage:      "`<access-token>` for authenticating with the API",
 		Category:   "Global:",
 		Persistent: true,
-		Required:   true,
 	}
 
 	configFlag = &cli.StringFlag{
@@ -95,7 +95,7 @@ var (
 		appIDFlag,
 		hathoraCloudEndpointFlag,
 		tokenFlag,
-		outputTypeFlag,
+		outputFlag,
 		outputPrettyFlag,
 		verboseFlag,
 		verbosityFlag,

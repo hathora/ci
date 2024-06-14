@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/hathora/ci/internal/commands/altsrc"
+	"github.com/hathora/ci/internal/output"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/setup"
@@ -313,7 +314,8 @@ var (
 
 type DeploymentConfig struct {
 	*GlobalConfig
-	SDK *sdk.SDK
+	SDK    *sdk.SDK
+	Output output.FormatWriter
 }
 
 var _ LoadableConfig = (*DeploymentConfig)(nil)
@@ -324,7 +326,14 @@ func (c *DeploymentConfig) Load(cmd *cli.Command) error {
 		return err
 	}
 	c.GlobalConfig = global
+
 	c.SDK = setup.SDK(c.Token, c.BaseURL, c.Verbosity)
+	var deployment shared.DeploymentV2
+	output, err := OutputFormatterFor(cmd, deployment)
+	if err != nil {
+		return err
+	}
+	c.Output = output
 	return nil
 }
 

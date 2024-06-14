@@ -14,22 +14,33 @@ var (
 	BuildVersion = "unknown"
 )
 
-func App() *cli.Command {
+func init() {
 	cli.VersionFlag = &cli.BoolFlag{
-		Name:  "version",
-		Usage: "print the version",
+		Name:     "version",
+		Usage:    "print the version",
+		Category: "Global:",
 	}
 
+	cli.HelpFlag = &cli.BoolFlag{
+		Name:     "help",
+		Aliases:  []string{"h"},
+		Usage:    "show help",
+		Category: "Global:",
+	}
+}
+
+func App() *cli.Command {
 	var cleanup []func()
 	return &cli.Command{
-		Name:                   "hathora",
-		EnableShellCompletion:  true,
-		Suggest:                true,
-		UseShortOptionHandling: true,
-		SliceFlagSeparator:     ",",
-		Usage:                  "a CLI tool for for CI/CD workflows to manage deployments and builds in hathora.dev",
-		Flags:                  GlobalFlags,
-		Version:                BuildVersion,
+		Name:                          "hathora",
+		EnableShellCompletion:         true,
+		Suggest:                       true,
+		UseShortOptionHandling:        true,
+		SliceFlagSeparator:            ",",
+		Usage:                         "a CLI tool for for CI/CD workflows to manage deployments and builds in hathora.dev",
+		Flags:                         GlobalFlags,
+		Version:                       BuildVersion,
+		CustomRootCommandHelpTemplate: cli.SubcommandHelpTemplate,
 		Before: func(ctx context.Context, cmd *cli.Command) error {
 			handleNewVersionAvailable(BuildVersion)
 
@@ -40,7 +51,7 @@ func App() *cli.Command {
 			if err != nil {
 				return err
 			}
-			cfg, err := GlobalConfigFrom(cmd)
+			cfg, err := VerbosityConfigFrom(cmd)
 			if err != nil {
 				return err
 			}
