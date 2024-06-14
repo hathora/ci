@@ -64,6 +64,7 @@ func App() *cli.Command {
 			Build,
 			Deploy,
 			Deployment,
+			Log,
 		},
 		After: func(ctx context.Context, c *cli.Command) error {
 			for _, fn := range cleanup {
