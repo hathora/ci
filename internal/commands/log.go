@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 
@@ -95,7 +96,7 @@ var (
 			cli.EnvVar(buildFlagEnvVar("TAIL_LINES")),
 			altsrc.ConfigFile(configFlag.Name, "log.tail-lines"),
 		),
-		Usage:      "`<number>` of lines to return from the most recent log history",
+		Usage:      "`<number>` of lines to return from the most recent log history (1-5000)",
 		Value:      100,
 		Category:   "Log:",
 		Persistent: true,
@@ -161,5 +162,12 @@ func ProcessLogConfigFrom(cmd *cli.Command) (*ProcessLogConfig, error) {
 }
 
 func (c *ProcessLogConfig) Validate() error {
-	return requireIntInRange(c.TailLines, minTailLines, maxTailLines, tailLinesFlag.Name)
+	var err error
+	err = errors.Join(err, requireIntInRange(c.TailLines, minTailLines, maxTailLines, tailLinesFlag.Name))
+
+	if c.ProcessID == "" {
+		err = errors.Join(err, missingRequiredFlag(processIDFlag.Name))
+	}
+
+	return err
 }
