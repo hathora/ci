@@ -95,7 +95,7 @@ var (
 			cli.EnvVar(buildFlagEnvVar("TAIL_LINES")),
 			altsrc.ConfigFile(configFlag.Name, "log.tail-lines"),
 		),
-		Usage:      "`<number>` of lines to return from the most recent log history",
+		Usage:      "`<number>` of lines to return from the most recent log history (1-5000)",
 		Value:      100,
 		Category:   "Log:",
 		Persistent: true,
