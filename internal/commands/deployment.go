@@ -29,7 +29,6 @@ var (
 	maxCPU                = float64(4)
 	minMemoryMB           = float64(1024)
 	maxMemoryMB           = float64(8192)
-	memoryMBPerCPU        = float64(2048)
 )
 
 var Deployment = &cli.Command{
