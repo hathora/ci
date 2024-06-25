@@ -175,10 +175,6 @@ func (c *DeployConfig) Validate() error {
 	err = errors.Join(err, requireFloatInRange(c.RequestedCPU, minCPU, maxCPU, requestedCPUFlag.Name))
 	err = errors.Join(err, requireMaxDecimals(c.RequestedCPU, maxCPUDecimalPlaces, requestedCPUFlag.Name))
 
-	if c.RequestedMemoryMB != (c.RequestedCPU * memoryMBPerCPU) {
-		err = errors.Join(err, invalidMemoryToCPURatio(c.RequestedMemoryMB, c.RequestedCPU))
-	}
-
 	return err
 }
 

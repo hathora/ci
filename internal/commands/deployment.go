@@ -29,7 +29,6 @@ var (
 	maxCPU                = float64(4)
 	minMemoryMB           = float64(1024)
 	maxMemoryMB           = float64(8192)
-	memoryMBPerCPU        = float64(2048)
 )
 
 var Deployment = &cli.Command{
@@ -504,10 +503,6 @@ func (c *CreateDeploymentConfig) Validate() error {
 
 	err = errors.Join(err, requireFloatInRange(c.RequestedCPU, minCPU, maxCPU, requestedCPUFlag.Name))
 	err = errors.Join(err, requireMaxDecimals(c.RequestedCPU, maxCPUDecimalPlaces, requestedCPUFlag.Name))
-
-	if c.RequestedMemoryMB != (c.RequestedCPU * memoryMBPerCPU) {
-		err = errors.Join(err, invalidMemoryToCPURatio(c.RequestedMemoryMB, c.RequestedCPU))
-	}
 
 	return err
 }
