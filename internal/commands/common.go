@@ -194,13 +194,12 @@ func BuildTextFormatter() output.FormatWriter {
 			"RequestedMemoryMB",
 			"DefaultContainerPort",
 			"AdditionalContainerPorts",
-			"Env",
 		),
 		output.RenameField(deployment, "RequestedMemoryMB", "RequestedMemory"),
 		output.WithPropertyFormatter(deployment, "RequestedMemoryMB", func(f float64) string {
 			return humanize.IBytes((uint64)(f * 1024 * 1024))
 		}),
-		output.WithoutFields(deployment, "AppID", "CreatedBy"),
+		output.WithoutFields(deployment, "AppID", "CreatedBy", "Env"),
 		output.WithFormatter(envVar,
 			func(e shared.DeploymentV2Env) string {
 				return fmt.Sprintf("%s=%s", e.Name, e.Value)

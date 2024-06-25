@@ -86,7 +86,7 @@ func Test_CreateTGZ(t *testing.T) {
 				}
 			}
 
-			archivePath, err := archive.CreateTGZ(srcFolder)
+			archivePath, err := archive.CreateTGZ(srcFolder, "tgz")
 			if tt.shouldFail {
 				assert.Error(err)
 				return
@@ -134,6 +134,80 @@ func Test_CreateTGZ(t *testing.T) {
 				assert.True(found, "Expected file %s not found in archive", path)
 				assert.Equal(expectedContent, content, "File content mismatch for %s", path)
 			}
+		})
+	}
+}
+
+func Test_RequireTGZ(t *testing.T) {
+	zapLogger, _ := zap.NewDevelopment()
+	zap.ReplaceGlobals(zapLogger)
+	tests := []struct {
+		name             string
+		files            map[string]string
+		archiveExt       string
+		precreateArchive bool
+	}{
+		{
+			name: "existing .tgz",
+			files: map[string]string{
+				"file1.txt": "This is file 1",
+			},
+			archiveExt:       "tgz",
+			precreateArchive: true,
+		},
+		{
+			name: "existing .tar.gz",
+			files: map[string]string{
+				"file1.txt": "This is file 1",
+			},
+			archiveExt:       "tar.gz",
+			precreateArchive: true,
+		},
+		{
+			name: "existing .tar.tgz",
+			files: map[string]string{
+				"file1.txt": "This is file 1",
+			},
+			archiveExt:       "tar.tgz",
+			precreateArchive: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert := assert.New(t)
+
+			srcFolder, err := os.MkdirTemp("", "testsrc")
+			require.NoError(t, err)
+			t.Cleanup(func() {
+				os.RemoveAll(srcFolder)
+			})
+
+			for path, content := range tt.files {
+				fullPath := filepath.Join(srcFolder, path)
+				if strings.HasSuffix(path, "/") {
+					require.NoError(t, os.MkdirAll(fullPath, os.ModePerm))
+				} else {
+					err := os.MkdirAll(filepath.Dir(fullPath), os.ModePerm)
+					require.NoError(t, err)
+					err = os.WriteFile(fullPath, []byte(content), 0644)
+					require.NoError(t, err)
+				}
+			}
+
+			var archivePath string
+			if tt.precreateArchive {
+				archivePath, err = archive.CreateTGZ(srcFolder, tt.archiveExt)
+				require.NoError(t, err)
+				t.Cleanup(func() {
+					os.Remove(archivePath)
+				})
+			}
+
+			tgzFile, err := archive.RequireTGZ(archivePath)
+			require.NoError(t, err)
+			require.NotNil(t, tgzFile)
+			assert.Equal(archivePath, tgzFile.Path)
 		})
 	}
 }

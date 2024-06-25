@@ -13,7 +13,7 @@ For documentation on how to use this CLI, check out our [docs.](https://hathora.
 To run the CLI locally, execute the following:
 
 ```sh
-go run cmd/main.go --help
+go run hathora.go --help
 ```
 
 ### Running tests
@@ -37,6 +37,14 @@ The target OS and architecture can be specified by setting the `OS` and `ARCH` e
 ```sh
 TARGETOS=linux TARGETARCH=amd64 make build
 ```
+
+> [!NOTE]
+> When building on windows you'll want the built binaries to include the `.exe` suffix. To achieve this, you can use the `BINARY_SUFFIX`
+> variable, e.g.:
+>
+> ```sh
+> TARGETOS=windows TARGETARCH=amd64 BINARY_SUFFIX=.exe make build
+> ```
 
 The binary will be available in the `bin` directory.
 
