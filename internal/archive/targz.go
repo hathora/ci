@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 
 	"github.com/h2non/filetype"
 	"github.com/monochromegane/go-gitignore"
@@ -47,9 +48,9 @@ func shouldIgnoreFilepath(filepath string, isDir bool, matchers []gitignore.Igno
 	return anyMatches
 }
 
-func CreateTGZ(srcFolder string) (string, error) {
+func CreateTGZ(srcFolder string, ext string) (string, error) {
 	fileName := filepath.Base(filepath.Clean(srcFolder))
-	destinationFile := fmt.Sprintf("%s.*.tgz", fileName)
+	destinationFile := fmt.Sprintf("%s.*.%s", fileName, ext)
 	tarGzFile, err := os.CreateTemp("", destinationFile)
 	if err != nil {
 		return "", err
@@ -74,6 +75,10 @@ func CreateTGZ(srcFolder string) (string, error) {
 	err = filepath.Walk(srcFolder, func(filePath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
+		}
+
+		if !info.Mode().IsRegular() {
+			return nil
 		}
 
 		relPath, err := filepath.Rel(srcFolder, filePath)
@@ -115,7 +120,7 @@ func CreateTGZ(srcFolder string) (string, error) {
 			return fmt.Errorf("expected to write %d bytes but wrote %d bytes for file %s", info.Size(), written, filePath)
 		}
 
-		zap.L().Debug("Inlcluding file: " + relPath)
+		zap.L().Debug("Including file: " + relPath)
 		return nil
 	})
 
@@ -151,17 +156,30 @@ func isTGZ(filePath string) (bool, error) {
 		return false, fmt.Errorf("could not read file: %s", filePath)
 	}
 
-	if filetype.IsArchive(buff) {
-		fileExt := filepath.Ext(filePath)
-		if !slices.Contains(supportedFileExtensions, fileExt) {
-			err := fmt.Errorf("unsupported archive file extension: %s", fileExt)
-			return false, err
-		}
-
-		return true, nil
+	if !filetype.IsArchive(buff) {
+		return false, nil
 	}
 
-	return false, nil
+	var fileExtParts []string
+	for {
+		ext := filepath.Ext(filePath)
+		if ext == "" {
+			break
+		}
+		fileExtParts = append(fileExtParts, ext)
+		filePath = filePath[:len(filePath)-len(ext)]
+	}
+	slices.Reverse(fileExtParts)
+
+	var fileExt string
+	for i := 0; i < len(fileExtParts); i++ {
+		fileExt = strings.Join(fileExtParts[i:], "")
+		if slices.Contains(supportedFileExtensions, fileExt) {
+			return true, nil
+		}
+	}
+
+	return false, fmt.Errorf("unsupported archive file extension: %s", fileExt)
 }
 
 func RequireTGZ(srcFolder string) (*TGZFile, error) {
@@ -187,7 +205,7 @@ func RequireTGZ(srcFolder string) (*TGZFile, error) {
 
 	zap.L().Debug(srcFolder + " is not a gzipped tar archive. Archiving and compressing now.")
 
-	destFile, err := CreateTGZ(srcFolder)
+	destFile, err := CreateTGZ(srcFolder, "tgz")
 	if err != nil {
 		return nil, err
 	}

@@ -130,12 +130,13 @@ jobs:
           TARGETOS: ${{ matrix.os }}
           TARGETARCH: ${{ matrix.arch }}
           BUILD_VERSION: ${{ needs.prepare.outputs.version }}
+          BINARY_SUFFIX: ${{ matrix.os == 'windows' && '.exe' || '' }}
         run: make build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: hathora-${{ matrix.os }}-${{ matrix.arch }}
+          name: hathora-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.os == 'windows' && '.exe' || '' }}
           path: bin/hathora-*
 
   release:
