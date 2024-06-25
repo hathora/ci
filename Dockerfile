@@ -8,7 +8,7 @@ RUN go mod download
 
 # copy source
 COPY Makefile Makefile
-COPY hathora.go hathora.go
+COPY hathora hathora
 COPY internal internal
 
 ARG TARGETOS
