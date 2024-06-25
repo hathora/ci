@@ -13,7 +13,7 @@ For documentation on how to use this CLI, check out our [docs.](https://hathora.
 To run the CLI locally, execute the following:
 
 ```sh
-go run hathora.go --help
+go run hathora/main.go --help
 ```
 
 ### Running tests

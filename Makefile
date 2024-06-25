@@ -22,7 +22,7 @@ build: ## Build the command binaries.
     go build \
         -o bin/hathora-${TARGETOS}-${TARGETARCH}${BINARY_SUFFIX} \
         -ldflags "-X 'github.com/hathora/ci/internal/commands.BuildVersion=${BUILD_VERSION}'" \
-        hathora.go
+        hathora/main.go
 
 .PHONY: sdk-clean
 sdk-clean: ## Re-generate the SDK using speakeasyapi.dev
