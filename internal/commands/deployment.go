@@ -410,7 +410,6 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 	c.ContainerPort = int(cmd.Int(containerPortFlag.Name))
 	c.RequestedMemoryMB = cmd.Float(requestedMemoryFlag.Name)
 	c.RequestedCPU = cmd.Float(requestedCPUFlag.Name)
-	c.IdleTimeoutEnabled = sdk.Bool(cmd.Bool(idleTimeoutFlag.Name))
 
 	addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
 	parsedAddlPorts, err := parseContainerPorts(addlPorts)

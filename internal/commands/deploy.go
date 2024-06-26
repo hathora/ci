@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"github.com/hathora/ci/internal/shorthand"
 	"github.com/urfave/cli/v3"
 	"go.uber.org/zap"
+
+	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/shorthand"
 )
 
 var Deploy = &cli.Command{
