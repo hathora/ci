@@ -45,7 +45,7 @@ var Deploy = &cli.Command{
 				return fmt.Errorf("unable to retrieve latest deployment: %w", err)
 			}
 
-			deploy.Merge(res.DeploymentV2)
+			deploy.Merge(res.DeploymentV2, cmd.IsSet(idleTimeoutFlag.Name))
 		}
 
 		if err := deploy.Validate(); err != nil {
@@ -108,14 +108,19 @@ func (c *DeployConfig) Load(cmd *cli.Command) error {
 	return nil
 }
 
-func (c *DeployConfig) Merge(latest *shared.DeploymentV2) {
+func (c *DeployConfig) Merge(latest *shared.DeploymentV2, isIdleTimeoutDefault bool) {
 	if latest == nil {
 		return
 	}
 
-	if c.IdleTimeoutEnabled == nil {
+	zap.L().Warn("Second round",
+		zap.Bool("isDefault", isIdleTimeoutDefault),
+		zap.Bool("Latest", latest.IdleTimeoutEnabled))
+	if !isIdleTimeoutDefault {
 		c.IdleTimeoutEnabled = &latest.IdleTimeoutEnabled
 	}
+
+	zap.L().Warn("Final", zap.Bool("idle timeout", *c.IdleTimeoutEnabled))
 
 	if c.RoomsPerProcess == 0 {
 		c.RoomsPerProcess = latest.RoomsPerProcess
