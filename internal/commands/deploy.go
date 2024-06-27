@@ -113,14 +113,9 @@ func (c *DeployConfig) Merge(latest *shared.DeploymentV2, isIdleTimeoutDefault b
 		return
 	}
 
-	zap.L().Warn("Second round",
-		zap.Bool("isDefault", isIdleTimeoutDefault),
-		zap.Bool("Latest", latest.IdleTimeoutEnabled))
 	if !isIdleTimeoutDefault {
 		c.IdleTimeoutEnabled = &latest.IdleTimeoutEnabled
 	}
-
-	zap.L().Warn("Final", zap.Bool("idle timeout", *c.IdleTimeoutEnabled))
 
 	if c.RoomsPerProcess == 0 {
 		c.RoomsPerProcess = latest.RoomsPerProcess

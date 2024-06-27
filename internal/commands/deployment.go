@@ -405,9 +405,6 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 	// Passed in as an argument
 	// From latest deployment config (if from-latest is true)
 	// Default true
-	zap.L().Warn("FLAG",
-		zap.Any("is set", cmd.IsSet(idleTimeoutFlag.Name)),
-		zap.Any("value", cmd.Bool(idleTimeoutFlag.Name)))
 	if cmd.IsSet(idleTimeoutFlag.Name) {
 		idleTimeoutEnabled := cmd.Bool(idleTimeoutFlag.Name)
 		c.IdleTimeoutEnabled = &idleTimeoutEnabled
@@ -416,7 +413,6 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 		c.IdleTimeoutEnabled = &idleTimeoutEnabled
 	}
 
-	zap.L().Warn("First round value", zap.Bool("idle timeout enabled", *c.IdleTimeoutEnabled))
 	c.RoomsPerProcess = int(cmd.Int(roomsPerProcessFlag.Name))
 	c.TransportType = shared.TransportType(cmd.String(transportTypeFlag.Name))
 	c.ContainerPort = int(cmd.Int(containerPortFlag.Name))
