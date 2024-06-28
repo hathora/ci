@@ -45,7 +45,7 @@ var Deploy = &cli.Command{
 				return fmt.Errorf("unable to retrieve latest deployment: %w", err)
 			}
 
-			deploy.Merge(res.DeploymentV2)
+			deploy.Merge(res.DeploymentV2, cmd.IsSet(idleTimeoutFlag.Name))
 		}
 
 		if err := deploy.Validate(); err != nil {
@@ -108,12 +108,12 @@ func (c *DeployConfig) Load(cmd *cli.Command) error {
 	return nil
 }
 
-func (c *DeployConfig) Merge(latest *shared.DeploymentV2) {
+func (c *DeployConfig) Merge(latest *shared.DeploymentV2, isIdleTimeoutDefault bool) {
 	if latest == nil {
 		return
 	}
 
-	if c.IdleTimeoutEnabled == nil {
+	if !isIdleTimeoutDefault {
 		c.IdleTimeoutEnabled = &latest.IdleTimeoutEnabled
 	}
 

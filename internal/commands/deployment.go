@@ -197,7 +197,6 @@ var (
 			cli.EnvVar(deploymentEnvVar("IDLE_TIMEOUT_ENABLED")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.idle-timeout-enabled"),
 		),
-		Value:      false,
 		Usage:      "whether to shut down processes that have had no new connections or rooms for five minutes",
 		Persistent: true,
 		Category:   "Deployment:",
@@ -401,10 +400,19 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 
 	c.DeploymentConfig = deployment
 	c.BuildID = int(cmd.Int(buildIDFlag.Name))
+
+	// Value of the idleTimeoutFlag by priority, high to low
+	// Passed in as an argument
+	// From latest deployment config (if from-latest is true)
+	// Default true
 	if cmd.IsSet(idleTimeoutFlag.Name) {
 		idleTimeoutEnabled := cmd.Bool(idleTimeoutFlag.Name)
 		c.IdleTimeoutEnabled = &idleTimeoutEnabled
+	} else {
+		idleTimeoutEnabled := true
+		c.IdleTimeoutEnabled = &idleTimeoutEnabled
 	}
+
 	c.RoomsPerProcess = int(cmd.Int(roomsPerProcessFlag.Name))
 	c.TransportType = shared.TransportType(cmd.String(transportTypeFlag.Name))
 	c.ContainerPort = int(cmd.Int(containerPortFlag.Name))
