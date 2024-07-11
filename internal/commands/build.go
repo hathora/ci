@@ -325,36 +325,30 @@ func OneBuildConfigFrom(cmd *cli.Command) (*OneBuildConfig, error) {
 }
 
 func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, filePath string) error {
-	// Open the file
 	file, err := os.Open(filePath)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	// Get the file size
 	fileInfo, err := file.Stat()
 	if err != nil {
 		return err
 	}
 	fileSize := fileInfo.Size()
 
-	// Create a buffer to hold the multipart form data
 	var requestBody bytes.Buffer
 	multipartWriter := multipart.NewWriter(&requestBody)
 
-	// Add the form fields
 	for _, param := range uploadBodyParams {
 		_ = multipartWriter.WriteField(param.Key, param.Value)
 	}
 
-	// Add the file field
 	fileWriter, err := multipartWriter.CreateFormFile("file", fileInfo.Name())
 	if err != nil {
 		return err
 	}
 
-	// Create a progress tracking reader
 	progressReader := &progressReader{
 		reader: file,
 		total:  fileSize,
@@ -363,24 +357,20 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 		},
 	}
 
-	// Copy the file data to the form file field
 	_, err = io.Copy(fileWriter, progressReader)
 	if err != nil {
 		return err
 	}
 	print("\n")
 
-	// Close the multipart writer to finalize the request body
 	multipartWriter.Close()
 
-	// Create the HTTP request
 	req, err := http.NewRequest("POST", uploadUrl, &requestBody)
 	if err != nil {
 		return err
 	}
 	req.Header.Set("Content-Type", multipartWriter.FormDataContentType())
 
-	// Perform the request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -388,7 +378,6 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 	}
 	defer resp.Body.Close()
 
-	// Check the response status
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return fmt.Errorf("upload failed with status: %s", resp.Status)
 	}
