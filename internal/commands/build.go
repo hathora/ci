@@ -140,9 +140,7 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		return nil, fmt.Errorf("no build file available for run: %w", err)
 	}
 
-	uploadBodyParams := createRes.BuildWithUploadURL.UploadBodyParams
-
-	uploadToUrl(createRes.BuildWithUploadURL.UploadURL, uploadBodyParams, file.Path)
+	uploadToUrl(createRes.BuildWithUploadURL.UploadURL, createRes.BuildWithUploadURL.UploadBodyParams, file.Path)
 
 	runRes, err := hathora.BuildV2.RunBuild(
 		ctx,
