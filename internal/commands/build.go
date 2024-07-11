@@ -167,12 +167,6 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		zap.L().Error("failed to stream output to console", zap.Error(err))
 	}
 
-	//literally the same thing but different types so this cast is necessary
-	regionalContainerTags := make([]shared.RegionalContainerTags, len(createRes.BuildWithUploadURL.RegionalContainerTags))
-	for i, tag := range createRes.BuildWithUploadURL.RegionalContainerTags {
-		regionalContainerTags[i] = shared.RegionalContainerTags(tag)
-	}
-
 	infoRes, err := hathora.BuildV2.GetBuildInfo(
 		ctx,
 		createRes.BuildWithUploadURL.BuildID,
