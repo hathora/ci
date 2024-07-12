@@ -54,7 +54,7 @@ var Deploy = &cli.Command{
 			return err
 		}
 
-		createdBuild, err := doBuildCreate(ctx, deploy.SDK, deploy.AppID, deploy.BuildTag, deploy.FilePath)
+		createdBuild, err := doBuildCreate(ctx, deploy.Log, deploy.SDK, deploy.AppID, deploy.BuildTag, deploy.FilePath)
 		if err != nil {
 			return err
 		}

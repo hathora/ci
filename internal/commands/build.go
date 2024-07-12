@@ -86,7 +86,7 @@ var Build = &cli.Command{
 					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
-				created, err := doBuildCreate(ctx, build.SDK, build.AppID, build.BuildTag, build.FilePath)
+				created, err := doBuildCreate(ctx, build.Log, build.SDK, build.AppID, build.BuildTag, build.FilePath)
 				if err != nil {
 					return err
 				}
@@ -123,7 +123,7 @@ var Build = &cli.Command{
 	},
 }
 
-func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTag, filePath string) (*shared.Build, error) {
+func doBuildCreate(ctx context.Context, logger *zap.Logger, hathora *sdk.SDK, appID *string, buildTag, filePath string) (*shared.Build, error) {
 	createRes, err := hathora.BuildV2.CreateBuildWithUploadURL(
 		ctx,
 		shared.CreateBuildParams{
@@ -140,7 +140,11 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		return nil, fmt.Errorf("no build file available for run: %w", err)
 	}
 
-	err = uploadToUrl(createRes.BuildWithUploadURL.UploadURL, createRes.BuildWithUploadURL.UploadBodyParams, file.Path)
+	if createRes.BuildWithUploadURL == nil {
+		return nil, fmt.Errorf("no build object in response")
+	}
+
+	err = uploadToUrl(createRes.BuildWithUploadURL.UploadURL, createRes.BuildWithUploadURL.UploadBodyParams, file.Path, logger)
 	if err != nil {
 		return nil, fmt.Errorf("failed to upload file: %w", err)
 	}
@@ -321,7 +325,7 @@ func OneBuildConfigFrom(cmd *cli.Command) (*OneBuildConfig, error) {
 	return ConfigFromCLI[*OneBuildConfig](oneBuildConfigKey, cmd)
 }
 
-func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, filePath string) error {
+func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, filePath string, logger *zap.Logger) error {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return err
@@ -350,7 +354,8 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 		reader: file,
 		total:  fileSize,
 		callback: func(percentage float64, loaded int64, total int64) {
-			fmt.Printf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, total)
+			progressLine := fmt.Sprintf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, total)
+			logger.Info(progressLine)
 		},
 	}
 
@@ -358,9 +363,12 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 	if err != nil {
 		return err
 	}
-	print("\n")
+	logger.Info("\n")
 
-	multipartWriter.Close()
+	err = multipartWriter.Close()
+	if err != nil {
+		return err
+	}
 
 	req, err := http.NewRequest("POST", uploadUrl, &requestBody)
 	if err != nil {
