@@ -350,7 +350,7 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 		return err
 	}
 
-	progressReader := &progressReader{
+	progressReader := &progressReaderType{
 		reader: file,
 		total:  fileSize,
 		callback: func(percentage float64, loaded int64, total int64) {
@@ -390,14 +390,14 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 	return nil
 }
 
-type progressReader struct {
+type progressReaderType struct {
 	reader   io.Reader
 	total    int64
 	read     int64
 	callback func(percentage float64, loaded int64, total int64)
 }
 
-func (pr *progressReader) Read(p []byte) (int, error) {
+func (pr *progressReaderType) Read(p []byte) (int, error) {
 	n, err := pr.reader.Read(p)
 	if n > 0 {
 		pr.read += int64(n)
