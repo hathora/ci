@@ -1,8 +1,12 @@
 package commands
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
+	"mime/multipart"
+	"net/http"
 	"os"
 
 	"github.com/urfave/cli/v3"
@@ -120,7 +124,7 @@ var Build = &cli.Command{
 }
 
 func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTag, filePath string) (*shared.Build, error) {
-	createRes, err := hathora.BuildV2.CreateBuild(
+	createRes, err := hathora.BuildV2.CreateBuildWithUploadURL(
 		ctx,
 		shared.CreateBuildParams{
 			BuildTag: sdk.String(buildTag),
@@ -136,9 +140,18 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		return nil, fmt.Errorf("no build file available for run: %w", err)
 	}
 
+	if createRes.BuildWithUploadURL == nil {
+		return nil, fmt.Errorf("no build object in response")
+	}
+
+	err = uploadToUrl(createRes.BuildWithUploadURL.UploadURL, createRes.BuildWithUploadURL.UploadBodyParams, file.Path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to upload file: %w", err)
+	}
+
 	runRes, err := hathora.BuildV2.RunBuild(
 		ctx,
-		createRes.Build.BuildID,
+		createRes.BuildWithUploadURL.BuildID,
 		operations.RunBuildRequestBody{
 			File: operations.RunBuildFile{
 				FileName: file.Name,
@@ -158,7 +171,16 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		zap.L().Error("failed to stream output to console", zap.Error(err))
 	}
 
-	return createRes.Build, nil
+	infoRes, err := hathora.BuildV2.GetBuildInfo(
+		ctx,
+		createRes.BuildWithUploadURL.BuildID,
+		appID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve build info: %w", err)
+	}
+
+	return infoRes.Build, nil
 }
 
 func buildFlagEnvVar(name string) string {
@@ -301,4 +323,91 @@ func (c *OneBuildConfig) New() LoadableConfig {
 
 func OneBuildConfigFrom(cmd *cli.Command) (*OneBuildConfig, error) {
 	return ConfigFromCLI[*OneBuildConfig](oneBuildConfigKey, cmd)
+}
+
+func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, filePath string) error {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	fileInfo, err := file.Stat()
+	if err != nil {
+		return err
+	}
+	fileSize := fileInfo.Size()
+
+	var requestBody bytes.Buffer
+	multipartWriter := multipart.NewWriter(&requestBody)
+
+	for _, param := range uploadBodyParams {
+		_ = multipartWriter.WriteField(param.Key, param.Value)
+	}
+
+	fileWriter, err := multipartWriter.CreateFormFile("file", fileInfo.Name())
+	if err != nil {
+		return err
+	}
+
+	progressReader := &progressReaderType{
+		reader: file,
+		total:  fileSize,
+		callback: func(percentage float64, loaded int64, total int64, eof bool) {
+			if !eof {
+				fmt.Printf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, total)
+			} else {
+				fmt.Printf("Upload complete\n")
+			}
+		},
+	}
+
+	_, err = io.Copy(fileWriter, progressReader)
+	if err != nil {
+		return err
+	}
+
+	err = multipartWriter.Close()
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", uploadUrl, &requestBody)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", multipartWriter.FormDataContentType())
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusNoContent {
+		return fmt.Errorf("upload failed with status: %s", resp.Status)
+	}
+
+	return nil
+}
+
+type progressReaderType struct {
+	reader   io.Reader
+	total    int64
+	read     int64
+	callback func(percentage float64, loaded int64, total int64, eof bool)
+}
+
+func (pr *progressReaderType) Read(p []byte) (int, error) {
+	n, err := pr.reader.Read(p)
+	if err != nil && err == io.EOF {
+		pr.callback(1, pr.read, pr.total, true)
+	}
+	if n > 0 {
+		pr.read += int64(n)
+		percentage := float64(pr.read) / float64(pr.total) * 100
+		pr.callback(percentage, pr.read, pr.total, false)
+	}
+	return n, err
 }
