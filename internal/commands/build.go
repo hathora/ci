@@ -86,7 +86,7 @@ var Build = &cli.Command{
 					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
-				created, err := doBuildCreate(ctx, build.Log, build.SDK, build.AppID, build.BuildTag, build.FilePath)
+				created, err := doBuildCreate(ctx, build.SDK, build.AppID, build.BuildTag, build.FilePath)
 				if err != nil {
 					return err
 				}
@@ -123,7 +123,7 @@ var Build = &cli.Command{
 	},
 }
 
-func doBuildCreate(ctx context.Context, logger *zap.Logger, hathora *sdk.SDK, appID *string, buildTag, filePath string) (*shared.Build, error) {
+func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTag, filePath string) (*shared.Build, error) {
 	createRes, err := hathora.BuildV2.CreateBuildWithUploadURL(
 		ctx,
 		shared.CreateBuildParams{
@@ -144,7 +144,7 @@ func doBuildCreate(ctx context.Context, logger *zap.Logger, hathora *sdk.SDK, ap
 		return nil, fmt.Errorf("no build object in response")
 	}
 
-	err = uploadToUrl(createRes.BuildWithUploadURL.UploadURL, createRes.BuildWithUploadURL.UploadBodyParams, file.Path, logger)
+	err = uploadToUrl(createRes.BuildWithUploadURL.UploadURL, createRes.BuildWithUploadURL.UploadBodyParams, file.Path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to upload file: %w", err)
 	}
@@ -325,7 +325,7 @@ func OneBuildConfigFrom(cmd *cli.Command) (*OneBuildConfig, error) {
 	return ConfigFromCLI[*OneBuildConfig](oneBuildConfigKey, cmd)
 }
 
-func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, filePath string, logger *zap.Logger) error {
+func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, filePath string) error {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return err
@@ -353,9 +353,12 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 	progressReader := &progressReaderType{
 		reader: file,
 		total:  fileSize,
-		callback: func(percentage float64, loaded int64, total int64) {
-			progressLine := fmt.Sprintf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, total)
-			logger.Info(progressLine)
+		callback: func(percentage float64, loaded int64, total int64, eof bool) {
+			if !eof {
+				fmt.Printf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, total)
+			} else {
+				fmt.Printf("Upload complete\n")
+			}
 		},
 	}
 
@@ -363,7 +366,6 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 	if err != nil {
 		return err
 	}
-	logger.Info("\n")
 
 	err = multipartWriter.Close()
 	if err != nil {
@@ -383,7 +385,7 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusNoContent {
 		return fmt.Errorf("upload failed with status: %s", resp.Status)
 	}
 
@@ -394,15 +396,18 @@ type progressReaderType struct {
 	reader   io.Reader
 	total    int64
 	read     int64
-	callback func(percentage float64, loaded int64, total int64)
+	callback func(percentage float64, loaded int64, total int64, eof bool)
 }
 
 func (pr *progressReaderType) Read(p []byte) (int, error) {
 	n, err := pr.reader.Read(p)
+	if err != nil && err == io.EOF {
+		pr.callback(1, pr.read, pr.total, true)
+	}
 	if n > 0 {
 		pr.read += int64(n)
 		percentage := float64(pr.read) / float64(pr.total) * 100
-		pr.callback(percentage, pr.read, pr.total)
+		pr.callback(percentage, pr.read, pr.total, false)
 	}
 	return n, err
 }
