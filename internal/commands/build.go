@@ -336,7 +336,6 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 	if err != nil {
 		return err
 	}
-	fileSize := fileInfo.Size()
 
 	var requestBody bytes.Buffer
 	multipartWriter := multipart.NewWriter(&requestBody)
@@ -350,19 +349,7 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 		return err
 	}
 
-	progressReader := &progressReaderType{
-		reader: file,
-		total:  fileSize,
-		callback: func(percentage float64, loaded int64, total int64, eof bool) {
-			if !eof {
-				fmt.Printf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, total)
-			} else {
-				fmt.Printf("Upload complete\n")
-			}
-		},
-	}
-
-	_, err = io.Copy(fileWriter, progressReader)
+	_, err = io.Copy(fileWriter, file)
 	if err != nil {
 		return err
 	}
@@ -372,11 +359,24 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 		return err
 	}
 
-	req, err := http.NewRequest("POST", uploadUrl, &requestBody)
+	progressReader := &progressReaderType{
+		reader: &requestBody,
+		total:  int64(requestBody.Len()),
+		callback: func(percentage float64, loaded int64, total int64, eof bool) {
+			if !eof {
+				fmt.Printf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, total)
+			} else {
+				fmt.Printf("Upload complete\n")
+			}
+		},
+	}
+
+	req, err := http.NewRequest("POST", uploadUrl, progressReader)
 	if err != nil {
 		return err
 	}
 	req.Header.Set("Content-Type", multipartWriter.FormDataContentType())
+	req.ContentLength = int64(requestBody.Len())
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
