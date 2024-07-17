@@ -336,7 +336,6 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 	if err != nil {
 		return err
 	}
-	fileSize := fileInfo.Size()
 
 	var requestBody bytes.Buffer
 	multipartWriter := multipart.NewWriter(&requestBody)
@@ -362,7 +361,7 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 
 	progressReader := &progressReaderType{
 		reader: &requestBody,
-		total:  fileSize,
+		total:  int64(requestBody.Len()),
 		callback: func(percentage float64, loaded int64, total int64, eof bool) {
 			if !eof {
 				fmt.Printf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, total)
