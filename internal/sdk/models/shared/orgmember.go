@@ -9,7 +9,7 @@ import (
 
 type OrgMember struct {
 	LastLogin *time.Time `json:"lastLogin,omitempty"`
-	UpdatedAt time.Time  `json:"updatedAt"`
+	JoinedAt  time.Time  `json:"joinedAt"`
 	CreatedAt time.Time  `json:"createdAt"`
 	InvitedBy string     `json:"invitedBy"`
 	// A user's email.
@@ -36,11 +36,11 @@ func (o *OrgMember) GetLastLogin() *time.Time {
 	return o.LastLogin
 }
 
-func (o *OrgMember) GetUpdatedAt() time.Time {
+func (o *OrgMember) GetJoinedAt() time.Time {
 	if o == nil {
 		return time.Time{}
 	}
-	return o.UpdatedAt
+	return o.JoinedAt
 }
 
 func (o *OrgMember) GetCreatedAt() time.Time {

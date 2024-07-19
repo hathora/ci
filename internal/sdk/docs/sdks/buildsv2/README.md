@@ -262,12 +262,7 @@ func main() {
 
     var buildID int = 1
 
-    requestBody := operations.RunBuildRequestBody{
-        File: operations.RunBuildFile{
-            FileName: "hybrid_hybrid.mpg",
-            Content: []byte("0xB76eFCCf61"),
-        },
-    }
+    requestBody := operations.RunBuildRequestBody{}
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     

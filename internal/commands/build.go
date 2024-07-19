@@ -152,12 +152,7 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 	runRes, err := hathora.BuildsV2.RunBuild(
 		ctx,
 		createRes.BuildWithUploadURL.BuildID,
-		operations.RunBuildRequestBody{
-			File: operations.RunBuildFile{
-				FileName: file.Name,
-				Content:  file.Content,
-			},
-		},
+		operations.RunBuildRequestBody{},
 		appID,
 	)
 

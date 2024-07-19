@@ -272,10 +272,10 @@ func main() {
 ### Response
 
 **[*operations.RescindInviteResponse](../../models/operations/rescindinviteresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429,500    | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+| Error Object        | Status Code         | Content Type        |
+| ------------------- | ------------------- | ------------------- |
+| sdkerrors.APIError  | 401,404,422,429,500 | application/json    |
+| sdkerrors.SDKError  | 4xx-5xx             | */*                 |
 
 ## GetOrgPendingInvites
 
