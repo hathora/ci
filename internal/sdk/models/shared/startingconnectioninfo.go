@@ -2,11 +2,6 @@
 
 package shared
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
 type Status string
 
 const (
@@ -15,19 +10,6 @@ const (
 
 func (e Status) ToPointer() *Status {
 	return &e
-}
-func (e *Status) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "starting":
-		*e = Status(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for Status: %v", v)
-	}
 }
 
 type StartingConnectionInfo struct {

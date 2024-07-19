@@ -18,7 +18,7 @@ func main() {
 	)
 
 	ctx := context.Background()
-	res, err := s.AppV1.GetApps(ctx)
+	res, err := s.AppsV1.GetApps(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}

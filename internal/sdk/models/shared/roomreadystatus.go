@@ -2,11 +2,6 @@
 
 package shared
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
 type RoomReadyStatus string
 
 const (
@@ -16,19 +11,4 @@ const (
 
 func (e RoomReadyStatus) ToPointer() *RoomReadyStatus {
 	return &e
-}
-func (e *RoomReadyStatus) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "active":
-		fallthrough
-	case "starting":
-		*e = RoomReadyStatus(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for RoomReadyStatus: %v", v)
-	}
 }

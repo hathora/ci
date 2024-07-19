@@ -40,8 +40,7 @@ type DeploymentV2 struct {
 	DefaultContainerPort ContainerPort `json:"defaultContainerPort"`
 	// When the deployment was created.
 	CreatedAt time.Time `json:"createdAt"`
-	// UserId or email address for the user that created the deployment.
-	CreatedBy string `json:"createdBy"`
+	CreatedBy string    `json:"createdBy"`
 	// The amount of memory allocated to your process.
 	RequestedMemoryMB float64 `json:"requestedMemoryMB"`
 	// The number of cores allocated to your process.

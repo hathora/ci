@@ -15,7 +15,7 @@ type GetUserPendingInvitesResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Ok
-	OrgInvitesPage *shared.OrgInvitesPage
+	PendingOrgInvitesPage *shared.PendingOrgInvitesPage
 }
 
 func (o *GetUserPendingInvitesResponse) GetContentType() string {
@@ -39,9 +39,9 @@ func (o *GetUserPendingInvitesResponse) GetRawResponse() *http.Response {
 	return o.RawResponse
 }
 
-func (o *GetUserPendingInvitesResponse) GetOrgInvitesPage() *shared.OrgInvitesPage {
+func (o *GetUserPendingInvitesResponse) GetPendingOrgInvitesPage() *shared.PendingOrgInvitesPage {
 	if o == nil {
 		return nil
 	}
-	return o.OrgInvitesPage
+	return o.PendingOrgInvitesPage
 }

@@ -65,7 +65,7 @@ func main() {
 **[*operations.GetProcessInfoResponse](../../models/operations/getprocessinforesponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404            | application/json   |
+| sdkerrors.APIError | 401,404,429        | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
 ## GetLatestProcesses
@@ -128,7 +128,7 @@ func main() {
 **[*operations.GetLatestProcessesResponse](../../models/operations/getlatestprocessesresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404            | application/json   |
+| sdkerrors.APIError | 401,404,429        | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
 ## StopProcess
@@ -184,7 +184,7 @@ func main() {
 **[*operations.StopProcessResponse](../../models/operations/stopprocessresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,500        | application/json   |
+| sdkerrors.APIError | 401,404,429,500    | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
 ## CreateProcess
@@ -238,7 +238,7 @@ func main() {
 ### Response
 
 **[*operations.CreateProcessResponse](../../models/operations/createprocessresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,402,404,500    | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+| Error Object        | Status Code         | Content Type        |
+| ------------------- | ------------------- | ------------------- |
+| sdkerrors.APIError  | 401,402,404,429,500 | application/json    |
+| sdkerrors.SDKError  | 4xx-5xx             | */*                 |

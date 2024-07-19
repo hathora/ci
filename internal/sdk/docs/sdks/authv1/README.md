@@ -57,7 +57,7 @@ func main() {
 **[*operations.LoginAnonymousResponse](../../models/operations/loginanonymousresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 404                | application/json   |
+| sdkerrors.APIError | 404,429            | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
 ## LoginNickname
@@ -112,7 +112,7 @@ func main() {
 **[*operations.LoginNicknameResponse](../../models/operations/loginnicknameresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 404                | application/json   |
+| sdkerrors.APIError | 404,429            | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
 ## LoginGoogle
@@ -167,5 +167,5 @@ func main() {
 **[*operations.LoginGoogleResponse](../../models/operations/logingoogleresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404            | application/json   |
+| sdkerrors.APIError | 401,404,429        | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |

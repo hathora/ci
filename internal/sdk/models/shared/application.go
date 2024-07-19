@@ -9,14 +9,13 @@ import (
 
 // Application - An application object is the top level namespace for the game server.
 type Application struct {
-	// UserId or email address for the user that deleted the application.
+	// The email address or token id for the user that deleted the application.
 	DeletedBy *string `json:"deletedBy"`
 	// When the application was deleted.
 	DeletedAt *time.Time `json:"deletedAt"`
 	// When the application was created.
 	CreatedAt time.Time `json:"createdAt"`
-	// UserId or email address for the user that created the application.
-	CreatedBy string `json:"createdBy"`
+	CreatedBy string    `json:"createdBy"`
 	// System generated unique identifier for an organization. Not guaranteed to have a specific format.
 	OrgID string `json:"orgId"`
 	// Configure [player authentication](https://hathora.dev/docs/lobbies-and-matchmaking/auth-service) for your application. Use Hathora's built-in auth providers or use your own [custom authentication](https://hathora.dev/docs/lobbies-and-matchmaking/auth-service#custom-auth-provider).

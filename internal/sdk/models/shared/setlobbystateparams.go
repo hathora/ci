@@ -2,18 +2,14 @@
 
 package shared
 
-// SetLobbyStateParamsState - JSON blob to store metadata for a room. Must be smaller than 1MB.
-type SetLobbyStateParamsState struct {
-}
-
 type SetLobbyStateParams struct {
 	// JSON blob to store metadata for a room. Must be smaller than 1MB.
-	State SetLobbyStateParamsState `json:"state"`
+	State any `json:"state"`
 }
 
-func (o *SetLobbyStateParams) GetState() SetLobbyStateParamsState {
+func (o *SetLobbyStateParams) GetState() any {
 	if o == nil {
-		return SetLobbyStateParamsState{}
+		return nil
 	}
 	return o.State
 }

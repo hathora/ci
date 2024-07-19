@@ -3,8 +3,6 @@
 package shared
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/hathora/ci/internal/sdk/internal/utils"
 	"time"
 )
@@ -42,23 +40,6 @@ const (
 func (e DeploymentTransportType) ToPointer() *DeploymentTransportType {
 	return &e
 }
-func (e *DeploymentTransportType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "tcp":
-		fallthrough
-	case "udp":
-		fallthrough
-	case "tls":
-		*e = DeploymentTransportType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for DeploymentTransportType: %v", v)
-	}
-}
 
 // Deployment is a versioned configuration for a build that describes runtime behavior.
 type Deployment struct {
@@ -89,8 +70,7 @@ type Deployment struct {
 	ContainerPort float64 `json:"containerPort"`
 	// When the deployment was created.
 	CreatedAt time.Time `json:"createdAt"`
-	// UserId or email address for the user that created the deployment.
-	CreatedBy string `json:"createdBy"`
+	CreatedBy string    `json:"createdBy"`
 	// The amount of memory allocated to your process.
 	RequestedMemoryMB int `json:"requestedMemoryMB"`
 	// The number of cores allocated to your process.

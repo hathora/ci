@@ -76,7 +76,7 @@ func (s *MetricsV1) GetMetrics(ctx context.Context, request operations.GetMetric
 
 		_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "404", "422", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"401", "404", "422", "429", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -121,6 +121,8 @@ func (s *MetricsV1) GetMetrics(ctx context.Context, request operations.GetMetric
 	case httpRes.StatusCode == 404:
 		fallthrough
 	case httpRes.StatusCode == 422:
+		fallthrough
+	case httpRes.StatusCode == 429:
 		fallthrough
 	case httpRes.StatusCode == 500:
 		switch {

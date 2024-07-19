@@ -34,7 +34,7 @@ type InviteUserResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Ok
-	OrgPermission *shared.OrgPermission
+	PendingOrgInvite *shared.PendingOrgInvite
 }
 
 func (o *InviteUserResponse) GetContentType() string {
@@ -58,9 +58,9 @@ func (o *InviteUserResponse) GetRawResponse() *http.Response {
 	return o.RawResponse
 }
 
-func (o *InviteUserResponse) GetOrgPermission() *shared.OrgPermission {
+func (o *InviteUserResponse) GetPendingOrgInvite() *shared.PendingOrgInvite {
 	if o == nil {
 		return nil
 	}
-	return o.OrgPermission
+	return o.PendingOrgInvite
 }

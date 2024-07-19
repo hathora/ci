@@ -59,7 +59,7 @@ func main() {
 **[*operations.GetBalanceResponse](../../models/operations/getbalanceresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404            | application/json   |
+| sdkerrors.APIError | 401,404,429        | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
 ## GetPaymentMethod
@@ -109,7 +109,7 @@ func main() {
 **[*operations.GetPaymentMethodResponse](../../models/operations/getpaymentmethodresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,500        | application/json   |
+| sdkerrors.APIError | 401,404,429,500    | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
 ## InitStripeCustomerPortalURL
@@ -212,5 +212,5 @@ func main() {
 **[*operations.GetInvoicesResponse](../../models/operations/getinvoicesresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404            | application/json   |
+| sdkerrors.APIError | 401,404,429        | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |

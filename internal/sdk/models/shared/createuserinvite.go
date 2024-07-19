@@ -3,6 +3,7 @@
 package shared
 
 type CreateUserInvite struct {
+	// A user's email.
 	UserEmail string `json:"userEmail"`
 }
 

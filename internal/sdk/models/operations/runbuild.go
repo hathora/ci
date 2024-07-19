@@ -38,12 +38,12 @@ func (o *RunBuildFile) GetContent() []byte {
 }
 
 type RunBuildRequestBody struct {
-	File RunBuildFile `multipartForm:"file"`
+	File *RunBuildFile `multipartForm:"file"`
 }
 
-func (o *RunBuildRequestBody) GetFile() RunBuildFile {
+func (o *RunBuildRequestBody) GetFile() *RunBuildFile {
 	if o == nil {
-		return RunBuildFile{}
+		return nil
 	}
 	return o.File
 }
