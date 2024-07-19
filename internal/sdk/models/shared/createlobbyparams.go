@@ -12,8 +12,8 @@ type CreateLobbyParams struct {
 	// `local`: for testing with a server running locally
 	Visibility LobbyVisibility `json:"visibility"`
 	// User input to initialize the game state. Object must be smaller than 64KB.
-	InitialConfig LobbyInitialConfig `json:"initialConfig"`
-	Region        Region             `json:"region"`
+	InitialConfig any    `json:"initialConfig"`
+	Region        Region `json:"region"`
 }
 
 func (o *CreateLobbyParams) GetVisibility() LobbyVisibility {
@@ -23,9 +23,9 @@ func (o *CreateLobbyParams) GetVisibility() LobbyVisibility {
 	return o.Visibility
 }
 
-func (o *CreateLobbyParams) GetInitialConfig() LobbyInitialConfig {
+func (o *CreateLobbyParams) GetInitialConfig() any {
 	if o == nil {
-		return LobbyInitialConfig{}
+		return nil
 	}
 	return o.InitialConfig
 }

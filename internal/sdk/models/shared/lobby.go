@@ -3,25 +3,87 @@
 package shared
 
 import (
+	"errors"
+	"fmt"
 	"github.com/hathora/ci/internal/sdk/internal/utils"
 	"time"
 )
 
-// State - JSON blob to store metadata for a room. Must be smaller than 1MB.
-type State struct {
+type CreatedByType string
+
+const (
+	CreatedByTypeStr    CreatedByType = "str"
+	CreatedByTypeNumber CreatedByType = "number"
+)
+
+// CreatedBy - UserId or email address for the user that created the lobby.
+type CreatedBy struct {
+	Str    *string
+	Number *float64
+
+	Type CreatedByType
+}
+
+func CreateCreatedByStr(str string) CreatedBy {
+	typ := CreatedByTypeStr
+
+	return CreatedBy{
+		Str:  &str,
+		Type: typ,
+	}
+}
+
+func CreateCreatedByNumber(number float64) CreatedBy {
+	typ := CreatedByTypeNumber
+
+	return CreatedBy{
+		Number: &number,
+		Type:   typ,
+	}
+}
+
+func (u *CreatedBy) UnmarshalJSON(data []byte) error {
+
+	var str string = ""
+	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
+		u.Str = &str
+		u.Type = CreatedByTypeStr
+		return nil
+	}
+
+	var number float64 = float64(0)
+	if err := utils.UnmarshalJSON(data, &number, "", true, true); err == nil {
+		u.Number = &number
+		u.Type = CreatedByTypeNumber
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for CreatedBy", string(data))
+}
+
+func (u CreatedBy) MarshalJSON() ([]byte, error) {
+	if u.Str != nil {
+		return utils.MarshalJSON(u.Str, "", true)
+	}
+
+	if u.Number != nil {
+		return utils.MarshalJSON(u.Number, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type CreatedBy: all fields are null")
 }
 
 // Lobby - A lobby object allows you to store and manage metadata for your rooms.
 type Lobby struct {
 	ShortCode *string `json:"shortCode"`
 	// JSON blob to store metadata for a room. Must be smaller than 1MB.
-	State *State `json:"state,omitempty"`
+	State any `json:"state,omitempty"`
 	// User input to initialize the game state. Object must be smaller than 64KB.
-	InitialConfig LobbyInitialConfig `json:"initialConfig"`
+	InitialConfig any `json:"initialConfig"`
 	// When the lobby was created.
 	CreatedAt time.Time `json:"createdAt"`
 	// UserId or email address for the user that created the lobby.
-	CreatedBy string `json:"createdBy"`
+	CreatedBy CreatedBy `json:"createdBy"`
 	// Deprecated field: This will be removed in a future release, please migrate away from it as soon as possible.
 	Local bool `json:"local"`
 	// Types of lobbies a player can create.
@@ -58,16 +120,16 @@ func (o *Lobby) GetShortCode() *string {
 	return o.ShortCode
 }
 
-func (o *Lobby) GetState() *State {
+func (o *Lobby) GetState() any {
 	if o == nil {
 		return nil
 	}
 	return o.State
 }
 
-func (o *Lobby) GetInitialConfig() LobbyInitialConfig {
+func (o *Lobby) GetInitialConfig() any {
 	if o == nil {
-		return LobbyInitialConfig{}
+		return nil
 	}
 	return o.InitialConfig
 }
@@ -79,9 +141,9 @@ func (o *Lobby) GetCreatedAt() time.Time {
 	return o.CreatedAt
 }
 
-func (o *Lobby) GetCreatedBy() string {
+func (o *Lobby) GetCreatedBy() CreatedBy {
 	if o == nil {
-		return ""
+		return CreatedBy{}
 	}
 	return o.CreatedBy
 }

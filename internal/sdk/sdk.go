@@ -67,32 +67,23 @@ func (c *sdkConfiguration) GetServerDetails() (string, map[string]string) {
 
 // SDK - Hathora Cloud API: Welcome to the Hathora Cloud API documentation! Learn how to use the Hathora Cloud APIs to build and scale your game servers globally.
 type SDK struct {
-	// Operations that allow you manage your [applications](https://hathora.dev/docs/concepts/hathora-entities#application).
-	AppV1 *AppV1
+	AppsV1 *AppsV1
 	// Operations that allow you to generate a Hathora-signed [JSON web token (JWT)](https://jwt.io/) for [player authentication](https://hathora.dev/docs/lobbies-and-matchmaking/auth-service).
 	AuthV1 *AuthV1
 	//
-	BillingV1 *BillingV1
-	// Deprecated. Use [BuildV2](https://hathora.dev/api#tag/BuildV2).
-	BuildV1 *BuildV1
-	// Operations that allow you create and manage your [builds](https://hathora.dev/docs/concepts/hathora-entities#build).
-	BuildV2 *BuildV2
-	// Deprecated. Use [DeploymentV2](https://hathora.dev/api#tag/DeploymentV2).
-	DeploymentV1 *DeploymentV1
-	// Operations that allow you configure and manage an application's [build](https://hathora.dev/docs/concepts/hathora-entities#build) at runtime.
-	DeploymentV2 *DeploymentV2
+	BillingV1     *BillingV1
+	BuildsV1      *BuildsV1
+	BuildsV2      *BuildsV2
+	DeploymentsV1 *DeploymentsV1
+	DeploymentsV2 *DeploymentsV2
 	// Deprecated. Does not include latest Regions (missing Dallas region). Use [DiscoveryV2](https://hathora.dev/api#tag/DiscoveryV2).
 	DiscoveryV1 *DiscoveryV1
 	// Service that allows clients to directly ping all Hathora regions to get latency information
 	DiscoveryV2 *DiscoveryV2
-	// Deprecated. Use [LobbyV3](https://hathora.dev/api#tag/LobbyV3).
-	LobbyV1 *LobbyV1
-	// Deprecated. Use [LobbyV3](https://hathora.dev/api#tag/LobbyV3).
-	LobbyV2 *LobbyV2
-	// Operations to create and manage lobbies using our [Lobby Service](https://hathora.dev/docs/lobbies-and-matchmaking/lobby-service).
-	LobbyV3 *LobbyV3
-	// Operations to get logs by [applications](https://hathora.dev/docs/concepts/hathora-entities#application), [processes](https://hathora.dev/docs/concepts/hathora-entities#process), and [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment). We store 20GB of logs data.
-	LogV1 *LogV1
+	LobbiesV1   *LobbiesV1
+	LobbiesV2   *LobbiesV2
+	LobbiesV3   *LobbiesV3
+	LogsV1      *LogsV1
 	//
 	ManagementV1 *ManagementV1
 	// Operations to get metrics by [process](https://hathora.dev/docs/concepts/hathora-entities#process). We store 72 hours of metrics data.
@@ -102,12 +93,10 @@ type SDK struct {
 	ProcessesV1 *ProcessesV1
 	// Operations to get data on active and stopped [processes](https://hathora.dev/docs/concepts/hathora-entities#process).
 	ProcessesV2 *ProcessesV2
-	// Deprecated. Use [RoomV2](https://hathora.dev/api#tag/RoomV2).
-	RoomV1 *RoomV1
-	// Operations to create, manage, and connect to [rooms](https://hathora.dev/docs/concepts/hathora-entities#room).
-	RoomV2 *RoomV2
+	RoomsV1     *RoomsV1
+	RoomsV2     *RoomsV2
 	//
-	OrgTokensV1 *OrgTokensV1
+	TokensV1 *TokensV1
 
 	sdkConfiguration sdkConfiguration
 }
@@ -191,9 +180,9 @@ func New(opts ...SDKOption) *SDK {
 		sdkConfiguration: sdkConfiguration{
 			Language:          "go",
 			OpenAPIDocVersion: "0.0.1",
-			SDKVersion:        "0.2.2",
+			SDKVersion:        "0.3.0",
 			GenVersion:        "2.333.3",
-			UserAgent:         "speakeasy-sdk/go 0.2.2 2.333.3 0.0.1 github.com/hathora/ci/internal/sdk",
+			UserAgent:         "speakeasy-sdk/go 0.3.0 2.333.3 0.0.1 github.com/hathora/ci/internal/sdk",
 			Globals:           globals.Globals{},
 			Hooks:             hooks.New(),
 		},
@@ -214,31 +203,31 @@ func New(opts ...SDKOption) *SDK {
 		sdk.sdkConfiguration.ServerURL = serverURL
 	}
 
-	sdk.AppV1 = newAppV1(sdk.sdkConfiguration)
+	sdk.AppsV1 = newAppsV1(sdk.sdkConfiguration)
 
 	sdk.AuthV1 = newAuthV1(sdk.sdkConfiguration)
 
 	sdk.BillingV1 = newBillingV1(sdk.sdkConfiguration)
 
-	sdk.BuildV1 = newBuildV1(sdk.sdkConfiguration)
+	sdk.BuildsV1 = newBuildsV1(sdk.sdkConfiguration)
 
-	sdk.BuildV2 = newBuildV2(sdk.sdkConfiguration)
+	sdk.BuildsV2 = newBuildsV2(sdk.sdkConfiguration)
 
-	sdk.DeploymentV1 = newDeploymentV1(sdk.sdkConfiguration)
+	sdk.DeploymentsV1 = newDeploymentsV1(sdk.sdkConfiguration)
 
-	sdk.DeploymentV2 = newDeploymentV2(sdk.sdkConfiguration)
+	sdk.DeploymentsV2 = newDeploymentsV2(sdk.sdkConfiguration)
 
 	sdk.DiscoveryV1 = newDiscoveryV1(sdk.sdkConfiguration)
 
 	sdk.DiscoveryV2 = newDiscoveryV2(sdk.sdkConfiguration)
 
-	sdk.LobbyV1 = newLobbyV1(sdk.sdkConfiguration)
+	sdk.LobbiesV1 = newLobbiesV1(sdk.sdkConfiguration)
 
-	sdk.LobbyV2 = newLobbyV2(sdk.sdkConfiguration)
+	sdk.LobbiesV2 = newLobbiesV2(sdk.sdkConfiguration)
 
-	sdk.LobbyV3 = newLobbyV3(sdk.sdkConfiguration)
+	sdk.LobbiesV3 = newLobbiesV3(sdk.sdkConfiguration)
 
-	sdk.LogV1 = newLogV1(sdk.sdkConfiguration)
+	sdk.LogsV1 = newLogsV1(sdk.sdkConfiguration)
 
 	sdk.ManagementV1 = newManagementV1(sdk.sdkConfiguration)
 
@@ -250,11 +239,11 @@ func New(opts ...SDKOption) *SDK {
 
 	sdk.ProcessesV2 = newProcessesV2(sdk.sdkConfiguration)
 
-	sdk.RoomV1 = newRoomV1(sdk.sdkConfiguration)
+	sdk.RoomsV1 = newRoomsV1(sdk.sdkConfiguration)
 
-	sdk.RoomV2 = newRoomV2(sdk.sdkConfiguration)
+	sdk.RoomsV2 = newRoomsV2(sdk.sdkConfiguration)
 
-	sdk.OrgTokensV1 = newOrgTokensV1(sdk.sdkConfiguration)
+	sdk.TokensV1 = newTokensV1(sdk.sdkConfiguration)
 
 	return sdk
 }

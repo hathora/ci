@@ -41,7 +41,7 @@ var Log = &cli.Command{
 
 		log.Log.Debug("Getting build server logs...")
 
-		res, err := log.SDK.LogV1.GetLogsForProcess(
+		res, err := log.SDK.LogsV1.GetLogsForProcess(
 			ctx,
 			log.ProcessID,
 			log.AppID,

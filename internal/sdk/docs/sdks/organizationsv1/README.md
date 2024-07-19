@@ -3,12 +3,167 @@
 
 ### Available Operations
 
+* [GetOrgs](#getorgs) - Returns an unsorted list of all organizations that you are a member of (an accepted membership invite). An organization is uniquely identified by an `orgId`.
+* [GetUserPendingInvites](#getuserpendinginvites)
+* [GetOrgMembers](#getorgmembers)
 * [InviteUser](#inviteuser)
 * [RescindInvite](#rescindinvite)
 * [GetOrgPendingInvites](#getorgpendinginvites)
-* [GetUserPendingInvites](#getuserpendinginvites)
 * [AcceptInvite](#acceptinvite)
 * [RejectInvite](#rejectinvite)
+
+## GetOrgs
+
+Returns an unsorted list of all organizations that you are a member of (an accepted membership invite). An organization is uniquely identified by an `orgId`.
+
+### Example Usage
+
+```go
+package main
+
+import(
+	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/sdk"
+	"context"
+	"log"
+)
+
+func main() {
+    s := sdk.New(
+        sdk.WithSecurity(shared.Security{
+            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+        }),
+        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+    )
+
+
+    
+    ctx := context.Background()
+    res, err := s.OrganizationsV1.GetOrgs(ctx)
+    if err != nil {
+        log.Fatal(err)
+    }
+    if res.OrgsPage != nil {
+        // handle response
+    }
+}
+```
+
+### Parameters
+
+| Parameter                                             | Type                                                  | Required                                              | Description                                           |
+| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
+| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |
+
+
+### Response
+
+**[*operations.GetOrgsResponse](../../models/operations/getorgsresponse.md), error**
+| Error Object       | Status Code        | Content Type       |
+| ------------------ | ------------------ | ------------------ |
+| sdkerrors.APIError | 401,404,429        | application/json   |
+| sdkerrors.SDKError | 4xx-5xx            | */*                |
+
+## GetUserPendingInvites
+
+### Example Usage
+
+```go
+package main
+
+import(
+	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/sdk"
+	"context"
+	"log"
+)
+
+func main() {
+    s := sdk.New(
+        sdk.WithSecurity(shared.Security{
+            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+        }),
+        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+    )
+
+
+    
+    ctx := context.Background()
+    res, err := s.OrganizationsV1.GetUserPendingInvites(ctx)
+    if err != nil {
+        log.Fatal(err)
+    }
+    if res.PendingOrgInvitesPage != nil {
+        // handle response
+    }
+}
+```
+
+### Parameters
+
+| Parameter                                             | Type                                                  | Required                                              | Description                                           |
+| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
+| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |
+
+
+### Response
+
+**[*operations.GetUserPendingInvitesResponse](../../models/operations/getuserpendinginvitesresponse.md), error**
+| Error Object       | Status Code        | Content Type       |
+| ------------------ | ------------------ | ------------------ |
+| sdkerrors.APIError | 401,429            | application/json   |
+| sdkerrors.SDKError | 4xx-5xx            | */*                |
+
+## GetOrgMembers
+
+### Example Usage
+
+```go
+package main
+
+import(
+	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/sdk"
+	"context"
+	"log"
+)
+
+func main() {
+    s := sdk.New(
+        sdk.WithSecurity(shared.Security{
+            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+        }),
+        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+    )
+
+    var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+    
+    ctx := context.Background()
+    res, err := s.OrganizationsV1.GetOrgMembers(ctx, orgID)
+    if err != nil {
+        log.Fatal(err)
+    }
+    if res.OrgMembersPage != nil {
+        // handle response
+    }
+}
+```
+
+### Parameters
+
+| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
+| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
+| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
+| `orgID`                                               | *string*                                              | :heavy_check_mark:                                    | N/A                                                   | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39              |
+
+
+### Response
+
+**[*operations.GetOrgMembersResponse](../../models/operations/getorgmembersresponse.md), error**
+| Error Object       | Status Code        | Content Type       |
+| ------------------ | ------------------ | ------------------ |
+| sdkerrors.APIError | 401,429            | application/json   |
+| sdkerrors.SDKError | 4xx-5xx            | */*                |
 
 ## InviteUser
 
@@ -35,7 +190,7 @@ func main() {
     var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
 
     createUserInvite := shared.CreateUserInvite{
-        UserEmail: "<value>",
+        UserEmail: "noreply@hathora.dev",
     }
     
     ctx := context.Background()
@@ -43,7 +198,7 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    if res.OrgPermission != nil {
+    if res.PendingOrgInvite != nil {
         // handle response
     }
 }
@@ -91,7 +246,7 @@ func main() {
     var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
 
     rescindUserInvite := shared.RescindUserInvite{
-        UserEmail: "<value>",
+        UserEmail: "noreply@hathora.dev",
     }
     
     ctx := context.Background()
@@ -151,7 +306,7 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    if res.OrgInvitesPage != nil {
+    if res.PendingOrgInvitesPage != nil {
         // handle response
     }
 }
@@ -168,56 +323,6 @@ func main() {
 ### Response
 
 **[*operations.GetOrgPendingInvitesResponse](../../models/operations/getorgpendinginvitesresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,429            | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
-
-## GetUserPendingInvites
-
-### Example Usage
-
-```go
-package main
-
-import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"github.com/hathora/ci/internal/sdk"
-	"context"
-	"log"
-)
-
-func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
-        }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
-    )
-
-
-    
-    ctx := context.Background()
-    res, err := s.OrganizationsV1.GetUserPendingInvites(ctx)
-    if err != nil {
-        log.Fatal(err)
-    }
-    if res.OrgInvitesPage != nil {
-        // handle response
-    }
-}
-```
-
-### Parameters
-
-| Parameter                                             | Type                                                  | Required                                              | Description                                           |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |
-
-
-### Response
-
-**[*operations.GetUserPendingInvitesResponse](../../models/operations/getuserpendinginvitesresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
 | sdkerrors.APIError | 401,429            | application/json   |

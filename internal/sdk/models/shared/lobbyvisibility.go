@@ -2,11 +2,6 @@
 
 package shared
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
 // LobbyVisibility - Types of lobbies a player can create.
 //
 // `private`: the player who created the room must share the roomId with their friends
@@ -24,21 +19,4 @@ const (
 
 func (e LobbyVisibility) ToPointer() *LobbyVisibility {
 	return &e
-}
-func (e *LobbyVisibility) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "private":
-		fallthrough
-	case "public":
-		fallthrough
-	case "local":
-		*e = LobbyVisibility(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for LobbyVisibility: %v", v)
-	}
 }

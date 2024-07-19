@@ -60,7 +60,7 @@ func main() {
 ### Response
 
 **[*operations.GetMetricsResponse](../../models/operations/getmetricsresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,422,500    | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+| Error Object        | Status Code         | Content Type        |
+| ------------------- | ------------------- | ------------------- |
+| sdkerrors.APIError  | 401,404,422,429,500 | application/json    |
+| sdkerrors.SDKError  | 4xx-5xx             | */*                 |

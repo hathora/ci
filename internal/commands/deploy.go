@@ -40,7 +40,7 @@ var Deploy = &cli.Command{
 
 		useLatest := cmd.Bool(fromLatestFlag.Name)
 		if useLatest {
-			res, err := deploy.SDK.DeploymentV2.GetLatestDeployment(ctx, deploy.AppID)
+			res, err := deploy.SDK.DeploymentsV2.GetLatestDeployment(ctx, deploy.AppID)
 			if err != nil {
 				return fmt.Errorf("unable to retrieve latest deployment: %w", err)
 			}
@@ -59,7 +59,7 @@ var Deploy = &cli.Command{
 			return err
 		}
 
-		res, err := deploy.SDK.DeploymentV2.CreateDeployment(
+		res, err := deploy.SDK.DeploymentsV2.CreateDeployment(
 			ctx,
 			createdBuild.BuildID,
 			shared.DeploymentConfigV2{

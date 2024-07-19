@@ -2,11 +2,6 @@
 
 package shared
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
 // TransportType - Transport type specifies the underlying communication protocol to the exposed port.
 type TransportType string
 
@@ -18,21 +13,4 @@ const (
 
 func (e TransportType) ToPointer() *TransportType {
 	return &e
-}
-func (e *TransportType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "tcp":
-		fallthrough
-	case "udp":
-		fallthrough
-	case "tls":
-		*e = TransportType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for TransportType: %v", v)
-	}
 }

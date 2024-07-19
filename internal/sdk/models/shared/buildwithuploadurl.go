@@ -61,8 +61,7 @@ type BuildWithUploadURL struct {
 	StartedAt *time.Time `json:"startedAt"`
 	// When [`CreateBuild()`](https://hathora.dev/api#tag/BuildV2/operation/CreateBuild) is called.
 	CreatedAt time.Time `json:"createdAt"`
-	// UserId or email address for the user that created the build.
-	CreatedBy string `json:"createdBy"`
+	CreatedBy string    `json:"createdBy"`
 	// System generated id for a build. Increments by 1.
 	BuildID int `json:"buildId"`
 	// System generated unique identifier for an application.

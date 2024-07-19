@@ -31,13 +31,13 @@ func (o *CreatePrivateLobbySecurity) GetPlayerAuth() string {
 
 type CreatePrivateLobbyRequestBody struct {
 	// User input to initialize the game state. Object must be smaller than 64KB.
-	InitialConfig shared.LobbyInitialConfig `json:"initialConfig"`
-	Region        shared.Region             `json:"region"`
+	InitialConfig any           `json:"initialConfig"`
+	Region        shared.Region `json:"region"`
 }
 
-func (o *CreatePrivateLobbyRequestBody) GetInitialConfig() shared.LobbyInitialConfig {
+func (o *CreatePrivateLobbyRequestBody) GetInitialConfig() any {
 	if o == nil {
-		return shared.LobbyInitialConfig{}
+		return nil
 	}
 	return o.InitialConfig
 }

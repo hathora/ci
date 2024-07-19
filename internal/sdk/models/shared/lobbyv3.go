@@ -3,9 +3,75 @@
 package shared
 
 import (
+	"errors"
+	"fmt"
 	"github.com/hathora/ci/internal/sdk/internal/utils"
 	"time"
 )
+
+type LobbyV3CreatedByType string
+
+const (
+	LobbyV3CreatedByTypeStr    LobbyV3CreatedByType = "str"
+	LobbyV3CreatedByTypeNumber LobbyV3CreatedByType = "number"
+)
+
+// LobbyV3CreatedBy - UserId or email address for the user that created the lobby.
+type LobbyV3CreatedBy struct {
+	Str    *string
+	Number *float64
+
+	Type LobbyV3CreatedByType
+}
+
+func CreateLobbyV3CreatedByStr(str string) LobbyV3CreatedBy {
+	typ := LobbyV3CreatedByTypeStr
+
+	return LobbyV3CreatedBy{
+		Str:  &str,
+		Type: typ,
+	}
+}
+
+func CreateLobbyV3CreatedByNumber(number float64) LobbyV3CreatedBy {
+	typ := LobbyV3CreatedByTypeNumber
+
+	return LobbyV3CreatedBy{
+		Number: &number,
+		Type:   typ,
+	}
+}
+
+func (u *LobbyV3CreatedBy) UnmarshalJSON(data []byte) error {
+
+	var str string = ""
+	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
+		u.Str = &str
+		u.Type = LobbyV3CreatedByTypeStr
+		return nil
+	}
+
+	var number float64 = float64(0)
+	if err := utils.UnmarshalJSON(data, &number, "", true, true); err == nil {
+		u.Number = &number
+		u.Type = LobbyV3CreatedByTypeNumber
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for LobbyV3CreatedBy", string(data))
+}
+
+func (u LobbyV3CreatedBy) MarshalJSON() ([]byte, error) {
+	if u.Str != nil {
+		return utils.MarshalJSON(u.Str, "", true)
+	}
+
+	if u.Number != nil {
+		return utils.MarshalJSON(u.Number, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type LobbyV3CreatedBy: all fields are null")
+}
 
 // LobbyV3 - A lobby object allows you to store and manage metadata for your rooms.
 type LobbyV3 struct {
@@ -14,8 +80,8 @@ type LobbyV3 struct {
 	// When the lobby was created.
 	CreatedAt time.Time `json:"createdAt"`
 	// UserId or email address for the user that created the lobby.
-	CreatedBy  string  `json:"createdBy"`
-	RoomConfig *string `json:"roomConfig"`
+	CreatedBy  LobbyV3CreatedBy `json:"createdBy"`
+	RoomConfig *string          `json:"roomConfig,omitempty"`
 	// Types of lobbies a player can create.
 	//
 	// `private`: the player who created the room must share the roomId with their friends
@@ -57,9 +123,9 @@ func (o *LobbyV3) GetCreatedAt() time.Time {
 	return o.CreatedAt
 }
 
-func (o *LobbyV3) GetCreatedBy() string {
+func (o *LobbyV3) GetCreatedBy() LobbyV3CreatedBy {
 	if o == nil {
-		return ""
+		return LobbyV3CreatedBy{}
 	}
 	return o.CreatedBy
 }

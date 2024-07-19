@@ -3,6 +3,7 @@
 package shared
 
 type RescindUserInvite struct {
+	// A user's email.
 	UserEmail string `json:"userEmail"`
 }
 

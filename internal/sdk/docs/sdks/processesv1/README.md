@@ -66,7 +66,7 @@ func main() {
 **[*operations.GetRunningProcessesResponse](../../models/operations/getrunningprocessesresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404            | application/json   |
+| sdkerrors.APIError | 401,404,429        | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
 ## ~~GetStoppedProcesses~~
@@ -124,7 +124,7 @@ func main() {
 **[*operations.GetStoppedProcessesResponse](../../models/operations/getstoppedprocessesresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404            | application/json   |
+| sdkerrors.APIError | 401,404,429        | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
 ## ~~GetProcessInfoDeprecated~~
@@ -182,5 +182,5 @@ func main() {
 **[*operations.GetProcessInfoDeprecatedResponse](../../models/operations/getprocessinfodeprecatedresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,500        | application/json   |
+| sdkerrors.APIError | 401,404,429,500    | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |

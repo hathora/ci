@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
-id: 1e3ae5b6-42eb-4f19-8f71-1e276b9f1d77
+id: 73b126a9-5c85-4e6d-ac9e-6ba8bad8c116
 management:
-  docChecksum: f9df5e98c2bb16f13a57f7face176a5e
+  docChecksum: aab9fbbed986e8a2acaae5f2f1efe3f9
   docVersion: 0.0.1
   speakeasyVersion: 1.294.0
   generationVersion: 2.333.3
-  releaseVersion: 0.2.2
-  configChecksum: d2502be86d0b57d83e74a9ca84beb0cb
+  releaseVersion: 0.3.0
+  configChecksum: aaa915c3e1b178d8e5f3c49f94a5fd18
 features:
   go:
     additionalDependencies: 0.1.0
@@ -19,34 +19,36 @@ features:
     globalSecurityCallbacks: 0.1.0
     globalServerURLs: 2.82.2
     globals: 2.82.2
+    groups: 2.81.2
     intellisenseMarkdownSupport: 0.1.0
     methodSecurity: 2.82.2
     nullables: 0.1.0
+    openEnums: 0.1.0
     responseFormat: 0.1.1
     sdkHooks: 0.1.0
     unions: 2.85.8
 generatedFiles:
-  - appv1.go
+  - appsv1.go
   - authv1.go
   - billingv1.go
-  - buildv1.go
-  - buildv2.go
-  - deploymentv1.go
-  - deploymentv2.go
+  - buildsv1.go
+  - buildsv2.go
+  - deploymentsv1.go
+  - deploymentsv2.go
   - discoveryv1.go
   - discoveryv2.go
-  - lobbyv1.go
-  - lobbyv2.go
-  - lobbyv3.go
-  - logv1.go
+  - lobbiesv1.go
+  - lobbiesv2.go
+  - lobbiesv3.go
+  - logsv1.go
   - managementv1.go
   - metricsv1.go
   - organizationsv1.go
   - processesv1.go
   - processesv2.go
-  - roomv1.go
-  - roomv2.go
-  - orgtokensv1.go
+  - roomsv1.go
+  - roomsv2.go
+  - tokensv1.go
   - sdk.go
   - go.mod
   - models/sdkerrors/sdkerror.go
@@ -119,10 +121,12 @@ generatedFiles:
   - /models/operations/getlogsfordeployment.go
   - /models/operations/sendverificationemail.go
   - /models/operations/getmetrics.go
+  - /models/operations/getorgs.go
+  - /models/operations/getuserpendinginvites.go
+  - /models/operations/getorgmembers.go
   - /models/operations/inviteuser.go
   - /models/operations/rescindinvite.go
   - /models/operations/getorgpendinginvites.go
-  - /models/operations/getuserpendinginvites.go
   - /models/operations/acceptinvite.go
   - /models/operations/rejectinvite.go
   - /models/operations/getrunningprocesses.go
@@ -181,7 +185,6 @@ generatedFiles:
   - /models/shared/pingendpoints.go
   - /models/shared/lobby.go
   - /models/shared/lobbyvisibility.go
-  - /models/shared/lobbyinitialconfig.go
   - /models/shared/createlobbyparams.go
   - /models/shared/setlobbystateparams.go
   - /models/shared/lobbyv3.go
@@ -191,15 +194,14 @@ generatedFiles:
   - /models/shared/metricsdata.go
   - /models/shared/metricvalue.go
   - /models/shared/metricname.go
-  - /models/shared/orgpermission.go
-  - /models/shared/organizationinvitestatus.go
-  - /models/shared/invitestatuspending.go
-  - /models/shared/invitestatusaccepted.go
-  - /models/shared/invitestatusrejected.go
-  - /models/shared/invitestatusrescinded.go
+  - /models/shared/orgspage.go
+  - /models/shared/organization.go
+  - /models/shared/pendingorginvitespage.go
+  - /models/shared/pendingorginvite.go
+  - /models/shared/orgmemberspage.go
+  - /models/shared/orgmember.go
   - /models/shared/createuserinvite.go
   - /models/shared/rescinduserinvite.go
-  - /models/shared/orginvitespage.go
   - /models/shared/processwithrooms.go
   - /models/shared/roomwithoutallocations.go
   - /models/shared/roomstatus.go
@@ -379,13 +381,16 @@ generatedFiles:
   - docs/models/operations/getmetricsglobals.md
   - docs/models/operations/getmetricsrequest.md
   - docs/models/operations/getmetricsresponse.md
+  - docs/models/operations/getorgsresponse.md
+  - docs/models/operations/getuserpendinginvitesresponse.md
+  - docs/models/operations/getorgmembersrequest.md
+  - docs/models/operations/getorgmembersresponse.md
   - docs/models/operations/inviteuserrequest.md
   - docs/models/operations/inviteuserresponse.md
   - docs/models/operations/rescindinviterequest.md
   - docs/models/operations/rescindinviteresponse.md
   - docs/models/operations/getorgpendinginvitesrequest.md
   - docs/models/operations/getorgpendinginvitesresponse.md
-  - docs/models/operations/getuserpendinginvitesresponse.md
   - docs/models/operations/acceptinviterequest.md
   - docs/models/operations/acceptinviteresponse.md
   - docs/models/operations/rejectinviterequest.md
@@ -502,13 +507,12 @@ generatedFiles:
   - docs/models/shared/deploymentconfigv2env.md
   - docs/models/shared/deploymentconfigv2.md
   - docs/models/shared/pingendpoints.md
-  - docs/models/shared/state.md
+  - docs/models/shared/createdby.md
   - docs/models/shared/lobby.md
   - docs/models/shared/lobbyvisibility.md
-  - docs/models/shared/lobbyinitialconfig.md
   - docs/models/shared/createlobbyparams.md
-  - docs/models/shared/setlobbystateparamsstate.md
   - docs/models/shared/setlobbystateparams.md
+  - docs/models/shared/lobbyv3createdby.md
   - docs/models/shared/lobbyv3.md
   - docs/models/shared/createlobbyv3params.md
   - docs/models/shared/verificationemailsuccess.md
@@ -516,19 +520,14 @@ generatedFiles:
   - docs/models/shared/metricsdata.md
   - docs/models/shared/metricvalue.md
   - docs/models/shared/metricname.md
-  - docs/models/shared/orgpermission.md
-  - docs/models/shared/organizationinvitestatus.md
-  - docs/models/shared/type.md
-  - docs/models/shared/invitestatuspending.md
-  - docs/models/shared/invitestatusacceptedtype.md
-  - docs/models/shared/invitestatusaccepted.md
-  - docs/models/shared/invitestatusrejectedtype.md
-  - docs/models/shared/invitestatusrejected.md
-  - docs/models/shared/invitestatusrescindedtype.md
-  - docs/models/shared/invitestatusrescinded.md
+  - docs/models/shared/orgspage.md
+  - docs/models/shared/organization.md
+  - docs/models/shared/pendingorginvitespage.md
+  - docs/models/shared/pendingorginvite.md
+  - docs/models/shared/orgmemberspage.md
+  - docs/models/shared/orgmember.md
   - docs/models/shared/createuserinvite.md
   - docs/models/shared/rescinduserinvite.md
-  - docs/models/shared/orginvitespage.md
   - docs/models/shared/processwithroomsexposedport.md
   - docs/models/shared/processwithrooms.md
   - docs/models/shared/currentallocation.md
@@ -561,27 +560,27 @@ generatedFiles:
   - docs/models/shared/security.md
   - docs/models/sdkerrors/apierror.md
   - docs/sdks/sdk/README.md
-  - docs/sdks/appv1/README.md
+  - docs/sdks/appsv1/README.md
   - docs/sdks/authv1/README.md
   - docs/sdks/billingv1/README.md
-  - docs/sdks/buildv1/README.md
-  - docs/sdks/buildv2/README.md
-  - docs/sdks/deploymentv1/README.md
-  - docs/sdks/deploymentv2/README.md
+  - docs/sdks/buildsv1/README.md
+  - docs/sdks/buildsv2/README.md
+  - docs/sdks/deploymentsv1/README.md
+  - docs/sdks/deploymentsv2/README.md
   - docs/sdks/discoveryv1/README.md
   - docs/sdks/discoveryv2/README.md
-  - docs/sdks/lobbyv1/README.md
-  - docs/sdks/lobbyv2/README.md
-  - docs/sdks/lobbyv3/README.md
-  - docs/sdks/logv1/README.md
+  - docs/sdks/lobbiesv1/README.md
+  - docs/sdks/lobbiesv2/README.md
+  - docs/sdks/lobbiesv3/README.md
+  - docs/sdks/logsv1/README.md
   - docs/sdks/managementv1/README.md
   - docs/sdks/metricsv1/README.md
   - docs/sdks/organizationsv1/README.md
   - docs/sdks/processesv1/README.md
   - docs/sdks/processesv2/README.md
-  - docs/sdks/roomv1/README.md
-  - docs/sdks/roomv2/README.md
-  - docs/sdks/orgtokensv1/README.md
+  - docs/sdks/roomsv1/README.md
+  - docs/sdks/roomsv2/README.md
+  - docs/sdks/tokensv1/README.md
   - USAGE.md
   - .gitattributes
   - internal/hooks/hooks.go

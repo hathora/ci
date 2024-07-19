@@ -2,11 +2,6 @@
 
 package shared
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
 type VerificationEmailSuccess string
 
 const (
@@ -15,17 +10,4 @@ const (
 
 func (e VerificationEmailSuccess) ToPointer() *VerificationEmailSuccess {
 	return &e
-}
-func (e *VerificationEmailSuccess) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "success":
-		*e = VerificationEmailSuccess(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for VerificationEmailSuccess: %v", v)
-	}
 }
