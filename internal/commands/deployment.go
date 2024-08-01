@@ -24,8 +24,8 @@ var (
 	maxRoomsPerProcess    = 10000
 	minPort               = 1
 	maxPort               = 65535
-	minCPU                = 0.5
-	maxCPUDecimalPlaces   = 1
+	minCPU                = 0.25
+	maxCPUDecimalPlaces   = 2
 	maxCPU                = float64(4)
 	minMemoryMB           = float64(1024)
 	maxMemoryMB           = float64(8192)
