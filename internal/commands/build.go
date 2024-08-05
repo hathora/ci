@@ -359,9 +359,9 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 		total:  int64(requestBody.Len()),
 		callback: func(percentage float64, loaded int64, total int64, eof bool) {
 			if !eof {
-				fmt.Printf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, total)
+				os.Stderr.WriteString(fmt.Sprintf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, total))
 			} else {
-				fmt.Printf("Upload complete\n")
+				os.Stderr.WriteString("Upload complete\n")
 			}
 		},
 	}
