@@ -37,22 +37,23 @@ import (
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"log"
+	"os"
 )
 
 func main() {
 	s := sdk.New(
 		sdk.WithSecurity(shared.Security{
-			HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+			HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
 		}),
-		sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+		sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
 	)
-
+	var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
 	ctx := context.Background()
-	res, err := s.AppsV1.GetApps(ctx)
+	res, err := s.TokensV1.GetOrgTokens(ctx, orgID)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if res.ApplicationWithLatestDeploymentAndBuilds != nil {
+	if res.ListOrgTokens != nil {
 		// handle response
 	}
 }
@@ -63,65 +64,71 @@ func main() {
 <!-- Start Available Resources and Operations [operations] -->
 ## Available Resources and Operations
 
-### [AppsV1](docs/sdks/appsv1/README.md)
+### [TokensV1](docs/sdks/tokensv1/README.md)
 
-* [GetApps](docs/sdks/appsv1/README.md#getapps) - Returns an unsorted list of your organization’s [applications](https://hathora.dev/docs/concepts/hathora-entities#application). An application is uniquely identified by an `appId`.
-* [CreateApp](docs/sdks/appsv1/README.md#createapp) - Create a new [application](https://hathora.dev/docs/concepts/hathora-entities#application).
-* [UpdateApp](docs/sdks/appsv1/README.md#updateapp) - Update data for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
-* [GetAppInfo](docs/sdks/appsv1/README.md#getappinfo) - Get details for an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
-* [DeleteApp](docs/sdks/appsv1/README.md#deleteapp) - Delete an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. Your organization will lose access to this application.
+* [GetOrgTokens](docs/sdks/tokensv1/README.md#getorgtokens) - List all organization tokens for a given org.
+* [CreateOrgToken](docs/sdks/tokensv1/README.md#createorgtoken) - Create a new organization token.
+* [RevokeOrgToken](docs/sdks/tokensv1/README.md#revokeorgtoken) - Revoke an organization token.
 
-### [AuthV1](docs/sdks/authv1/README.md)
+### [RoomsV1](docs/sdks/roomsv1/README.md)
 
-* [LoginAnonymous](docs/sdks/authv1/README.md#loginanonymous) - Returns a unique player token for an anonymous user.
-* [LoginNickname](docs/sdks/authv1/README.md#loginnickname) - Returns a unique player token with a specified nickname for a user.
-* [LoginGoogle](docs/sdks/authv1/README.md#logingoogle) - Returns a unique player token using a Google-signed OIDC `idToken`.
+* [~~CreateRoomDeprecated~~](docs/sdks/roomsv1/README.md#createroomdeprecated) - :warning: **Deprecated**
+* [~~GetRoomInfoDeprecated~~](docs/sdks/roomsv1/README.md#getroominfodeprecated) - :warning: **Deprecated**
+* [~~GetActiveRoomsForProcessDeprecated~~](docs/sdks/roomsv1/README.md#getactiveroomsforprocessdeprecated) - :warning: **Deprecated**
+* [~~GetInactiveRoomsForProcessDeprecated~~](docs/sdks/roomsv1/README.md#getinactiveroomsforprocessdeprecated) - :warning: **Deprecated**
+* [~~DestroyRoomDeprecated~~](docs/sdks/roomsv1/README.md#destroyroomdeprecated) - :warning: **Deprecated**
+* [~~SuspendRoomDeprecated~~](docs/sdks/roomsv1/README.md#suspendroomdeprecated) - :warning: **Deprecated**
+* [~~GetConnectionInfoDeprecated~~](docs/sdks/roomsv1/README.md#getconnectioninfodeprecated) - :warning: **Deprecated**
 
-### [BillingV1](docs/sdks/billingv1/README.md)
+### [RoomsV2](docs/sdks/roomsv2/README.md)
 
-* [GetBalance](docs/sdks/billingv1/README.md#getbalance)
-* [GetPaymentMethod](docs/sdks/billingv1/README.md#getpaymentmethod)
-* [InitStripeCustomerPortalURL](docs/sdks/billingv1/README.md#initstripecustomerportalurl)
-* [GetInvoices](docs/sdks/billingv1/README.md#getinvoices)
+* [CreateRoom](docs/sdks/roomsv2/README.md#createroom) - Create a new [room](https://hathora.dev/docs/concepts/hathora-entities#room) for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application). Poll the [`GetConnectionInfo()`](https://hathora.dev/api#tag/RoomV2/operation/GetConnectionInfo) endpoint to get connection details for an active room.
+* [GetRoomInfo](docs/sdks/roomsv2/README.md#getroominfo) - Retreive current and historical allocation data for a [room](https://hathora.dev/docs/concepts/hathora-entities#room).
+* [GetActiveRoomsForProcess](docs/sdks/roomsv2/README.md#getactiveroomsforprocess) - Get all active [rooms](https://hathora.dev/docs/concepts/hathora-entities#room) for a given [process](https://hathora.dev/docs/concepts/hathora-entities#process).
+* [GetInactiveRoomsForProcess](docs/sdks/roomsv2/README.md#getinactiveroomsforprocess) - Get all inactive [rooms](https://hathora.dev/docs/concepts/hathora-entities#room) for a given [process](https://hathora.dev/docs/concepts/hathora-entities#process).
+* [DestroyRoom](docs/sdks/roomsv2/README.md#destroyroom) - Destroy a [room](https://hathora.dev/docs/concepts/hathora-entities#room). All associated metadata is deleted.
+* [~~SuspendRoomV2Deprecated~~](docs/sdks/roomsv2/README.md#suspendroomv2deprecated) - Suspend a [room](https://hathora.dev/docs/concepts/hathora-entities#room). The room is unallocated from the process but can be rescheduled later using the same `roomId`. :warning: **Deprecated**
+* [GetConnectionInfo](docs/sdks/roomsv2/README.md#getconnectioninfo) - Poll this endpoint to get connection details to a [room](https://hathora.dev/docs/concepts/hathora-entities#room). Clients can call this endpoint without authentication.
+* [UpdateRoomConfig](docs/sdks/roomsv2/README.md#updateroomconfig)
 
-### [BuildsV1](docs/sdks/buildsv1/README.md)
+### [ProcessesV1](docs/sdks/processesv1/README.md)
 
-* [~~GetBuildsDeprecated~~](docs/sdks/buildsv1/README.md#getbuildsdeprecated) - Returns an array of [builds](https://hathora.dev/docs/concepts/hathora-entities#build) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). :warning: **Deprecated**
-* [~~GetBuildInfoDeprecated~~](docs/sdks/buildsv1/README.md#getbuildinfodeprecated) - Get details for a [build](https://hathora.dev/docs/concepts/hathora-entities#build). :warning: **Deprecated**
-* [~~CreateBuildDeprecated~~](docs/sdks/buildsv1/README.md#createbuilddeprecated) - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build). Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build. :warning: **Deprecated**
-* [~~RunBuildDeprecated~~](docs/sdks/buildsv1/README.md#runbuilddeprecated) - Builds a game server artifact from a tarball you provide. Pass in the `buildId` generated from [`CreateBuild()`](https://hathora.dev/api#tag/BuildV1/operation/CreateBuild). :warning: **Deprecated**
-* [~~DeleteBuildDeprecated~~](docs/sdks/buildsv1/README.md#deletebuilddeprecated) - Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build). All associated metadata is deleted. :warning: **Deprecated**
+* [~~GetRunningProcesses~~](docs/sdks/processesv1/README.md#getrunningprocesses) - Retrieve 10 most recently started [process](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `region`. :warning: **Deprecated**
+* [~~GetStoppedProcesses~~](docs/sdks/processesv1/README.md#getstoppedprocesses) - Retrieve 10 most recently stopped [process](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `region`. :warning: **Deprecated**
+* [~~GetProcessInfoDeprecated~~](docs/sdks/processesv1/README.md#getprocessinfodeprecated) - Get details for a [process](https://hathora.dev/docs/concepts/hathora-entities#process). :warning: **Deprecated**
 
-### [BuildsV2](docs/sdks/buildsv2/README.md)
+### [ProcessesV2](docs/sdks/processesv2/README.md)
 
-* [GetBuilds](docs/sdks/buildsv2/README.md#getbuilds) - Returns an array of [builds](https://hathora.dev/docs/concepts/hathora-entities#build) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
-* [GetBuildInfo](docs/sdks/buildsv2/README.md#getbuildinfo) - Get details for a [build](https://hathora.dev/docs/concepts/hathora-entities#build).
-* [CreateBuild](docs/sdks/buildsv2/README.md#createbuild) - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build). Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
-* [CreateBuildWithUploadURL](docs/sdks/buildsv2/README.md#createbuildwithuploadurl) - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build) with optional `uploadUrl` that can be used to upload the build to before calling `runBuild`. Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
-* [RunBuild](docs/sdks/buildsv2/README.md#runbuild) - Builds a game server artifact from a tarball you provide. Pass in the `buildId` generated from [`CreateBuild()`](https://hathora.dev/api#tag/BuildV1/operation/CreateBuild).
-* [DeleteBuild](docs/sdks/buildsv2/README.md#deletebuild) - Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build). All associated metadata is deleted.
+* [GetProcessInfo](docs/sdks/processesv2/README.md#getprocessinfo) - Get details for a [process](https://hathora.dev/docs/concepts/hathora-entities#process).
+* [GetLatestProcesses](docs/sdks/processesv2/README.md#getlatestprocesses) - Retrieve the 10 most recent [processes](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `status` or `region`.
+* [StopProcess](docs/sdks/processesv2/README.md#stopprocess) - Stops a [process](https://hathora.dev/docs/concepts/hathora-entities#process) immediately.
+* [CreateProcess](docs/sdks/processesv2/README.md#createprocess) - Creates a [process](https://hathora.dev/docs/concepts/hathora-entities#process) without a room. Use this to pre-allocate processes ahead of time so that subsequent room assignment via [CreateRoom()](https://hathora.dev/api#tag/RoomV2/operation/CreateRoom) can be instant.
 
-### [DeploymentsV1](docs/sdks/deploymentsv1/README.md)
+### [OrganizationsV1](docs/sdks/organizationsv1/README.md)
 
-* [~~GetDeploymentsDeprecated~~](docs/sdks/deploymentsv1/README.md#getdeploymentsdeprecated) - Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). :warning: **Deprecated**
-* [~~GetLatestDeploymentDeprecated~~](docs/sdks/deploymentsv1/README.md#getlatestdeploymentdeprecated) - Get the latest [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). :warning: **Deprecated**
-* [~~GetDeploymentInfoDeprecated~~](docs/sdks/deploymentsv1/README.md#getdeploymentinfodeprecated) - Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). :warning: **Deprecated**
-* [~~CreateDeploymentDeprecated~~](docs/sdks/deploymentsv1/README.md#createdeploymentdeprecated) - Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected. :warning: **Deprecated**
+* [GetOrgs](docs/sdks/organizationsv1/README.md#getorgs) - Returns an unsorted list of all organizations that you are a member of (an accepted membership invite). An organization is uniquely identified by an `orgId`.
+* [GetUserPendingInvites](docs/sdks/organizationsv1/README.md#getuserpendinginvites)
+* [GetOrgMembers](docs/sdks/organizationsv1/README.md#getorgmembers)
+* [InviteUser](docs/sdks/organizationsv1/README.md#inviteuser)
+* [RescindInvite](docs/sdks/organizationsv1/README.md#rescindinvite)
+* [GetOrgPendingInvites](docs/sdks/organizationsv1/README.md#getorgpendinginvites)
+* [AcceptInvite](docs/sdks/organizationsv1/README.md#acceptinvite)
+* [RejectInvite](docs/sdks/organizationsv1/README.md#rejectinvite)
 
-### [DeploymentsV2](docs/sdks/deploymentsv2/README.md)
+### [MetricsV1](docs/sdks/metricsv1/README.md)
 
-* [GetDeployments](docs/sdks/deploymentsv2/README.md#getdeployments) - Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
-* [GetLatestDeployment](docs/sdks/deploymentsv2/README.md#getlatestdeployment) - Get the latest [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
-* [GetDeploymentInfo](docs/sdks/deploymentsv2/README.md#getdeploymentinfo) - Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment).
-* [CreateDeployment](docs/sdks/deploymentsv2/README.md#createdeployment) - Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
+* [GetMetrics](docs/sdks/metricsv1/README.md#getmetrics) - Get metrics for a [process](https://hathora.dev/docs/concepts/hathora-entities#process) using `appId` and `processId`.
 
-### [DiscoveryV1](docs/sdks/discoveryv1/README.md)
+### [ManagementV1](docs/sdks/managementv1/README.md)
 
-* [~~GetPingServiceEndpointsDeprecated~~](docs/sdks/discoveryv1/README.md#getpingserviceendpointsdeprecated) - Returns an array of V1 regions with a host and port that a client can directly ping. Open a websocket connection to `wss://<host>:<port>/ws` and send a packet. To calculate ping, measure the time it takes to get an echo packet back. :warning: **Deprecated**
+* [SendVerificationEmail](docs/sdks/managementv1/README.md#sendverificationemail)
 
-### [DiscoveryV2](docs/sdks/discoveryv2/README.md)
+### [LogsV1](docs/sdks/logsv1/README.md)
 
-* [GetPingServiceEndpoints](docs/sdks/discoveryv2/README.md#getpingserviceendpoints) - Returns an array of all regions with a host and port that a client can directly ping. Open a websocket connection to `wss://<host>:<port>/ws` and send a packet. To calculate ping, measure the time it takes to get an echo packet back.
+* [~~GetLogsForApp~~](docs/sdks/logsv1/README.md#getlogsforapp) - Returns a stream of logs for an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. :warning: **Deprecated**
+* [GetLogsForProcess](docs/sdks/logsv1/README.md#getlogsforprocess) - Returns a stream of logs for a [process](https://hathora.dev/docs/concepts/hathora-entities#process) using `appId` and `processId`.
+* [DownloadLogForProcess](docs/sdks/logsv1/README.md#downloadlogforprocess) - Download entire log file for a stopped process.
+* [~~GetLogsForDeployment~~](docs/sdks/logsv1/README.md#getlogsfordeployment) - Returns a stream of logs for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) using `appId` and `deploymentId`. :warning: **Deprecated**
 
 ### [LobbiesV1](docs/sdks/lobbiesv1/README.md)
 
@@ -146,71 +153,65 @@ func main() {
 * [GetLobbyInfoByRoomID](docs/sdks/lobbiesv3/README.md#getlobbyinfobyroomid) - Get details for a lobby.
 * [GetLobbyInfoByShortCode](docs/sdks/lobbiesv3/README.md#getlobbyinfobyshortcode) - Get details for a lobby. If 2 or more lobbies have the same `shortCode`, then the most recently created lobby will be returned.
 
-### [LogsV1](docs/sdks/logsv1/README.md)
+### [DiscoveryV1](docs/sdks/discoveryv1/README.md)
 
-* [~~GetLogsForApp~~](docs/sdks/logsv1/README.md#getlogsforapp) - Returns a stream of logs for an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. :warning: **Deprecated**
-* [GetLogsForProcess](docs/sdks/logsv1/README.md#getlogsforprocess) - Returns a stream of logs for a [process](https://hathora.dev/docs/concepts/hathora-entities#process) using `appId` and `processId`.
-* [DownloadLogForProcess](docs/sdks/logsv1/README.md#downloadlogforprocess) - Download entire log file for a stopped process.
-* [~~GetLogsForDeployment~~](docs/sdks/logsv1/README.md#getlogsfordeployment) - Returns a stream of logs for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) using `appId` and `deploymentId`. :warning: **Deprecated**
+* [~~GetPingServiceEndpointsDeprecated~~](docs/sdks/discoveryv1/README.md#getpingserviceendpointsdeprecated) - Returns an array of V1 regions with a host and port that a client can directly ping. Open a websocket connection to `wss://<host>:<port>/ws` and send a packet. To calculate ping, measure the time it takes to get an echo packet back. :warning: **Deprecated**
 
-### [ManagementV1](docs/sdks/managementv1/README.md)
+### [DiscoveryV2](docs/sdks/discoveryv2/README.md)
 
-* [SendVerificationEmail](docs/sdks/managementv1/README.md#sendverificationemail)
+* [GetPingServiceEndpoints](docs/sdks/discoveryv2/README.md#getpingserviceendpoints) - Returns an array of all regions with a host and port that a client can directly ping. Open a websocket connection to `wss://<host>:<port>/ws` and send a packet. To calculate ping, measure the time it takes to get an echo packet back.
 
-### [MetricsV1](docs/sdks/metricsv1/README.md)
+### [DeploymentsV1](docs/sdks/deploymentsv1/README.md)
 
-* [GetMetrics](docs/sdks/metricsv1/README.md#getmetrics) - Get metrics for a [process](https://hathora.dev/docs/concepts/hathora-entities#process) using `appId` and `processId`.
+* [~~GetDeploymentsDeprecated~~](docs/sdks/deploymentsv1/README.md#getdeploymentsdeprecated) - Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). :warning: **Deprecated**
+* [~~GetLatestDeploymentDeprecated~~](docs/sdks/deploymentsv1/README.md#getlatestdeploymentdeprecated) - Get the latest [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). :warning: **Deprecated**
+* [~~GetDeploymentInfoDeprecated~~](docs/sdks/deploymentsv1/README.md#getdeploymentinfodeprecated) - Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). :warning: **Deprecated**
+* [~~CreateDeploymentDeprecated~~](docs/sdks/deploymentsv1/README.md#createdeploymentdeprecated) - Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected. :warning: **Deprecated**
 
-### [OrganizationsV1](docs/sdks/organizationsv1/README.md)
+### [DeploymentsV2](docs/sdks/deploymentsv2/README.md)
 
-* [GetOrgs](docs/sdks/organizationsv1/README.md#getorgs) - Returns an unsorted list of all organizations that you are a member of (an accepted membership invite). An organization is uniquely identified by an `orgId`.
-* [GetUserPendingInvites](docs/sdks/organizationsv1/README.md#getuserpendinginvites)
-* [GetOrgMembers](docs/sdks/organizationsv1/README.md#getorgmembers)
-* [InviteUser](docs/sdks/organizationsv1/README.md#inviteuser)
-* [RescindInvite](docs/sdks/organizationsv1/README.md#rescindinvite)
-* [GetOrgPendingInvites](docs/sdks/organizationsv1/README.md#getorgpendinginvites)
-* [AcceptInvite](docs/sdks/organizationsv1/README.md#acceptinvite)
-* [RejectInvite](docs/sdks/organizationsv1/README.md#rejectinvite)
+* [GetDeployments](docs/sdks/deploymentsv2/README.md#getdeployments) - Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
+* [GetLatestDeployment](docs/sdks/deploymentsv2/README.md#getlatestdeployment) - Get the latest [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
+* [GetDeploymentInfo](docs/sdks/deploymentsv2/README.md#getdeploymentinfo) - Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment).
+* [CreateDeployment](docs/sdks/deploymentsv2/README.md#createdeployment) - Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
 
-### [ProcessesV1](docs/sdks/processesv1/README.md)
+### [BuildsV1](docs/sdks/buildsv1/README.md)
 
-* [~~GetRunningProcesses~~](docs/sdks/processesv1/README.md#getrunningprocesses) - Retrieve 10 most recently started [process](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `region`. :warning: **Deprecated**
-* [~~GetStoppedProcesses~~](docs/sdks/processesv1/README.md#getstoppedprocesses) - Retrieve 10 most recently stopped [process](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `region`. :warning: **Deprecated**
-* [~~GetProcessInfoDeprecated~~](docs/sdks/processesv1/README.md#getprocessinfodeprecated) - Get details for a [process](https://hathora.dev/docs/concepts/hathora-entities#process). :warning: **Deprecated**
+* [~~GetBuildsDeprecated~~](docs/sdks/buildsv1/README.md#getbuildsdeprecated) - Returns an array of [builds](https://hathora.dev/docs/concepts/hathora-entities#build) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). :warning: **Deprecated**
+* [~~GetBuildInfoDeprecated~~](docs/sdks/buildsv1/README.md#getbuildinfodeprecated) - Get details for a [build](https://hathora.dev/docs/concepts/hathora-entities#build). :warning: **Deprecated**
+* [~~CreateBuildDeprecated~~](docs/sdks/buildsv1/README.md#createbuilddeprecated) - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build). Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build. :warning: **Deprecated**
+* [~~DeleteBuildDeprecated~~](docs/sdks/buildsv1/README.md#deletebuilddeprecated) - Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build). All associated metadata is deleted. :warning: **Deprecated**
+* [~~RunBuildDeprecated~~](docs/sdks/buildsv1/README.md#runbuilddeprecated) - Builds a game server artifact from a tarball you provide. Pass in the `buildId` generated from [`CreateBuild()`](https://hathora.dev/api#tag/BuildV1/operation/CreateBuild). :warning: **Deprecated**
 
-### [ProcessesV2](docs/sdks/processesv2/README.md)
+### [BuildsV2](docs/sdks/buildsv2/README.md)
 
-* [GetProcessInfo](docs/sdks/processesv2/README.md#getprocessinfo) - Get details for a [process](https://hathora.dev/docs/concepts/hathora-entities#process).
-* [GetLatestProcesses](docs/sdks/processesv2/README.md#getlatestprocesses) - Retrieve the 10 most recent [processes](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `status` or `region`.
-* [StopProcess](docs/sdks/processesv2/README.md#stopprocess) - Stops a [process](https://hathora.dev/docs/concepts/hathora-entities#process) immediately.
-* [CreateProcess](docs/sdks/processesv2/README.md#createprocess) - Creates a [process](https://hathora.dev/docs/concepts/hathora-entities#process) without a room. Use this to pre-allocate processes ahead of time so that subsequent room assignment via [CreateRoom()](https://hathora.dev/api#tag/RoomV2/operation/CreateRoom) can be instant.
+* [GetBuilds](docs/sdks/buildsv2/README.md#getbuilds) - Returns an array of [builds](https://hathora.dev/docs/concepts/hathora-entities#build) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
+* [GetBuildInfo](docs/sdks/buildsv2/README.md#getbuildinfo) - Get details for a [build](https://hathora.dev/docs/concepts/hathora-entities#build).
+* [CreateBuild](docs/sdks/buildsv2/README.md#createbuild) - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build). Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
+* [CreateBuildWithUploadURL](docs/sdks/buildsv2/README.md#createbuildwithuploadurl) - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build) with optional `uploadUrl` that can be used to upload the build to before calling `runBuild`. Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
+* [DeleteBuild](docs/sdks/buildsv2/README.md#deletebuild) - Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build). All associated metadata is deleted.
+* [RunBuild](docs/sdks/buildsv2/README.md#runbuild) - Builds a game server artifact from a tarball you provide. Pass in the `buildId` generated from [`CreateBuild()`](https://hathora.dev/api#tag/BuildV1/operation/CreateBuild).
 
-### [RoomsV1](docs/sdks/roomsv1/README.md)
+### [BillingV1](docs/sdks/billingv1/README.md)
 
-* [~~CreateRoomDeprecated~~](docs/sdks/roomsv1/README.md#createroomdeprecated) - :warning: **Deprecated**
-* [~~GetRoomInfoDeprecated~~](docs/sdks/roomsv1/README.md#getroominfodeprecated) - :warning: **Deprecated**
-* [~~GetActiveRoomsForProcessDeprecated~~](docs/sdks/roomsv1/README.md#getactiveroomsforprocessdeprecated) - :warning: **Deprecated**
-* [~~GetInactiveRoomsForProcessDeprecated~~](docs/sdks/roomsv1/README.md#getinactiveroomsforprocessdeprecated) - :warning: **Deprecated**
-* [~~DestroyRoomDeprecated~~](docs/sdks/roomsv1/README.md#destroyroomdeprecated) - :warning: **Deprecated**
-* [~~SuspendRoomDeprecated~~](docs/sdks/roomsv1/README.md#suspendroomdeprecated) - :warning: **Deprecated**
-* [~~GetConnectionInfoDeprecated~~](docs/sdks/roomsv1/README.md#getconnectioninfodeprecated) - :warning: **Deprecated**
+* [GetBalance](docs/sdks/billingv1/README.md#getbalance)
+* [GetPaymentMethod](docs/sdks/billingv1/README.md#getpaymentmethod)
+* [InitStripeCustomerPortalURL](docs/sdks/billingv1/README.md#initstripecustomerportalurl)
+* [GetInvoices](docs/sdks/billingv1/README.md#getinvoices)
 
-### [RoomsV2](docs/sdks/roomsv2/README.md)
+### [AuthV1](docs/sdks/authv1/README.md)
 
-* [CreateRoom](docs/sdks/roomsv2/README.md#createroom) - Create a new [room](https://hathora.dev/docs/concepts/hathora-entities#room) for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application). Poll the [`GetConnectionInfo()`](https://hathora.dev/api#tag/RoomV2/operation/GetConnectionInfo) endpoint to get connection details for an active room.
-* [GetRoomInfo](docs/sdks/roomsv2/README.md#getroominfo) - Retreive current and historical allocation data for a [room](https://hathora.dev/docs/concepts/hathora-entities#room).
-* [GetActiveRoomsForProcess](docs/sdks/roomsv2/README.md#getactiveroomsforprocess) - Get all active [rooms](https://hathora.dev/docs/concepts/hathora-entities#room) for a given [process](https://hathora.dev/docs/concepts/hathora-entities#process).
-* [GetInactiveRoomsForProcess](docs/sdks/roomsv2/README.md#getinactiveroomsforprocess) - Get all inactive [rooms](https://hathora.dev/docs/concepts/hathora-entities#room) for a given [process](https://hathora.dev/docs/concepts/hathora-entities#process).
-* [DestroyRoom](docs/sdks/roomsv2/README.md#destroyroom) - Destroy a [room](https://hathora.dev/docs/concepts/hathora-entities#room). All associated metadata is deleted.
-* [~~SuspendRoomV2Deprecated~~](docs/sdks/roomsv2/README.md#suspendroomv2deprecated) - Suspend a [room](https://hathora.dev/docs/concepts/hathora-entities#room). The room is unallocated from the process but can be rescheduled later using the same `roomId`. :warning: **Deprecated**
-* [GetConnectionInfo](docs/sdks/roomsv2/README.md#getconnectioninfo) - Poll this endpoint to get connection details to a [room](https://hathora.dev/docs/concepts/hathora-entities#room). Clients can call this endpoint without authentication.
-* [UpdateRoomConfig](docs/sdks/roomsv2/README.md#updateroomconfig)
+* [LoginAnonymous](docs/sdks/authv1/README.md#loginanonymous) - Returns a unique player token for an anonymous user.
+* [LoginNickname](docs/sdks/authv1/README.md#loginnickname) - Returns a unique player token with a specified nickname for a user.
+* [LoginGoogle](docs/sdks/authv1/README.md#logingoogle) - Returns a unique player token using a Google-signed OIDC `idToken`.
 
-### [TokensV1](docs/sdks/tokensv1/README.md)
+### [AppsV1](docs/sdks/appsv1/README.md)
 
-* [GetOrgTokens](docs/sdks/tokensv1/README.md#getorgtokens) - List all organization tokens for a given org.
-* [CreateOrgToken](docs/sdks/tokensv1/README.md#createorgtoken) - Create a new organization token.
-* [RevokeOrgToken](docs/sdks/tokensv1/README.md#revokeorgtoken) - Revoke an organization token.
+* [GetApps](docs/sdks/appsv1/README.md#getapps) - Returns an unsorted list of your organization’s [applications](https://hathora.dev/docs/concepts/hathora-entities#application). An application is uniquely identified by an `appId`.
+* [CreateApp](docs/sdks/appsv1/README.md#createapp) - Create a new [application](https://hathora.dev/docs/concepts/hathora-entities#application).
+* [UpdateApp](docs/sdks/appsv1/README.md#updateapp) - Update data for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
+* [GetAppInfo](docs/sdks/appsv1/README.md#getappinfo) - Get details for an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
+* [DeleteApp](docs/sdks/appsv1/README.md#deleteapp) - Delete an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. Your organization will lose access to this application.
 <!-- End Available Resources and Operations [operations] -->
 
 <!-- Start Global Parameters [global-parameters] -->
@@ -218,7 +219,7 @@ func main() {
 
 A parameter is configured globally. This parameter may be set on the SDK client instance itself during initialization. When configured as an option during SDK initialization, This global value will be used as the default on the operations that use it. When such operations are called, there is a place in each to override the global value, if needed.
 
-For example, you can set `appId` to `"app-af469a92-5b45-4565-b3c4-b79878de67d2"` at SDK initialization and then you do not have to pass the same value on calls to operations like `UpdateApp`. But if you want to do so you may, which will locally override the global setting. See the example code below for a demonstration.
+For example, you can set `appId` to `"app-af469a92-5b45-4565-b3c4-b79878de67d2"` at SDK initialization and then you do not have to pass the same value on calls to operations like `CreateRoomDeprecated`. But if you want to do so you may, which will locally override the global setting. See the example code below for a demonstration.
 
 
 ### Available Globals
@@ -240,29 +241,30 @@ import (
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"log"
+	"os"
 )
 
 func main() {
 	s := sdk.New(
 		sdk.WithSecurity(shared.Security{
-			HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+			HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
 		}),
-		sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+		sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
 	)
-
-	appConfig := shared.AppConfig{
-		AuthConfiguration: shared.AuthConfiguration{},
-		AppName:           "minecraft",
+	createRoomParams := shared.CreateRoomParams{
+		RoomConfig: sdk.String("{\"name\":\"my-room\"}"),
+		Region:     shared.RegionChicago,
 	}
 
 	var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
+	var roomID *string = sdk.String("2swovpy1fnunu")
 	ctx := context.Background()
-	res, err := s.AppsV1.UpdateApp(ctx, appConfig, appID)
+	res, err := s.RoomsV1.CreateRoomDeprecated(ctx, createRoomParams, appID, roomID)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if res.Application != nil {
+	if res.RoomID != nil {
 		// handle response
 	}
 }
@@ -277,7 +279,7 @@ Handling errors in this SDK should largely match your expectations.  All operati
 
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,429            | application/json   |
+| sdkerrors.APIError | 401,404,429        | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
 ### Example
@@ -292,18 +294,19 @@ import (
 	"github.com/hathora/ci/internal/sdk/models/sdkerrors"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"log"
+	"os"
 )
 
 func main() {
 	s := sdk.New(
 		sdk.WithSecurity(shared.Security{
-			HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+			HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
 		}),
-		sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+		sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
 	)
-
+	var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
 	ctx := context.Background()
-	res, err := s.AppsV1.GetApps(ctx)
+	res, err := s.TokensV1.GetOrgTokens(ctx, orgID)
 	if err != nil {
 
 		var e *sdkerrors.APIError
@@ -345,23 +348,24 @@ import (
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"log"
+	"os"
 )
 
 func main() {
 	s := sdk.New(
 		sdk.WithServerIndex(1),
 		sdk.WithSecurity(shared.Security{
-			HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+			HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
 		}),
-		sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+		sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
 	)
-
+	var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
 	ctx := context.Background()
-	res, err := s.AppsV1.GetApps(ctx)
+	res, err := s.TokensV1.GetOrgTokens(ctx, orgID)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if res.ApplicationWithLatestDeploymentAndBuilds != nil {
+	if res.ListOrgTokens != nil {
 		// handle response
 	}
 }
@@ -380,23 +384,24 @@ import (
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"log"
+	"os"
 )
 
 func main() {
 	s := sdk.New(
 		sdk.WithServerURL("https://api.hathora.dev"),
 		sdk.WithSecurity(shared.Security{
-			HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+			HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
 		}),
-		sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+		sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
 	)
-
+	var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
 	ctx := context.Background()
-	res, err := s.AppsV1.GetApps(ctx)
+	res, err := s.TokensV1.GetOrgTokens(ctx, orgID)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if res.ApplicationWithLatestDeploymentAndBuilds != nil {
+	if res.ListOrgTokens != nil {
 		// handle response
 	}
 }
@@ -453,22 +458,23 @@ import (
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"log"
+	"os"
 )
 
 func main() {
 	s := sdk.New(
 		sdk.WithSecurity(shared.Security{
-			HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+			HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
 		}),
-		sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+		sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
 	)
-
+	var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
 	ctx := context.Background()
-	res, err := s.AppsV1.GetApps(ctx)
+	res, err := s.TokensV1.GetOrgTokens(ctx, orgID)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if res.ApplicationWithLatestDeploymentAndBuilds != nil {
+	if res.ListOrgTokens != nil {
 		// handle response
 	}
 }
@@ -487,15 +493,15 @@ import (
 	"github.com/hathora/ci/internal/sdk/models/operations"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"log"
+	"os"
 )
 
 func main() {
 	s := sdk.New(
-		sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+		sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
 	)
-
 	security := operations.CreatePrivateLobbyDeprecatedSecurity{
-		PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
+		PlayerAuth: os.Getenv("PLAYER_AUTH"),
 	}
 
 	var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
@@ -503,7 +509,6 @@ func main() {
 	var region *shared.Region = shared.RegionLondon.ToPointer()
 
 	var local *bool = sdk.Bool(false)
-
 	ctx := context.Background()
 	res, err := s.LobbiesV1.CreatePrivateLobbyDeprecated(ctx, security, appID, region, local)
 	if err != nil {
@@ -522,6 +527,100 @@ func main() {
 
 
 <!-- End Special Types [types] -->
+
+<!-- Start Retries [retries] -->
+## Retries
+
+Some of the endpoints in this SDK support retries. If you use the SDK without any configuration, it will fall back to the default retry strategy provided by the API. However, the default retry strategy can be overridden on a per-operation basis, or across the entire SDK.
+
+To change the default retry strategy for a single API call, simply provide a `retry.Config` object to the call by using the `WithRetries` option:
+```go
+package main
+
+import (
+	"context"
+	"github.com/hathora/ci/internal/sdk"
+	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/sdk/retry"
+	"log"
+	"models/operations"
+	"os"
+)
+
+func main() {
+	s := sdk.New(
+		sdk.WithSecurity(shared.Security{
+			HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
+		}),
+		sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+	)
+	var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+	ctx := context.Background()
+	res, err := s.TokensV1.GetOrgTokens(ctx, orgID, operations.WithRetries(
+		retry.Config{
+			Strategy: "backoff",
+			Backoff: &retry.BackoffStrategy{
+				InitialInterval: 1,
+				MaxInterval:     50,
+				Exponent:        1.1,
+				MaxElapsedTime:  100,
+			},
+			RetryConnectionErrors: false,
+		}))
+	if err != nil {
+		log.Fatal(err)
+	}
+	if res.ListOrgTokens != nil {
+		// handle response
+	}
+}
+
+```
+
+If you'd like to override the default retry strategy for all operations that support retries, you can use the `WithRetryConfig` option at SDK initialization:
+```go
+package main
+
+import (
+	"context"
+	"github.com/hathora/ci/internal/sdk"
+	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/sdk/retry"
+	"log"
+	"os"
+)
+
+func main() {
+	s := sdk.New(
+		sdk.WithRetryConfig(
+			retry.Config{
+				Strategy: "backoff",
+				Backoff: &retry.BackoffStrategy{
+					InitialInterval: 1,
+					MaxInterval:     50,
+					Exponent:        1.1,
+					MaxElapsedTime:  100,
+				},
+				RetryConnectionErrors: false,
+			}),
+		sdk.WithSecurity(shared.Security{
+			HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
+		}),
+		sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+	)
+	var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+	ctx := context.Background()
+	res, err := s.TokensV1.GetOrgTokens(ctx, orgID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if res.ListOrgTokens != nil {
+		// handle response
+	}
+}
+
+```
+<!-- End Retries [retries] -->
 
 <!-- Placeholder for Future Speakeasy SDK Sections -->
 

@@ -52,7 +52,7 @@ var Log = &cli.Command{
 			return fmt.Errorf("failed to get logs: %w", err)
 		}
 
-		err = output.StreamOutput(res.Stream, os.Stdout)
+		err = output.StreamOutput(res.ResponseStream, os.Stdout)
 		if err != nil {
 			zap.L().Error("failed to stream output to console", zap.Error(err))
 		}

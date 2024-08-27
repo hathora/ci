@@ -161,7 +161,7 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 	}
 
 	zap.L().Debug("streaming build output to console...")
-	err = output.StreamOutput(runRes.Stream, os.Stderr)
+	err = output.StreamOutput(runRes.ResponseStream, os.Stderr)
 	if err != nil {
 		zap.L().Error("failed to stream output to console", zap.Error(err))
 	}

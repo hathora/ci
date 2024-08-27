@@ -20,6 +20,7 @@ package main
 import(
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/operations"
+	"os"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
 	"log"
@@ -27,11 +28,10 @@ import(
 
 func main() {
     s := sdk.New(
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     security := operations.CreateLobbySecurity{
-            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
+            PlayerAuth: os.Getenv("PLAYER_AUTH"),
         }
 
     createLobbyV3Params := shared.CreateLobbyV3Params{
@@ -45,7 +45,6 @@ func main() {
     var shortCode *string = sdk.String("LFG4")
 
     var roomID *string = sdk.String("2swovpy1fnunu")
-    
     ctx := context.Background()
     res, err := s.LobbiesV3.CreateLobby(ctx, security, createLobbyV3Params, appID, shortCode, roomID)
     if err != nil {
@@ -67,6 +66,7 @@ func main() {
 | `appID`                                                                          | **string*                                                                        | :heavy_minus_sign:                                                               | N/A                                                                              | app-af469a92-5b45-4565-b3c4-b79878de67d2                                         |
 | `shortCode`                                                                      | **string*                                                                        | :heavy_minus_sign:                                                               | N/A                                                                              | LFG4                                                                             |
 | `roomID`                                                                         | **string*                                                                        | :heavy_minus_sign:                                                               | N/A                                                                              | 2swovpy1fnunu                                                                    |
+| `opts`                                                                           | [][operations.Option](../../models/operations/option.md)                         | :heavy_minus_sign:                                                               | The options for this request.                                                    |                                                                                  |
 
 
 ### Response
@@ -95,13 +95,11 @@ import(
 
 func main() {
     s := sdk.New(
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var region *shared.Region = shared.RegionSeattle.ToPointer()
-    
     ctx := context.Background()
     res, err := s.LobbiesV3.ListActivePublicLobbies(ctx, appID, region)
     if err != nil {
@@ -120,6 +118,7 @@ func main() {
 | `ctx`                                                              | [context.Context](https://pkg.go.dev/context#Context)              | :heavy_check_mark:                                                 | The context to use for the request.                                |                                                                    |
 | `appID`                                                            | **string*                                                          | :heavy_minus_sign:                                                 | N/A                                                                | app-af469a92-5b45-4565-b3c4-b79878de67d2                           |
 | `region`                                                           | [*shared.Region](../../models/shared/region.md)                    | :heavy_minus_sign:                                                 | If omitted, active public lobbies in all regions will be returned. |                                                                    |
+| `opts`                                                             | [][operations.Option](../../models/operations/option.md)           | :heavy_minus_sign:                                                 | The options for this request.                                      |                                                                    |
 
 
 ### Response
@@ -147,13 +146,11 @@ import(
 
 func main() {
     s := sdk.New(
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.LobbiesV3.GetLobbyInfoByRoomID(ctx, roomID, appID)
     if err != nil {
@@ -167,11 +164,12 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `roomID`                                              | *string*                                              | :heavy_check_mark:                                    | N/A                                                   | 2swovpy1fnunu                                         |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `roomID`                                                 | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | 2swovpy1fnunu                                            |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response
@@ -199,13 +197,11 @@ import(
 
 func main() {
     s := sdk.New(
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var shortCode string = "LFG4"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.LobbiesV3.GetLobbyInfoByShortCode(ctx, shortCode, appID)
     if err != nil {
@@ -219,11 +215,12 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `shortCode`                                           | *string*                                              | :heavy_check_mark:                                    | N/A                                                   | LFG4                                                  |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `shortCode`                                              | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | LFG4                                                     |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response

@@ -20,6 +20,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/operations"
 	"context"
@@ -29,15 +30,13 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     request := operations.GetMetricsRequest{
         ProcessID: "cbfcddd2-0006-43ae-996c-995fff7bed2e",
     }
-    
     ctx := context.Background()
     res, err := s.MetricsV1.GetMetrics(ctx, request)
     if err != nil {
@@ -55,6 +54,7 @@ func main() {
 | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | `ctx`                                                                        | [context.Context](https://pkg.go.dev/context#Context)                        | :heavy_check_mark:                                                           | The context to use for the request.                                          |
 | `request`                                                                    | [operations.GetMetricsRequest](../../models/operations/getmetricsrequest.md) | :heavy_check_mark:                                                           | The request object to use for the request.                                   |
+| `opts`                                                                       | [][operations.Option](../../models/operations/option.md)                     | :heavy_minus_sign:                                                           | The options for this request.                                                |
 
 
 ### Response

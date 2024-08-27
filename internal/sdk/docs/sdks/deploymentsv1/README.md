@@ -21,6 +21,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -29,13 +30,11 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.DeploymentsV1.GetDeploymentsDeprecated(ctx, appID)
     if err != nil {
@@ -49,10 +48,11 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response
@@ -76,6 +76,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -84,13 +85,11 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.DeploymentsV1.GetLatestDeploymentDeprecated(ctx, appID)
     if err != nil {
@@ -104,10 +103,11 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response
@@ -131,6 +131,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -139,15 +140,13 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var deploymentID int = 1
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.DeploymentsV1.GetDeploymentInfoDeprecated(ctx, deploymentID, appID)
     if err != nil {
@@ -161,11 +160,12 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `deploymentID`                                        | *int*                                                 | :heavy_check_mark:                                    | N/A                                                   | 1                                                     |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `deploymentID`                                           | *int*                                                    | :heavy_check_mark:                                       | N/A                                                      | 1                                                        |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response
@@ -189,6 +189,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -197,11 +198,10 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var buildID int = 1
 
     deploymentConfig := shared.DeploymentConfig{
@@ -225,7 +225,6 @@ func main() {
     }
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.DeploymentsV1.CreateDeploymentDeprecated(ctx, buildID, deploymentConfig, appID)
     if err != nil {
@@ -245,6 +244,7 @@ func main() {
 | `buildID`                                                          | *int*                                                              | :heavy_check_mark:                                                 | N/A                                                                | 1                                                                  |
 | `deploymentConfig`                                                 | [shared.DeploymentConfig](../../models/shared/deploymentconfig.md) | :heavy_check_mark:                                                 | N/A                                                                |                                                                    |
 | `appID`                                                            | **string*                                                          | :heavy_minus_sign:                                                 | N/A                                                                | app-af469a92-5b45-4565-b3c4-b79878de67d2                           |
+| `opts`                                                             | [][operations.Option](../../models/operations/option.md)           | :heavy_minus_sign:                                                 | The options for this request.                                      |                                                                    |
 
 
 ### Response

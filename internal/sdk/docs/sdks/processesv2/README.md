@@ -23,6 +23,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -31,15 +32,13 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.ProcessesV2.GetProcessInfo(ctx, processID, appID)
     if err != nil {
@@ -53,11 +52,12 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `processID`                                           | *string*                                              | :heavy_check_mark:                                    | N/A                                                   | cbfcddd2-0006-43ae-996c-995fff7bed2e                  |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `processID`                                              | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | cbfcddd2-0006-43ae-996c-995fff7bed2e                     |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response
@@ -79,6 +79,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -87,11 +88,10 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var status []shared.ProcessStatus = []shared.ProcessStatus{
@@ -101,7 +101,6 @@ func main() {
     var region []shared.Region = []shared.Region{
         shared.RegionFrankfurt,
     }
-    
     ctx := context.Background()
     res, err := s.ProcessesV2.GetLatestProcesses(ctx, appID, status, region)
     if err != nil {
@@ -121,6 +120,7 @@ func main() {
 | `appID`                                                        | **string*                                                      | :heavy_minus_sign:                                             | N/A                                                            | app-af469a92-5b45-4565-b3c4-b79878de67d2                       |
 | `status`                                                       | [][shared.ProcessStatus](../../models/shared/processstatus.md) | :heavy_minus_sign:                                             | N/A                                                            |                                                                |
 | `region`                                                       | [][shared.Region](../../models/shared/region.md)               | :heavy_minus_sign:                                             | N/A                                                            |                                                                |
+| `opts`                                                         | [][operations.Option](../../models/operations/option.md)       | :heavy_minus_sign:                                             | The options for this request.                                  |                                                                |
 
 
 ### Response
@@ -142,6 +142,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -150,15 +151,13 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.ProcessesV2.StopProcess(ctx, processID, appID)
     if err != nil {
@@ -172,11 +171,12 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `processID`                                           | *string*                                              | :heavy_check_mark:                                    | N/A                                                   | cbfcddd2-0006-43ae-996c-995fff7bed2e                  |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `processID`                                              | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | cbfcddd2-0006-43ae-996c-995fff7bed2e                     |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response
@@ -198,6 +198,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -206,15 +207,13 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var region shared.Region = shared.RegionTokyo
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.ProcessesV2.CreateProcess(ctx, region, appID)
     if err != nil {
@@ -228,11 +227,12 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `region`                                              | [shared.Region](../../models/shared/region.md)        | :heavy_check_mark:                                    | N/A                                                   |                                                       |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `region`                                                 | [shared.Region](../../models/shared/region.md)           | :heavy_check_mark:                                       | N/A                                                      |                                                          |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response

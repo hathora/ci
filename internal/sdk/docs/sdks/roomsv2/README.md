@@ -23,6 +23,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -31,11 +32,10 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     createRoomParams := shared.CreateRoomParams{
         RoomConfig: sdk.String("{\"name\":\"my-room\"}"),
         Region: shared.RegionSaoPaulo,
@@ -44,7 +44,6 @@ func main() {
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var roomID *string = sdk.String("2swovpy1fnunu")
-    
     ctx := context.Background()
     res, err := s.RoomsV2.CreateRoom(ctx, createRoomParams, appID, roomID)
     if err != nil {
@@ -64,6 +63,7 @@ func main() {
 | `createRoomParams`                                                 | [shared.CreateRoomParams](../../models/shared/createroomparams.md) | :heavy_check_mark:                                                 | N/A                                                                |                                                                    |
 | `appID`                                                            | **string*                                                          | :heavy_minus_sign:                                                 | N/A                                                                | app-af469a92-5b45-4565-b3c4-b79878de67d2                           |
 | `roomID`                                                           | **string*                                                          | :heavy_minus_sign:                                                 | N/A                                                                | 2swovpy1fnunu                                                      |
+| `opts`                                                             | [][operations.Option](../../models/operations/option.md)           | :heavy_minus_sign:                                                 | The options for this request.                                      |                                                                    |
 
 
 ### Response
@@ -85,6 +85,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -93,15 +94,13 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.RoomsV2.GetRoomInfo(ctx, roomID, appID)
     if err != nil {
@@ -115,11 +114,12 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `roomID`                                              | *string*                                              | :heavy_check_mark:                                    | N/A                                                   | 2swovpy1fnunu                                         |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `roomID`                                                 | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | 2swovpy1fnunu                                            |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response
@@ -141,6 +141,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -149,15 +150,13 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.RoomsV2.GetActiveRoomsForProcess(ctx, processID, appID)
     if err != nil {
@@ -171,11 +170,12 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `processID`                                           | *string*                                              | :heavy_check_mark:                                    | N/A                                                   | cbfcddd2-0006-43ae-996c-995fff7bed2e                  |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `processID`                                              | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | cbfcddd2-0006-43ae-996c-995fff7bed2e                     |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response
@@ -197,6 +197,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -205,15 +206,13 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.RoomsV2.GetInactiveRoomsForProcess(ctx, processID, appID)
     if err != nil {
@@ -227,11 +226,12 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `processID`                                           | *string*                                              | :heavy_check_mark:                                    | N/A                                                   | cbfcddd2-0006-43ae-996c-995fff7bed2e                  |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `processID`                                              | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | cbfcddd2-0006-43ae-996c-995fff7bed2e                     |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response
@@ -253,6 +253,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -261,15 +262,13 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.RoomsV2.DestroyRoom(ctx, roomID, appID)
     if err != nil {
@@ -283,11 +282,12 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `roomID`                                              | *string*                                              | :heavy_check_mark:                                    | N/A                                                   | 2swovpy1fnunu                                         |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `roomID`                                                 | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | 2swovpy1fnunu                                            |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response
@@ -311,6 +311,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -319,15 +320,13 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.RoomsV2.SuspendRoomV2Deprecated(ctx, roomID, appID)
     if err != nil {
@@ -341,11 +340,12 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `roomID`                                              | *string*                                              | :heavy_check_mark:                                    | N/A                                                   | 2swovpy1fnunu                                         |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `roomID`                                                 | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | 2swovpy1fnunu                                            |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response
@@ -373,13 +373,11 @@ import(
 
 func main() {
     s := sdk.New(
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.RoomsV2.GetConnectionInfo(ctx, roomID, appID)
     if err != nil {
@@ -393,11 +391,12 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `roomID`                                              | *string*                                              | :heavy_check_mark:                                    | N/A                                                   | 2swovpy1fnunu                                         |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `roomID`                                                 | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | 2swovpy1fnunu                                            |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response
@@ -417,6 +416,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -425,11 +425,10 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var roomID string = "2swovpy1fnunu"
 
     updateRoomConfigParams := shared.UpdateRoomConfigParams{
@@ -437,7 +436,6 @@ func main() {
     }
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.RoomsV2.UpdateRoomConfig(ctx, roomID, updateRoomConfigParams, appID)
     if err != nil {
@@ -457,6 +455,7 @@ func main() {
 | `roomID`                                                                       | *string*                                                                       | :heavy_check_mark:                                                             | N/A                                                                            | 2swovpy1fnunu                                                                  |
 | `updateRoomConfigParams`                                                       | [shared.UpdateRoomConfigParams](../../models/shared/updateroomconfigparams.md) | :heavy_check_mark:                                                             | N/A                                                                            |                                                                                |
 | `appID`                                                                        | **string*                                                                      | :heavy_minus_sign:                                                             | N/A                                                                            | app-af469a92-5b45-4565-b3c4-b79878de67d2                                       |
+| `opts`                                                                         | [][operations.Option](../../models/operations/option.md)                       | :heavy_minus_sign:                                                             | The options for this request.                                                  |                                                                                |
 
 
 ### Response

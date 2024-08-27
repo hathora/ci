@@ -66,4 +66,5 @@ The SDK can be regenerated based on the OpenAPI spec hosted at `https://hathora.
 
 ```sh
 make sdk-clean
+rm internal/sdk/go.mod
 ```

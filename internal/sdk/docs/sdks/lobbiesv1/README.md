@@ -19,6 +19,7 @@ package main
 import(
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/operations"
+	"os"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
 	"log"
@@ -26,11 +27,10 @@ import(
 
 func main() {
     s := sdk.New(
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     security := operations.CreatePrivateLobbyDeprecatedSecurity{
-            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
+            PlayerAuth: os.Getenv("PLAYER_AUTH"),
         }
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
@@ -38,7 +38,6 @@ func main() {
     var region *shared.Region = shared.RegionLondon.ToPointer()
 
     var local *bool = sdk.Bool(false)
-    
     ctx := context.Background()
     res, err := s.LobbiesV1.CreatePrivateLobbyDeprecated(ctx, security, appID, region, local)
     if err != nil {
@@ -59,6 +58,7 @@ func main() {
 | `appID`                                                                                                            | **string*                                                                                                          | :heavy_minus_sign:                                                                                                 | N/A                                                                                                                | app-af469a92-5b45-4565-b3c4-b79878de67d2                                                                           |
 | `region`                                                                                                           | [*shared.Region](../../models/shared/region.md)                                                                    | :heavy_minus_sign:                                                                                                 | N/A                                                                                                                |                                                                                                                    |
 | `local`                                                                                                            | **bool*                                                                                                            | :heavy_minus_sign:                                                                                                 | N/A                                                                                                                |                                                                                                                    |
+| `opts`                                                                                                             | [][operations.Option](../../models/operations/option.md)                                                           | :heavy_minus_sign:                                                                                                 | The options for this request.                                                                                      |                                                                                                                    |
 
 
 ### Response
@@ -81,6 +81,7 @@ package main
 import(
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/operations"
+	"os"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
 	"log"
@@ -88,11 +89,10 @@ import(
 
 func main() {
     s := sdk.New(
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     security := operations.CreatePublicLobbyDeprecatedSecurity{
-            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
+            PlayerAuth: os.Getenv("PLAYER_AUTH"),
         }
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
@@ -100,7 +100,6 @@ func main() {
     var region *shared.Region = shared.RegionFrankfurt.ToPointer()
 
     var local *bool = sdk.Bool(false)
-    
     ctx := context.Background()
     res, err := s.LobbiesV1.CreatePublicLobbyDeprecated(ctx, security, appID, region, local)
     if err != nil {
@@ -121,6 +120,7 @@ func main() {
 | `appID`                                                                                                          | **string*                                                                                                        | :heavy_minus_sign:                                                                                               | N/A                                                                                                              | app-af469a92-5b45-4565-b3c4-b79878de67d2                                                                         |
 | `region`                                                                                                         | [*shared.Region](../../models/shared/region.md)                                                                  | :heavy_minus_sign:                                                                                               | N/A                                                                                                              |                                                                                                                  |
 | `local`                                                                                                          | **bool*                                                                                                          | :heavy_minus_sign:                                                                                               | N/A                                                                                                              |                                                                                                                  |
+| `opts`                                                                                                           | [][operations.Option](../../models/operations/option.md)                                                         | :heavy_minus_sign:                                                                                               | The options for this request.                                                                                    |                                                                                                                  |
 
 
 ### Response
@@ -149,15 +149,13 @@ import(
 
 func main() {
     s := sdk.New(
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var local *bool = sdk.Bool(false)
 
     var region *shared.Region = shared.RegionSydney.ToPointer()
-    
     ctx := context.Background()
     res, err := s.LobbiesV1.ListActivePublicLobbiesDeprecatedV1(ctx, appID, local, region)
     if err != nil {
@@ -171,12 +169,13 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
-| `local`                                               | **bool*                                               | :heavy_minus_sign:                                    | N/A                                                   |                                                       |
-| `region`                                              | [*shared.Region](../../models/shared/region.md)       | :heavy_minus_sign:                                    | N/A                                                   |                                                       |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `local`                                                  | **bool*                                                  | :heavy_minus_sign:                                       | N/A                                                      |                                                          |
+| `region`                                                 | [*shared.Region](../../models/shared/region.md)          | :heavy_minus_sign:                                       | N/A                                                      |                                                          |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response

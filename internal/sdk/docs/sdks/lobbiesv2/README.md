@@ -23,6 +23,7 @@ package main
 import(
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/operations"
+	"os"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
 	"log"
@@ -30,11 +31,10 @@ import(
 
 func main() {
     s := sdk.New(
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     security := operations.CreatePrivateLobbySecurity{
-            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
+            PlayerAuth: os.Getenv("PLAYER_AUTH"),
         }
 
     requestBody := operations.CreatePrivateLobbyRequestBody{
@@ -45,7 +45,6 @@ func main() {
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var roomID *string = sdk.String("2swovpy1fnunu")
-    
     ctx := context.Background()
     res, err := s.LobbiesV2.CreatePrivateLobby(ctx, security, requestBody, appID, roomID)
     if err != nil {
@@ -66,6 +65,7 @@ func main() {
 | `requestBody`                                                                                        | [operations.CreatePrivateLobbyRequestBody](../../models/operations/createprivatelobbyrequestbody.md) | :heavy_check_mark:                                                                                   | N/A                                                                                                  |                                                                                                      |
 | `appID`                                                                                              | **string*                                                                                            | :heavy_minus_sign:                                                                                   | N/A                                                                                                  | app-af469a92-5b45-4565-b3c4-b79878de67d2                                                             |
 | `roomID`                                                                                             | **string*                                                                                            | :heavy_minus_sign:                                                                                   | N/A                                                                                                  | 2swovpy1fnunu                                                                                        |
+| `opts`                                                                                               | [][operations.Option](../../models/operations/option.md)                                             | :heavy_minus_sign:                                                                                   | The options for this request.                                                                        |                                                                                                      |
 
 
 ### Response
@@ -88,6 +88,7 @@ package main
 import(
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/operations"
+	"os"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
 	"log"
@@ -95,11 +96,10 @@ import(
 
 func main() {
     s := sdk.New(
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     security := operations.CreatePublicLobbySecurity{
-            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
+            PlayerAuth: os.Getenv("PLAYER_AUTH"),
         }
 
     requestBody := operations.CreatePublicLobbyRequestBody{
@@ -110,7 +110,6 @@ func main() {
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var roomID *string = sdk.String("2swovpy1fnunu")
-    
     ctx := context.Background()
     res, err := s.LobbiesV2.CreatePublicLobby(ctx, security, requestBody, appID, roomID)
     if err != nil {
@@ -131,6 +130,7 @@ func main() {
 | `requestBody`                                                                                      | [operations.CreatePublicLobbyRequestBody](../../models/operations/createpubliclobbyrequestbody.md) | :heavy_check_mark:                                                                                 | N/A                                                                                                |                                                                                                    |
 | `appID`                                                                                            | **string*                                                                                          | :heavy_minus_sign:                                                                                 | N/A                                                                                                | app-af469a92-5b45-4565-b3c4-b79878de67d2                                                           |
 | `roomID`                                                                                           | **string*                                                                                          | :heavy_minus_sign:                                                                                 | N/A                                                                                                | 2swovpy1fnunu                                                                                      |
+| `opts`                                                                                             | [][operations.Option](../../models/operations/option.md)                                           | :heavy_minus_sign:                                                                                 | The options for this request.                                                                      |                                                                                                    |
 
 
 ### Response
@@ -153,6 +153,7 @@ package main
 import(
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/operations"
+	"os"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
 	"log"
@@ -160,11 +161,10 @@ import(
 
 func main() {
     s := sdk.New(
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     security := operations.CreateLocalLobbySecurity{
-            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
+            PlayerAuth: os.Getenv("PLAYER_AUTH"),
         }
 
     requestBody := operations.CreateLocalLobbyRequestBody{
@@ -175,7 +175,6 @@ func main() {
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var roomID *string = sdk.String("2swovpy1fnunu")
-    
     ctx := context.Background()
     res, err := s.LobbiesV2.CreateLocalLobby(ctx, security, requestBody, appID, roomID)
     if err != nil {
@@ -196,6 +195,7 @@ func main() {
 | `requestBody`                                                                                    | [operations.CreateLocalLobbyRequestBody](../../models/operations/createlocallobbyrequestbody.md) | :heavy_check_mark:                                                                               | N/A                                                                                              |                                                                                                  |
 | `appID`                                                                                          | **string*                                                                                        | :heavy_minus_sign:                                                                               | N/A                                                                                              | app-af469a92-5b45-4565-b3c4-b79878de67d2                                                         |
 | `roomID`                                                                                         | **string*                                                                                        | :heavy_minus_sign:                                                                               | N/A                                                                                              | 2swovpy1fnunu                                                                                    |
+| `opts`                                                                                           | [][operations.Option](../../models/operations/option.md)                                         | :heavy_minus_sign:                                                                               | The options for this request.                                                                    |                                                                                                  |
 
 
 ### Response
@@ -220,6 +220,7 @@ package main
 import(
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/operations"
+	"os"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
 	"log"
@@ -227,11 +228,10 @@ import(
 
 func main() {
     s := sdk.New(
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     security := operations.CreateLobbyDeprecatedSecurity{
-            PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
+            PlayerAuth: os.Getenv("PLAYER_AUTH"),
         }
 
     createLobbyParams := shared.CreateLobbyParams{
@@ -243,7 +243,6 @@ func main() {
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var roomID *string = sdk.String("2swovpy1fnunu")
-    
     ctx := context.Background()
     res, err := s.LobbiesV2.CreateLobbyDeprecated(ctx, security, createLobbyParams, appID, roomID)
     if err != nil {
@@ -264,6 +263,7 @@ func main() {
 | `createLobbyParams`                                                                                  | [shared.CreateLobbyParams](../../models/shared/createlobbyparams.md)                                 | :heavy_check_mark:                                                                                   | N/A                                                                                                  |                                                                                                      |
 | `appID`                                                                                              | **string*                                                                                            | :heavy_minus_sign:                                                                                   | N/A                                                                                                  | app-af469a92-5b45-4565-b3c4-b79878de67d2                                                             |
 | `roomID`                                                                                             | **string*                                                                                            | :heavy_minus_sign:                                                                                   | N/A                                                                                                  | 2swovpy1fnunu                                                                                        |
+| `opts`                                                                                               | [][operations.Option](../../models/operations/option.md)                                             | :heavy_minus_sign:                                                                                   | The options for this request.                                                                        |                                                                                                      |
 
 
 ### Response
@@ -294,13 +294,11 @@ import(
 
 func main() {
     s := sdk.New(
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
 
     var region *shared.Region = shared.RegionFrankfurt.ToPointer()
-    
     ctx := context.Background()
     res, err := s.LobbiesV2.ListActivePublicLobbiesDeprecatedV2(ctx, appID, region)
     if err != nil {
@@ -319,6 +317,7 @@ func main() {
 | `ctx`                                                                                   | [context.Context](https://pkg.go.dev/context#Context)                                   | :heavy_check_mark:                                                                      | The context to use for the request.                                                     |                                                                                         |
 | `appID`                                                                                 | **string*                                                                               | :heavy_minus_sign:                                                                      | N/A                                                                                     | app-af469a92-5b45-4565-b3c4-b79878de67d2                                                |
 | `region`                                                                                | [*shared.Region](../../models/shared/region.md)                                         | :heavy_minus_sign:                                                                      | Region to filter by. If omitted, active public lobbies in all regions will be returned. |                                                                                         |
+| `opts`                                                                                  | [][operations.Option](../../models/operations/option.md)                                | :heavy_minus_sign:                                                                      | The options for this request.                                                           |                                                                                         |
 
 
 ### Response
@@ -348,13 +347,11 @@ import(
 
 func main() {
     s := sdk.New(
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var roomID string = "2swovpy1fnunu"
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.LobbiesV2.GetLobbyInfo(ctx, roomID, appID)
     if err != nil {
@@ -368,11 +365,12 @@ func main() {
 
 ### Parameters
 
-| Parameter                                             | Type                                                  | Required                                              | Description                                           | Example                                               |
-| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `ctx`                                                 | [context.Context](https://pkg.go.dev/context#Context) | :heavy_check_mark:                                    | The context to use for the request.                   |                                                       |
-| `roomID`                                              | *string*                                              | :heavy_check_mark:                                    | N/A                                                   | 2swovpy1fnunu                                         |
-| `appID`                                               | **string*                                             | :heavy_minus_sign:                                    | N/A                                                   | app-af469a92-5b45-4565-b3c4-b79878de67d2              |
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `roomID`                                                 | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | 2swovpy1fnunu                                            |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 
 ### Response
@@ -396,6 +394,7 @@ package main
 
 import(
 	"github.com/hathora/ci/internal/sdk/models/shared"
+	"os"
 	"github.com/hathora/ci/internal/sdk"
 	"context"
 	"log"
@@ -404,11 +403,10 @@ import(
 func main() {
     s := sdk.New(
         sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String("<YOUR_BEARER_TOKEN_HERE>"),
+            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
         }),
-        sdk.WithAppID(sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")),
+        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-
     var roomID string = "2swovpy1fnunu"
 
     setLobbyStateParams := shared.SetLobbyStateParams{
@@ -416,7 +414,6 @@ func main() {
     }
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    
     ctx := context.Background()
     res, err := s.LobbiesV2.SetLobbyState(ctx, roomID, setLobbyStateParams, appID)
     if err != nil {
@@ -436,6 +433,7 @@ func main() {
 | `roomID`                                                                 | *string*                                                                 | :heavy_check_mark:                                                       | N/A                                                                      | 2swovpy1fnunu                                                            |
 | `setLobbyStateParams`                                                    | [shared.SetLobbyStateParams](../../models/shared/setlobbystateparams.md) | :heavy_check_mark:                                                       | N/A                                                                      |                                                                          |
 | `appID`                                                                  | **string*                                                                | :heavy_minus_sign:                                                       | N/A                                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                                 |
+| `opts`                                                                   | [][operations.Option](../../models/operations/option.md)                 | :heavy_minus_sign:                                                       | The options for this request.                                            |                                                                          |
 
 
 ### Response
