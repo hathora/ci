@@ -69,10 +69,10 @@ func main() {
 ### Response
 
 **[*operations.CreateRoomResponse](../../models/operations/createroomresponse.md), error**
-| Error Object                    | Status Code                     | Content Type                    |
-| ------------------------------- | ------------------------------- | ------------------------------- |
-| sdkerrors.APIError              | 400,401,402,403,404,422,429,500 | application/json                |
-| sdkerrors.SDKError              | 4xx-5xx                         | */*                             |
+| Error Object                | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| sdkerrors.APIError          | 400,401,402,404,422,429,500 | application/json            |
+| sdkerrors.SDKError          | 4xx-5xx                     | */*                         |
 
 ## GetRoomInfo
 

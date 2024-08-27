@@ -3,12 +3,12 @@
 
 ### Available Operations
 
-* [~~GetDeploymentsDeprecated~~](#getdeploymentsdeprecated) - Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). :warning: **Deprecated**
-* [~~GetLatestDeploymentDeprecated~~](#getlatestdeploymentdeprecated) - Get the latest [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). :warning: **Deprecated**
-* [~~GetDeploymentInfoDeprecated~~](#getdeploymentinfodeprecated) - Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). :warning: **Deprecated**
-* [~~CreateDeploymentDeprecated~~](#createdeploymentdeprecated) - Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected. :warning: **Deprecated**
+* [~~GetDeploymentsV1Deprecated~~](#getdeploymentsv1deprecated) - Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). :warning: **Deprecated**
+* [~~GetLatestDeploymentV1Deprecated~~](#getlatestdeploymentv1deprecated) - Get the latest [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). :warning: **Deprecated**
+* [~~GetDeploymentInfoV1Deprecated~~](#getdeploymentinfov1deprecated) - Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). :warning: **Deprecated**
+* [~~CreateDeploymentV1Deprecated~~](#createdeploymentv1deprecated) - Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected. :warning: **Deprecated**
 
-## ~~GetDeploymentsDeprecated~~
+## ~~GetDeploymentsV1Deprecated~~
 
 Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
 
@@ -36,11 +36,11 @@ func main() {
     )
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.DeploymentsV1.GetDeploymentsDeprecated(ctx, appID)
+    res, err := s.DeploymentsV1.GetDeploymentsV1Deprecated(ctx, appID)
     if err != nil {
         log.Fatal(err)
     }
-    if res.Deployments != nil {
+    if res.DeploymentV1s != nil {
         // handle response
     }
 }
@@ -57,13 +57,13 @@ func main() {
 
 ### Response
 
-**[*operations.GetDeploymentsDeprecatedResponse](../../models/operations/getdeploymentsdeprecatedresponse.md), error**
+**[*operations.GetDeploymentsV1DeprecatedResponse](../../models/operations/getdeploymentsv1deprecatedresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
 | sdkerrors.APIError | 401,404,429        | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
-## ~~GetLatestDeploymentDeprecated~~
+## ~~GetLatestDeploymentV1Deprecated~~
 
 Get the latest [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
 
@@ -91,11 +91,11 @@ func main() {
     )
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.DeploymentsV1.GetLatestDeploymentDeprecated(ctx, appID)
+    res, err := s.DeploymentsV1.GetLatestDeploymentV1Deprecated(ctx, appID)
     if err != nil {
         log.Fatal(err)
     }
-    if res.Deployment != nil {
+    if res.DeploymentV1 != nil {
         // handle response
     }
 }
@@ -112,13 +112,13 @@ func main() {
 
 ### Response
 
-**[*operations.GetLatestDeploymentDeprecatedResponse](../../models/operations/getlatestdeploymentdeprecatedresponse.md), error**
+**[*operations.GetLatestDeploymentV1DeprecatedResponse](../../models/operations/getlatestdeploymentv1deprecatedresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429        | application/json   |
+| sdkerrors.APIError | 401,404,422,429    | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
-## ~~GetDeploymentInfoDeprecated~~
+## ~~GetDeploymentInfoV1Deprecated~~
 
 Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment).
 
@@ -148,11 +148,11 @@ func main() {
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.DeploymentsV1.GetDeploymentInfoDeprecated(ctx, deploymentID, appID)
+    res, err := s.DeploymentsV1.GetDeploymentInfoV1Deprecated(ctx, deploymentID, appID)
     if err != nil {
         log.Fatal(err)
     }
-    if res.Deployment != nil {
+    if res.DeploymentV1 != nil {
         // handle response
     }
 }
@@ -170,13 +170,13 @@ func main() {
 
 ### Response
 
-**[*operations.GetDeploymentInfoDeprecatedResponse](../../models/operations/getdeploymentinfodeprecatedresponse.md), error**
+**[*operations.GetDeploymentInfoV1DeprecatedResponse](../../models/operations/getdeploymentinfov1deprecatedresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
 | sdkerrors.APIError | 401,404,429        | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
-## ~~CreateDeploymentDeprecated~~
+## ~~CreateDeploymentV1Deprecated~~
 
 Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
 
@@ -215,22 +215,22 @@ func main() {
         PlanName: shared.PlanNameTiny,
         AdditionalContainerPorts: []shared.ContainerPort{
             shared.ContainerPort{
-                TransportType: shared.TransportTypeUDP,
+                TransportType: shared.TransportTypeTCP,
                 Port: 8000,
                 Name: "default",
             },
         },
-        TransportType: shared.TransportTypeTLS,
+        TransportType: shared.TransportTypeTCP,
         ContainerPort: 4000,
     }
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.DeploymentsV1.CreateDeploymentDeprecated(ctx, buildID, deploymentConfig, appID)
+    res, err := s.DeploymentsV1.CreateDeploymentV1Deprecated(ctx, buildID, deploymentConfig, appID)
     if err != nil {
         log.Fatal(err)
     }
-    if res.Deployment != nil {
+    if res.DeploymentV1 != nil {
         // handle response
     }
 }
@@ -249,7 +249,7 @@ func main() {
 
 ### Response
 
-**[*operations.CreateDeploymentDeprecatedResponse](../../models/operations/createdeploymentdeprecatedresponse.md), error**
+**[*operations.CreateDeploymentV1DeprecatedResponse](../../models/operations/createdeploymentv1deprecatedresponse.md), error**
 | Error Object            | Status Code             | Content Type            |
 | ----------------------- | ----------------------- | ----------------------- |
 | sdkerrors.APIError      | 400,401,404,422,429,500 | application/json        |

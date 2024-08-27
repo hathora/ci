@@ -26,19 +26,19 @@ func newBuildsV2(sdkConfig sdkConfiguration) *BuildsV2 {
 	}
 }
 
-// GetBuilds - Returns an array of [builds](https://hathora.dev/docs/concepts/hathora-entities#build) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
-func (s *BuildsV2) GetBuilds(ctx context.Context, appID *string, opts ...operations.Option) (*operations.GetBuildsResponse, error) {
+// GetBuildsV2Deprecated - Returns an array of [builds](https://hathora.dev/docs/concepts/hathora-entities#build) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
+func (s *BuildsV2) GetBuildsV2Deprecated(ctx context.Context, appID *string, opts ...operations.Option) (*operations.GetBuildsV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "GetBuilds",
+		OperationID:    "GetBuildsV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.GetBuildsRequest{
+	request := operations.GetBuildsV2DeprecatedRequest{
 		AppID: appID,
 	}
 
-	globals := operations.GetBuildsGlobals{
+	globals := operations.GetBuildsV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -158,7 +158,7 @@ func (s *BuildsV2) GetBuilds(ctx context.Context, appID *string, opts ...operati
 
 			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 			return nil, err
-		} else if utils.MatchStatusCodes([]string{"401", "404", "4XX", "5XX"}, httpRes.StatusCode) {
+		} else if utils.MatchStatusCodes([]string{"401", "404", "429", "4XX", "5XX"}, httpRes.StatusCode) {
 			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 			if err != nil {
 				return nil, err
@@ -173,7 +173,7 @@ func (s *BuildsV2) GetBuilds(ctx context.Context, appID *string, opts ...operati
 		}
 	}
 
-	res := &operations.GetBuildsResponse{
+	res := &operations.GetBuildsV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -202,6 +202,8 @@ func (s *BuildsV2) GetBuilds(ctx context.Context, appID *string, opts ...operati
 	case httpRes.StatusCode == 401:
 		fallthrough
 	case httpRes.StatusCode == 404:
+		fallthrough
+	case httpRes.StatusCode == 429:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
 			var out sdkerrors.APIError
@@ -225,20 +227,20 @@ func (s *BuildsV2) GetBuilds(ctx context.Context, appID *string, opts ...operati
 
 }
 
-// GetBuildInfo - Get details for a [build](https://hathora.dev/docs/concepts/hathora-entities#build).
-func (s *BuildsV2) GetBuildInfo(ctx context.Context, buildID int, appID *string, opts ...operations.Option) (*operations.GetBuildInfoResponse, error) {
+// GetBuildInfoV2Deprecated - Get details for a [build](https://hathora.dev/docs/concepts/hathora-entities#build).
+func (s *BuildsV2) GetBuildInfoV2Deprecated(ctx context.Context, buildID int, appID *string, opts ...operations.Option) (*operations.GetBuildInfoV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "GetBuildInfo",
+		OperationID:    "GetBuildInfoV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.GetBuildInfoRequest{
+	request := operations.GetBuildInfoV2DeprecatedRequest{
 		AppID:   appID,
 		BuildID: buildID,
 	}
 
-	globals := operations.GetBuildInfoGlobals{
+	globals := operations.GetBuildInfoV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -358,7 +360,7 @@ func (s *BuildsV2) GetBuildInfo(ctx context.Context, buildID int, appID *string,
 
 			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 			return nil, err
-		} else if utils.MatchStatusCodes([]string{"401", "404", "4XX", "5XX"}, httpRes.StatusCode) {
+		} else if utils.MatchStatusCodes([]string{"401", "404", "429", "4XX", "5XX"}, httpRes.StatusCode) {
 			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 			if err != nil {
 				return nil, err
@@ -373,7 +375,7 @@ func (s *BuildsV2) GetBuildInfo(ctx context.Context, buildID int, appID *string,
 		}
 	}
 
-	res := &operations.GetBuildInfoResponse{
+	res := &operations.GetBuildInfoV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -402,6 +404,8 @@ func (s *BuildsV2) GetBuildInfo(ctx context.Context, buildID int, appID *string,
 	case httpRes.StatusCode == 401:
 		fallthrough
 	case httpRes.StatusCode == 404:
+		fallthrough
+	case httpRes.StatusCode == 429:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
 			var out sdkerrors.APIError
@@ -425,20 +429,20 @@ func (s *BuildsV2) GetBuildInfo(ctx context.Context, buildID int, appID *string,
 
 }
 
-// CreateBuild - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build). Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
-func (s *BuildsV2) CreateBuild(ctx context.Context, createBuildParams shared.CreateBuildParams, appID *string, opts ...operations.Option) (*operations.CreateBuildResponse, error) {
+// CreateBuildV2Deprecated - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build). Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
+func (s *BuildsV2) CreateBuildV2Deprecated(ctx context.Context, createBuildParams shared.CreateBuildParams, appID *string, opts ...operations.Option) (*operations.CreateBuildV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "CreateBuild",
+		OperationID:    "CreateBuildV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.CreateBuildRequest{
+	request := operations.CreateBuildV2DeprecatedRequest{
 		AppID:             appID,
 		CreateBuildParams: createBuildParams,
 	}
 
-	globals := operations.CreateBuildGlobals{
+	globals := operations.CreateBuildV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -579,7 +583,7 @@ func (s *BuildsV2) CreateBuild(ctx context.Context, createBuildParams shared.Cre
 		}
 	}
 
-	res := &operations.CreateBuildResponse{
+	res := &operations.CreateBuildV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -635,20 +639,20 @@ func (s *BuildsV2) CreateBuild(ctx context.Context, createBuildParams shared.Cre
 
 }
 
-// CreateBuildWithUploadURL - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build) with optional `uploadUrl` that can be used to upload the build to before calling `runBuild`. Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
-func (s *BuildsV2) CreateBuildWithUploadURL(ctx context.Context, createBuildParams shared.CreateBuildParams, appID *string, opts ...operations.Option) (*operations.CreateBuildWithUploadURLResponse, error) {
+// CreateBuildWithUploadURLV2Deprecated - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build) with `uploadUrl` that can be used to upload the build to before calling `runBuild`. Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
+func (s *BuildsV2) CreateBuildWithUploadURLV2Deprecated(ctx context.Context, createBuildParams shared.CreateBuildParams, appID *string, opts ...operations.Option) (*operations.CreateBuildWithUploadURLV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "CreateBuildWithUploadUrl",
+		OperationID:    "CreateBuildWithUploadUrlV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.CreateBuildWithUploadURLRequest{
+	request := operations.CreateBuildWithUploadURLV2DeprecatedRequest{
 		AppID:             appID,
 		CreateBuildParams: createBuildParams,
 	}
 
-	globals := operations.CreateBuildWithUploadURLGlobals{
+	globals := operations.CreateBuildWithUploadURLV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -789,7 +793,7 @@ func (s *BuildsV2) CreateBuildWithUploadURL(ctx context.Context, createBuildPara
 		}
 	}
 
-	res := &operations.CreateBuildWithUploadURLResponse{
+	res := &operations.CreateBuildWithUploadURLV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -845,20 +849,232 @@ func (s *BuildsV2) CreateBuildWithUploadURL(ctx context.Context, createBuildPara
 
 }
 
-// DeleteBuild - Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build). All associated metadata is deleted.
-func (s *BuildsV2) DeleteBuild(ctx context.Context, buildID int, appID *string, opts ...operations.Option) (*operations.DeleteBuildResponse, error) {
+// CreateWithMultipartUploadsV2Deprecated - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build) with optional `multipartUploadUrls` that can be used to upload larger builds in parts before calling `runBuild`. Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
+func (s *BuildsV2) CreateWithMultipartUploadsV2Deprecated(ctx context.Context, createMultipartBuildParams shared.CreateMultipartBuildParams, appID *string, opts ...operations.Option) (*operations.CreateWithMultipartUploadsV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "DeleteBuild",
+		OperationID:    "CreateWithMultipartUploadsV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.DeleteBuildRequest{
+	request := operations.CreateWithMultipartUploadsV2DeprecatedRequest{
+		AppID:                      appID,
+		CreateMultipartBuildParams: createMultipartBuildParams,
+	}
+
+	globals := operations.CreateWithMultipartUploadsV2DeprecatedGlobals{
+		AppID: s.sdkConfiguration.Globals.AppID,
+	}
+
+	o := operations.Options{}
+	supportedOptions := []string{
+		operations.SupportedOptionRetries,
+		operations.SupportedOptionTimeout,
+	}
+
+	for _, opt := range opts {
+		if err := opt(&o, supportedOptions...); err != nil {
+			return nil, fmt.Errorf("error applying option: %w", err)
+		}
+	}
+
+	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/builds/v2/{appId}/createWithMultipartUploads", request, globals)
+	if err != nil {
+		return nil, fmt.Errorf("error generating URL: %w", err)
+	}
+
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "CreateMultipartBuildParams", "json", `request:"mediaType=application/json"`)
+	if err != nil {
+		return nil, err
+	}
+
+	timeout := o.Timeout
+	if timeout == nil {
+		timeout = s.sdkConfiguration.Timeout
+	}
+
+	if timeout != nil {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, *timeout)
+		defer cancel()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "POST", opURL, bodyReader)
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+	req.Header.Set("Content-Type", reqContentType)
+
+	utils.PopulateHeaders(ctx, req, request, globals)
+
+	if err := utils.PopulateQueryParams(ctx, req, request, globals); err != nil {
+		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
+
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		}
+	}
+
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil {
+				copyBody, err := req.GetBody()
+				if err != nil {
+					return nil, err
+				}
+				req.Body = copyBody
+			}
+
+			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				return nil, backoff.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
+		if err != nil {
+			return nil, err
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	} else {
+		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+		if err != nil {
+			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{"400", "401", "404", "429", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	res := &operations.CreateWithMultipartUploadsV2DeprecatedResponse{
+		StatusCode:  httpRes.StatusCode,
+		ContentType: httpRes.Header.Get("Content-Type"),
+		RawResponse: httpRes,
+	}
+
+	rawBody, err := io.ReadAll(httpRes.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response body: %w", err)
+	}
+	httpRes.Body.Close()
+	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+
+	switch {
+	case httpRes.StatusCode == 201:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			var out shared.BuildWithMultipartUrls
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.BuildWithMultipartUrls = &out
+		default:
+			return nil, sdkerrors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 400:
+		fallthrough
+	case httpRes.StatusCode == 401:
+		fallthrough
+	case httpRes.StatusCode == 404:
+		fallthrough
+	case httpRes.StatusCode == 429:
+		fallthrough
+	case httpRes.StatusCode == 500:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			var out sdkerrors.APIError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			return nil, &out
+		default:
+			return nil, sdkerrors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode >= 400 && httpRes.StatusCode < 500:
+		fallthrough
+	case httpRes.StatusCode >= 500 && httpRes.StatusCode < 600:
+		return nil, sdkerrors.NewSDKError("API error occurred", httpRes.StatusCode, string(rawBody), httpRes)
+	default:
+		return nil, sdkerrors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
+	}
+
+	return res, nil
+
+}
+
+// DeleteBuildV2Deprecated - Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build). All associated metadata is deleted.
+func (s *BuildsV2) DeleteBuildV2Deprecated(ctx context.Context, buildID int, appID *string, opts ...operations.Option) (*operations.DeleteBuildV2DeprecatedResponse, error) {
+	hookCtx := hooks.HookContext{
+		Context:        ctx,
+		OperationID:    "DeleteBuildV2Deprecated",
+		SecuritySource: s.sdkConfiguration.Security,
+	}
+
+	request := operations.DeleteBuildV2DeprecatedRequest{
 		AppID:   appID,
 		BuildID: buildID,
 	}
 
-	globals := operations.DeleteBuildGlobals{
+	globals := operations.DeleteBuildV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -993,7 +1209,7 @@ func (s *BuildsV2) DeleteBuild(ctx context.Context, buildID int, appID *string, 
 		}
 	}
 
-	res := &operations.DeleteBuildResponse{
+	res := &operations.DeleteBuildV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -1040,21 +1256,21 @@ func (s *BuildsV2) DeleteBuild(ctx context.Context, buildID int, appID *string, 
 
 }
 
-// RunBuild - Builds a game server artifact from a tarball you provide. Pass in the `buildId` generated from [`CreateBuild()`](https://hathora.dev/api#tag/BuildV1/operation/CreateBuild).
-func (s *BuildsV2) RunBuild(ctx context.Context, buildID int, requestBody operations.RunBuildRequestBody, appID *string, opts ...operations.Option) (*operations.RunBuildResponse, error) {
+// RunBuildV2Deprecated - Builds a game server artifact from a tarball you provide. Pass in the `buildId` generated from [`CreateBuild()`](https://hathora.dev/api#tag/BuildV1/operation/CreateBuild).
+func (s *BuildsV2) RunBuildV2Deprecated(ctx context.Context, buildID int, requestBody operations.RunBuildV2DeprecatedRequestBody, appID *string, opts ...operations.Option) (*operations.RunBuildV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "RunBuild",
+		OperationID:    "RunBuildV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.RunBuildRequest{
+	request := operations.RunBuildV2DeprecatedRequest{
 		AppID:       appID,
 		BuildID:     buildID,
 		RequestBody: requestBody,
 	}
 
-	globals := operations.RunBuildGlobals{
+	globals := operations.RunBuildV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -1195,7 +1411,7 @@ func (s *BuildsV2) RunBuild(ctx context.Context, buildID int, requestBody operat
 		}
 	}
 
-	res := &operations.RunBuildResponse{
+	res := &operations.RunBuildV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,

@@ -92,13 +92,16 @@ type SDK struct {
 	DiscoveryV2   *DiscoveryV2
 	DeploymentsV1 *DeploymentsV1
 	DeploymentsV2 *DeploymentsV2
+	DeploymentsV3 *DeploymentsV3
 	BuildsV1      *BuildsV1
 	BuildsV2      *BuildsV2
+	BuildsV3      *BuildsV3
 	//
 	BillingV1 *BillingV1
 	// Operations that allow you to generate a Hathora-signed [JSON web token (JWT)](https://jwt.io/) for [player authentication](https://hathora.dev/docs/lobbies-and-matchmaking/auth-service).
 	AuthV1 *AuthV1
 	AppsV1 *AppsV1
+	AppsV2 *AppsV2
 
 	sdkConfiguration sdkConfiguration
 }
@@ -183,9 +186,9 @@ func New(opts ...SDKOption) *SDK {
 		sdkConfiguration: sdkConfiguration{
 			Language:          "go",
 			OpenAPIDocVersion: "0.0.1",
-			SDKVersion:        "0.4.0",
+			SDKVersion:        "0.4.1",
 			GenVersion:        "2.380.2",
-			UserAgent:         "speakeasy-sdk/go 0.4.0 2.380.2 0.0.1 github.com/hathora/ci/internal/sdk",
+			UserAgent:         "speakeasy-sdk/go 0.4.1 2.380.2 0.0.1 github.com/hathora/ci/internal/sdk",
 			Globals:           globals.Globals{},
 			Hooks:             hooks.New(),
 		},
@@ -238,15 +241,21 @@ func New(opts ...SDKOption) *SDK {
 
 	sdk.DeploymentsV2 = newDeploymentsV2(sdk.sdkConfiguration)
 
+	sdk.DeploymentsV3 = newDeploymentsV3(sdk.sdkConfiguration)
+
 	sdk.BuildsV1 = newBuildsV1(sdk.sdkConfiguration)
 
 	sdk.BuildsV2 = newBuildsV2(sdk.sdkConfiguration)
+
+	sdk.BuildsV3 = newBuildsV3(sdk.sdkConfiguration)
 
 	sdk.BillingV1 = newBillingV1(sdk.sdkConfiguration)
 
 	sdk.AuthV1 = newAuthV1(sdk.sdkConfiguration)
 
 	sdk.AppsV1 = newAppsV1(sdk.sdkConfiguration)
+
+	sdk.AppsV2 = newAppsV2(sdk.sdkConfiguration)
 
 	return sdk
 }

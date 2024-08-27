@@ -3,37 +3,27 @@
 package operations
 
 import (
+	"github.com/hathora/ci/internal/sdk/models/shared"
 	"net/http"
 )
 
-type DeleteBuildGlobals struct {
-	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
-}
-
-func (o *DeleteBuildGlobals) GetAppID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppID
-}
-
 type DeleteBuildRequest struct {
-	AppID   *string `pathParam:"style=simple,explode=false,name=appId"`
-	BuildID int     `pathParam:"style=simple,explode=false,name=buildId"`
+	BuildID string  `pathParam:"style=simple,explode=false,name=buildId"`
+	OrgID   *string `queryParam:"style=form,explode=true,name=orgId"`
 }
 
-func (o *DeleteBuildRequest) GetAppID() *string {
+func (o *DeleteBuildRequest) GetBuildID() string {
 	if o == nil {
-		return nil
-	}
-	return o.AppID
-}
-
-func (o *DeleteBuildRequest) GetBuildID() int {
-	if o == nil {
-		return 0
+		return ""
 	}
 	return o.BuildID
+}
+
+func (o *DeleteBuildRequest) GetOrgID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.OrgID
 }
 
 type DeleteBuildResponse struct {
@@ -43,6 +33,8 @@ type DeleteBuildResponse struct {
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
+	// Ok
+	DeletedBuild *shared.DeletedBuild
 }
 
 func (o *DeleteBuildResponse) GetContentType() string {
@@ -64,4 +56,11 @@ func (o *DeleteBuildResponse) GetRawResponse() *http.Response {
 		return nil
 	}
 	return o.RawResponse
+}
+
+func (o *DeleteBuildResponse) GetDeletedBuild() *shared.DeletedBuild {
+	if o == nil {
+		return nil
+	}
+	return o.DeletedBuild
 }

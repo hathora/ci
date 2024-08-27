@@ -7,34 +7,23 @@ import (
 	"net/http"
 )
 
-type CreateBuildGlobals struct {
-	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
-}
-
-func (o *CreateBuildGlobals) GetAppID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppID
-}
-
 type CreateBuildRequest struct {
-	AppID             *string                  `pathParam:"style=simple,explode=false,name=appId"`
-	CreateBuildParams shared.CreateBuildParams `request:"mediaType=application/json"`
+	OrgID                      *string                           `queryParam:"style=form,explode=true,name=orgId"`
+	CreateMultipartBuildParams shared.CreateMultipartBuildParams `request:"mediaType=application/json"`
 }
 
-func (o *CreateBuildRequest) GetAppID() *string {
+func (o *CreateBuildRequest) GetOrgID() *string {
 	if o == nil {
 		return nil
 	}
-	return o.AppID
+	return o.OrgID
 }
 
-func (o *CreateBuildRequest) GetCreateBuildParams() shared.CreateBuildParams {
+func (o *CreateBuildRequest) GetCreateMultipartBuildParams() shared.CreateMultipartBuildParams {
 	if o == nil {
-		return shared.CreateBuildParams{}
+		return shared.CreateMultipartBuildParams{}
 	}
-	return o.CreateBuildParams
+	return o.CreateMultipartBuildParams
 }
 
 type CreateBuildResponse struct {
@@ -43,8 +32,8 @@ type CreateBuildResponse struct {
 	// HTTP response status code for this operation
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	Build       *shared.Build
+	RawResponse                     *http.Response
+	CreatedBuildV3WithMultipartUrls *shared.CreatedBuildV3WithMultipartUrls
 }
 
 func (o *CreateBuildResponse) GetContentType() string {
@@ -68,9 +57,9 @@ func (o *CreateBuildResponse) GetRawResponse() *http.Response {
 	return o.RawResponse
 }
 
-func (o *CreateBuildResponse) GetBuild() *shared.Build {
+func (o *CreateBuildResponse) GetCreatedBuildV3WithMultipartUrls() *shared.CreatedBuildV3WithMultipartUrls {
 	if o == nil {
 		return nil
 	}
-	return o.Build
+	return o.CreatedBuildV3WithMultipartUrls
 }

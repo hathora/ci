@@ -20,8 +20,7 @@ func (o *CreateDeploymentGlobals) GetAppID() *string {
 
 type CreateDeploymentRequest struct {
 	AppID              *string                   `pathParam:"style=simple,explode=false,name=appId"`
-	BuildID            int                       `pathParam:"style=simple,explode=false,name=buildId"`
-	DeploymentConfigV2 shared.DeploymentConfigV2 `request:"mediaType=application/json"`
+	DeploymentConfigV3 shared.DeploymentConfigV3 `request:"mediaType=application/json"`
 }
 
 func (o *CreateDeploymentRequest) GetAppID() *string {
@@ -31,18 +30,11 @@ func (o *CreateDeploymentRequest) GetAppID() *string {
 	return o.AppID
 }
 
-func (o *CreateDeploymentRequest) GetBuildID() int {
+func (o *CreateDeploymentRequest) GetDeploymentConfigV3() shared.DeploymentConfigV3 {
 	if o == nil {
-		return 0
+		return shared.DeploymentConfigV3{}
 	}
-	return o.BuildID
-}
-
-func (o *CreateDeploymentRequest) GetDeploymentConfigV2() shared.DeploymentConfigV2 {
-	if o == nil {
-		return shared.DeploymentConfigV2{}
-	}
-	return o.DeploymentConfigV2
+	return o.DeploymentConfigV3
 }
 
 type CreateDeploymentResponse struct {
@@ -52,7 +44,7 @@ type CreateDeploymentResponse struct {
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse  *http.Response
-	DeploymentV2 *shared.DeploymentV2
+	DeploymentV3 *shared.DeploymentV3
 }
 
 func (o *CreateDeploymentResponse) GetContentType() string {
@@ -76,9 +68,9 @@ func (o *CreateDeploymentResponse) GetRawResponse() *http.Response {
 	return o.RawResponse
 }
 
-func (o *CreateDeploymentResponse) GetDeploymentV2() *shared.DeploymentV2 {
+func (o *CreateDeploymentResponse) GetDeploymentV3() *shared.DeploymentV3 {
 	if o == nil {
 		return nil
 	}
-	return o.DeploymentV2
+	return o.DeploymentV3
 }

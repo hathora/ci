@@ -40,7 +40,7 @@ var Build = &cli.Command{
 				}
 				build.Log.Debug("getting build info...")
 
-				res, err := build.SDK.BuildsV2.GetBuildInfo(ctx, build.BuildID, build.AppID)
+				res, err := build.SDK.BuildsV2.GetBuildInfoV2Deprecated(ctx, build.BuildID, build.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to get build info: %w", err)
 				}
@@ -62,7 +62,7 @@ var Build = &cli.Command{
 				}
 				build.Log.Debug("getting all builds...")
 
-				res, err := build.SDK.BuildsV2.GetBuilds(ctx, build.AppID)
+				res, err := build.SDK.BuildsV2.GetBuildsV2Deprecated(ctx, build.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to get builds: %w", err)
 				}
@@ -108,7 +108,7 @@ var Build = &cli.Command{
 				}
 				build.Log.Debug("deleting a build...")
 
-				res, err := build.SDK.BuildsV2.DeleteBuild(ctx, build.BuildID, build.AppID)
+				res, err := build.SDK.BuildsV2.DeleteBuildV2Deprecated(ctx, build.BuildID, build.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to delete build: %w", err)
 				}
@@ -124,7 +124,7 @@ var Build = &cli.Command{
 }
 
 func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTag, filePath string) (*shared.Build, error) {
-	createRes, err := hathora.BuildsV2.CreateBuildWithUploadURL(
+	createRes, err := hathora.BuildsV2.CreateBuildWithUploadURLV2Deprecated(
 		ctx,
 		shared.CreateBuildParams{
 			BuildTag: sdk.String(buildTag),
@@ -149,10 +149,10 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		return nil, fmt.Errorf("failed to upload file: %w", err)
 	}
 
-	runRes, err := hathora.BuildsV2.RunBuild(
+	runRes, err := hathora.BuildsV2.RunBuildV2Deprecated(
 		ctx,
 		createRes.BuildWithUploadURL.BuildID,
-		operations.RunBuildRequestBody{},
+		operations.RunBuildV2DeprecatedRequestBody{},
 		appID,
 	)
 
@@ -166,7 +166,7 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		zap.L().Error("failed to stream output to console", zap.Error(err))
 	}
 
-	infoRes, err := hathora.BuildsV2.GetBuildInfo(
+	infoRes, err := hathora.BuildsV2.GetBuildInfoV2Deprecated(
 		ctx,
 		createRes.BuildWithUploadURL.BuildID,
 		appID,

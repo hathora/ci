@@ -45,14 +45,16 @@ type ApplicationWithLatestDeploymentAndBuildDeployment struct {
 	RequestedMemoryMB float64 `json:"requestedMemoryMB"`
 	// The number of cores allocated to your process.
 	RequestedCPU float64 `json:"requestedCPU"`
-	// System generated id for a deployment. Increments by 1.
-	DeploymentID int `json:"deploymentId"`
-	// System generated id for a build. Increments by 1.
-	BuildID int `json:"buildId"`
+	// System generated id for a deployment.
+	DeploymentID string `json:"deploymentId"`
+	// Tag to associate an external version with a build. It is accessible via [`GetBuildInfo()`](https://hathora.dev/api#tag/BuildV2/operation/GetBuildInfo).
+	BuildTag *string `json:"buildTag,omitempty"`
+	// System generated id for a build. Can also be user defined when creating a build.
+	BuildID string `json:"buildId"`
 	// System generated unique identifier for an application.
 	AppID string `json:"appId"`
 	// A build represents a game server artifact and its associated metadata.
-	Build Build `json:"build"`
+	Build BuildV3 `json:"build"`
 }
 
 func (a ApplicationWithLatestDeploymentAndBuildDeployment) MarshalJSON() ([]byte, error) {
@@ -129,16 +131,23 @@ func (o *ApplicationWithLatestDeploymentAndBuildDeployment) GetRequestedCPU() fl
 	return o.RequestedCPU
 }
 
-func (o *ApplicationWithLatestDeploymentAndBuildDeployment) GetDeploymentID() int {
+func (o *ApplicationWithLatestDeploymentAndBuildDeployment) GetDeploymentID() string {
 	if o == nil {
-		return 0
+		return ""
 	}
 	return o.DeploymentID
 }
 
-func (o *ApplicationWithLatestDeploymentAndBuildDeployment) GetBuildID() int {
+func (o *ApplicationWithLatestDeploymentAndBuildDeployment) GetBuildTag() *string {
 	if o == nil {
-		return 0
+		return nil
+	}
+	return o.BuildTag
+}
+
+func (o *ApplicationWithLatestDeploymentAndBuildDeployment) GetBuildID() string {
+	if o == nil {
+		return ""
 	}
 	return o.BuildID
 }
@@ -150,9 +159,9 @@ func (o *ApplicationWithLatestDeploymentAndBuildDeployment) GetAppID() string {
 	return o.AppID
 }
 
-func (o *ApplicationWithLatestDeploymentAndBuildDeployment) GetBuild() Build {
+func (o *ApplicationWithLatestDeploymentAndBuildDeployment) GetBuild() BuildV3 {
 	if o == nil {
-		return Build{}
+		return BuildV3{}
 	}
 	return o.Build
 }

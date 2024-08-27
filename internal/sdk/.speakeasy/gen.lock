@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: 73b126a9-5c85-4e6d-ac9e-6ba8bad8c116
 management:
-  docChecksum: 639bc4c022948c3e348effb9c6feaabc
+  docChecksum: fc29dc3fbf444b050385e4aad0d174d3
   docVersion: 0.0.1
   speakeasyVersion: 1.348.2
   generationVersion: 2.380.2
-  releaseVersion: 0.4.0
-  configChecksum: 50afd16fc23fe717351ba9ea4322b0e4
+  releaseVersion: 0.4.1
+  configChecksum: 902e99b2a81afa38cea4c9119792fa93
 features:
   go:
     additionalDependencies: 0.1.0
@@ -47,11 +47,14 @@ generatedFiles:
   - discoveryv2.go
   - deploymentsv1.go
   - deploymentsv2.go
+  - deploymentsv3.go
   - buildsv1.go
   - buildsv2.go
+  - buildsv3.go
   - billingv1.go
   - authv1.go
   - appsv1.go
+  - appsv2.go
   - sdk.go
   - go.mod
   - models/sdkerrors/sdkerror.go
@@ -95,6 +98,7 @@ generatedFiles:
   - /models/operations/getprocessinfodeprecated.go
   - /models/operations/getprocessinfo.go
   - /models/operations/getlatestprocesses.go
+  - /models/operations/getprocessescountexperimental.go
   - /models/operations/stopprocess.go
   - /models/operations/createprocess.go
   - /models/operations/getorgs.go
@@ -127,36 +131,53 @@ generatedFiles:
   - /models/operations/getlobbyinfobyshortcode.go
   - /models/operations/getpingserviceendpointsdeprecated.go
   - /models/operations/getpingserviceendpoints.go
-  - /models/operations/getdeploymentsdeprecated.go
-  - /models/operations/getlatestdeploymentdeprecated.go
-  - /models/operations/getdeploymentinfodeprecated.go
-  - /models/operations/createdeploymentdeprecated.go
+  - /models/operations/getdeploymentsv1deprecated.go
+  - /models/operations/getlatestdeploymentv1deprecated.go
+  - /models/operations/getdeploymentinfov1deprecated.go
+  - /models/operations/createdeploymentv1deprecated.go
+  - /models/operations/getdeploymentsv2deprecated.go
+  - /models/operations/getlatestdeploymentv2deprecated.go
+  - /models/operations/getdeploymentinfov2deprecated.go
+  - /models/operations/createdeploymentv2deprecated.go
   - /models/operations/getdeployments.go
-  - /models/operations/getlatestdeployment.go
-  - /models/operations/getdeploymentinfo.go
   - /models/operations/createdeployment.go
+  - /models/operations/getlatestdeployment.go
+  - /models/operations/getdeployment.go
   - /models/operations/getbuildsdeprecated.go
   - /models/operations/getbuildinfodeprecated.go
   - /models/operations/createbuilddeprecated.go
   - /models/operations/deletebuilddeprecated.go
   - /models/operations/runbuilddeprecated.go
+  - /models/operations/getbuildsv2deprecated.go
+  - /models/operations/getbuildinfov2deprecated.go
+  - /models/operations/createbuildv2deprecated.go
+  - /models/operations/createbuildwithuploadurlv2deprecated.go
+  - /models/operations/createwithmultipartuploadsv2deprecated.go
+  - /models/operations/deletebuildv2deprecated.go
+  - /models/operations/runbuildv2deprecated.go
   - /models/operations/getbuilds.go
-  - /models/operations/getbuildinfo.go
   - /models/operations/createbuild.go
-  - /models/operations/createbuildwithuploadurl.go
+  - /models/operations/getbuild.go
   - /models/operations/deletebuild.go
   - /models/operations/runbuild.go
   - /models/operations/getbalance.go
+  - /models/operations/getupcominginvoiceitems.go
+  - /models/operations/getupcominginvoicetotal.go
   - /models/operations/getpaymentmethod.go
   - /models/operations/initstripecustomerportalurl.go
   - /models/operations/getinvoices.go
   - /models/operations/loginanonymous.go
   - /models/operations/loginnickname.go
   - /models/operations/logingoogle.go
+  - /models/operations/getappsv1deprecated.go
+  - /models/operations/createappv1deprecated.go
+  - /models/operations/updateappv1deprecated.go
+  - /models/operations/getappinfov1deprecated.go
+  - /models/operations/deleteappv1deprecated.go
   - /models/operations/getapps.go
   - /models/operations/createapp.go
   - /models/operations/updateapp.go
-  - /models/operations/getappinfo.go
+  - /models/operations/getapp.go
   - /models/operations/deleteapp.go
   - /models/shared/listorgtokens.go
   - /models/shared/orgtoken.go
@@ -202,16 +223,28 @@ generatedFiles:
   - /models/shared/lobbyv3.go
   - /models/shared/createlobbyv3params.go
   - /models/shared/pingendpoints.go
-  - /models/shared/deployment.go
+  - /models/shared/deploymentv1.go
   - /models/shared/containerport.go
   - /models/shared/planname.go
   - /models/shared/deploymentconfig.go
   - /models/shared/deploymentv2.go
   - /models/shared/deploymentconfigv2.go
+  - /models/shared/deploymentsv3page.go
+  - /models/shared/deploymentv3.go
+  - /models/shared/deploymentconfigv3.go
   - /models/shared/build.go
   - /models/shared/buildstatus.go
   - /models/shared/createbuildparams.go
   - /models/shared/buildwithuploadurl.go
+  - /models/shared/buildwithmultiparturls.go
+  - /models/shared/buildpart.go
+  - /models/shared/createmultipartbuildparams.go
+  - /models/shared/buildsv3page.go
+  - /models/shared/buildv3.go
+  - /models/shared/createdbuildv3withmultiparturls.go
+  - /models/shared/deletedbuild.go
+  - /models/shared/invoiceitempage.go
+  - /models/shared/invoiceitem.go
   - /models/shared/paymentmethod.go
   - /models/shared/linkpaymentmethod.go
   - /models/shared/achpaymentmethod.go
@@ -223,11 +256,13 @@ generatedFiles:
   - /models/shared/playertokenobject.go
   - /models/shared/nicknameobject.go
   - /models/shared/googleidtokenobject.go
-  - /models/shared/applicationwithlatestdeploymentandbuild.go
+  - /models/shared/applicationwithlatestdeploymentandbuilddeprecated.go
   - /models/shared/authconfiguration.go
   - /models/shared/recordstringnever.go
   - /models/shared/application.go
   - /models/shared/appconfig.go
+  - /models/shared/applicationspage.go
+  - /models/shared/applicationwithlatestdeploymentandbuild.go
   - /models/shared/security.go
   - /models/sdkerrors/apierror.go
   - docs/models/operations/getorgtokensrequest.md
@@ -296,6 +331,10 @@ generatedFiles:
   - docs/models/operations/getlatestprocessesglobals.md
   - docs/models/operations/getlatestprocessesrequest.md
   - docs/models/operations/getlatestprocessesresponse.md
+  - docs/models/operations/getprocessescountexperimentalglobals.md
+  - docs/models/operations/getprocessescountexperimentalrequest.md
+  - docs/models/operations/getprocessescountexperimentalresponsebody.md
+  - docs/models/operations/getprocessescountexperimentalresponse.md
   - docs/models/operations/stopprocessglobals.md
   - docs/models/operations/stopprocessrequest.md
   - docs/models/operations/stopprocessresponse.md
@@ -386,30 +425,42 @@ generatedFiles:
   - docs/models/operations/getlobbyinfobyshortcoderesponse.md
   - docs/models/operations/getpingserviceendpointsdeprecatedresponse.md
   - docs/models/operations/getpingserviceendpointsresponse.md
-  - docs/models/operations/getdeploymentsdeprecatedglobals.md
-  - docs/models/operations/getdeploymentsdeprecatedrequest.md
-  - docs/models/operations/getdeploymentsdeprecatedresponse.md
-  - docs/models/operations/getlatestdeploymentdeprecatedglobals.md
-  - docs/models/operations/getlatestdeploymentdeprecatedrequest.md
-  - docs/models/operations/getlatestdeploymentdeprecatedresponse.md
-  - docs/models/operations/getdeploymentinfodeprecatedglobals.md
-  - docs/models/operations/getdeploymentinfodeprecatedrequest.md
-  - docs/models/operations/getdeploymentinfodeprecatedresponse.md
-  - docs/models/operations/createdeploymentdeprecatedglobals.md
-  - docs/models/operations/createdeploymentdeprecatedrequest.md
-  - docs/models/operations/createdeploymentdeprecatedresponse.md
+  - docs/models/operations/getdeploymentsv1deprecatedglobals.md
+  - docs/models/operations/getdeploymentsv1deprecatedrequest.md
+  - docs/models/operations/getdeploymentsv1deprecatedresponse.md
+  - docs/models/operations/getlatestdeploymentv1deprecatedglobals.md
+  - docs/models/operations/getlatestdeploymentv1deprecatedrequest.md
+  - docs/models/operations/getlatestdeploymentv1deprecatedresponse.md
+  - docs/models/operations/getdeploymentinfov1deprecatedglobals.md
+  - docs/models/operations/getdeploymentinfov1deprecatedrequest.md
+  - docs/models/operations/getdeploymentinfov1deprecatedresponse.md
+  - docs/models/operations/createdeploymentv1deprecatedglobals.md
+  - docs/models/operations/createdeploymentv1deprecatedrequest.md
+  - docs/models/operations/createdeploymentv1deprecatedresponse.md
+  - docs/models/operations/getdeploymentsv2deprecatedglobals.md
+  - docs/models/operations/getdeploymentsv2deprecatedrequest.md
+  - docs/models/operations/getdeploymentsv2deprecatedresponse.md
+  - docs/models/operations/getlatestdeploymentv2deprecatedglobals.md
+  - docs/models/operations/getlatestdeploymentv2deprecatedrequest.md
+  - docs/models/operations/getlatestdeploymentv2deprecatedresponse.md
+  - docs/models/operations/getdeploymentinfov2deprecatedglobals.md
+  - docs/models/operations/getdeploymentinfov2deprecatedrequest.md
+  - docs/models/operations/getdeploymentinfov2deprecatedresponse.md
+  - docs/models/operations/createdeploymentv2deprecatedglobals.md
+  - docs/models/operations/createdeploymentv2deprecatedrequest.md
+  - docs/models/operations/createdeploymentv2deprecatedresponse.md
   - docs/models/operations/getdeploymentsglobals.md
   - docs/models/operations/getdeploymentsrequest.md
   - docs/models/operations/getdeploymentsresponse.md
-  - docs/models/operations/getlatestdeploymentglobals.md
-  - docs/models/operations/getlatestdeploymentrequest.md
-  - docs/models/operations/getlatestdeploymentresponse.md
-  - docs/models/operations/getdeploymentinfoglobals.md
-  - docs/models/operations/getdeploymentinforequest.md
-  - docs/models/operations/getdeploymentinforesponse.md
   - docs/models/operations/createdeploymentglobals.md
   - docs/models/operations/createdeploymentrequest.md
   - docs/models/operations/createdeploymentresponse.md
+  - docs/models/operations/getlatestdeploymentglobals.md
+  - docs/models/operations/getlatestdeploymentrequest.md
+  - docs/models/operations/getlatestdeploymentresponse.md
+  - docs/models/operations/getdeploymentglobals.md
+  - docs/models/operations/getdeploymentrequest.md
+  - docs/models/operations/getdeploymentresponse.md
   - docs/models/operations/getbuildsdeprecatedglobals.md
   - docs/models/operations/getbuildsdeprecatedrequest.md
   - docs/models/operations/getbuildsdeprecatedresponse.md
@@ -427,27 +478,43 @@ generatedFiles:
   - docs/models/operations/runbuilddeprecatedrequestbody.md
   - docs/models/operations/runbuilddeprecatedrequest.md
   - docs/models/operations/runbuilddeprecatedresponse.md
-  - docs/models/operations/getbuildsglobals.md
+  - docs/models/operations/getbuildsv2deprecatedglobals.md
+  - docs/models/operations/getbuildsv2deprecatedrequest.md
+  - docs/models/operations/getbuildsv2deprecatedresponse.md
+  - docs/models/operations/getbuildinfov2deprecatedglobals.md
+  - docs/models/operations/getbuildinfov2deprecatedrequest.md
+  - docs/models/operations/getbuildinfov2deprecatedresponse.md
+  - docs/models/operations/createbuildv2deprecatedglobals.md
+  - docs/models/operations/createbuildv2deprecatedrequest.md
+  - docs/models/operations/createbuildv2deprecatedresponse.md
+  - docs/models/operations/createbuildwithuploadurlv2deprecatedglobals.md
+  - docs/models/operations/createbuildwithuploadurlv2deprecatedrequest.md
+  - docs/models/operations/createbuildwithuploadurlv2deprecatedresponse.md
+  - docs/models/operations/createwithmultipartuploadsv2deprecatedglobals.md
+  - docs/models/operations/createwithmultipartuploadsv2deprecatedrequest.md
+  - docs/models/operations/createwithmultipartuploadsv2deprecatedresponse.md
+  - docs/models/operations/deletebuildv2deprecatedglobals.md
+  - docs/models/operations/deletebuildv2deprecatedrequest.md
+  - docs/models/operations/deletebuildv2deprecatedresponse.md
+  - docs/models/operations/runbuildv2deprecatedglobals.md
+  - docs/models/operations/runbuildv2deprecatedfile.md
+  - docs/models/operations/runbuildv2deprecatedrequestbody.md
+  - docs/models/operations/runbuildv2deprecatedrequest.md
+  - docs/models/operations/runbuildv2deprecatedresponse.md
   - docs/models/operations/getbuildsrequest.md
   - docs/models/operations/getbuildsresponse.md
-  - docs/models/operations/getbuildinfoglobals.md
-  - docs/models/operations/getbuildinforequest.md
-  - docs/models/operations/getbuildinforesponse.md
-  - docs/models/operations/createbuildglobals.md
   - docs/models/operations/createbuildrequest.md
   - docs/models/operations/createbuildresponse.md
-  - docs/models/operations/createbuildwithuploadurlglobals.md
-  - docs/models/operations/createbuildwithuploadurlrequest.md
-  - docs/models/operations/createbuildwithuploadurlresponse.md
-  - docs/models/operations/deletebuildglobals.md
+  - docs/models/operations/getbuildrequest.md
+  - docs/models/operations/getbuildresponse.md
   - docs/models/operations/deletebuildrequest.md
   - docs/models/operations/deletebuildresponse.md
-  - docs/models/operations/runbuildglobals.md
-  - docs/models/operations/runbuildfile.md
-  - docs/models/operations/runbuildrequestbody.md
   - docs/models/operations/runbuildrequest.md
   - docs/models/operations/runbuildresponse.md
   - docs/models/operations/getbalanceresponse.md
+  - docs/models/operations/getupcominginvoiceitemsresponse.md
+  - docs/models/operations/getupcominginvoicetotalresponsebody.md
+  - docs/models/operations/getupcominginvoicetotalresponse.md
   - docs/models/operations/getpaymentmethodresponse.md
   - docs/models/operations/initstripecustomerportalurlresponse.md
   - docs/models/operations/getinvoicesresponse.md
@@ -460,14 +527,27 @@ generatedFiles:
   - docs/models/operations/logingoogleglobals.md
   - docs/models/operations/logingooglerequest.md
   - docs/models/operations/logingoogleresponse.md
+  - docs/models/operations/getappsv1deprecatedresponse.md
+  - docs/models/operations/createappv1deprecatedresponse.md
+  - docs/models/operations/updateappv1deprecatedglobals.md
+  - docs/models/operations/updateappv1deprecatedrequest.md
+  - docs/models/operations/updateappv1deprecatedresponse.md
+  - docs/models/operations/getappinfov1deprecatedglobals.md
+  - docs/models/operations/getappinfov1deprecatedrequest.md
+  - docs/models/operations/getappinfov1deprecatedresponse.md
+  - docs/models/operations/deleteappv1deprecatedglobals.md
+  - docs/models/operations/deleteappv1deprecatedrequest.md
+  - docs/models/operations/deleteappv1deprecatedresponse.md
+  - docs/models/operations/getappsrequest.md
   - docs/models/operations/getappsresponse.md
+  - docs/models/operations/createapprequest.md
   - docs/models/operations/createappresponse.md
   - docs/models/operations/updateappglobals.md
   - docs/models/operations/updateapprequest.md
   - docs/models/operations/updateappresponse.md
-  - docs/models/operations/getappinfoglobals.md
-  - docs/models/operations/getappinforequest.md
-  - docs/models/operations/getappinforesponse.md
+  - docs/models/operations/getappglobals.md
+  - docs/models/operations/getapprequest.md
+  - docs/models/operations/getappresponse.md
   - docs/models/operations/deleteappglobals.md
   - docs/models/operations/deleteapprequest.md
   - docs/models/operations/deleteappresponse.md
@@ -525,8 +605,8 @@ generatedFiles:
   - docs/models/shared/createlobbyv3params.md
   - docs/models/shared/pingendpoints.md
   - docs/models/shared/env.md
-  - docs/models/shared/deploymenttransporttype.md
-  - docs/models/shared/deployment.md
+  - docs/models/shared/deploymentv1transporttype.md
+  - docs/models/shared/deploymentv1.md
   - docs/models/shared/containerport.md
   - docs/models/shared/planname.md
   - docs/models/shared/deploymentconfigenv.md
@@ -535,6 +615,11 @@ generatedFiles:
   - docs/models/shared/deploymentv2.md
   - docs/models/shared/deploymentconfigv2env.md
   - docs/models/shared/deploymentconfigv2.md
+  - docs/models/shared/deploymentsv3page.md
+  - docs/models/shared/deploymentv3env.md
+  - docs/models/shared/deploymentv3.md
+  - docs/models/shared/deploymentconfigv3env.md
+  - docs/models/shared/deploymentconfigv3.md
   - docs/models/shared/regionalcontainertags.md
   - docs/models/shared/build.md
   - docs/models/shared/buildstatus.md
@@ -542,6 +627,16 @@ generatedFiles:
   - docs/models/shared/buildwithuploadurlregionalcontainertags.md
   - docs/models/shared/uploadbodyparams.md
   - docs/models/shared/buildwithuploadurl.md
+  - docs/models/shared/buildwithmultiparturlsregionalcontainertags.md
+  - docs/models/shared/buildwithmultiparturls.md
+  - docs/models/shared/buildpart.md
+  - docs/models/shared/createmultipartbuildparams.md
+  - docs/models/shared/buildsv3page.md
+  - docs/models/shared/buildv3.md
+  - docs/models/shared/createdbuildv3withmultiparturls.md
+  - docs/models/shared/deletedbuild.md
+  - docs/models/shared/invoiceitempage.md
+  - docs/models/shared/invoiceitem.md
   - docs/models/shared/paymentmethod.md
   - docs/models/shared/linkpaymentmethod.md
   - docs/models/shared/achpaymentmethod.md
@@ -553,14 +648,18 @@ generatedFiles:
   - docs/models/shared/playertokenobject.md
   - docs/models/shared/nicknameobject.md
   - docs/models/shared/googleidtokenobject.md
-  - docs/models/shared/applicationwithlatestdeploymentandbuildenv.md
-  - docs/models/shared/applicationwithlatestdeploymentandbuilddeployment.md
-  - docs/models/shared/applicationwithlatestdeploymentandbuild.md
+  - docs/models/shared/applicationwithlatestdeploymentandbuilddeprecatedenv.md
+  - docs/models/shared/deployment.md
+  - docs/models/shared/applicationwithlatestdeploymentandbuilddeprecated.md
   - docs/models/shared/google.md
   - docs/models/shared/authconfiguration.md
   - docs/models/shared/recordstringnever.md
   - docs/models/shared/application.md
   - docs/models/shared/appconfig.md
+  - docs/models/shared/applicationspage.md
+  - docs/models/shared/applicationwithlatestdeploymentandbuildenv.md
+  - docs/models/shared/applicationwithlatestdeploymentandbuilddeployment.md
+  - docs/models/shared/applicationwithlatestdeploymentandbuild.md
   - docs/models/shared/security.md
   - docs/models/sdkerrors/apierror.md
   - docs/sdks/sdk/README.md
@@ -581,11 +680,14 @@ generatedFiles:
   - docs/sdks/discoveryv2/README.md
   - docs/sdks/deploymentsv1/README.md
   - docs/sdks/deploymentsv2/README.md
+  - docs/sdks/deploymentsv3/README.md
   - docs/sdks/buildsv1/README.md
   - docs/sdks/buildsv2/README.md
+  - docs/sdks/buildsv3/README.md
   - docs/sdks/billingv1/README.md
   - docs/sdks/authv1/README.md
   - docs/sdks/appsv1/README.md
+  - docs/sdks/appsv2/README.md
   - USAGE.md
   - models/operations/options.go
   - .gitattributes

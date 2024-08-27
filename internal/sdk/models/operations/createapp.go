@@ -7,6 +7,25 @@ import (
 	"net/http"
 )
 
+type CreateAppRequest struct {
+	OrgID     *string          `queryParam:"style=form,explode=true,name=orgId"`
+	AppConfig shared.AppConfig `request:"mediaType=application/json"`
+}
+
+func (o *CreateAppRequest) GetOrgID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.OrgID
+}
+
+func (o *CreateAppRequest) GetAppConfig() shared.AppConfig {
+	if o == nil {
+		return shared.AppConfig{}
+	}
+	return o.AppConfig
+}
+
 type CreateAppResponse struct {
 	// HTTP response content type for this operation
 	ContentType string

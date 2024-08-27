@@ -3,12 +3,12 @@
 
 ### Available Operations
 
-* [GetDeployments](#getdeployments) - Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
-* [GetLatestDeployment](#getlatestdeployment) - Get the latest [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
-* [GetDeploymentInfo](#getdeploymentinfo) - Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment).
-* [CreateDeployment](#createdeployment) - Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
+* [GetDeploymentsV2Deprecated](#getdeploymentsv2deprecated) - Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
+* [GetLatestDeploymentV2Deprecated](#getlatestdeploymentv2deprecated) - Get the latest [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
+* [GetDeploymentInfoV2Deprecated](#getdeploymentinfov2deprecated) - Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment).
+* [CreateDeploymentV2Deprecated](#createdeploymentv2deprecated) - Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
 
-## GetDeployments
+## GetDeploymentsV2Deprecated
 
 Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
 
@@ -34,7 +34,7 @@ func main() {
     )
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.DeploymentsV2.GetDeployments(ctx, appID)
+    res, err := s.DeploymentsV2.GetDeploymentsV2Deprecated(ctx, appID)
     if err != nil {
         log.Fatal(err)
     }
@@ -55,13 +55,13 @@ func main() {
 
 ### Response
 
-**[*operations.GetDeploymentsResponse](../../models/operations/getdeploymentsresponse.md), error**
+**[*operations.GetDeploymentsV2DeprecatedResponse](../../models/operations/getdeploymentsv2deprecatedresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
 | sdkerrors.APIError | 401,404,429        | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
-## GetLatestDeployment
+## GetLatestDeploymentV2Deprecated
 
 Get the latest [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
 
@@ -87,7 +87,7 @@ func main() {
     )
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.DeploymentsV2.GetLatestDeployment(ctx, appID)
+    res, err := s.DeploymentsV2.GetLatestDeploymentV2Deprecated(ctx, appID)
     if err != nil {
         log.Fatal(err)
     }
@@ -108,13 +108,13 @@ func main() {
 
 ### Response
 
-**[*operations.GetLatestDeploymentResponse](../../models/operations/getlatestdeploymentresponse.md), error**
+**[*operations.GetLatestDeploymentV2DeprecatedResponse](../../models/operations/getlatestdeploymentv2deprecatedresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429        | application/json   |
+| sdkerrors.APIError | 401,404,422,429    | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
-## GetDeploymentInfo
+## GetDeploymentInfoV2Deprecated
 
 Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment).
 
@@ -142,7 +142,7 @@ func main() {
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.DeploymentsV2.GetDeploymentInfo(ctx, deploymentID, appID)
+    res, err := s.DeploymentsV2.GetDeploymentInfoV2Deprecated(ctx, deploymentID, appID)
     if err != nil {
         log.Fatal(err)
     }
@@ -164,13 +164,13 @@ func main() {
 
 ### Response
 
-**[*operations.GetDeploymentInfoResponse](../../models/operations/getdeploymentinforesponse.md), error**
+**[*operations.GetDeploymentInfoV2DeprecatedResponse](../../models/operations/getdeploymentinfov2deprecatedresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
 | sdkerrors.APIError | 401,404,429        | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
-## CreateDeployment
+## CreateDeploymentV2Deprecated
 
 Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
 
@@ -207,7 +207,7 @@ func main() {
         RoomsPerProcess: 3,
         AdditionalContainerPorts: []shared.ContainerPort{
             shared.ContainerPort{
-                TransportType: shared.TransportTypeUDP,
+                TransportType: shared.TransportTypeTLS,
                 Port: 8000,
                 Name: "default",
             },
@@ -220,7 +220,7 @@ func main() {
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.DeploymentsV2.CreateDeployment(ctx, buildID, deploymentConfigV2, appID)
+    res, err := s.DeploymentsV2.CreateDeploymentV2Deprecated(ctx, buildID, deploymentConfigV2, appID)
     if err != nil {
         log.Fatal(err)
     }
@@ -243,7 +243,7 @@ func main() {
 
 ### Response
 
-**[*operations.CreateDeploymentResponse](../../models/operations/createdeploymentresponse.md), error**
+**[*operations.CreateDeploymentV2DeprecatedResponse](../../models/operations/createdeploymentv2deprecatedresponse.md), error**
 | Error Object            | Status Code             | Content Type            |
 | ----------------------- | ----------------------- | ----------------------- |
 | sdkerrors.APIError      | 400,401,404,422,429,500 | application/json        |

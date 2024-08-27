@@ -37,7 +37,7 @@ type GetLatestDeploymentResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Ok
-	DeploymentV2 *shared.DeploymentV2
+	DeploymentV3 *shared.DeploymentV3
 }
 
 func (o *GetLatestDeploymentResponse) GetContentType() string {
@@ -61,9 +61,9 @@ func (o *GetLatestDeploymentResponse) GetRawResponse() *http.Response {
 	return o.RawResponse
 }
 
-func (o *GetLatestDeploymentResponse) GetDeploymentV2() *shared.DeploymentV2 {
+func (o *GetLatestDeploymentResponse) GetDeploymentV3() *shared.DeploymentV3 {
 	if o == nil {
 		return nil
 	}
-	return o.DeploymentV2
+	return o.DeploymentV3
 }

@@ -166,7 +166,7 @@ func (s *RoomsV2) CreateRoom(ctx context.Context, createRoomParams shared.Create
 
 			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 			return nil, err
-		} else if utils.MatchStatusCodes([]string{"400", "401", "402", "403", "404", "422", "429", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+		} else if utils.MatchStatusCodes([]string{"400", "401", "402", "404", "422", "429", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 			if err != nil {
 				return nil, err
@@ -212,8 +212,6 @@ func (s *RoomsV2) CreateRoom(ctx context.Context, createRoomParams shared.Create
 	case httpRes.StatusCode == 401:
 		fallthrough
 	case httpRes.StatusCode == 402:
-		fallthrough
-	case httpRes.StatusCode == 403:
 		fallthrough
 	case httpRes.StatusCode == 404:
 		fallthrough

@@ -7,6 +7,17 @@ import (
 	"net/http"
 )
 
+type GetAppsRequest struct {
+	OrgID *string `queryParam:"style=form,explode=true,name=orgId"`
+}
+
+func (o *GetAppsRequest) GetOrgID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.OrgID
+}
+
 type GetAppsResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
@@ -15,7 +26,7 @@ type GetAppsResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Ok
-	ApplicationWithLatestDeploymentAndBuilds []shared.ApplicationWithLatestDeploymentAndBuild
+	ApplicationsPage *shared.ApplicationsPage
 }
 
 func (o *GetAppsResponse) GetContentType() string {
@@ -39,9 +50,9 @@ func (o *GetAppsResponse) GetRawResponse() *http.Response {
 	return o.RawResponse
 }
 
-func (o *GetAppsResponse) GetApplicationWithLatestDeploymentAndBuilds() []shared.ApplicationWithLatestDeploymentAndBuild {
+func (o *GetAppsResponse) GetApplicationsPage() *shared.ApplicationsPage {
 	if o == nil {
 		return nil
 	}
-	return o.ApplicationWithLatestDeploymentAndBuilds
+	return o.ApplicationsPage
 }

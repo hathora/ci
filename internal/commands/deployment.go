@@ -49,7 +49,7 @@ var Deployment = &cli.Command{
 				}
 				deployment.Log.Debug("getting deployment info...")
 
-				res, err := deployment.SDK.DeploymentsV2.GetDeploymentInfo(
+				res, err := deployment.SDK.DeploymentsV2.GetDeploymentInfoV2Deprecated(
 					ctx,
 					deployment.DeploymentID,
 					deployment.AppID,
@@ -75,7 +75,7 @@ var Deployment = &cli.Command{
 				}
 				deployment.Log.Debug("getting the latest deployment...")
 
-				res, err := deployment.SDK.DeploymentsV2.GetLatestDeployment(ctx, deployment.AppID)
+				res, err := deployment.SDK.DeploymentsV2.GetLatestDeploymentV2Deprecated(ctx, deployment.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to get the latest deployment: %w", err)
 				}
@@ -97,7 +97,7 @@ var Deployment = &cli.Command{
 				}
 				deployment.Log.Debug("getting all deployments...")
 
-				res, err := deployment.SDK.DeploymentsV2.GetDeployments(ctx, deployment.AppID)
+				res, err := deployment.SDK.DeploymentsV2.GetDeploymentsV2Deprecated(ctx, deployment.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to get deployments: %w", err)
 				}
@@ -136,7 +136,7 @@ var Deployment = &cli.Command{
 
 				useLatest := cmd.Bool(fromLatestFlag.Name)
 				if useLatest {
-					res, err := deployment.SDK.DeploymentsV2.GetLatestDeployment(ctx, deployment.AppID)
+					res, err := deployment.SDK.DeploymentsV2.GetLatestDeploymentV2Deprecated(ctx, deployment.AppID)
 					if err != nil {
 						return fmt.Errorf("unable to retrieve latest deployment: %w", err)
 					}
@@ -150,7 +150,7 @@ var Deployment = &cli.Command{
 					return err
 				}
 
-				res, err := deployment.SDK.DeploymentsV2.CreateDeployment(
+				res, err := deployment.SDK.DeploymentsV2.CreateDeploymentV2Deprecated(
 					ctx,
 					deployment.BuildID,
 					shared.DeploymentConfigV2{

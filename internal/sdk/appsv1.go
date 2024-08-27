@@ -27,11 +27,11 @@ func newAppsV1(sdkConfig sdkConfiguration) *AppsV1 {
 	}
 }
 
-// GetApps - Returns an unsorted list of your organization’s [applications](https://hathora.dev/docs/concepts/hathora-entities#application). An application is uniquely identified by an `appId`.
-func (s *AppsV1) GetApps(ctx context.Context, opts ...operations.Option) (*operations.GetAppsResponse, error) {
+// GetAppsV1Deprecated - Returns an unsorted list of your organization’s [applications](https://hathora.dev/docs/concepts/hathora-entities#application). An application is uniquely identified by an `appId`.
+func (s *AppsV1) GetAppsV1Deprecated(ctx context.Context, opts ...operations.Option) (*operations.GetAppsV1DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "GetApps",
+		OperationID:    "GetAppsV1Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
@@ -160,7 +160,7 @@ func (s *AppsV1) GetApps(ctx context.Context, opts ...operations.Option) (*opera
 		}
 	}
 
-	res := &operations.GetAppsResponse{
+	res := &operations.GetAppsV1DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -177,12 +177,12 @@ func (s *AppsV1) GetApps(ctx context.Context, opts ...operations.Option) (*opera
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			var out []shared.ApplicationWithLatestDeploymentAndBuild
+			var out []shared.ApplicationWithLatestDeploymentAndBuildDeprecated
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.ApplicationWithLatestDeploymentAndBuilds = out
+			res.ApplicationWithLatestDeploymentAndBuildDeprecateds = out
 		default:
 			return nil, sdkerrors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
@@ -212,11 +212,11 @@ func (s *AppsV1) GetApps(ctx context.Context, opts ...operations.Option) (*opera
 
 }
 
-// CreateApp - Create a new [application](https://hathora.dev/docs/concepts/hathora-entities#application).
-func (s *AppsV1) CreateApp(ctx context.Context, request shared.AppConfig, opts ...operations.Option) (*operations.CreateAppResponse, error) {
+// CreateAppV1Deprecated - Create a new [application](https://hathora.dev/docs/concepts/hathora-entities#application).
+func (s *AppsV1) CreateAppV1Deprecated(ctx context.Context, request shared.AppConfig, opts ...operations.Option) (*operations.CreateAppV1DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "CreateApp",
+		OperationID:    "CreateAppV1Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
@@ -351,7 +351,7 @@ func (s *AppsV1) CreateApp(ctx context.Context, request shared.AppConfig, opts .
 		}
 	}
 
-	res := &operations.CreateAppResponse{
+	res := &operations.CreateAppV1DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -407,20 +407,20 @@ func (s *AppsV1) CreateApp(ctx context.Context, request shared.AppConfig, opts .
 
 }
 
-// UpdateApp - Update data for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
-func (s *AppsV1) UpdateApp(ctx context.Context, appConfig shared.AppConfig, appID *string, opts ...operations.Option) (*operations.UpdateAppResponse, error) {
+// UpdateAppV1Deprecated - Update data for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
+func (s *AppsV1) UpdateAppV1Deprecated(ctx context.Context, appConfig shared.AppConfig, appID *string, opts ...operations.Option) (*operations.UpdateAppV1DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "UpdateApp",
+		OperationID:    "UpdateAppV1Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.UpdateAppRequest{
+	request := operations.UpdateAppV1DeprecatedRequest{
 		AppID:     appID,
 		AppConfig: appConfig,
 	}
 
-	globals := operations.UpdateAppGlobals{
+	globals := operations.UpdateAppV1DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -561,7 +561,7 @@ func (s *AppsV1) UpdateApp(ctx context.Context, appConfig shared.AppConfig, appI
 		}
 	}
 
-	res := &operations.UpdateAppResponse{
+	res := &operations.UpdateAppV1DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -619,19 +619,19 @@ func (s *AppsV1) UpdateApp(ctx context.Context, appConfig shared.AppConfig, appI
 
 }
 
-// GetAppInfo - Get details for an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
-func (s *AppsV1) GetAppInfo(ctx context.Context, appID *string, opts ...operations.Option) (*operations.GetAppInfoResponse, error) {
+// GetAppInfoV1Deprecated - Get details for an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
+func (s *AppsV1) GetAppInfoV1Deprecated(ctx context.Context, appID *string, opts ...operations.Option) (*operations.GetAppInfoV1DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "GetAppInfo",
+		OperationID:    "GetAppInfoV1Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.GetAppInfoRequest{
+	request := operations.GetAppInfoV1DeprecatedRequest{
 		AppID: appID,
 	}
 
-	globals := operations.GetAppInfoGlobals{
+	globals := operations.GetAppInfoV1DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -766,7 +766,7 @@ func (s *AppsV1) GetAppInfo(ctx context.Context, appID *string, opts ...operatio
 		}
 	}
 
-	res := &operations.GetAppInfoResponse{
+	res := &operations.GetAppInfoV1DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -820,19 +820,19 @@ func (s *AppsV1) GetAppInfo(ctx context.Context, appID *string, opts ...operatio
 
 }
 
-// DeleteApp - Delete an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. Your organization will lose access to this application.
-func (s *AppsV1) DeleteApp(ctx context.Context, appID *string, opts ...operations.Option) (*operations.DeleteAppResponse, error) {
+// DeleteAppV1Deprecated - Delete an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. Your organization will lose access to this application.
+func (s *AppsV1) DeleteAppV1Deprecated(ctx context.Context, appID *string, opts ...operations.Option) (*operations.DeleteAppV1DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "DeleteApp",
+		OperationID:    "DeleteAppV1Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.DeleteAppRequest{
+	request := operations.DeleteAppV1DeprecatedRequest{
 		AppID: appID,
 	}
 
-	globals := operations.DeleteAppGlobals{
+	globals := operations.DeleteAppV1DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -967,7 +967,7 @@ func (s *AppsV1) DeleteApp(ctx context.Context, appID *string, opts ...operation
 		}
 	}
 
-	res := &operations.DeleteAppResponse{
+	res := &operations.DeleteAppV1DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,

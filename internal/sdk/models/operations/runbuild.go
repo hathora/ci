@@ -7,72 +7,23 @@ import (
 	"net/http"
 )
 
-type RunBuildGlobals struct {
-	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
+type RunBuildRequest struct {
+	BuildID string  `pathParam:"style=simple,explode=false,name=buildId"`
+	OrgID   *string `queryParam:"style=form,explode=true,name=orgId"`
 }
 
-func (o *RunBuildGlobals) GetAppID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppID
-}
-
-type RunBuildFile struct {
-	FileName string `multipartForm:"name=file"`
-	Content  []byte `multipartForm:"content"`
-}
-
-func (o *RunBuildFile) GetFileName() string {
+func (o *RunBuildRequest) GetBuildID() string {
 	if o == nil {
 		return ""
-	}
-	return o.FileName
-}
-
-func (o *RunBuildFile) GetContent() []byte {
-	if o == nil {
-		return []byte{}
-	}
-	return o.Content
-}
-
-type RunBuildRequestBody struct {
-	File *RunBuildFile `multipartForm:"file"`
-}
-
-func (o *RunBuildRequestBody) GetFile() *RunBuildFile {
-	if o == nil {
-		return nil
-	}
-	return o.File
-}
-
-type RunBuildRequest struct {
-	AppID       *string             `pathParam:"style=simple,explode=false,name=appId"`
-	BuildID     int                 `pathParam:"style=simple,explode=false,name=buildId"`
-	RequestBody RunBuildRequestBody `request:"mediaType=multipart/form-data"`
-}
-
-func (o *RunBuildRequest) GetAppID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppID
-}
-
-func (o *RunBuildRequest) GetBuildID() int {
-	if o == nil {
-		return 0
 	}
 	return o.BuildID
 }
 
-func (o *RunBuildRequest) GetRequestBody() RunBuildRequestBody {
+func (o *RunBuildRequest) GetOrgID() *string {
 	if o == nil {
-		return RunBuildRequestBody{}
+		return nil
 	}
-	return o.RequestBody
+	return o.OrgID
 }
 
 type RunBuildResponse struct {
