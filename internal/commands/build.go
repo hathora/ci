@@ -124,10 +124,20 @@ var Build = &cli.Command{
 }
 
 func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTag, filePath string) (*shared.Build, error) {
-	createRes, err := hathora.BuildsV2.CreateBuildWithUploadURLV2Deprecated(
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open file: %w", err)
+	}
+	fileInfo, err := file.Stat()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get file info: %w", err)
+	}
+
+	createRes, err := hathora.BuildsV2.CreateWithMultipartUploadsV2Deprecated(
 		ctx,
-		shared.CreateBuildParams{
-			BuildTag: sdk.String(buildTag),
+		shared.CreateMultipartBuildParams{
+			BuildTag:         sdk.String(buildTag),
+			BuildSizeInBytes: float64(fileInfo.Size()),
 		},
 		appID,
 	)
@@ -135,23 +145,28 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		return nil, fmt.Errorf("failed to create a build: %w", err)
 	}
 
-	file, err := archive.RequireTGZ(filePath)
+	_, err = archive.RequireTGZ(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("no build file available for run: %w", err)
 	}
 
-	if createRes.BuildWithUploadURL == nil {
+	if createRes.BuildWithMultipartUrls == nil {
 		return nil, fmt.Errorf("no build object in response")
 	}
 
-	err = uploadToUrl(createRes.BuildWithUploadURL.UploadURL, createRes.BuildWithUploadURL.UploadBodyParams, file.Path)
+	osFile, err := os.Open(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open file: %w", err)
+	}
+
+	err = uploadToUrl(createRes.BuildWithMultipartUrls.UploadParts, int(createRes.BuildWithMultipartUrls.MaxChunkSize), createRes.BuildWithMultipartUrls.CompleteUploadPostRequestURL, *osFile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to upload file: %w", err)
 	}
 
 	runRes, err := hathora.BuildsV2.RunBuildV2Deprecated(
 		ctx,
-		createRes.BuildWithUploadURL.BuildID,
+		createRes.BuildWithMultipartUrls.BuildID,
 		operations.RunBuildV2DeprecatedRequestBody{},
 		appID,
 	)
@@ -168,7 +183,7 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 
 	infoRes, err := hathora.BuildsV2.GetBuildInfoV2Deprecated(
 		ctx,
-		createRes.BuildWithUploadURL.BuildID,
+		createRes.BuildWithMultipartUrls.BuildID,
 		appID,
 	)
 	if err != nil {
@@ -320,11 +335,7 @@ func OneBuildConfigFrom(cmd *cli.Command) (*OneBuildConfig, error) {
 	return ConfigFromCLI[*OneBuildConfig](oneBuildConfigKey, cmd)
 }
 
-func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, filePath string) error {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return err
-	}
+func uploadToUrl(multipartUploadParts []shared.BuildPart, MaxChunkSize int, completeUploadPostRequestUrl string, file os.File) error {
 	defer file.Close()
 
 	fileInfo, err := file.Stat()
@@ -334,6 +345,7 @@ func uploadToUrl(uploadUrl string, uploadBodyParams []shared.UploadBodyParams, f
 
 	var requestBody bytes.Buffer
 	multipartWriter := multipart.NewWriter(&requestBody)
+	uploadProgressMap := make(map[int]int)
 
 	for _, param := range uploadBodyParams {
 		_ = multipartWriter.WriteField(param.Key, param.Value)
