@@ -159,7 +159,7 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		return nil, fmt.Errorf("failed to open file: %w", err)
 	}
 
-	err = uploadToUrl(createRes.BuildWithMultipartUrls.UploadParts, int(createRes.BuildWithMultipartUrls.MaxChunkSize), createRes.BuildWithMultipartUrls.CompleteUploadPostRequestURL, *osFile)
+	err = uploadToUrl(createRes.BuildWithMultipartUrls.UploadParts, int(createRes.BuildWithMultipartUrls.MaxChunkSize), createRes.BuildWithMultipartUrls.CompleteUploadPostRequestURL, osFile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to upload file: %w", err)
 	}
@@ -335,7 +335,7 @@ func OneBuildConfigFrom(cmd *cli.Command) (*OneBuildConfig, error) {
 	return ConfigFromCLI[*OneBuildConfig](oneBuildConfigKey, cmd)
 }
 
-func uploadToUrl(multipartUploadParts []shared.BuildPart, MaxChunkSize int, completeUploadPostRequestUrl string, file os.File) error {
+func uploadToUrl(multipartUploadParts []shared.BuildPart, MaxChunkSize int, completeUploadPostRequestUrl string, file *os.File) error {
 	defer file.Close()
 
 	fileInfo, err := file.Stat()
@@ -345,11 +345,10 @@ func uploadToUrl(multipartUploadParts []shared.BuildPart, MaxChunkSize int, comp
 
 	var requestBody bytes.Buffer
 	multipartWriter := multipart.NewWriter(&requestBody)
-	uploadProgressMap := make(map[int]int)
 
-	for _, param := range uploadBodyParams {
-		_ = multipartWriter.WriteField(param.Key, param.Value)
-	}
+	// for _, param := range uploadBodyParams {
+	// 	_ = multipartWriter.WriteField(param.Key, param.Value)
+	// }
 
 	fileWriter, err := multipartWriter.CreateFormFile("file", fileInfo.Name())
 	if err != nil {
@@ -378,7 +377,7 @@ func uploadToUrl(multipartUploadParts []shared.BuildPart, MaxChunkSize int, comp
 		},
 	}
 
-	req, err := http.NewRequest("POST", uploadUrl, progressReader)
+	req, err := http.NewRequest("POST", completeUploadPostRequestUrl, progressReader)
 	if err != nil {
 		return err
 	}
