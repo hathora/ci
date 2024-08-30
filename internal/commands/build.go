@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"mime/multipart"
 	"net/http"
 	"os"
 
@@ -154,15 +153,53 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		return nil, fmt.Errorf("no build object in response")
 	}
 
-	osFile, err := os.Open(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open file: %w", err)
+	etagsForParts := make(map[int64](chan string), len(createRes.BuildWithMultipartUrls.UploadParts))
+
+	for _, part := range createRes.BuildWithMultipartUrls.UploadParts {
+		etagChan := make(chan string)
+		partNumber := int64(part.PartNumber)
+		etagsForParts[partNumber] = etagChan
+		maxChunkSize := int64(createRes.BuildWithMultipartUrls.MaxChunkSize)
+
+		startByteForPart := (partNumber - 1) * maxChunkSize
+		endByteForPart := min(partNumber*maxChunkSize, fileInfo.Size())
+
+		partSize := endByteForPart - startByteForPart
+		partBuffer := make([]byte, partSize)
+
+		_, err := file.ReadAt(partBuffer, startByteForPart)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read file: %w", err)
+		}
+		go uploadFileToS3(part.PutRequestURL, partBuffer, etagChan)
 	}
 
-	err = uploadToUrl(createRes.BuildWithMultipartUrls.UploadParts, int(createRes.BuildWithMultipartUrls.MaxChunkSize), createRes.BuildWithMultipartUrls.CompleteUploadPostRequestURL, osFile)
-	if err != nil {
-		return nil, fmt.Errorf("failed to upload file: %w", err)
+	xmlBody := "<CompleteMultipartUpload>"
+	for partNumber, etagChan := range etagsForParts {
+		print(partNumber)
+		xmlBody += fmt.Sprintf(`
+			<Part>
+				<PartNumber>%d</PartNumber>
+				<ETag>%s</ETag>
+			</Part>`, int(partNumber), <-etagChan)
 	}
+	xmlBody += "</CompleteMultipartUpload>"
+
+	resp, err := http.Post(createRes.BuildWithMultipartUrls.CompleteUploadPostRequestURL, "application/xml", bytes.NewBufferString(xmlBody))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Complete multipart upload failed with status: %s\n", resp.Status)
+	} else {
+		fmt.Println("Complete multipart upload succeeded.")
+	}
+	// err = uploadToUrl(createRes.BuildWithMultipartUrls.UploadParts, int(createRes.BuildWithMultipartUrls.MaxChunkSize), createRes.BuildWithMultipartUrls.CompleteUploadPostRequestURL, osFile)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to upload file: %w", err)
+	// }
 
 	runRes, err := hathora.BuildsV2.RunBuildV2Deprecated(
 		ctx,
@@ -335,69 +372,6 @@ func OneBuildConfigFrom(cmd *cli.Command) (*OneBuildConfig, error) {
 	return ConfigFromCLI[*OneBuildConfig](oneBuildConfigKey, cmd)
 }
 
-func uploadToUrl(multipartUploadParts []shared.BuildPart, MaxChunkSize int, completeUploadPostRequestUrl string, file *os.File) error {
-	defer file.Close()
-
-	fileInfo, err := file.Stat()
-	if err != nil {
-		return err
-	}
-
-	var requestBody bytes.Buffer
-	multipartWriter := multipart.NewWriter(&requestBody)
-
-	// for _, param := range uploadBodyParams {
-	// 	_ = multipartWriter.WriteField(param.Key, param.Value)
-	// }
-
-	fileWriter, err := multipartWriter.CreateFormFile("file", fileInfo.Name())
-	if err != nil {
-		return err
-	}
-
-	_, err = io.Copy(fileWriter, file)
-	if err != nil {
-		return err
-	}
-
-	err = multipartWriter.Close()
-	if err != nil {
-		return err
-	}
-
-	progressReader := &progressReaderType{
-		reader: &requestBody,
-		total:  int64(requestBody.Len()),
-		callback: func(percentage float64, loaded int64, total int64, eof bool) {
-			if !eof {
-				os.Stderr.WriteString(fmt.Sprintf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, total))
-			} else {
-				os.Stderr.WriteString("Upload complete\n")
-			}
-		},
-	}
-
-	req, err := http.NewRequest("POST", completeUploadPostRequestUrl, progressReader)
-	if err != nil {
-		return err
-	}
-	req.Header.Set("Content-Type", multipartWriter.FormDataContentType())
-	req.ContentLength = int64(requestBody.Len())
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusNoContent {
-		return fmt.Errorf("upload failed with status: %s", resp.Status)
-	}
-
-	return nil
-}
-
 type progressReaderType struct {
 	reader   io.Reader
 	total    int64
@@ -416,4 +390,52 @@ func (pr *progressReaderType) Read(p []byte) (int, error) {
 		pr.callback(percentage, pr.read, pr.total, false)
 	}
 	return n, err
+}
+
+func uploadFileToS3(presignedUrl string, byteBuffer []byte, etagChan chan string) {
+	requestBody := bytes.NewReader(byteBuffer)
+	progressReader := &progressReaderType{
+		reader: requestBody,
+		total:  int64(requestBody.Len()),
+		callback: func(percentage float64, loaded int64, total int64, eof bool) {
+			if !eof {
+				os.Stderr.WriteString(fmt.Sprintf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, total))
+			} else {
+				os.Stderr.WriteString("Upload complete\n")
+			}
+		},
+	}
+	req, err := http.NewRequest("PUT", presignedUrl, progressReader)
+	if err != nil {
+		os.Stderr.WriteString(fmt.Sprintf("failed to create request: %w", err))
+		etagChan <- "error"
+		return
+	}
+	req.Header.Set("Content-Type", "application/octet-stream")
+	req.ContentLength = int64(requestBody.Len())
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		os.Stderr.WriteString(fmt.Sprintf("failed to upload part: %w", err))
+		etagChan <- "error"
+		return
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		os.Stderr.WriteString(fmt.Sprintf("upload failed with status code: %d, response: %s", resp.StatusCode, body))
+		etagChan <- "error"
+		return
+	}
+
+	etag := resp.Header.Get("ETag")
+	if etag == "" {
+		os.Stderr.WriteString("ETag header not found in response")
+		etagChan <- "error"
+	} else {
+		etagChan <- etag
+	}
 }

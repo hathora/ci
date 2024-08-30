@@ -5,5 +5,5 @@ import (
 )
 
 func missingRequiredFlag(flagName string) error {
-	return fmt.Errorf("Required flag \"%s\" is not set", flagName)
+	return fmt.Errorf("required flag \"%s\" is not set", flagName)
 }
