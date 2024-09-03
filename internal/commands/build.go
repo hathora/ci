@@ -188,7 +188,6 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 			return nil
 		})
 	}
-
 	if err := eg.Wait(); err != nil {
 		return nil, fmt.Errorf("failed to upload parts: %w", err)
 	}
@@ -200,9 +199,9 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("Complete multipart upload failed with status: %s\n", resp.Status)
+		fmt.Printf("\nComplete multipart upload failed with status: %s\n", resp.Status)
 	} else {
-		fmt.Println("Complete multipart upload succeeded.")
+		fmt.Println("\nComplete multipart upload succeeded.")
 	}
 
 	runRes, err := hathora.BuildsV2.RunBuildV2Deprecated(
@@ -402,9 +401,6 @@ type progressReaderType struct {
 
 func (pr *progressReaderType) Read(p []byte) (int, error) {
 	n, err := pr.reader.Read(p)
-	if err != nil && err == io.EOF {
-		os.Stderr.WriteString("Upload complete\n")
-	}
 	if n > 0 {
 		pr.globalUploadProgress.Add(int64(n))
 		loaded := pr.globalUploadProgress.Load()
