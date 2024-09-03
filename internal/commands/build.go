@@ -7,6 +7,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
+	"sync"
 	"sync/atomic"
 
 	"github.com/urfave/cli/v3"
@@ -20,7 +22,13 @@ import (
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/setup"
 	"github.com/hathora/ci/internal/workaround"
+	"golang.org/x/sync/errgroup"
 )
+
+type etagPart struct {
+	partNumber int
+	etag       string
+}
 
 var Build = &cli.Command{
 	Name:  "build",
@@ -145,8 +153,7 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		return nil, fmt.Errorf("failed to create a build: %w", err)
 	}
 
-	_, err = archive.RequireTGZ(filePath)
-	if err != nil {
+	if _, err = archive.RequireTGZ(filePath); err != nil {
 		return nil, fmt.Errorf("no build file available for run: %w", err)
 	}
 
@@ -154,40 +161,43 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		return nil, fmt.Errorf("no build object in response")
 	}
 
-	etagsForParts := make(map[int64](chan string), len(createRes.BuildWithMultipartUrls.UploadParts))
-
 	globalUploadProgress := atomic.Int64{}
 
-	for _, part := range createRes.BuildWithMultipartUrls.UploadParts {
-		etagChan := make(chan string)
-		partNumber := int64(part.PartNumber)
-		etagsForParts[partNumber] = etagChan
-		maxChunkSize := int64(createRes.BuildWithMultipartUrls.MaxChunkSize)
+	var etagParts = make([]etagPart, len(createRes.BuildWithMultipartUrls.UploadParts))
+	var eg errgroup.Group
 
-		startByteForPart := (partNumber - 1) * maxChunkSize
-		endByteForPart := min(partNumber*maxChunkSize, fileInfo.Size())
+	var mu sync.Mutex
+	for _, uploadPart := range createRes.BuildWithMultipartUrls.UploadParts {
+		partNum := int64(uploadPart.PartNumber)
+		reqURL := uploadPart.PutRequestURL
+		eg.Go(func() error {
+			maxChunkSize := int64(createRes.BuildWithMultipartUrls.MaxChunkSize)
 
-		partSize := endByteForPart - startByteForPart
-		partBuffer := make([]byte, partSize)
+			start := maxChunkSize * (partNum - 1)
+			end := min(partNum*maxChunkSize, fileInfo.Size())
+			size := end - start
+			buf := make([]byte, size)
 
-		_, err := file.ReadAt(partBuffer, startByteForPart)
-		if err != nil {
-			return nil, fmt.Errorf("failed to read file: %w", err)
-		}
-		go uploadFileToS3(part.PutRequestURL, partBuffer, etagChan, &globalUploadProgress, fileInfo.Size())
+			if _, err := file.ReadAt(buf, start); err != nil {
+				fmt.Printf("failed to read part %d: %v\n", partNum, err)
+			}
+			etag, err := uploadFileToS3(reqURL, buf, &globalUploadProgress, fileInfo.Size())
+			if err != nil {
+				fmt.Printf("failed to upload part %d: %v\n", partNum, err)
+			}
+			mu.Lock()
+			defer mu.Unlock()
+			etagParts = append(etagParts, etagPart{partNumber: int(partNum), etag: etag})
+
+			return nil
+		})
 	}
 
-	xmlBody := "<CompleteMultipartUpload>"
-	for partNumber, etagChan := range etagsForParts {
-		xmlBody += fmt.Sprintf(`
-			<Part>
-				<PartNumber>%d</PartNumber>
-				<ETag>%s</ETag>
-			</Part>`, int(partNumber), <-etagChan)
+	if err := eg.Wait(); err != nil {
+		return nil, fmt.Errorf("failed to upload parts: %w", err)
 	}
-	xmlBody += "</CompleteMultipartUpload>"
 
-	resp, err := http.Post(createRes.BuildWithMultipartUrls.CompleteUploadPostRequestURL, "application/xml", bytes.NewBufferString(xmlBody))
+	resp, err := http.Post(createRes.BuildWithMultipartUrls.CompleteUploadPostRequestURL, "application/xml", bytes.NewBufferString(createEtagXML(etagParts...)))
 	if err != nil {
 		return nil, err
 	}
@@ -228,6 +238,24 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 	return infoRes.Build, nil
 }
 
+func createEtagXML(etags ...etagPart) string {
+	const header = "<CompleteMultipartUpload>"
+	const footer = "</CompleteMultipartUpload>"
+
+	var builder strings.Builder
+	builder.WriteString(header)
+
+	for _, etag := range etags {
+		builder.WriteString(fmt.Sprintf(`
+	<Part>
+		<PartNumber>%d</PartNumber>
+		<ETag>%s</ETag>
+	</Part>`, etag.partNumber, etag.etag))
+	}
+
+	builder.WriteString(footer)
+	return builder.String()
+}
 func buildFlagEnvVar(name string) string {
 	return buildFlagEnvVarPrefix + name
 }
@@ -390,18 +418,17 @@ func (pr *progressReaderType) Read(p []byte) (int, error) {
 	return n, err
 }
 
-func uploadFileToS3(presignedUrl string, byteBuffer []byte, etagChan chan string, globalUploadProgress *atomic.Int64, globalTotal int64) {
+func uploadFileToS3(preSignedURL string, byteBuffer []byte, globalUploadProgress *atomic.Int64, globalTotal int64) (string, error) {
 	requestBody := bytes.NewReader(byteBuffer)
 	progressReader := &progressReaderType{
 		reader:               requestBody,
 		globalTotal:          globalTotal,
 		globalUploadProgress: globalUploadProgress,
 	}
-	req, err := http.NewRequest("PUT", presignedUrl, progressReader)
+	req, err := http.NewRequest("PUT", preSignedURL, progressReader)
 	if err != nil {
 		os.Stderr.WriteString(fmt.Sprintf("failed to create request: %v", err))
-		etagChan <- "error"
-		return
+		return "", fmt.Errorf("failed to create request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/octet-stream")
 	req.ContentLength = int64(requestBody.Len())
@@ -410,8 +437,7 @@ func uploadFileToS3(presignedUrl string, byteBuffer []byte, etagChan chan string
 	resp, err := client.Do(req)
 	if err != nil {
 		os.Stderr.WriteString(fmt.Sprintf("failed to upload part: %v", err))
-		etagChan <- "error"
-		return
+		return "", fmt.Errorf("failed to upload part: %w", err)
 	}
 
 	defer resp.Body.Close()
@@ -419,15 +445,14 @@ func uploadFileToS3(presignedUrl string, byteBuffer []byte, etagChan chan string
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
 		os.Stderr.WriteString(fmt.Sprintf("upload failed with status code: %d, response: %s", resp.StatusCode, body))
-		etagChan <- "error"
-		return
+		return "", fmt.Errorf("upload failed with status code: %d", resp.StatusCode)
 	}
 
 	etag := resp.Header.Get("ETag")
 	if etag == "" {
-		os.Stderr.WriteString("ETag header not found in response")
-		etagChan <- "error"
-	} else {
-		etagChan <- etag
+		os.Stderr.WriteString("etag header not found in response")
+		return "", fmt.Errorf("etag header not found in response")
 	}
+
+	return etag, nil
 }
