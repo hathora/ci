@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sync/atomic"
 
 	"github.com/urfave/cli/v3"
 	"go.uber.org/zap"
@@ -155,6 +156,8 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 
 	etagsForParts := make(map[int64](chan string), len(createRes.BuildWithMultipartUrls.UploadParts))
 
+	globalUploadProgress := atomic.Int64{}
+
 	for _, part := range createRes.BuildWithMultipartUrls.UploadParts {
 		etagChan := make(chan string)
 		partNumber := int64(part.PartNumber)
@@ -171,12 +174,11 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		if err != nil {
 			return nil, fmt.Errorf("failed to read file: %w", err)
 		}
-		go uploadFileToS3(part.PutRequestURL, partBuffer, etagChan)
+		go uploadFileToS3(part.PutRequestURL, partBuffer, etagChan, &globalUploadProgress, fileInfo.Size())
 	}
 
 	xmlBody := "<CompleteMultipartUpload>"
 	for partNumber, etagChan := range etagsForParts {
-		print(partNumber)
 		xmlBody += fmt.Sprintf(`
 			<Part>
 				<PartNumber>%d</PartNumber>
@@ -373,41 +375,35 @@ func OneBuildConfigFrom(cmd *cli.Command) (*OneBuildConfig, error) {
 }
 
 type progressReaderType struct {
-	reader   io.Reader
-	total    int64
-	read     int64
-	callback func(percentage float64, loaded int64, total int64, eof bool)
+	reader               io.Reader
+	total                int64
+	globalUploadProgress *atomic.Int64
 }
 
 func (pr *progressReaderType) Read(p []byte) (int, error) {
 	n, err := pr.reader.Read(p)
 	if err != nil && err == io.EOF {
-		pr.callback(1, pr.read, pr.total, true)
+		os.Stderr.WriteString("Upload complete\n")
 	}
 	if n > 0 {
-		pr.read += int64(n)
-		percentage := float64(pr.read) / float64(pr.total) * 100
-		pr.callback(percentage, pr.read, pr.total, false)
+		pr.globalUploadProgress.Add(int64(n))
+		loaded := pr.globalUploadProgress.Load()
+		percentage := float64(loaded*100) / float64(pr.total)
+		os.Stderr.WriteString(fmt.Sprintf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, pr.total))
 	}
 	return n, err
 }
 
-func uploadFileToS3(presignedUrl string, byteBuffer []byte, etagChan chan string) {
+func uploadFileToS3(presignedUrl string, byteBuffer []byte, etagChan chan string, globalUploadProgress *atomic.Int64, globalTotal int64) {
 	requestBody := bytes.NewReader(byteBuffer)
 	progressReader := &progressReaderType{
-		reader: requestBody,
-		total:  int64(requestBody.Len()),
-		callback: func(percentage float64, loaded int64, total int64, eof bool) {
-			if !eof {
-				os.Stderr.WriteString(fmt.Sprintf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, total))
-			} else {
-				os.Stderr.WriteString("Upload complete\n")
-			}
-		},
+		reader:               requestBody,
+		total:                globalTotal,
+		globalUploadProgress: globalUploadProgress,
 	}
 	req, err := http.NewRequest("PUT", presignedUrl, progressReader)
 	if err != nil {
-		os.Stderr.WriteString(fmt.Sprintf("failed to create request: %w", err))
+		os.Stderr.WriteString(fmt.Sprintf("failed to create request: %v", err))
 		etagChan <- "error"
 		return
 	}
@@ -417,7 +413,7 @@ func uploadFileToS3(presignedUrl string, byteBuffer []byte, etagChan chan string
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		os.Stderr.WriteString(fmt.Sprintf("failed to upload part: %w", err))
+		os.Stderr.WriteString(fmt.Sprintf("failed to upload part: %v", err))
 		etagChan <- "error"
 		return
 	}
