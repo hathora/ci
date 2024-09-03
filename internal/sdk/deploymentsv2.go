@@ -26,19 +26,19 @@ func newDeploymentsV2(sdkConfig sdkConfiguration) *DeploymentsV2 {
 	}
 }
 
-// GetDeployments - Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
-func (s *DeploymentsV2) GetDeployments(ctx context.Context, appID *string, opts ...operations.Option) (*operations.GetDeploymentsResponse, error) {
+// GetDeploymentsV2Deprecated - Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
+func (s *DeploymentsV2) GetDeploymentsV2Deprecated(ctx context.Context, appID *string, opts ...operations.Option) (*operations.GetDeploymentsV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "GetDeployments",
+		OperationID:    "GetDeploymentsV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.GetDeploymentsRequest{
+	request := operations.GetDeploymentsV2DeprecatedRequest{
 		AppID: appID,
 	}
 
-	globals := operations.GetDeploymentsGlobals{
+	globals := operations.GetDeploymentsV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -173,7 +173,7 @@ func (s *DeploymentsV2) GetDeployments(ctx context.Context, appID *string, opts 
 		}
 	}
 
-	res := &operations.GetDeploymentsResponse{
+	res := &operations.GetDeploymentsV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -227,19 +227,19 @@ func (s *DeploymentsV2) GetDeployments(ctx context.Context, appID *string, opts 
 
 }
 
-// GetLatestDeployment - Get the latest [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
-func (s *DeploymentsV2) GetLatestDeployment(ctx context.Context, appID *string, opts ...operations.Option) (*operations.GetLatestDeploymentResponse, error) {
+// GetLatestDeploymentV2Deprecated - Get the latest [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
+func (s *DeploymentsV2) GetLatestDeploymentV2Deprecated(ctx context.Context, appID *string, opts ...operations.Option) (*operations.GetLatestDeploymentV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "GetLatestDeployment",
+		OperationID:    "GetLatestDeploymentV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.GetLatestDeploymentRequest{
+	request := operations.GetLatestDeploymentV2DeprecatedRequest{
 		AppID: appID,
 	}
 
-	globals := operations.GetLatestDeploymentGlobals{
+	globals := operations.GetLatestDeploymentV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -359,7 +359,7 @@ func (s *DeploymentsV2) GetLatestDeployment(ctx context.Context, appID *string, 
 
 			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 			return nil, err
-		} else if utils.MatchStatusCodes([]string{"401", "404", "429", "4XX", "5XX"}, httpRes.StatusCode) {
+		} else if utils.MatchStatusCodes([]string{"401", "404", "422", "429", "4XX", "5XX"}, httpRes.StatusCode) {
 			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 			if err != nil {
 				return nil, err
@@ -374,7 +374,7 @@ func (s *DeploymentsV2) GetLatestDeployment(ctx context.Context, appID *string, 
 		}
 	}
 
-	res := &operations.GetLatestDeploymentResponse{
+	res := &operations.GetLatestDeploymentV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -404,6 +404,8 @@ func (s *DeploymentsV2) GetLatestDeployment(ctx context.Context, appID *string, 
 		fallthrough
 	case httpRes.StatusCode == 404:
 		fallthrough
+	case httpRes.StatusCode == 422:
+		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -428,20 +430,20 @@ func (s *DeploymentsV2) GetLatestDeployment(ctx context.Context, appID *string, 
 
 }
 
-// GetDeploymentInfo - Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment).
-func (s *DeploymentsV2) GetDeploymentInfo(ctx context.Context, deploymentID int, appID *string, opts ...operations.Option) (*operations.GetDeploymentInfoResponse, error) {
+// GetDeploymentInfoV2Deprecated - Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment).
+func (s *DeploymentsV2) GetDeploymentInfoV2Deprecated(ctx context.Context, deploymentID int, appID *string, opts ...operations.Option) (*operations.GetDeploymentInfoV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "GetDeploymentInfo",
+		OperationID:    "GetDeploymentInfoV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.GetDeploymentInfoRequest{
+	request := operations.GetDeploymentInfoV2DeprecatedRequest{
 		AppID:        appID,
 		DeploymentID: deploymentID,
 	}
 
-	globals := operations.GetDeploymentInfoGlobals{
+	globals := operations.GetDeploymentInfoV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -576,7 +578,7 @@ func (s *DeploymentsV2) GetDeploymentInfo(ctx context.Context, deploymentID int,
 		}
 	}
 
-	res := &operations.GetDeploymentInfoResponse{
+	res := &operations.GetDeploymentInfoV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -630,21 +632,21 @@ func (s *DeploymentsV2) GetDeploymentInfo(ctx context.Context, deploymentID int,
 
 }
 
-// CreateDeployment - Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
-func (s *DeploymentsV2) CreateDeployment(ctx context.Context, buildID int, deploymentConfigV2 shared.DeploymentConfigV2, appID *string, opts ...operations.Option) (*operations.CreateDeploymentResponse, error) {
+// CreateDeploymentV2Deprecated - Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
+func (s *DeploymentsV2) CreateDeploymentV2Deprecated(ctx context.Context, buildID int, deploymentConfigV2 shared.DeploymentConfigV2, appID *string, opts ...operations.Option) (*operations.CreateDeploymentV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "CreateDeployment",
+		OperationID:    "CreateDeploymentV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.CreateDeploymentRequest{
+	request := operations.CreateDeploymentV2DeprecatedRequest{
 		AppID:              appID,
 		BuildID:            buildID,
 		DeploymentConfigV2: deploymentConfigV2,
 	}
 
-	globals := operations.CreateDeploymentGlobals{
+	globals := operations.CreateDeploymentV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -785,7 +787,7 @@ func (s *DeploymentsV2) CreateDeployment(ctx context.Context, buildID int, deplo
 		}
 	}
 
-	res := &operations.CreateDeploymentResponse{
+	res := &operations.CreateDeploymentV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,

@@ -26,21 +26,21 @@ func newDeploymentsV1(sdkConfig sdkConfiguration) *DeploymentsV1 {
 	}
 }
 
-// GetDeploymentsDeprecated - Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
+// GetDeploymentsV1Deprecated - Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
 //
 // Deprecated method: This will be removed in a future release, please migrate away from it as soon as possible.
-func (s *DeploymentsV1) GetDeploymentsDeprecated(ctx context.Context, appID *string, opts ...operations.Option) (*operations.GetDeploymentsDeprecatedResponse, error) {
+func (s *DeploymentsV1) GetDeploymentsV1Deprecated(ctx context.Context, appID *string, opts ...operations.Option) (*operations.GetDeploymentsV1DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "GetDeploymentsDeprecated",
+		OperationID:    "GetDeploymentsV1Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.GetDeploymentsDeprecatedRequest{
+	request := operations.GetDeploymentsV1DeprecatedRequest{
 		AppID: appID,
 	}
 
-	globals := operations.GetDeploymentsDeprecatedGlobals{
+	globals := operations.GetDeploymentsV1DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -175,7 +175,7 @@ func (s *DeploymentsV1) GetDeploymentsDeprecated(ctx context.Context, appID *str
 		}
 	}
 
-	res := &operations.GetDeploymentsDeprecatedResponse{
+	res := &operations.GetDeploymentsV1DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -192,12 +192,12 @@ func (s *DeploymentsV1) GetDeploymentsDeprecated(ctx context.Context, appID *str
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			var out []shared.Deployment
+			var out []shared.DeploymentV1
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Deployments = out
+			res.DeploymentV1s = out
 		default:
 			return nil, sdkerrors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
@@ -229,21 +229,21 @@ func (s *DeploymentsV1) GetDeploymentsDeprecated(ctx context.Context, appID *str
 
 }
 
-// GetLatestDeploymentDeprecated - Get the latest [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
+// GetLatestDeploymentV1Deprecated - Get the latest [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
 //
 // Deprecated method: This will be removed in a future release, please migrate away from it as soon as possible.
-func (s *DeploymentsV1) GetLatestDeploymentDeprecated(ctx context.Context, appID *string, opts ...operations.Option) (*operations.GetLatestDeploymentDeprecatedResponse, error) {
+func (s *DeploymentsV1) GetLatestDeploymentV1Deprecated(ctx context.Context, appID *string, opts ...operations.Option) (*operations.GetLatestDeploymentV1DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "GetLatestDeploymentDeprecated",
+		OperationID:    "GetLatestDeploymentV1Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.GetLatestDeploymentDeprecatedRequest{
+	request := operations.GetLatestDeploymentV1DeprecatedRequest{
 		AppID: appID,
 	}
 
-	globals := operations.GetLatestDeploymentDeprecatedGlobals{
+	globals := operations.GetLatestDeploymentV1DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -363,7 +363,7 @@ func (s *DeploymentsV1) GetLatestDeploymentDeprecated(ctx context.Context, appID
 
 			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 			return nil, err
-		} else if utils.MatchStatusCodes([]string{"401", "404", "429", "4XX", "5XX"}, httpRes.StatusCode) {
+		} else if utils.MatchStatusCodes([]string{"401", "404", "422", "429", "4XX", "5XX"}, httpRes.StatusCode) {
 			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 			if err != nil {
 				return nil, err
@@ -378,7 +378,7 @@ func (s *DeploymentsV1) GetLatestDeploymentDeprecated(ctx context.Context, appID
 		}
 	}
 
-	res := &operations.GetLatestDeploymentDeprecatedResponse{
+	res := &operations.GetLatestDeploymentV1DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -395,18 +395,20 @@ func (s *DeploymentsV1) GetLatestDeploymentDeprecated(ctx context.Context, appID
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			var out shared.Deployment
+			var out shared.DeploymentV1
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Deployment = &out
+			res.DeploymentV1 = &out
 		default:
 			return nil, sdkerrors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	case httpRes.StatusCode == 401:
 		fallthrough
 	case httpRes.StatusCode == 404:
+		fallthrough
+	case httpRes.StatusCode == 422:
 		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {
@@ -432,22 +434,22 @@ func (s *DeploymentsV1) GetLatestDeploymentDeprecated(ctx context.Context, appID
 
 }
 
-// GetDeploymentInfoDeprecated - Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment).
+// GetDeploymentInfoV1Deprecated - Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment).
 //
 // Deprecated method: This will be removed in a future release, please migrate away from it as soon as possible.
-func (s *DeploymentsV1) GetDeploymentInfoDeprecated(ctx context.Context, deploymentID int, appID *string, opts ...operations.Option) (*operations.GetDeploymentInfoDeprecatedResponse, error) {
+func (s *DeploymentsV1) GetDeploymentInfoV1Deprecated(ctx context.Context, deploymentID int, appID *string, opts ...operations.Option) (*operations.GetDeploymentInfoV1DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "GetDeploymentInfoDeprecated",
+		OperationID:    "GetDeploymentInfoV1Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.GetDeploymentInfoDeprecatedRequest{
+	request := operations.GetDeploymentInfoV1DeprecatedRequest{
 		AppID:        appID,
 		DeploymentID: deploymentID,
 	}
 
-	globals := operations.GetDeploymentInfoDeprecatedGlobals{
+	globals := operations.GetDeploymentInfoV1DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -582,7 +584,7 @@ func (s *DeploymentsV1) GetDeploymentInfoDeprecated(ctx context.Context, deploym
 		}
 	}
 
-	res := &operations.GetDeploymentInfoDeprecatedResponse{
+	res := &operations.GetDeploymentInfoV1DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -599,12 +601,12 @@ func (s *DeploymentsV1) GetDeploymentInfoDeprecated(ctx context.Context, deploym
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			var out shared.Deployment
+			var out shared.DeploymentV1
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Deployment = &out
+			res.DeploymentV1 = &out
 		default:
 			return nil, sdkerrors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
@@ -636,23 +638,23 @@ func (s *DeploymentsV1) GetDeploymentInfoDeprecated(ctx context.Context, deploym
 
 }
 
-// CreateDeploymentDeprecated - Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
+// CreateDeploymentV1Deprecated - Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
 //
 // Deprecated method: This will be removed in a future release, please migrate away from it as soon as possible.
-func (s *DeploymentsV1) CreateDeploymentDeprecated(ctx context.Context, buildID int, deploymentConfig shared.DeploymentConfig, appID *string, opts ...operations.Option) (*operations.CreateDeploymentDeprecatedResponse, error) {
+func (s *DeploymentsV1) CreateDeploymentV1Deprecated(ctx context.Context, buildID int, deploymentConfig shared.DeploymentConfig, appID *string, opts ...operations.Option) (*operations.CreateDeploymentV1DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "CreateDeploymentDeprecated",
+		OperationID:    "CreateDeploymentV1Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.CreateDeploymentDeprecatedRequest{
+	request := operations.CreateDeploymentV1DeprecatedRequest{
 		AppID:            appID,
 		BuildID:          buildID,
 		DeploymentConfig: deploymentConfig,
 	}
 
-	globals := operations.CreateDeploymentDeprecatedGlobals{
+	globals := operations.CreateDeploymentV1DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -793,7 +795,7 @@ func (s *DeploymentsV1) CreateDeploymentDeprecated(ctx context.Context, buildID 
 		}
 	}
 
-	res := &operations.CreateDeploymentDeprecatedResponse{
+	res := &operations.CreateDeploymentV1DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -810,12 +812,12 @@ func (s *DeploymentsV1) CreateDeploymentDeprecated(ctx context.Context, buildID 
 	case httpRes.StatusCode == 201:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			var out shared.Deployment
+			var out shared.DeploymentV1
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Deployment = &out
+			res.DeploymentV1 = &out
 		default:
 			return nil, sdkerrors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}

@@ -7,26 +7,15 @@ import (
 	"net/http"
 )
 
-type GetBuildsGlobals struct {
-	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
-}
-
-func (o *GetBuildsGlobals) GetAppID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppID
-}
-
 type GetBuildsRequest struct {
-	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
+	OrgID *string `queryParam:"style=form,explode=true,name=orgId"`
 }
 
-func (o *GetBuildsRequest) GetAppID() *string {
+func (o *GetBuildsRequest) GetOrgID() *string {
 	if o == nil {
 		return nil
 	}
-	return o.AppID
+	return o.OrgID
 }
 
 type GetBuildsResponse struct {
@@ -37,7 +26,7 @@ type GetBuildsResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Ok
-	Builds []shared.Build
+	BuildsV3Page *shared.BuildsV3Page
 }
 
 func (o *GetBuildsResponse) GetContentType() string {
@@ -61,9 +50,9 @@ func (o *GetBuildsResponse) GetRawResponse() *http.Response {
 	return o.RawResponse
 }
 
-func (o *GetBuildsResponse) GetBuilds() []shared.Build {
+func (o *GetBuildsResponse) GetBuildsV3Page() *shared.BuildsV3Page {
 	if o == nil {
 		return nil
 	}
-	return o.Builds
+	return o.BuildsV3Page
 }

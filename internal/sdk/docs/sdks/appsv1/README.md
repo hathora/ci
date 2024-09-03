@@ -3,13 +3,13 @@
 
 ### Available Operations
 
-* [GetApps](#getapps) - Returns an unsorted list of your organization’s [applications](https://hathora.dev/docs/concepts/hathora-entities#application). An application is uniquely identified by an `appId`.
-* [CreateApp](#createapp) - Create a new [application](https://hathora.dev/docs/concepts/hathora-entities#application).
-* [UpdateApp](#updateapp) - Update data for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
-* [GetAppInfo](#getappinfo) - Get details for an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
-* [DeleteApp](#deleteapp) - Delete an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. Your organization will lose access to this application.
+* [GetAppsV1Deprecated](#getappsv1deprecated) - Returns an unsorted list of your organization’s [applications](https://hathora.dev/docs/concepts/hathora-entities#application). An application is uniquely identified by an `appId`.
+* [CreateAppV1Deprecated](#createappv1deprecated) - Create a new [application](https://hathora.dev/docs/concepts/hathora-entities#application).
+* [UpdateAppV1Deprecated](#updateappv1deprecated) - Update data for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
+* [GetAppInfoV1Deprecated](#getappinfov1deprecated) - Get details for an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
+* [DeleteAppV1Deprecated](#deleteappv1deprecated) - Delete an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. Your organization will lose access to this application.
 
-## GetApps
+## GetAppsV1Deprecated
 
 Returns an unsorted list of your organization’s [applications](https://hathora.dev/docs/concepts/hathora-entities#application). An application is uniquely identified by an `appId`.
 
@@ -35,11 +35,11 @@ func main() {
     )
 
     ctx := context.Background()
-    res, err := s.AppsV1.GetApps(ctx)
+    res, err := s.AppsV1.GetAppsV1Deprecated(ctx)
     if err != nil {
         log.Fatal(err)
     }
-    if res.ApplicationWithLatestDeploymentAndBuilds != nil {
+    if res.ApplicationWithLatestDeploymentAndBuildDeprecateds != nil {
         // handle response
     }
 }
@@ -55,13 +55,13 @@ func main() {
 
 ### Response
 
-**[*operations.GetAppsResponse](../../models/operations/getappsresponse.md), error**
+**[*operations.GetAppsV1DeprecatedResponse](../../models/operations/getappsv1deprecatedresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
 | sdkerrors.APIError | 401,429            | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
-## CreateApp
+## CreateAppV1Deprecated
 
 Create a new [application](https://hathora.dev/docs/concepts/hathora-entities#application).
 
@@ -90,7 +90,7 @@ func main() {
         AppName: "minecraft",
     }
     ctx := context.Background()
-    res, err := s.AppsV1.CreateApp(ctx, request)
+    res, err := s.AppsV1.CreateAppV1Deprecated(ctx, request)
     if err != nil {
         log.Fatal(err)
     }
@@ -111,13 +111,13 @@ func main() {
 
 ### Response
 
-**[*operations.CreateAppResponse](../../models/operations/createappresponse.md), error**
+**[*operations.CreateAppV1DeprecatedResponse](../../models/operations/createappv1deprecatedresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
 | sdkerrors.APIError | 401,422,429,500    | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
-## UpdateApp
+## UpdateAppV1Deprecated
 
 Update data for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
 
@@ -148,7 +148,7 @@ func main() {
 
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.AppsV1.UpdateApp(ctx, appConfig, appID)
+    res, err := s.AppsV1.UpdateAppV1Deprecated(ctx, appConfig, appID)
     if err != nil {
         log.Fatal(err)
     }
@@ -170,13 +170,13 @@ func main() {
 
 ### Response
 
-**[*operations.UpdateAppResponse](../../models/operations/updateappresponse.md), error**
+**[*operations.UpdateAppV1DeprecatedResponse](../../models/operations/updateappv1deprecatedresponse.md), error**
 | Error Object        | Status Code         | Content Type        |
 | ------------------- | ------------------- | ------------------- |
 | sdkerrors.APIError  | 401,404,422,429,500 | application/json    |
 | sdkerrors.SDKError  | 4xx-5xx             | */*                 |
 
-## GetAppInfo
+## GetAppInfoV1Deprecated
 
 Get details for an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
 
@@ -202,7 +202,7 @@ func main() {
     )
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.AppsV1.GetAppInfo(ctx, appID)
+    res, err := s.AppsV1.GetAppInfoV1Deprecated(ctx, appID)
     if err != nil {
         log.Fatal(err)
     }
@@ -223,13 +223,13 @@ func main() {
 
 ### Response
 
-**[*operations.GetAppInfoResponse](../../models/operations/getappinforesponse.md), error**
+**[*operations.GetAppInfoV1DeprecatedResponse](../../models/operations/getappinfov1deprecatedresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
 | sdkerrors.APIError | 401,404,429        | application/json   |
 | sdkerrors.SDKError | 4xx-5xx            | */*                |
 
-## DeleteApp
+## DeleteAppV1Deprecated
 
 Delete an [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. Your organization will lose access to this application.
 
@@ -255,7 +255,7 @@ func main() {
     )
     var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.AppsV1.DeleteApp(ctx, appID)
+    res, err := s.AppsV1.DeleteAppV1Deprecated(ctx, appID)
     if err != nil {
         log.Fatal(err)
     }
@@ -276,7 +276,7 @@ func main() {
 
 ### Response
 
-**[*operations.DeleteAppResponse](../../models/operations/deleteappresponse.md), error**
+**[*operations.DeleteAppV1DeprecatedResponse](../../models/operations/deleteappv1deprecatedresponse.md), error**
 | Error Object       | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
 | sdkerrors.APIError | 401,404,429,500    | application/json   |
