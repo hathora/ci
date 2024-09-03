@@ -198,10 +198,6 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 	} else {
 		fmt.Println("Complete multipart upload succeeded.")
 	}
-	// err = uploadToUrl(createRes.BuildWithMultipartUrls.UploadParts, int(createRes.BuildWithMultipartUrls.MaxChunkSize), createRes.BuildWithMultipartUrls.CompleteUploadPostRequestURL, osFile)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("failed to upload file: %w", err)
-	// }
 
 	runRes, err := hathora.BuildsV2.RunBuildV2Deprecated(
 		ctx,
@@ -376,7 +372,7 @@ func OneBuildConfigFrom(cmd *cli.Command) (*OneBuildConfig, error) {
 
 type progressReaderType struct {
 	reader               io.Reader
-	total                int64
+	globalTotal          int64
 	globalUploadProgress *atomic.Int64
 }
 
@@ -388,8 +384,8 @@ func (pr *progressReaderType) Read(p []byte) (int, error) {
 	if n > 0 {
 		pr.globalUploadProgress.Add(int64(n))
 		loaded := pr.globalUploadProgress.Load()
-		percentage := float64(loaded*100) / float64(pr.total)
-		os.Stderr.WriteString(fmt.Sprintf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, pr.total))
+		percentage := float64(loaded*100) / float64(pr.globalTotal)
+		os.Stderr.WriteString(fmt.Sprintf("Upload progress: %.2f%% (%d/%d bytes)\r", percentage, loaded, pr.globalTotal))
 	}
 	return n, err
 }
@@ -398,7 +394,7 @@ func uploadFileToS3(presignedUrl string, byteBuffer []byte, etagChan chan string
 	requestBody := bytes.NewReader(byteBuffer)
 	progressReader := &progressReaderType{
 		reader:               requestBody,
-		total:                globalTotal,
+		globalTotal:          globalTotal,
 		globalUploadProgress: globalUploadProgress,
 	}
 	req, err := http.NewRequest("PUT", presignedUrl, progressReader)
