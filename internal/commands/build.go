@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"sync"
 	"sync/atomic"
 
 	"github.com/urfave/cli/v3"
@@ -165,11 +164,10 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 
 	var etagParts = make([]etagPart, len(createRes.BuildWithMultipartUrls.UploadParts))
 	var eg errgroup.Group
-
-	var mu sync.Mutex
-	for _, uploadPart := range createRes.BuildWithMultipartUrls.UploadParts {
+	for i, uploadPart := range createRes.BuildWithMultipartUrls.UploadParts {
 		partNum := int64(uploadPart.PartNumber)
 		reqURL := uploadPart.PutRequestURL
+		index := i
 		eg.Go(func() error {
 			maxChunkSize := int64(createRes.BuildWithMultipartUrls.MaxChunkSize)
 
@@ -185,9 +183,7 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 			if err != nil {
 				fmt.Printf("failed to upload part %d: %v\n", partNum, err)
 			}
-			mu.Lock()
-			defer mu.Unlock()
-			etagParts = append(etagParts, etagPart{partNumber: int(partNum), etag: etag})
+			etagParts[index] = etagPart{partNumber: int(partNum), etag: etag}
 
 			return nil
 		})
