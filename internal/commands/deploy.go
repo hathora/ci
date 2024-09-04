@@ -40,12 +40,12 @@ var Deploy = &cli.Command{
 
 		useLatest := cmd.Bool(fromLatestFlag.Name)
 		if useLatest {
-			res, err := deploy.SDK.DeploymentsV2.GetLatestDeploymentV2Deprecated(ctx, deploy.AppID)
+			res, err := deploy.SDK.DeploymentsV3.GetLatestDeployment(ctx, deploy.AppID)
 			if err != nil {
 				return fmt.Errorf("unable to retrieve latest deployment: %w", err)
 			}
 
-			deploy.Merge(res.DeploymentV2, cmd.IsSet(idleTimeoutFlag.Name))
+			deploy.Merge(res.DeploymentV3, cmd.IsSet(idleTimeoutFlag.Name))
 		}
 
 		if err := deploy.Validate(); err != nil {
@@ -59,7 +59,7 @@ var Deploy = &cli.Command{
 			return err
 		}
 
-		res, err := deploy.SDK.DeploymentsV2.CreateDeploymentV2Deprecated(
+		res, err := deploy.SDK.DeploymentsV2.CreateDeploymentV3(
 			ctx,
 			createdBuild.BuildID,
 			shared.DeploymentConfigV2{
@@ -108,7 +108,7 @@ func (c *DeployConfig) Load(cmd *cli.Command) error {
 	return nil
 }
 
-func (c *DeployConfig) Merge(latest *shared.DeploymentV2, isIdleTimeoutDefault bool) {
+func (c *DeployConfig) Merge(latest *shared.DeploymentV3, isIdleTimeoutDefault bool) {
 	if latest == nil {
 		return
 	}
