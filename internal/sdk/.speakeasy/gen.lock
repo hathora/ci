@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: 73b126a9-5c85-4e6d-ac9e-6ba8bad8c116
 management:
-  docChecksum: fc29dc3fbf444b050385e4aad0d174d3
+  docChecksum: 0a87a5d71a740a1c41abdb9879544197
   docVersion: 0.0.1
   speakeasyVersion: 1.348.2
   generationVersion: 2.380.2
-  releaseVersion: 0.4.1
-  configChecksum: 902e99b2a81afa38cea4c9119792fa93
+  releaseVersion: 0.4.2
+  configChecksum: d86798337999a9191a43cc8effd616f3
 features:
   go:
     additionalDependencies: 0.1.0
@@ -36,6 +36,7 @@ generatedFiles:
   - roomsv2.go
   - processesv1.go
   - processesv2.go
+  - processesv3.go
   - organizationsv1.go
   - metricsv1.go
   - managementv1.go
@@ -96,11 +97,16 @@ generatedFiles:
   - /models/operations/getrunningprocesses.go
   - /models/operations/getstoppedprocesses.go
   - /models/operations/getprocessinfodeprecated.go
-  - /models/operations/getprocessinfo.go
+  - /models/operations/getprocessinfov2deprecated.go
+  - /models/operations/getlatestprocessesv2deprecated.go
+  - /models/operations/getprocessescountexperimentalv2deprecated.go
+  - /models/operations/stopprocessv2deprecated.go
+  - /models/operations/createprocessv2deprecated.go
   - /models/operations/getlatestprocesses.go
   - /models/operations/getprocessescountexperimental.go
-  - /models/operations/stopprocess.go
   - /models/operations/createprocess.go
+  - /models/operations/getprocess.go
+  - /models/operations/stopprocess.go
   - /models/operations/getorgs.go
   - /models/operations/getuserpendinginvites.go
   - /models/operations/getorgmembers.go
@@ -203,6 +209,7 @@ generatedFiles:
   - /models/shared/process.go
   - /models/shared/processv2.go
   - /models/shared/processstatus.go
+  - /models/shared/processv3.go
   - /models/shared/orgspage.go
   - /models/shared/organization.go
   - /models/shared/pendingorginvitespage.go
@@ -325,9 +332,22 @@ generatedFiles:
   - docs/models/operations/getprocessinfodeprecatedglobals.md
   - docs/models/operations/getprocessinfodeprecatedrequest.md
   - docs/models/operations/getprocessinfodeprecatedresponse.md
-  - docs/models/operations/getprocessinfoglobals.md
-  - docs/models/operations/getprocessinforequest.md
-  - docs/models/operations/getprocessinforesponse.md
+  - docs/models/operations/getprocessinfov2deprecatedglobals.md
+  - docs/models/operations/getprocessinfov2deprecatedrequest.md
+  - docs/models/operations/getprocessinfov2deprecatedresponse.md
+  - docs/models/operations/getlatestprocessesv2deprecatedglobals.md
+  - docs/models/operations/getlatestprocessesv2deprecatedrequest.md
+  - docs/models/operations/getlatestprocessesv2deprecatedresponse.md
+  - docs/models/operations/getprocessescountexperimentalv2deprecatedglobals.md
+  - docs/models/operations/getprocessescountexperimentalv2deprecatedrequest.md
+  - docs/models/operations/getprocessescountexperimentalv2deprecatedresponsebody.md
+  - docs/models/operations/getprocessescountexperimentalv2deprecatedresponse.md
+  - docs/models/operations/stopprocessv2deprecatedglobals.md
+  - docs/models/operations/stopprocessv2deprecatedrequest.md
+  - docs/models/operations/stopprocessv2deprecatedresponse.md
+  - docs/models/operations/createprocessv2deprecatedglobals.md
+  - docs/models/operations/createprocessv2deprecatedrequest.md
+  - docs/models/operations/createprocessv2deprecatedresponse.md
   - docs/models/operations/getlatestprocessesglobals.md
   - docs/models/operations/getlatestprocessesrequest.md
   - docs/models/operations/getlatestprocessesresponse.md
@@ -335,12 +355,15 @@ generatedFiles:
   - docs/models/operations/getprocessescountexperimentalrequest.md
   - docs/models/operations/getprocessescountexperimentalresponsebody.md
   - docs/models/operations/getprocessescountexperimentalresponse.md
-  - docs/models/operations/stopprocessglobals.md
-  - docs/models/operations/stopprocessrequest.md
-  - docs/models/operations/stopprocessresponse.md
   - docs/models/operations/createprocessglobals.md
   - docs/models/operations/createprocessrequest.md
   - docs/models/operations/createprocessresponse.md
+  - docs/models/operations/getprocessglobals.md
+  - docs/models/operations/getprocessrequest.md
+  - docs/models/operations/getprocessresponse.md
+  - docs/models/operations/stopprocessglobals.md
+  - docs/models/operations/stopprocessrequest.md
+  - docs/models/operations/stopprocessresponse.md
   - docs/models/operations/getorgsresponse.md
   - docs/models/operations/getuserpendinginvitesresponse.md
   - docs/models/operations/getorgmembersrequest.md
@@ -582,6 +605,8 @@ generatedFiles:
   - docs/models/shared/processv2exposedport.md
   - docs/models/shared/processv2.md
   - docs/models/shared/processstatus.md
+  - docs/models/shared/processv3exposedport.md
+  - docs/models/shared/processv3.md
   - docs/models/shared/orgspage.md
   - docs/models/shared/organization.md
   - docs/models/shared/pendingorginvitespage.md
@@ -669,6 +694,7 @@ generatedFiles:
   - docs/sdks/roomsv2/README.md
   - docs/sdks/processesv1/README.md
   - docs/sdks/processesv2/README.md
+  - docs/sdks/processesv3/README.md
   - docs/sdks/organizationsv1/README.md
   - docs/sdks/metricsv1/README.md
   - docs/sdks/managementv1/README.md

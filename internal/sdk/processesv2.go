@@ -27,20 +27,20 @@ func newProcessesV2(sdkConfig sdkConfiguration) *ProcessesV2 {
 	}
 }
 
-// GetProcessInfo - Get details for a [process](https://hathora.dev/docs/concepts/hathora-entities#process).
-func (s *ProcessesV2) GetProcessInfo(ctx context.Context, processID string, appID *string, opts ...operations.Option) (*operations.GetProcessInfoResponse, error) {
+// GetProcessInfoV2Deprecated - Get details for a [process](https://hathora.dev/docs/concepts/hathora-entities#process).
+func (s *ProcessesV2) GetProcessInfoV2Deprecated(ctx context.Context, processID string, appID *string, opts ...operations.Option) (*operations.GetProcessInfoV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "GetProcessInfo",
+		OperationID:    "GetProcessInfoV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.GetProcessInfoRequest{
+	request := operations.GetProcessInfoV2DeprecatedRequest{
 		AppID:     appID,
 		ProcessID: processID,
 	}
 
-	globals := operations.GetProcessInfoGlobals{
+	globals := operations.GetProcessInfoV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -175,7 +175,7 @@ func (s *ProcessesV2) GetProcessInfo(ctx context.Context, processID string, appI
 		}
 	}
 
-	res := &operations.GetProcessInfoResponse{
+	res := &operations.GetProcessInfoV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -229,21 +229,21 @@ func (s *ProcessesV2) GetProcessInfo(ctx context.Context, processID string, appI
 
 }
 
-// GetLatestProcesses - Retrieve the 10 most recent [processes](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `status` or `region`.
-func (s *ProcessesV2) GetLatestProcesses(ctx context.Context, appID *string, status []shared.ProcessStatus, region []shared.Region, opts ...operations.Option) (*operations.GetLatestProcessesResponse, error) {
+// GetLatestProcessesV2Deprecated - Retrieve the 10 most recent [processes](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `status` or `region`.
+func (s *ProcessesV2) GetLatestProcessesV2Deprecated(ctx context.Context, appID *string, status []shared.ProcessStatus, region []shared.Region, opts ...operations.Option) (*operations.GetLatestProcessesV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "GetLatestProcesses",
+		OperationID:    "GetLatestProcessesV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.GetLatestProcessesRequest{
+	request := operations.GetLatestProcessesV2DeprecatedRequest{
 		AppID:  appID,
 		Status: status,
 		Region: region,
 	}
 
-	globals := operations.GetLatestProcessesGlobals{
+	globals := operations.GetLatestProcessesV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -378,7 +378,7 @@ func (s *ProcessesV2) GetLatestProcesses(ctx context.Context, appID *string, sta
 		}
 	}
 
-	res := &operations.GetLatestProcessesResponse{
+	res := &operations.GetLatestProcessesV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -432,21 +432,21 @@ func (s *ProcessesV2) GetLatestProcesses(ctx context.Context, appID *string, sta
 
 }
 
-// GetProcessesCountExperimental - Count the number of [processes](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter by optionally passing in a `status` or `region`.
-func (s *ProcessesV2) GetProcessesCountExperimental(ctx context.Context, appID *string, status []shared.ProcessStatus, region []shared.Region, opts ...operations.Option) (*operations.GetProcessesCountExperimentalResponse, error) {
+// GetProcessesCountExperimentalV2Deprecated - Count the number of [processes](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter by optionally passing in a `status` or `region`.
+func (s *ProcessesV2) GetProcessesCountExperimentalV2Deprecated(ctx context.Context, appID *string, status []shared.ProcessStatus, region []shared.Region, opts ...operations.Option) (*operations.GetProcessesCountExperimentalV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "GetProcessesCountExperimental",
+		OperationID:    "GetProcessesCountExperimentalV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.GetProcessesCountExperimentalRequest{
+	request := operations.GetProcessesCountExperimentalV2DeprecatedRequest{
 		AppID:  appID,
 		Status: status,
 		Region: region,
 	}
 
-	globals := operations.GetProcessesCountExperimentalGlobals{
+	globals := operations.GetProcessesCountExperimentalV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -581,7 +581,7 @@ func (s *ProcessesV2) GetProcessesCountExperimental(ctx context.Context, appID *
 		}
 	}
 
-	res := &operations.GetProcessesCountExperimentalResponse{
+	res := &operations.GetProcessesCountExperimentalV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -598,7 +598,7 @@ func (s *ProcessesV2) GetProcessesCountExperimental(ctx context.Context, appID *
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			var out operations.GetProcessesCountExperimentalResponseBody
+			var out operations.GetProcessesCountExperimentalV2DeprecatedResponseBody
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -635,20 +635,20 @@ func (s *ProcessesV2) GetProcessesCountExperimental(ctx context.Context, appID *
 
 }
 
-// StopProcess - Stops a [process](https://hathora.dev/docs/concepts/hathora-entities#process) immediately.
-func (s *ProcessesV2) StopProcess(ctx context.Context, processID string, appID *string, opts ...operations.Option) (*operations.StopProcessResponse, error) {
+// StopProcessV2Deprecated - Stops a [process](https://hathora.dev/docs/concepts/hathora-entities#process) immediately.
+func (s *ProcessesV2) StopProcessV2Deprecated(ctx context.Context, processID string, appID *string, opts ...operations.Option) (*operations.StopProcessV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "StopProcess",
+		OperationID:    "StopProcessV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.StopProcessRequest{
+	request := operations.StopProcessV2DeprecatedRequest{
 		AppID:     appID,
 		ProcessID: processID,
 	}
 
-	globals := operations.StopProcessGlobals{
+	globals := operations.StopProcessV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -783,7 +783,7 @@ func (s *ProcessesV2) StopProcess(ctx context.Context, processID string, appID *
 		}
 	}
 
-	res := &operations.StopProcessResponse{
+	res := &operations.StopProcessV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -828,20 +828,20 @@ func (s *ProcessesV2) StopProcess(ctx context.Context, processID string, appID *
 
 }
 
-// CreateProcess - Creates a [process](https://hathora.dev/docs/concepts/hathora-entities#process) without a room. Use this to pre-allocate processes ahead of time so that subsequent room assignment via [CreateRoom()](https://hathora.dev/api#tag/RoomV2/operation/CreateRoom) can be instant.
-func (s *ProcessesV2) CreateProcess(ctx context.Context, region shared.Region, appID *string, opts ...operations.Option) (*operations.CreateProcessResponse, error) {
+// CreateProcessV2Deprecated - Creates a [process](https://hathora.dev/docs/concepts/hathora-entities#process) without a room. Use this to pre-allocate processes ahead of time so that subsequent room assignment via [CreateRoom()](https://hathora.dev/api#tag/RoomV2/operation/CreateRoom) can be instant.
+func (s *ProcessesV2) CreateProcessV2Deprecated(ctx context.Context, region shared.Region, appID *string, opts ...operations.Option) (*operations.CreateProcessV2DeprecatedResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "CreateProcess",
+		OperationID:    "CreateProcessV2Deprecated",
 		SecuritySource: s.sdkConfiguration.Security,
 	}
 
-	request := operations.CreateProcessRequest{
+	request := operations.CreateProcessV2DeprecatedRequest{
 		AppID:  appID,
 		Region: region,
 	}
 
-	globals := operations.CreateProcessGlobals{
+	globals := operations.CreateProcessV2DeprecatedGlobals{
 		AppID: s.sdkConfiguration.Globals.AppID,
 	}
 
@@ -976,7 +976,7 @@ func (s *ProcessesV2) CreateProcess(ctx context.Context, region shared.Region, a
 		}
 	}
 
-	res := &operations.CreateProcessResponse{
+	res := &operations.CreateProcessV2DeprecatedResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,

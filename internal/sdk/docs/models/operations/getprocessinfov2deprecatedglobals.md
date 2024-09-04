@@ -1,4 +1,4 @@
-# GetProcessInfoGlobals
+# GetProcessInfoV2DeprecatedGlobals
 
 
 ## Fields

@@ -1,4 +1,4 @@
-# GetProcessInfoRequest
+# StopProcessV2DeprecatedRequest
 
 
 ## Fields

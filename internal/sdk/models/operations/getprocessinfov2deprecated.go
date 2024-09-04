@@ -7,37 +7,37 @@ import (
 	"net/http"
 )
 
-type GetProcessInfoGlobals struct {
+type GetProcessInfoV2DeprecatedGlobals struct {
 	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
 }
 
-func (o *GetProcessInfoGlobals) GetAppID() *string {
+func (o *GetProcessInfoV2DeprecatedGlobals) GetAppID() *string {
 	if o == nil {
 		return nil
 	}
 	return o.AppID
 }
 
-type GetProcessInfoRequest struct {
+type GetProcessInfoV2DeprecatedRequest struct {
 	AppID     *string `pathParam:"style=simple,explode=false,name=appId"`
 	ProcessID string  `pathParam:"style=simple,explode=false,name=processId"`
 }
 
-func (o *GetProcessInfoRequest) GetAppID() *string {
+func (o *GetProcessInfoV2DeprecatedRequest) GetAppID() *string {
 	if o == nil {
 		return nil
 	}
 	return o.AppID
 }
 
-func (o *GetProcessInfoRequest) GetProcessID() string {
+func (o *GetProcessInfoV2DeprecatedRequest) GetProcessID() string {
 	if o == nil {
 		return ""
 	}
 	return o.ProcessID
 }
 
-type GetProcessInfoResponse struct {
+type GetProcessInfoV2DeprecatedResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
 	// HTTP response status code for this operation
@@ -48,28 +48,28 @@ type GetProcessInfoResponse struct {
 	ProcessV2 *shared.ProcessV2
 }
 
-func (o *GetProcessInfoResponse) GetContentType() string {
+func (o *GetProcessInfoV2DeprecatedResponse) GetContentType() string {
 	if o == nil {
 		return ""
 	}
 	return o.ContentType
 }
 
-func (o *GetProcessInfoResponse) GetStatusCode() int {
+func (o *GetProcessInfoV2DeprecatedResponse) GetStatusCode() int {
 	if o == nil {
 		return 0
 	}
 	return o.StatusCode
 }
 
-func (o *GetProcessInfoResponse) GetRawResponse() *http.Response {
+func (o *GetProcessInfoV2DeprecatedResponse) GetRawResponse() *http.Response {
 	if o == nil {
 		return nil
 	}
 	return o.RawResponse
 }
 
-func (o *GetProcessInfoResponse) GetProcessV2() *shared.ProcessV2 {
+func (o *GetProcessInfoV2DeprecatedResponse) GetProcessV2() *shared.ProcessV2 {
 	if o == nil {
 		return nil
 	}

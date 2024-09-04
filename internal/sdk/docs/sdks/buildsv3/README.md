@@ -118,10 +118,10 @@ func main() {
 ### Response
 
 **[*operations.CreateBuildResponse](../../models/operations/createbuildresponse.md), error**
-| Error Object        | Status Code         | Content Type        |
-| ------------------- | ------------------- | ------------------- |
-| sdkerrors.APIError  | 400,401,404,429,500 | application/json    |
-| sdkerrors.SDKError  | 4xx-5xx             | */*                 |
+| Error Object            | Status Code             | Content Type            |
+| ----------------------- | ----------------------- | ----------------------- |
+| sdkerrors.APIError      | 400,401,404,422,429,500 | application/json        |
+| sdkerrors.SDKError      | 4xx-5xx                 | */*                     |
 
 ## GetBuild
 
