@@ -7,70 +7,70 @@ import (
 	"net/http"
 )
 
-type CreateProcessGlobals struct {
+type CreateProcessV2DeprecatedGlobals struct {
 	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
 }
 
-func (o *CreateProcessGlobals) GetAppID() *string {
+func (o *CreateProcessV2DeprecatedGlobals) GetAppID() *string {
 	if o == nil {
 		return nil
 	}
 	return o.AppID
 }
 
-type CreateProcessRequest struct {
+type CreateProcessV2DeprecatedRequest struct {
 	AppID  *string       `pathParam:"style=simple,explode=false,name=appId"`
 	Region shared.Region `pathParam:"style=simple,explode=false,name=region"`
 }
 
-func (o *CreateProcessRequest) GetAppID() *string {
+func (o *CreateProcessV2DeprecatedRequest) GetAppID() *string {
 	if o == nil {
 		return nil
 	}
 	return o.AppID
 }
 
-func (o *CreateProcessRequest) GetRegion() shared.Region {
+func (o *CreateProcessV2DeprecatedRequest) GetRegion() shared.Region {
 	if o == nil {
 		return shared.Region("")
 	}
 	return o.Region
 }
 
-type CreateProcessResponse struct {
+type CreateProcessV2DeprecatedResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
 	// HTTP response status code for this operation
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
-	ProcessV3   *shared.ProcessV3
+	ProcessV2   *shared.ProcessV2
 }
 
-func (o *CreateProcessResponse) GetContentType() string {
+func (o *CreateProcessV2DeprecatedResponse) GetContentType() string {
 	if o == nil {
 		return ""
 	}
 	return o.ContentType
 }
 
-func (o *CreateProcessResponse) GetStatusCode() int {
+func (o *CreateProcessV2DeprecatedResponse) GetStatusCode() int {
 	if o == nil {
 		return 0
 	}
 	return o.StatusCode
 }
 
-func (o *CreateProcessResponse) GetRawResponse() *http.Response {
+func (o *CreateProcessV2DeprecatedResponse) GetRawResponse() *http.Response {
 	if o == nil {
 		return nil
 	}
 	return o.RawResponse
 }
 
-func (o *CreateProcessResponse) GetProcessV3() *shared.ProcessV3 {
+func (o *CreateProcessV2DeprecatedResponse) GetProcessV2() *shared.ProcessV2 {
 	if o == nil {
 		return nil
 	}
-	return o.ProcessV3
+	return o.ProcessV2
 }

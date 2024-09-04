@@ -77,6 +77,7 @@ type SDK struct {
 	ProcessesV1 *ProcessesV1
 	// Operations to get data on active and stopped [processes](https://hathora.dev/docs/concepts/hathora-entities#process).
 	ProcessesV2     *ProcessesV2
+	ProcessesV3     *ProcessesV3
 	OrganizationsV1 *OrganizationsV1
 	// Operations to get metrics by [process](https://hathora.dev/docs/concepts/hathora-entities#process). We store 72 hours of metrics data.
 	MetricsV1 *MetricsV1
@@ -186,9 +187,9 @@ func New(opts ...SDKOption) *SDK {
 		sdkConfiguration: sdkConfiguration{
 			Language:          "go",
 			OpenAPIDocVersion: "0.0.1",
-			SDKVersion:        "0.4.1",
+			SDKVersion:        "0.4.2",
 			GenVersion:        "2.380.2",
-			UserAgent:         "speakeasy-sdk/go 0.4.1 2.380.2 0.0.1 github.com/hathora/ci/internal/sdk",
+			UserAgent:         "speakeasy-sdk/go 0.4.2 2.380.2 0.0.1 github.com/hathora/ci/internal/sdk",
 			Globals:           globals.Globals{},
 			Hooks:             hooks.New(),
 		},
@@ -218,6 +219,8 @@ func New(opts ...SDKOption) *SDK {
 	sdk.ProcessesV1 = newProcessesV1(sdk.sdkConfiguration)
 
 	sdk.ProcessesV2 = newProcessesV2(sdk.sdkConfiguration)
+
+	sdk.ProcessesV3 = newProcessesV3(sdk.sdkConfiguration)
 
 	sdk.OrganizationsV1 = newOrganizationsV1(sdk.sdkConfiguration)
 

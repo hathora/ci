@@ -7,45 +7,45 @@ import (
 	"net/http"
 )
 
-type GetLatestProcessesGlobals struct {
+type GetLatestProcessesV2DeprecatedGlobals struct {
 	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
 }
 
-func (o *GetLatestProcessesGlobals) GetAppID() *string {
+func (o *GetLatestProcessesV2DeprecatedGlobals) GetAppID() *string {
 	if o == nil {
 		return nil
 	}
 	return o.AppID
 }
 
-type GetLatestProcessesRequest struct {
+type GetLatestProcessesV2DeprecatedRequest struct {
 	AppID  *string                `pathParam:"style=simple,explode=false,name=appId"`
 	Status []shared.ProcessStatus `queryParam:"style=form,explode=true,name=status"`
 	Region []shared.Region        `queryParam:"style=form,explode=true,name=region"`
 }
 
-func (o *GetLatestProcessesRequest) GetAppID() *string {
+func (o *GetLatestProcessesV2DeprecatedRequest) GetAppID() *string {
 	if o == nil {
 		return nil
 	}
 	return o.AppID
 }
 
-func (o *GetLatestProcessesRequest) GetStatus() []shared.ProcessStatus {
+func (o *GetLatestProcessesV2DeprecatedRequest) GetStatus() []shared.ProcessStatus {
 	if o == nil {
 		return nil
 	}
 	return o.Status
 }
 
-func (o *GetLatestProcessesRequest) GetRegion() []shared.Region {
+func (o *GetLatestProcessesV2DeprecatedRequest) GetRegion() []shared.Region {
 	if o == nil {
 		return nil
 	}
 	return o.Region
 }
 
-type GetLatestProcessesResponse struct {
+type GetLatestProcessesV2DeprecatedResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
 	// HTTP response status code for this operation
@@ -53,33 +53,33 @@ type GetLatestProcessesResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Ok
-	ProcessV3s []shared.ProcessV3
+	ProcessV2s []shared.ProcessV2
 }
 
-func (o *GetLatestProcessesResponse) GetContentType() string {
+func (o *GetLatestProcessesV2DeprecatedResponse) GetContentType() string {
 	if o == nil {
 		return ""
 	}
 	return o.ContentType
 }
 
-func (o *GetLatestProcessesResponse) GetStatusCode() int {
+func (o *GetLatestProcessesV2DeprecatedResponse) GetStatusCode() int {
 	if o == nil {
 		return 0
 	}
 	return o.StatusCode
 }
 
-func (o *GetLatestProcessesResponse) GetRawResponse() *http.Response {
+func (o *GetLatestProcessesV2DeprecatedResponse) GetRawResponse() *http.Response {
 	if o == nil {
 		return nil
 	}
 	return o.RawResponse
 }
 
-func (o *GetLatestProcessesResponse) GetProcessV3s() []shared.ProcessV3 {
+func (o *GetLatestProcessesV2DeprecatedResponse) GetProcessV2s() []shared.ProcessV2 {
 	if o == nil {
 		return nil
 	}
-	return o.ProcessV3s
+	return o.ProcessV2s
 }
