@@ -49,7 +49,7 @@ var Deployment = &cli.Command{
 				}
 				deployment.Log.Debug("getting deployment info...")
 
-				res, err := deployment.SDK.DeploymentsV2.GetDeploymentInfoV2Deprecated(
+				res, err := deployment.SDK.DeploymentsV3.GetDeployment(
 					ctx,
 					deployment.DeploymentID,
 					deployment.AppID,
@@ -58,7 +58,7 @@ var Deployment = &cli.Command{
 					return fmt.Errorf("failed to get deployment info: %w", err)
 				}
 
-				return deployment.Output.Write(res.DeploymentV2, os.Stdout)
+				return deployment.Output.Write(res.DeploymentV3, os.Stdout)
 			},
 		},
 		{
@@ -97,16 +97,16 @@ var Deployment = &cli.Command{
 				}
 				deployment.Log.Debug("getting all deployments...")
 
-				res, err := deployment.SDK.DeploymentsV2.GetDeploymentsV2Deprecated(ctx, deployment.AppID)
+				res, err := deployment.SDK.DeploymentsV3.GetDeployments(ctx, deployment.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to get deployments: %w", err)
 				}
 
-				if len(res.DeploymentV2s) == 0 {
+				if len(res.DeploymentsV3Page.Deployments) == 0 {
 					return fmt.Errorf("no deployments found")
 				}
 
-				return deployment.Output.Write(res.DeploymentV2s, os.Stdout)
+				return deployment.Output.Write(res.Deployments, os.Stdout)
 			},
 		},
 		{
@@ -136,12 +136,12 @@ var Deployment = &cli.Command{
 
 				useLatest := cmd.Bool(fromLatestFlag.Name)
 				if useLatest {
-					res, err := deployment.SDK.DeploymentsV2.GetLatestDeploymentV2Deprecated(ctx, deployment.AppID)
+					res, err := deployment.SDK.DeploymentsV3.GetLatestDeployment(ctx, deployment.AppID)
 					if err != nil {
 						return fmt.Errorf("unable to retrieve latest deployment: %w", err)
 					}
 
-					deployment.Merge(res.DeploymentV2)
+					deployment.Merge(res.DeploymentV3)
 				}
 
 				if err := deployment.Validate(); err != nil {
@@ -150,10 +150,10 @@ var Deployment = &cli.Command{
 					return err
 				}
 
-				res, err := deployment.SDK.DeploymentsV2.CreateDeploymentV2Deprecated(
+				res, err := deployment.SDK.DeploymentsV3.CreateDeployment(
 					ctx,
-					deployment.BuildID,
-					shared.DeploymentConfigV2{
+					shared.DeploymentConfigV3{
+						BuildID:                  deployment.BuildID,
 						IdleTimeoutEnabled:       *deployment.IdleTimeoutEnabled,
 						RoomsPerProcess:          deployment.RoomsPerProcess,
 						TransportType:            deployment.TransportType,
@@ -169,7 +169,7 @@ var Deployment = &cli.Command{
 					return fmt.Errorf("failed to create a deployment: %w", err)
 				}
 
-				return deployment.Output.Write(res.DeploymentV2, os.Stdout)
+				return deployment.Output.Write(res.DeploymentV3, os.Stdout)
 			},
 		},
 	},
@@ -294,8 +294,8 @@ func parseContainerPorts(ports []string) ([]shared.ContainerPort, error) {
 	return output, nil
 }
 
-func parseEnvVars(envVars []string) ([]shared.DeploymentConfigV2Env, error) {
-	output := make([]shared.DeploymentConfigV2Env, 0, len(envVars))
+func parseEnvVars(envVars []string) ([]shared.DeploymentConfigV3Env, error) {
+	output := make([]shared.DeploymentConfigV3Env, 0, len(envVars))
 	for _, envVar := range envVars {
 		env, err := shorthand.ParseDeploymentEnvVar(envVar)
 		if err != nil {
@@ -326,7 +326,7 @@ func (c *DeploymentConfig) Load(cmd *cli.Command) error {
 	c.GlobalConfig = global
 
 	c.SDK = setup.SDK(c.Token, c.BaseURL, c.Verbosity)
-	var deployment shared.DeploymentV2
+	var deployment shared.DeploymentV3
 	output, err := OutputFormatterFor(cmd, deployment)
 	if err != nil {
 		return err
@@ -436,7 +436,7 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 	return nil
 }
 
-func (c *CreateDeploymentConfig) Merge(latest *shared.DeploymentV2) {
+func (c *CreateDeploymentConfig) Merge(latest *shared.DeploymentV3) {
 	if latest == nil {
 		return
 	}

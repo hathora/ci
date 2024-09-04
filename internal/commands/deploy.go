@@ -59,10 +59,10 @@ var Deploy = &cli.Command{
 			return err
 		}
 
-		res, err := deploy.SDK.DeploymentsV2.CreateDeploymentV3(
+		res, err := deploy.SDK.DeploymentsV3.CreateDeployment(
 			ctx,
-			createdBuild.BuildID,
 			shared.DeploymentConfigV2{
+				BuildId:                  createdBuild.BuildID,
 				IdleTimeoutEnabled:       *deploy.IdleTimeoutEnabled,
 				RoomsPerProcess:          deploy.RoomsPerProcess,
 				TransportType:            deploy.TransportType,

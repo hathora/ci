@@ -168,8 +168,8 @@ func OutputFormatterFor(cmd *cli.Command, outputType any) (output.FormatWriter, 
 func BuildTextFormatter() output.FormatWriter {
 	// TODO: Allow commands to register their own formatters so that this one function doesn't have to know the desired format for every type
 	var build shared.Build
-	var deployment shared.DeploymentV2
-	var envVar shared.DeploymentV2Env
+	var deployment shared.DeploymentV3
+	var envVar shared.DeploymentV3Env
 	var containerPort shared.ContainerPort
 	var timestamp time.Time
 	var long int64
@@ -201,7 +201,7 @@ func BuildTextFormatter() output.FormatWriter {
 		}),
 		output.WithoutFields(deployment, "AppID", "CreatedBy", "Env"),
 		output.WithFormatter(envVar,
-			func(e shared.DeploymentV2Env) string {
+			func(e shared.DeploymentV3Env) string {
 				return fmt.Sprintf("%s=%s", e.Name, e.Value)
 			},
 		),
