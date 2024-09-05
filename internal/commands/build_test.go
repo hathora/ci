@@ -62,7 +62,7 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
-				assert.Equal(t, "/builds/v3/builds/bld-1", r.URL.Path, "request path should contain app id and build id")
+				assert.Equal(t, "/builds/v3/builds/bld-1", r.URL.Path, "request path should contain build id")
 				assert.Empty(t, requestBody, "request body should be empty")
 			},
 		},
@@ -140,7 +140,7 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodDelete, "request method should be DELETE")
-				assert.Equal(t, "/builds/v3/test-app-id/delete/bld-1", r.URL.Path, "request path should contain app id and build id")
+				assert.Equal(t, "/builds/v3/delete/bld-1", r.URL.Path, "request path should contain build id")
 				assert.Empty(t, requestBody, "request body should be empty")
 			},
 		},
@@ -215,7 +215,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
-				assert.Equal(t, "/builds/v3/builds/bld-1", r.URL.Path, "request path should contain app id and build id")
+				assert.Equal(t, "/builds/v3/builds/bld-1", r.URL.Path, "request path should contain build id")
 				assert.Empty(t, requestBody, "request body should be empty")
 			},
 		},
@@ -243,7 +243,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
-				assert.Equal(t, "/builds/v3/builds/bld-1", r.URL.Path, "request path should contain app id and build id")
+				assert.Equal(t, "/builds/v3/builds/bld-1", r.URL.Path, "request path should contain build id")
 				assert.Empty(t, requestBody, "request body should be empty")
 			},
 		},
