@@ -14,13 +14,13 @@ func Test_DeploymentEnvVarShorthand(t *testing.T) {
 	tests := []struct {
 		name      string
 		input     string
-		expect    *shared.DeploymentConfigV2Env
+		expect    *shared.DeploymentConfigV3Env
 		expectErr bool
 	}{
 		{
 			name:  "name and value",
 			input: "NAME=VALUE",
-			expect: &shared.DeploymentConfigV2Env{
+			expect: &shared.DeploymentConfigV3Env{
 				Name:  "NAME",
 				Value: "VALUE",
 			},
@@ -28,7 +28,7 @@ func Test_DeploymentEnvVarShorthand(t *testing.T) {
 		{
 			name:  "name and value with spaces",
 			input: "NAME = VALUE ",
-			expect: &shared.DeploymentConfigV2Env{
+			expect: &shared.DeploymentConfigV3Env{
 				Name:  "NAME",
 				Value: "VALUE",
 			},
