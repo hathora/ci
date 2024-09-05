@@ -120,35 +120,37 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 			name:           "get all deployments",
 			command:        "list",
 			responseStatus: http.StatusOK,
-			responseBody: `[
-				{
-					"idleTimeoutEnabled": true,
-					"env": [
-						{
-							"value": "TRUE",
-							"name": "EULA"
-						}
-					],
-					"roomsPerProcess": 3,
-					"additionalContainerPorts": [{
-						"transportType": "tcp",
-						"port": 4000,
-						"name": "debug"
-					}],
-					"defaultContainerPort": {
-						"transportType": "tcp",
-						"port": 8000,
-						"name": "default"
-					},
-					"createdAt": "2019-08-24T14:15:22Z",
-					"createdBy": "google-oauth2|107030234048588177467",
-					"requestedMemoryMB": 1024,
-					"requestedCPU": 0.5,
-					"deploymentId": "dep-1",
-					"buildId": "bld-1",
-					"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-				}
-			]`,
+			responseBody: `{
+				deployments: [
+					{
+						"idleTimeoutEnabled": true,
+						"env": [
+							{
+								"value": "TRUE",
+								"name": "EULA"
+							}
+						],
+						"roomsPerProcess": 3,
+						"additionalContainerPorts": [{
+							"transportType": "tcp",
+							"port": 4000,
+							"name": "debug"
+						}],
+						"defaultContainerPort": {
+							"transportType": "tcp",
+							"port": 8000,
+							"name": "default"
+						},
+						"createdAt": "2019-08-24T14:15:22Z",
+						"createdBy": "google-oauth2|107030234048588177467",
+						"requestedMemoryMB": 1024,
+						"requestedCPU": 0.5,
+						"deploymentId": "dep-1",
+						"buildId": "bld-1",
+						"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+					}
+				]
+			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
 				assert.Equal(t, "/deployments/v3/apps/test-app-id/deployments", r.URL.Path, "request path should contain app id")
