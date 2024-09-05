@@ -22,7 +22,7 @@ func Test_DeploymentTextOutput(t *testing.T) {
 	}{
 		{
 			name: "single deployment",
-			input: shared.DeploymentV2{
+			input: shared.DeploymentV3{
 				IdleTimeoutEnabled: true,
 				RoomsPerProcess:    3,
 				AdditionalContainerPorts: []shared.ContainerPort{
@@ -40,9 +40,9 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				CreatedAt:    ts,
 				CreatedBy:    "createdBy",
 				AppID:        "appID",
-				DeploymentID: 2,
-				BuildID:      1,
-				Env: []shared.DeploymentV2Env{
+				DeploymentID: "dep-2",
+				BuildID:      "bld-1",
+				Env: []shared.DeploymentV3Env{
 					{
 						Name:  "EULA",
 						Value: "TRUE",
@@ -58,7 +58,7 @@ func Test_DeploymentTextOutput(t *testing.T) {
 		},
 		{
 			name: "single deployment ptr",
-			input: &shared.DeploymentV2{
+			input: &shared.DeploymentV3{
 				IdleTimeoutEnabled: true,
 				RoomsPerProcess:    3,
 				AdditionalContainerPorts: []shared.ContainerPort{
@@ -76,9 +76,9 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				CreatedAt:    ts,
 				CreatedBy:    "createdBy",
 				AppID:        "appID",
-				DeploymentID: 2,
-				BuildID:      1,
-				Env: []shared.DeploymentV2Env{
+				DeploymentID: "dep-2",
+				BuildID:      "bld-1",
+				Env: []shared.DeploymentV3Env{
 					{
 						Name:  "EULA",
 						Value: "TRUE",
@@ -94,7 +94,7 @@ func Test_DeploymentTextOutput(t *testing.T) {
 		},
 		{
 			name: "multiple deployments",
-			input: []shared.DeploymentV2{
+			input: []shared.DeploymentV3{
 				{
 					IdleTimeoutEnabled: true,
 					RoomsPerProcess:    3,
@@ -113,9 +113,9 @@ func Test_DeploymentTextOutput(t *testing.T) {
 					CreatedAt:    ts,
 					CreatedBy:    "createdBy",
 					AppID:        "appID",
-					DeploymentID: 2,
-					BuildID:      1,
-					Env: []shared.DeploymentV2Env{
+					DeploymentID: "dep-2",
+					BuildID:      "bld-1",
+					Env: []shared.DeploymentV3Env{
 						{
 							Name:  "EULA",
 							Value: "TRUE",
@@ -142,9 +142,9 @@ func Test_DeploymentTextOutput(t *testing.T) {
 					CreatedAt:    ts,
 					CreatedBy:    "createdBy",
 					AppID:        "appID",
-					DeploymentID: 2,
-					BuildID:      1,
-					Env: []shared.DeploymentV2Env{
+					DeploymentID: "dep-2",
+					BuildID:      "bld-1",
+					Env: []shared.DeploymentV3Env{
 						{
 							Name:  "EULA",
 							Value: "TRUE",
@@ -195,7 +195,7 @@ func Test_BuildTextOutput(t *testing.T) {
 				CreatedAt:  ts,
 				CreatedBy:  "createdBy",
 				AppID:      "appID",
-				BuildID:    1,
+				BuildID:    "bld-1",
 				ImageSize:  2048,
 				Status:     "status",
 				BuildTag:   sdk.String("v1.0.0"),
@@ -213,7 +213,7 @@ func Test_BuildTextOutput(t *testing.T) {
 				CreatedAt:  ts,
 				CreatedBy:  "createdBy",
 				AppID:      "appID",
-				BuildID:    1,
+				BuildID:    "bld-1",
 				ImageSize:  2048,
 				Status:     "status",
 				BuildTag:   sdk.String("v1.0.0"),
@@ -232,7 +232,7 @@ func Test_BuildTextOutput(t *testing.T) {
 					CreatedAt:  ts,
 					CreatedBy:  "createdBy",
 					AppID:      "appID",
-					BuildID:    1,
+					BuildID:    "bld-1",
 					ImageSize:  2048,
 					Status:     "status",
 					BuildTag:   sdk.String("v1.0.0"),
@@ -243,7 +243,7 @@ func Test_BuildTextOutput(t *testing.T) {
 					CreatedAt:  ts,
 					CreatedBy:  "createdBy",
 					AppID:      "appID",
-					BuildID:    1,
+					BuildID:    "bld-1",
 					ImageSize:  2048,
 					Status:     "status",
 					BuildTag:   sdk.String("v1.0.0"),

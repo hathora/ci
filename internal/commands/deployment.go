@@ -75,12 +75,12 @@ var Deployment = &cli.Command{
 				}
 				deployment.Log.Debug("getting the latest deployment...")
 
-				res, err := deployment.SDK.DeploymentsV2.GetLatestDeploymentV2Deprecated(ctx, deployment.AppID)
+				res, err := deployment.SDK.DeploymentsV3.GetLatestDeployment(ctx, deployment.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to get the latest deployment: %w", err)
 				}
 
-				return deployment.Output.Write(res.DeploymentV2, os.Stdout)
+				return deployment.Output.Write(res.DeploymentV3, os.Stdout)
 			},
 		},
 		{
@@ -106,7 +106,7 @@ var Deployment = &cli.Command{
 					return fmt.Errorf("no deployments found")
 				}
 
-				return deployment.Output.Write(res.Deployments, os.Stdout)
+				return deployment.Output.Write(res.DeploymentsV3Page.Deployments, os.Stdout)
 			},
 		},
 		{
@@ -349,7 +349,7 @@ var (
 
 type OneDeploymentConfig struct {
 	*DeploymentConfig
-	DeploymentID int
+	DeploymentID string
 }
 
 var _ LoadableConfig = (*OneDeploymentConfig)(nil)
@@ -360,8 +360,8 @@ func (c *OneDeploymentConfig) Load(cmd *cli.Command) error {
 		return err
 	}
 	c.DeploymentConfig = deployment
-	c.DeploymentID = int(cmd.Int(deploymentIDFlag.Name))
-	c.Log = c.Log.With(zap.Int("deployment.id", c.DeploymentID))
+	c.DeploymentID = cmd.String(deploymentIDFlag.Name)
+	c.Log = c.Log.With(zap.String("deployment.id", c.DeploymentID))
 	return nil
 }
 
@@ -379,7 +379,7 @@ var (
 
 type CreateDeploymentConfig struct {
 	*DeploymentConfig
-	BuildID                  int
+	BuildID                  string
 	IdleTimeoutEnabled       *bool
 	RoomsPerProcess          int
 	TransportType            shared.TransportType
@@ -387,7 +387,7 @@ type CreateDeploymentConfig struct {
 	RequestedMemoryMB        float64
 	RequestedCPU             float64
 	AdditionalContainerPorts []shared.ContainerPort
-	Env                      []shared.DeploymentConfigV2Env
+	Env                      []shared.DeploymentConfigV3Env
 }
 
 var _ LoadableConfig = (*CreateDeploymentConfig)(nil)
@@ -399,7 +399,7 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 	}
 
 	c.DeploymentConfig = deployment
-	c.BuildID = int(cmd.Int(buildIDFlag.Name))
+	c.BuildID = cmd.String(buildIDFlag.Name)
 
 	// Value of the idleTimeoutFlag by priority, high to low
 	// Passed in as an argument
@@ -441,7 +441,7 @@ func (c *CreateDeploymentConfig) Merge(latest *shared.DeploymentV3) {
 		return
 	}
 
-	if c.BuildID == 0 {
+	if c.BuildID == "" {
 		c.BuildID = latest.BuildID
 	}
 
@@ -480,7 +480,7 @@ func (c *CreateDeploymentConfig) Merge(latest *shared.DeploymentV3) {
 
 func (c *CreateDeploymentConfig) Validate() error {
 	var err error
-	if c.BuildID == 0 {
+	if c.BuildID == "" {
 		err = errors.Join(err, missingRequiredFlag(buildIDFlag.Name))
 	}
 

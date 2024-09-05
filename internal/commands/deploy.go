@@ -54,15 +54,15 @@ var Deploy = &cli.Command{
 			return err
 		}
 
-		createdBuild, err := doBuildCreate(ctx, deploy.SDK, deploy.AppID, deploy.BuildTag, deploy.FilePath)
+		createdBuild, err := doBuildCreate(ctx, deploy.SDK, deploy.BuildTag, deploy.FilePath)
 		if err != nil {
 			return err
 		}
 
 		res, err := deploy.SDK.DeploymentsV3.CreateDeployment(
 			ctx,
-			shared.DeploymentConfigV2{
-				BuildId:                  createdBuild.BuildID,
+			shared.DeploymentConfigV3{
+				BuildID:                  createdBuild.BuildID,
 				IdleTimeoutEnabled:       *deploy.IdleTimeoutEnabled,
 				RoomsPerProcess:          deploy.RoomsPerProcess,
 				TransportType:            deploy.TransportType,
@@ -78,7 +78,7 @@ var Deploy = &cli.Command{
 			return fmt.Errorf("failed to create a deployment: %w", err)
 		}
 
-		return deploy.Output.Write(res.DeploymentV2, os.Stdout)
+		return deploy.Output.Write(res.DeploymentV3, os.Stdout)
 	},
 }
 
