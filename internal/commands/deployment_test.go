@@ -44,7 +44,7 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 	}{
 		{
 			name:           "get deployment info",
-			command:        "info --deployment-id 1",
+			command:        "info --deployment-id dep-1",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"idleTimeoutEnabled": true,
@@ -157,7 +157,7 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 		},
 		{
 			name: "create a deployment",
-			command: "create --build-id 1 --idle-timeout-enabled --rooms-per-process 3" +
+			command: "create --build-id bld-1 --idle-timeout-enabled --rooms-per-process 3" +
 				" --transport-type tcp --container-port 8000 --requested-memory-mb 1024 --requested-cpu 0.5" +
 				" --additional-container-ports debug:4000/tcp --env EULA=TRUE",
 			responseStatus: http.StatusCreated,

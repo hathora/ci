@@ -40,7 +40,7 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 	}{
 		{
 			name:           "get build info",
-			command:        "info --build-id 1",
+			command:        "info --build-id bld-1",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"buildTag": "0.1.14-14c793",
@@ -130,7 +130,7 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 		},
 		{
 			name:           "delete a build",
-			command:        "delete --build-id 1",
+			command:        "delete --build-id bld-1",
 			responseStatus: http.StatusNoContent,
 			responseBody:   "",
 			expectOutput: `{
@@ -193,7 +193,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 	}{
 		{
 			name:           "use global args after domain-level command",
-			command:        "build --app-id test-app-id --token test-token info --build-id 1",
+			command:        "build --app-id test-app-id --token test-token info --build-id bld-1",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"buildTag": "0.1.14-14c793",
@@ -221,7 +221,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 		},
 		{
 			name:           "use global args after action-level command",
-			command:        "build info --build-id 1 --app-id test-app-id --token test-token",
+			command:        "build info --build-id bld-1 --app-id test-app-id --token test-token",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"buildTag": "0.1.14-14c793",
