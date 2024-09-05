@@ -69,8 +69,8 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 				"createdBy": "google-oauth2|107030234048588177467",
 				"requestedMemoryMB": 1024,
 				"requestedCPU": 0.5,
-				"deploymentId": 1,
-				"buildId": 1,
+				"deploymentId": "dep-1",
+				"buildId": "bld-1",
 				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
@@ -106,8 +106,8 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 				"createdBy": "google-oauth2|107030234048588177467",
 				"requestedMemoryMB": 1024,
 				"requestedCPU": 0.5,
-				"deploymentId": 1,
-				"buildId": 1,
+				"deploymentId": "dep-1",
+				"buildId": "bld-1",
 				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
@@ -144,8 +144,8 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 					"createdBy": "google-oauth2|107030234048588177467",
 					"requestedMemoryMB": 1024,
 					"requestedCPU": 0.5,
-					"deploymentId": 1,
-					"buildId": 1,
+					"deploymentId": "dep-1",
+					"buildId": "bld-1",
 					"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 				}
 			]`,
@@ -294,8 +294,8 @@ func Test_Integration_DeploymentCommands_CreateFromLatest(t *testing.T) {
 						"createdBy": "google-oauth2|107030234048588177467",
 						"requestedMemoryMB": 1024,
 						"requestedCPU": 0.5,
-						"deploymentId": 1,
-						"buildId": 1,
+						"deploymentId": "dep-1",
+						"buildId": "bld-1",
 						"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 					}`,
 				},
@@ -405,8 +405,8 @@ func Test_Integration_DeploymentCommands_CreateFromLatest(t *testing.T) {
 						"createdBy": "google-oauth2|107030234048588177467",
 						"requestedMemoryMB": 1024,
 						"requestedCPU": 0.5,
-						"deploymentId": 1,
-						"buildId": 1,
+						"deploymentId": "dep-1",
+						"buildId": "bld-1",
 						"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 					}`,
 				},
