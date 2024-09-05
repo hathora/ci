@@ -182,7 +182,7 @@ func deploymentEnvVar(name string) string {
 var (
 	deploymentFlagEnvVarPrefix = fmt.Sprintf("%s%s", globalFlagEnvVarPrefix, "DEPLOYMENT_")
 
-	deploymentIDFlag = &workaround.IntFlag{
+	deploymentIDFlag = &cli.StringFlag{
 		Name:     "deployment-id",
 		Aliases:  []string{"d"},
 		Sources:  cli.EnvVars(deploymentEnvVar("ID")),
