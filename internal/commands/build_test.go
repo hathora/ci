@@ -71,7 +71,7 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 			command:        "list",
 			responseStatus: http.StatusOK,
 			responseBody: `{
-				builds: [
+				"builds": [
 					{
 						"buildTag": "0.1.14-14c793",
 						"regionalContainerTags": [
