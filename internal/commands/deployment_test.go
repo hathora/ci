@@ -182,7 +182,8 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 				"transportType": "tcp",
 				"containerPort": 8000,
 				"requestedMemoryMB": 1024,
-				"requestedCPU": 0.5
+				"requestedCPU": 0.5,
+				"buildId": "bld-1"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodPost, "request method should be POST")
@@ -207,7 +208,8 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 							"value": "TRUE",
 							"name": "EULA"
 						}
-					]
+					],
+				  "buildId": "bld-1"
 				}`, string(*requestBody), "request body should match expected")
 			},
 		},
