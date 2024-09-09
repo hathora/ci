@@ -133,12 +133,12 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 		{
 			name:           "delete a build",
 			command:        "delete --build-id bld-1",
-			responseStatus: http.StatusNoContent,
-			responseBody:   "",
+			responseStatus: http.StatusOK,
+			responseBody:   "{}",
 			expectOutput: `{
 				"status": "success"
 				"message": "Build successfully deleted.",
-				"code": 204
+				"code": 200
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodDelete, "request method should be DELETE")
