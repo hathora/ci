@@ -138,12 +138,14 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, filePath str
 		return nil, fmt.Errorf("failed to get file info: %w", err)
 	}
 
+	params := shared.CreateMultipartBuildParams{BuildSizeInBytes: float64(fileInfo.Size())}
+	if buildTag != "" {
+		params.BuildTag = sdk.String(buildTag)
+	}
+
 	createRes, err := hathora.BuildsV3.CreateBuild(
 		ctx,
-		shared.CreateMultipartBuildParams{
-			BuildTag:         sdk.String(buildTag),
-			BuildSizeInBytes: float64(fileInfo.Size()),
-		},
+		params,
 		nil,
 	)
 	if err != nil {
