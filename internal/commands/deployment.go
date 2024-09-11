@@ -480,6 +480,11 @@ func (c *CreateDeploymentConfig) Merge(latest *shared.DeploymentV3) {
 
 func (c *CreateDeploymentConfig) Validate() error {
 	var err error
+
+	if c.AppID == nil || *c.AppID == "" {
+		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+	}
+
 	if c.BuildID == "" {
 		err = errors.Join(err, missingRequiredFlag(buildIDFlag.Name))
 	}

@@ -149,6 +149,10 @@ func (c *DeployConfig) Merge(latest *shared.DeploymentV3, isIdleTimeoutDefault b
 func (c *DeployConfig) Validate() error {
 	var err error
 
+	if c.AppID == nil || *c.AppID == "" {
+		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+	}
+
 	if c.RoomsPerProcess == 0 {
 		err = errors.Join(err, missingRequiredFlag(roomsPerProcessFlag.Name))
 	}

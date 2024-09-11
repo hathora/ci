@@ -110,10 +110,9 @@ func (c *GlobalConfig) Load(cmd *cli.Command) error {
 	if c.BaseURL == "" {
 		err = errors.Join(err, missingRequiredFlag(hathoraCloudEndpointFlag.Name))
 	}
-
 	appID := cmd.String(appIDFlag.Name)
 	if appID == "" {
-		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+		c.AppID = nil
 	} else {
 		c.AppID = &appID
 	}
