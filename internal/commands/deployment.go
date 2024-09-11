@@ -39,7 +39,7 @@ var Deployment = &cli.Command{
 			Name:    infoCommandName,
 			Aliases: []string{"get-deployment-info"},
 			Usage:   "get a deployment by id",
-			Flags:   subcommandFlags(appIDFlag, deploymentIDFlag),
+			Flags:   subcommandFlags(deploymentIDFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				deployment, err := OneDeploymentConfigFrom(cmd)
 				if err != nil {
@@ -52,7 +52,7 @@ var Deployment = &cli.Command{
 				res, err := deployment.SDK.DeploymentsV3.GetDeployment(
 					ctx,
 					deployment.DeploymentID,
-					&deployment.AppID,
+					deployment.AppID,
 				)
 				if err != nil {
 					return fmt.Errorf("failed to get deployment info: %w", err)
@@ -65,7 +65,7 @@ var Deployment = &cli.Command{
 			Name:    latestCommandName,
 			Aliases: []string{"get-latest-deployment"},
 			Usage:   "get the latest deployment",
-			Flags:   subcommandFlags(appIDFlag),
+			Flags:   subcommandFlags(),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				deployment, err := DeploymentConfigFrom(cmd)
 				if err != nil {
@@ -75,7 +75,7 @@ var Deployment = &cli.Command{
 				}
 				deployment.Log.Debug("getting the latest deployment...")
 
-				res, err := deployment.SDK.DeploymentsV3.GetLatestDeployment(ctx, &deployment.AppID)
+				res, err := deployment.SDK.DeploymentsV3.GetLatestDeployment(ctx, deployment.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to get the latest deployment: %w", err)
 				}
@@ -97,7 +97,7 @@ var Deployment = &cli.Command{
 				}
 				deployment.Log.Debug("getting all deployments...")
 
-				res, err := deployment.SDK.DeploymentsV3.GetDeployments(ctx, &deployment.AppID)
+				res, err := deployment.SDK.DeploymentsV3.GetDeployments(ctx, deployment.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to get deployments: %w", err)
 				}
@@ -114,7 +114,6 @@ var Deployment = &cli.Command{
 			Aliases: []string{"create-deployment"},
 			Usage:   "create a deployment",
 			Flags: subcommandFlags(
-				appIDFlag,
 				buildIDFlag,
 				idleTimeoutFlag,
 				roomsPerProcessFlag,
@@ -137,7 +136,7 @@ var Deployment = &cli.Command{
 
 				useLatest := cmd.Bool(fromLatestFlag.Name)
 				if useLatest {
-					res, err := deployment.SDK.DeploymentsV3.GetLatestDeployment(ctx, &deployment.AppID)
+					res, err := deployment.SDK.DeploymentsV3.GetLatestDeployment(ctx, deployment.AppID)
 					if err != nil {
 						return fmt.Errorf("unable to retrieve latest deployment: %w", err)
 					}
@@ -164,7 +163,7 @@ var Deployment = &cli.Command{
 						AdditionalContainerPorts: deployment.AdditionalContainerPorts,
 						Env:                      deployment.Env,
 					},
-					&deployment.AppID,
+					deployment.AppID,
 				)
 				if err != nil {
 					return fmt.Errorf("failed to create a deployment: %w", err)
@@ -190,18 +189,6 @@ var (
 		Usage:    "the `<id>` of the deployment in Hathora",
 		Required: true,
 		Category: "Deployment:",
-	}
-
-	appIDFlag = &cli.StringFlag{
-		Name:    "app-id",
-		Aliases: []string{"a"},
-		Sources: cli.NewValueSourceChain(
-			cli.EnvVar(globalFlagEnvVar("APP_ID")),
-			altsrc.ConfigFile(configFlag.Name, "app.id"),
-		),
-		Usage:      "the `<id>` of the app in Hathora",
-		Category:   "Deployment:",
-		Persistent: true,
 	}
 
 	idleTimeoutFlag = &cli.BoolFlag{
@@ -325,7 +312,6 @@ var (
 
 type DeploymentConfig struct {
 	*GlobalConfig
-	AppID  string
 	SDK    *sdk.SDK
 	Output output.FormatWriter
 }
@@ -413,8 +399,6 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 	}
 
 	c.DeploymentConfig = deployment
-
-	c.AppID = cmd.String(appIDFlag.Name)
 	c.BuildID = cmd.String(buildIDFlag.Name)
 
 	// Value of the idleTimeoutFlag by priority, high to low
@@ -455,10 +439,6 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 func (c *CreateDeploymentConfig) Merge(latest *shared.DeploymentV3) {
 	if latest == nil {
 		return
-	}
-
-	if c.AppID == "" {
-		c.AppID = latest.AppID
 	}
 
 	if c.BuildID == "" {
@@ -502,10 +482,6 @@ func (c *CreateDeploymentConfig) Validate() error {
 	var err error
 	if c.BuildID == "" {
 		err = errors.Join(err, missingRequiredFlag(buildIDFlag.Name))
-	}
-
-	if c.AppID == "" {
-		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
 	}
 
 	if c.RoomsPerProcess == 0 {

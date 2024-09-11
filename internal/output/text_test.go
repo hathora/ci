@@ -52,8 +52,8 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				RequestedCPU:      0.5,
 			},
 			expect: [][]string{
-				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "RequestedCPU", "RequestedMemory", "DefaultContainerPort", "AdditionalContainerPorts", "BuildTag", "AppID"},
-				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null", "appID"},
+				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "RequestedCPU", "RequestedMemory", "DefaultContainerPort", "AdditionalContainerPorts", "BuildTag"},
+				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null"},
 			},
 		},
 		{
@@ -88,8 +88,8 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				RequestedCPU:      0.5,
 			},
 			expect: [][]string{
-				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "RequestedCPU", "RequestedMemory", "DefaultContainerPort", "AdditionalContainerPorts", "BuildTag", "AppID"},
-				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null", "appID"},
+				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "RequestedCPU", "RequestedMemory", "DefaultContainerPort", "AdditionalContainerPorts", "BuildTag"},
+				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null"},
 			},
 		},
 		{
@@ -155,9 +155,9 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				},
 			},
 			expect: [][]string{
-				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "RequestedCPU", "RequestedMemory", "DefaultContainerPort", "AdditionalContainerPorts", "BuildTag", "AppID"},
-				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null", "appID"},
-				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null", "appID"},
+				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "RequestedCPU", "RequestedMemory", "DefaultContainerPort", "AdditionalContainerPorts", "BuildTag"},
+				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null"},
+				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null"},
 			},
 		},
 	}
@@ -191,9 +191,10 @@ func Test_BuildTextOutput(t *testing.T) {
 	}{
 		{
 			name: "single build",
-			input: shared.BuildV3{
+			input: shared.Build{
 				CreatedAt:  ts,
 				CreatedBy:  "createdBy",
+				AppID:      "appID",
 				BuildID:    "bld-1",
 				ImageSize:  2048,
 				Status:     "status",
@@ -202,15 +203,16 @@ func Test_BuildTextOutput(t *testing.T) {
 				FinishedAt: nil,
 			},
 			expect: [][]string{
-				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt", "ContentHash", "OrgID"},
-				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null"},
+				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt"},
+				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
 			},
 		},
 		{
 			name: "single build ptr",
-			input: &shared.BuildV3{
+			input: &shared.Build{
 				CreatedAt:  ts,
 				CreatedBy:  "createdBy",
+				AppID:      "appID",
 				BuildID:    "bld-1",
 				ImageSize:  2048,
 				Status:     "status",
@@ -219,16 +221,17 @@ func Test_BuildTextOutput(t *testing.T) {
 				FinishedAt: nil,
 			},
 			expect: [][]string{
-				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt", "ContentHash", "OrgID"},
-				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null"},
+				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt"},
+				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
 			},
 		},
 		{
 			name: "multiple builds",
-			input: []shared.BuildV3{
+			input: []shared.Build{
 				{
 					CreatedAt:  ts,
 					CreatedBy:  "createdBy",
+					AppID:      "appID",
 					BuildID:    "bld-1",
 					ImageSize:  2048,
 					Status:     "status",
@@ -239,6 +242,7 @@ func Test_BuildTextOutput(t *testing.T) {
 				{
 					CreatedAt:  ts,
 					CreatedBy:  "createdBy",
+					AppID:      "appID",
 					BuildID:    "bld-1",
 					ImageSize:  2048,
 					Status:     "status",
@@ -248,9 +252,9 @@ func Test_BuildTextOutput(t *testing.T) {
 				},
 			},
 			expect: [][]string{
-				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt", "ContentHash", "OrgID"},
-				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null"},
-				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null"},
+				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt"},
+				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
+				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
 			},
 		},
 	}

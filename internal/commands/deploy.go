@@ -17,7 +17,6 @@ var Deploy = &cli.Command{
 	Name:  "deploy",
 	Usage: "create a build and a deployment in a combined flow",
 	Flags: subcommandFlags(
-		appIDFlag,
 		buildTagFlag,
 		fileFlag,
 		fromLatestFlag,
@@ -41,7 +40,7 @@ var Deploy = &cli.Command{
 
 		useLatest := cmd.Bool(fromLatestFlag.Name)
 		if useLatest {
-			res, err := deploy.SDK.DeploymentsV3.GetLatestDeployment(ctx, &deploy.AppID)
+			res, err := deploy.SDK.DeploymentsV3.GetLatestDeployment(ctx, deploy.AppID)
 			if err != nil {
 				return fmt.Errorf("unable to retrieve latest deployment: %w", err)
 			}
@@ -73,7 +72,7 @@ var Deploy = &cli.Command{
 				AdditionalContainerPorts: deploy.AdditionalContainerPorts,
 				Env:                      deploy.Env,
 			},
-			&deploy.AppID,
+			deploy.AppID,
 		)
 		if err != nil {
 			return fmt.Errorf("failed to create a deployment: %w", err)
@@ -122,10 +121,6 @@ func (c *DeployConfig) Merge(latest *shared.DeploymentV3, isIdleTimeoutDefault b
 		c.RoomsPerProcess = latest.RoomsPerProcess
 	}
 
-	if c.AppID == "" {
-		c.AppID = latest.AppID
-	}
-
 	if c.TransportType == "" {
 		c.TransportType = latest.DefaultContainerPort.TransportType
 	}
@@ -153,10 +148,6 @@ func (c *DeployConfig) Merge(latest *shared.DeploymentV3, isIdleTimeoutDefault b
 
 func (c *DeployConfig) Validate() error {
 	var err error
-
-	if c.AppID == "" {
-		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
-	}
 
 	if c.RoomsPerProcess == 0 {
 		err = errors.Join(err, missingRequiredFlag(roomsPerProcessFlag.Name))

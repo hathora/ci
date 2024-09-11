@@ -93,6 +93,7 @@ type GlobalConfig struct {
 	*VerbosityConfig
 	Token   string
 	BaseURL string
+	AppID   *string
 }
 
 func (c *GlobalConfig) Load(cmd *cli.Command) error {
@@ -109,7 +110,15 @@ func (c *GlobalConfig) Load(cmd *cli.Command) error {
 	if c.BaseURL == "" {
 		err = errors.Join(err, missingRequiredFlag(hathoraCloudEndpointFlag.Name))
 	}
-	c.Log = zap.L()
+
+	appID := cmd.String(appIDFlag.Name)
+	if appID == "" {
+		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+	} else {
+		c.AppID = &appID
+	}
+	c.Log = zap.L().With(zap.String("app.id", appID))
+
 	return err
 }
 
@@ -158,7 +167,7 @@ func OutputFormatterFor(cmd *cli.Command, outputType any) (output.FormatWriter, 
 
 func BuildTextFormatter() output.FormatWriter {
 	// TODO: Allow commands to register their own formatters so that this one function doesn't have to know the desired format for every type
-	var build shared.BuildV3
+	var build shared.Build
 	var deployment shared.DeploymentV3
 	var envVar shared.DeploymentV3Env
 	var containerPort shared.ContainerPort
@@ -174,9 +183,8 @@ func BuildTextFormatter() output.FormatWriter {
 			"StartedAt",
 			"FinishedAt",
 		),
-		output.WithoutFields(build, "RegionalContainerTags", "DeletedAt", "CreatedBy"),
+		output.WithoutFields(build, "AppID", "RegionalContainerTags", "DeletedAt", "CreatedBy"),
 		output.WithFieldOrder(deployment,
-			"AppID",
 			"DeploymentID",
 			"BuildID",
 			"CreatedAt",
@@ -186,13 +194,12 @@ func BuildTextFormatter() output.FormatWriter {
 			"RequestedMemoryMB",
 			"DefaultContainerPort",
 			"AdditionalContainerPorts",
-			"BuildTag",
 		),
 		output.RenameField(deployment, "RequestedMemoryMB", "RequestedMemory"),
 		output.WithPropertyFormatter(deployment, "RequestedMemoryMB", func(f float64) string {
 			return humanize.IBytes((uint64)(f * 1024 * 1024))
 		}),
-		output.WithoutFields(deployment, "CreatedBy", "Env"),
+		output.WithoutFields(deployment, "AppID", "CreatedBy", "Env"),
 		output.WithFormatter(envVar,
 			func(e shared.DeploymentV3Env) string {
 				return fmt.Sprintf("%s=%s", e.Name, e.Value)

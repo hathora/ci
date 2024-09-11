@@ -139,7 +139,6 @@ type ProcessLogConfig struct {
 	Follow    bool
 	TailLines int
 	ProcessID string
-	AppID     *string
 }
 
 var _ LoadableConfig = (*ProcessLogConfig)(nil)

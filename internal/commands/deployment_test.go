@@ -44,7 +44,7 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 	}{
 		{
 			name:           "get deployment info",
-			command:        "info --deployment-id dep-1 --app-id test-app-id",
+			command:        "info --deployment-id dep-1",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"idleTimeoutEnabled": true,
@@ -71,7 +71,7 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 				"requestedCPU": 0.5,
 				"deploymentId": "dep-1",
 				"buildId": "bld-1",
-				"appId": "test-app-id"
+				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
@@ -226,6 +226,8 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 			staticArgs := []string{
 				"hathora",
 				"-vvv",
+				"--app-id",
+				"test-app-id",
 				"--token",
 				"test-token",
 				"--hathora-cloud-endpoint",
