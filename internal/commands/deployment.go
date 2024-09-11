@@ -42,6 +42,11 @@ var Deployment = &cli.Command{
 			Flags:   subcommandFlags(deploymentIDFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				deployment, err := OneDeploymentConfigFrom(cmd)
+
+				if deployment.AppID == nil || *deployment.AppID == "" {
+					err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+				}
+
 				if err != nil {
 					//nolint:errcheck
 					cli.ShowSubcommandHelp(cmd)
