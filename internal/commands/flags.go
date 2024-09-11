@@ -29,18 +29,6 @@ var (
 		Persistent: true,
 	}
 
-	appIDFlag = &cli.StringFlag{
-		Name:    "app-id",
-		Aliases: []string{"a"},
-		Sources: cli.NewValueSourceChain(
-			cli.EnvVar(globalFlagEnvVar("APP_ID")),
-			altsrc.ConfigFile(configFlag.Name, "app.id"),
-		),
-		Usage:      "the `<id>` of the app in Hathora",
-		Category:   "Global:",
-		Persistent: true,
-	}
-
 	verboseFlag = &cli.BoolFlag{
 		Name:       "verbose",
 		Aliases:    []string{"v"},
@@ -92,7 +80,6 @@ var (
 	}
 
 	GlobalFlags = []cli.Flag{
-		appIDFlag,
 		hathoraCloudEndpointFlag,
 		tokenFlag,
 		outputFlag,

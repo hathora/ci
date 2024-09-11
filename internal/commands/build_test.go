@@ -57,8 +57,7 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 				"startedAt": "2019-08-24T14:15:22Z",
 				"createdAt": "2019-08-24T14:15:22Z",
 				"createdBy": "google-oauth2|107030234048588177467",
-				"buildId": "bld-1",
-				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+				"buildId": "bld-1"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
@@ -87,14 +86,13 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 						"startedAt": "2019-08-24T14:15:22Z",
 						"createdAt": "2019-08-24T14:15:22Z",
 						"createdBy": "google-oauth2|107030234048588177467",
-						"buildId": "bld-1",
-						"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+						"buildId": "bld-1"
 					}
 				]
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
-				assert.Equal(t, "/builds/v3/builds", r.URL.Path, "request path should contain app id")
+				assert.Equal(t, "/builds/v3/builds", r.URL.Path, "request path should not contain app id")
 				assert.Empty(t, requestBody, "request body should be empty")
 			},
 		},
@@ -120,7 +118,6 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 				"createdAt": "2019-08-24T14:15:22Z",
 				"createdBy": "google-oauth2|107030234048588177467",
 				"buildId": "bld-1",
-				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodPost, "request method should be POST")
@@ -158,8 +155,6 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 			staticArgs := []string{
 				"hathora",
 				"-vvv",
-				"--app-id",
-				"test-app-id",
 				"--token",
 				"test-token",
 				"--hathora-cloud-endpoint",
@@ -195,7 +190,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 	}{
 		{
 			name:           "use global args after domain-level command",
-			command:        "build --app-id test-app-id --token test-token info --build-id bld-1",
+			command:        "build --token test-token info --build-id bld-1",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"buildTag": "0.1.14-14c793",
@@ -212,8 +207,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 				"startedAt": "2019-08-24T14:15:22Z",
 				"createdAt": "2019-08-24T14:15:22Z",
 				"createdBy": "google-oauth2|107030234048588177467",
-				"buildId": "bld-1",
-				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+				"buildId": "bld-1"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
@@ -223,7 +217,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 		},
 		{
 			name:           "use global args after action-level command",
-			command:        "build info --build-id bld-1 --app-id test-app-id --token test-token",
+			command:        "build info --build-id bld-1 --token test-token",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"buildTag": "0.1.14-14c793",
@@ -240,8 +234,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 				"startedAt": "2019-08-24T14:15:22Z",
 				"createdAt": "2019-08-24T14:15:22Z",
 				"createdBy": "google-oauth2|107030234048588177467",
-				"buildId": "bld-1",
-				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+				"buildId": "bld-1"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
