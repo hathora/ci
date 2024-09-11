@@ -83,7 +83,7 @@ var Build = &cli.Command{
 			Name:    createCommandName,
 			Aliases: []string{"create-build"},
 			Usage:   "create a build",
-			Flags:   subcommandFlags(buildTagFlag, fileFlag),
+			Flags:   subcommandFlags(buildTagFlag, buildIDFlag, fileFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				build, err := CreateBuildConfigFrom(cmd)
 				if err != nil {
@@ -91,7 +91,7 @@ var Build = &cli.Command{
 					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
-				created, err := doBuildCreate(ctx, build.SDK, build.BuildTag, build.FilePath)
+				created, err := doBuildCreate(ctx, build.SDK, build.BuildTag, build.BuildID, build.FilePath)
 				if err != nil {
 					return err
 				}
@@ -128,7 +128,7 @@ var Build = &cli.Command{
 	},
 }
 
-func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, filePath string) (*shared.BuildV3, error) {
+func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, buildId, filePath string) (*shared.BuildV3, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open file: %w", err)
@@ -141,6 +141,9 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, filePath str
 	params := shared.CreateMultipartBuildParams{BuildSizeInBytes: float64(fileInfo.Size())}
 	if buildTag != "" {
 		params.BuildTag = sdk.String(buildTag)
+	}
+	if buildId != "" {
+		params.BuildID = sdk.String(buildId)
 	}
 
 	createRes, err := hathora.BuildsV3.CreateBuild(
@@ -337,6 +340,7 @@ var (
 type CreateBuildConfig struct {
 	*BuildConfig
 	BuildTag string
+	BuildID  string
 	FilePath string
 }
 
@@ -349,8 +353,9 @@ func (c *CreateBuildConfig) Load(cmd *cli.Command) error {
 	}
 	c.BuildConfig = build
 	c.BuildTag = cmd.String(buildTagFlag.Name)
+	c.BuildID = cmd.String(buildIDFlag.Name)
 	c.FilePath = cmd.String(fileFlag.Name)
-	c.Log = c.Log.With(zap.String("build.tag", c.BuildTag))
+	c.Log = c.Log.With(zap.String("build.tag", c.BuildTag)).With(zap.String("build.id", c.BuildID))
 	return nil
 }
 

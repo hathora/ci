@@ -17,6 +17,7 @@ var Deploy = &cli.Command{
 	Name:  "deploy",
 	Usage: "create a build and a deployment in a combined flow",
 	Flags: subcommandFlags(
+		buildIDFlag,
 		buildTagFlag,
 		fileFlag,
 		fromLatestFlag,
@@ -54,7 +55,7 @@ var Deploy = &cli.Command{
 			return err
 		}
 
-		createdBuild, err := doBuildCreate(ctx, deploy.SDK, deploy.BuildTag, deploy.FilePath)
+		createdBuild, err := doBuildCreate(ctx, deploy.SDK, deploy.BuildTag, deploy.BuildID, deploy.FilePath)
 		if err != nil {
 			return err
 		}
@@ -102,8 +103,9 @@ func (c *DeployConfig) Load(cmd *cli.Command) error {
 	c.CreateDeploymentConfig = deployment
 
 	c.BuildTag = cmd.String(buildTagFlag.Name)
+	c.BuildID = cmd.String(buildIDFlag.Name)
 	c.FilePath = cmd.String(fileFlag.Name)
-	c.Log = c.Log.With(zap.String("build.tag", c.BuildTag))
+	c.Log = c.Log.With(zap.String("build.tag", c.BuildTag)).With(zap.String("build.id", c.BuildID))
 
 	return nil
 }
