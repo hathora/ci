@@ -313,7 +313,7 @@ func (c *BuildConfig) Load(cmd *cli.Command) error {
 	}
 	c.GlobalConfig = global
 	c.SDK = setup.SDK(c.Token, c.BaseURL, c.Verbosity)
-	var build shared.Build
+	var build shared.BuildV3
 	output, err := OutputFormatterFor(cmd, build)
 	if err != nil {
 		return err

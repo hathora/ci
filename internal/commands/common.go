@@ -167,7 +167,7 @@ func OutputFormatterFor(cmd *cli.Command, outputType any) (output.FormatWriter, 
 
 func BuildTextFormatter() output.FormatWriter {
 	// TODO: Allow commands to register their own formatters so that this one function doesn't have to know the desired format for every type
-	var build shared.Build
+	var build shared.BuildV3
 	var deployment shared.DeploymentV3
 	var envVar shared.DeploymentV3Env
 	var containerPort shared.ContainerPort

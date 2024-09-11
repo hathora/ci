@@ -191,10 +191,9 @@ func Test_BuildTextOutput(t *testing.T) {
 	}{
 		{
 			name: "single build",
-			input: shared.Build{
+			input: shared.BuildV3{
 				CreatedAt:  ts,
 				CreatedBy:  "createdBy",
-				AppID:      "appID",
 				BuildID:    "bld-1",
 				ImageSize:  2048,
 				Status:     "status",
@@ -203,16 +202,15 @@ func Test_BuildTextOutput(t *testing.T) {
 				FinishedAt: nil,
 			},
 			expect: [][]string{
-				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt"},
-				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
+				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt", "ContentHash", "OrgID"},
+				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null"},
 			},
 		},
 		{
 			name: "single build ptr",
-			input: &shared.Build{
+			input: &shared.BuildV3{
 				CreatedAt:  ts,
 				CreatedBy:  "createdBy",
-				AppID:      "appID",
 				BuildID:    "bld-1",
 				ImageSize:  2048,
 				Status:     "status",
@@ -221,17 +219,16 @@ func Test_BuildTextOutput(t *testing.T) {
 				FinishedAt: nil,
 			},
 			expect: [][]string{
-				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt"},
-				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
+				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt", "ContentHash", "OrgID"},
+				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null"},
 			},
 		},
 		{
 			name: "multiple builds",
-			input: []shared.Build{
+			input: []shared.BuildV3{
 				{
 					CreatedAt:  ts,
 					CreatedBy:  "createdBy",
-					AppID:      "appID",
 					BuildID:    "bld-1",
 					ImageSize:  2048,
 					Status:     "status",
@@ -242,7 +239,6 @@ func Test_BuildTextOutput(t *testing.T) {
 				{
 					CreatedAt:  ts,
 					CreatedBy:  "createdBy",
-					AppID:      "appID",
 					BuildID:    "bld-1",
 					ImageSize:  2048,
 					Status:     "status",
@@ -252,9 +248,9 @@ func Test_BuildTextOutput(t *testing.T) {
 				},
 			},
 			expect: [][]string{
-				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt"},
-				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
-				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null"},
+				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt", "ContentHash", "OrgID"},
+				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null"},
+				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null"},
 			},
 		},
 	}
