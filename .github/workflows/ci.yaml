@@ -133,6 +133,14 @@ jobs:
           BINARY_SUFFIX: ${{ matrix.os == 'windows' && '.exe' || '' }}
         run: make build
 
+      - name: Sign the Windows binary
+        if: matrix.os == 'windows'
+        run: |
+          choco install signtool
+          echo "${{ secrets.CERTIFICATE_PFX }}" | base64 --decode > certificate.pfx
+          signtool sign /fd sha256 /a /tr http://timestamp.digicert.com /td sha256 /f certificate.pfx bin/hathora-windows-${{ matrix.arch }}.exe
+          del certificate.pfx
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
