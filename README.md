@@ -2,6 +2,11 @@
 
 This repo houses the CLI that can be used to deploy your game server builds to Hathora Cloud in your CI/CD pipelines.
 
+
+## Docs
+
+For documentation on how to use this CLI, check out our [docs.](https://hathora.dev/docs/guides/ci-cd)
+
 ## Hathora CLI Upgrade Notes
 
 This covers the relevant notes for users upgrading from previous CLI versions. We aim to cover compatibility changes that you must be aware of.
@@ -31,10 +36,6 @@ Notes:
 ### Hathora CLI v0.x.x
 
 Hathora CLI v0.x.x is no longer compatible with builds and application deployments created via the Hathora UI Console.
-
-## Docs
-
-For documentation on how to use this CLI, check out our [docs.](https://hathora.dev/docs/guides/ci-cd)
 
 ## Development
 
