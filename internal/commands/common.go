@@ -252,7 +252,6 @@ func handleNewVersionAvailable(currentVersion string) {
 
 	prefixedVersion := "go" + currentVersion
 	showLatest := false
-	zap.L().Warn("Upgrade to CLI v1.0.0+ required. Builds/deployments created via this version are not supported on earlier versions. Update now to ensure full compatibility.")
 	if !version.IsValid(prefixedVersion) {
 		zap.L().Warn("You are using a development version of the hathora cli.")
 		showLatest = true
