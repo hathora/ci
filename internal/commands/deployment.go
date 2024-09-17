@@ -42,6 +42,11 @@ var Deployment = &cli.Command{
 			Flags:   subcommandFlags(deploymentIDFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				deployment, err := OneDeploymentConfigFrom(cmd)
+
+				if deployment.AppID == nil || *deployment.AppID == "" {
+					err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+				}
+
 				if err != nil {
 					//nolint:errcheck
 					cli.ShowSubcommandHelp(cmd)
@@ -49,7 +54,7 @@ var Deployment = &cli.Command{
 				}
 				deployment.Log.Debug("getting deployment info...")
 
-				res, err := deployment.SDK.DeploymentsV2.GetDeploymentInfoV2Deprecated(
+				res, err := deployment.SDK.DeploymentsV3.GetDeployment(
 					ctx,
 					deployment.DeploymentID,
 					deployment.AppID,
@@ -58,7 +63,7 @@ var Deployment = &cli.Command{
 					return fmt.Errorf("failed to get deployment info: %w", err)
 				}
 
-				return deployment.Output.Write(res.DeploymentV2, os.Stdout)
+				return deployment.Output.Write(res.DeploymentV3, os.Stdout)
 			},
 		},
 		{
@@ -68,6 +73,9 @@ var Deployment = &cli.Command{
 			Flags:   subcommandFlags(),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				deployment, err := DeploymentConfigFrom(cmd)
+				if deployment.AppID == nil || *deployment.AppID == "" {
+					err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+				}
 				if err != nil {
 					//nolint:errcheck
 					cli.ShowSubcommandHelp(cmd)
@@ -75,12 +83,12 @@ var Deployment = &cli.Command{
 				}
 				deployment.Log.Debug("getting the latest deployment...")
 
-				res, err := deployment.SDK.DeploymentsV2.GetLatestDeploymentV2Deprecated(ctx, deployment.AppID)
+				res, err := deployment.SDK.DeploymentsV3.GetLatestDeployment(ctx, deployment.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to get the latest deployment: %w", err)
 				}
 
-				return deployment.Output.Write(res.DeploymentV2, os.Stdout)
+				return deployment.Output.Write(res.DeploymentV3, os.Stdout)
 			},
 		},
 		{
@@ -90,6 +98,9 @@ var Deployment = &cli.Command{
 			Flags:   subcommandFlags(),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				deployment, err := DeploymentConfigFrom(cmd)
+				if deployment.AppID == nil || *deployment.AppID == "" {
+					err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+				}
 				if err != nil {
 					//nolint:errcheck
 					cli.ShowSubcommandHelp(cmd)
@@ -97,16 +108,16 @@ var Deployment = &cli.Command{
 				}
 				deployment.Log.Debug("getting all deployments...")
 
-				res, err := deployment.SDK.DeploymentsV2.GetDeploymentsV2Deprecated(ctx, deployment.AppID)
+				res, err := deployment.SDK.DeploymentsV3.GetDeployments(ctx, deployment.AppID)
 				if err != nil {
 					return fmt.Errorf("failed to get deployments: %w", err)
 				}
 
-				if len(res.DeploymentV2s) == 0 {
+				if len(res.DeploymentsV3Page.Deployments) == 0 {
 					return fmt.Errorf("no deployments found")
 				}
 
-				return deployment.Output.Write(res.DeploymentV2s, os.Stdout)
+				return deployment.Output.Write(res.DeploymentsV3Page.Deployments, os.Stdout)
 			},
 		},
 		{
@@ -136,12 +147,12 @@ var Deployment = &cli.Command{
 
 				useLatest := cmd.Bool(fromLatestFlag.Name)
 				if useLatest {
-					res, err := deployment.SDK.DeploymentsV2.GetLatestDeploymentV2Deprecated(ctx, deployment.AppID)
+					res, err := deployment.SDK.DeploymentsV3.GetLatestDeployment(ctx, deployment.AppID)
 					if err != nil {
 						return fmt.Errorf("unable to retrieve latest deployment: %w", err)
 					}
 
-					deployment.Merge(res.DeploymentV2)
+					deployment.Merge(res.DeploymentV3)
 				}
 
 				if err := deployment.Validate(); err != nil {
@@ -150,10 +161,10 @@ var Deployment = &cli.Command{
 					return err
 				}
 
-				res, err := deployment.SDK.DeploymentsV2.CreateDeploymentV2Deprecated(
+				res, err := deployment.SDK.DeploymentsV3.CreateDeployment(
 					ctx,
-					deployment.BuildID,
-					shared.DeploymentConfigV2{
+					shared.DeploymentConfigV3{
+						BuildID:                  deployment.BuildID,
 						IdleTimeoutEnabled:       *deployment.IdleTimeoutEnabled,
 						RoomsPerProcess:          deployment.RoomsPerProcess,
 						TransportType:            deployment.TransportType,
@@ -169,7 +180,7 @@ var Deployment = &cli.Command{
 					return fmt.Errorf("failed to create a deployment: %w", err)
 				}
 
-				return deployment.Output.Write(res.DeploymentV2, os.Stdout)
+				return deployment.Output.Write(res.DeploymentV3, os.Stdout)
 			},
 		},
 	},
@@ -182,7 +193,7 @@ func deploymentEnvVar(name string) string {
 var (
 	deploymentFlagEnvVarPrefix = fmt.Sprintf("%s%s", globalFlagEnvVarPrefix, "DEPLOYMENT_")
 
-	deploymentIDFlag = &workaround.IntFlag{
+	deploymentIDFlag = &cli.StringFlag{
 		Name:     "deployment-id",
 		Aliases:  []string{"d"},
 		Sources:  cli.EnvVars(deploymentEnvVar("ID")),
@@ -294,8 +305,8 @@ func parseContainerPorts(ports []string) ([]shared.ContainerPort, error) {
 	return output, nil
 }
 
-func parseEnvVars(envVars []string) ([]shared.DeploymentConfigV2Env, error) {
-	output := make([]shared.DeploymentConfigV2Env, 0, len(envVars))
+func parseEnvVars(envVars []string) ([]shared.DeploymentConfigV3Env, error) {
+	output := make([]shared.DeploymentConfigV3Env, 0, len(envVars))
 	for _, envVar := range envVars {
 		env, err := shorthand.ParseDeploymentEnvVar(envVar)
 		if err != nil {
@@ -326,7 +337,7 @@ func (c *DeploymentConfig) Load(cmd *cli.Command) error {
 	c.GlobalConfig = global
 
 	c.SDK = setup.SDK(c.Token, c.BaseURL, c.Verbosity)
-	var deployment shared.DeploymentV2
+	var deployment shared.DeploymentV3
 	output, err := OutputFormatterFor(cmd, deployment)
 	if err != nil {
 		return err
@@ -349,7 +360,7 @@ var (
 
 type OneDeploymentConfig struct {
 	*DeploymentConfig
-	DeploymentID int
+	DeploymentID string
 }
 
 var _ LoadableConfig = (*OneDeploymentConfig)(nil)
@@ -360,8 +371,8 @@ func (c *OneDeploymentConfig) Load(cmd *cli.Command) error {
 		return err
 	}
 	c.DeploymentConfig = deployment
-	c.DeploymentID = int(cmd.Int(deploymentIDFlag.Name))
-	c.Log = c.Log.With(zap.Int("deployment.id", c.DeploymentID))
+	c.DeploymentID = cmd.String(deploymentIDFlag.Name)
+	c.Log = c.Log.With(zap.String("deployment.id", c.DeploymentID))
 	return nil
 }
 
@@ -379,7 +390,7 @@ var (
 
 type CreateDeploymentConfig struct {
 	*DeploymentConfig
-	BuildID                  int
+	BuildID                  string
 	IdleTimeoutEnabled       *bool
 	RoomsPerProcess          int
 	TransportType            shared.TransportType
@@ -387,7 +398,7 @@ type CreateDeploymentConfig struct {
 	RequestedMemoryMB        float64
 	RequestedCPU             float64
 	AdditionalContainerPorts []shared.ContainerPort
-	Env                      []shared.DeploymentConfigV2Env
+	Env                      []shared.DeploymentConfigV3Env
 }
 
 var _ LoadableConfig = (*CreateDeploymentConfig)(nil)
@@ -399,7 +410,7 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 	}
 
 	c.DeploymentConfig = deployment
-	c.BuildID = int(cmd.Int(buildIDFlag.Name))
+	c.BuildID = cmd.String(buildIDFlag.Name)
 
 	// Value of the idleTimeoutFlag by priority, high to low
 	// Passed in as an argument
@@ -436,12 +447,12 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 	return nil
 }
 
-func (c *CreateDeploymentConfig) Merge(latest *shared.DeploymentV2) {
+func (c *CreateDeploymentConfig) Merge(latest *shared.DeploymentV3) {
 	if latest == nil {
 		return
 	}
 
-	if c.BuildID == 0 {
+	if c.BuildID == "" {
 		c.BuildID = latest.BuildID
 	}
 
@@ -480,7 +491,12 @@ func (c *CreateDeploymentConfig) Merge(latest *shared.DeploymentV2) {
 
 func (c *CreateDeploymentConfig) Validate() error {
 	var err error
-	if c.BuildID == 0 {
+
+	if c.AppID == nil || *c.AppID == "" {
+		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+	}
+
+	if c.BuildID == "" {
 		err = errors.Join(err, missingRequiredFlag(buildIDFlag.Name))
 	}
 

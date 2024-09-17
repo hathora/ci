@@ -44,7 +44,7 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 	}{
 		{
 			name:           "get deployment info",
-			command:        "info --deployment-id 1",
+			command:        "info --deployment-id dep-1",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"idleTimeoutEnabled": true,
@@ -69,13 +69,13 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 				"createdBy": "google-oauth2|107030234048588177467",
 				"requestedMemoryMB": 1024,
 				"requestedCPU": 0.5,
-				"deploymentId": 1,
-				"buildId": 1,
+				"deploymentId": "dep-1",
+				"buildId": "bld-1",
 				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
-				assert.Equal(t, "/deployments/v2/test-app-id/info/1", r.URL.Path, "request path should contain app id and deplyoment id")
+				assert.Equal(t, "/deployments/v3/apps/test-app-id/deployments/dep-1", r.URL.Path, "request path should contain app id and deplyoment id")
 				assert.Empty(t, requestBody, "request body should be empty")
 			},
 		},
@@ -106,13 +106,13 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 				"createdBy": "google-oauth2|107030234048588177467",
 				"requestedMemoryMB": 1024,
 				"requestedCPU": 0.5,
-				"deploymentId": 1,
-				"buildId": 1,
+				"deploymentId": "dep-1",
+				"buildId": "bld-1",
 				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
-				assert.Equal(t, "/deployments/v2/test-app-id/latest", r.URL.Path, "request path should contain app id")
+				assert.Equal(t, "/deployments/v3/apps/test-app-id/deployments/latest", r.URL.Path, "request path should contain app id")
 				assert.Empty(t, requestBody, "request body should be empty")
 			},
 		},
@@ -120,44 +120,46 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 			name:           "get all deployments",
 			command:        "list",
 			responseStatus: http.StatusOK,
-			responseBody: `[
-				{
-					"idleTimeoutEnabled": true,
-					"env": [
-						{
-							"value": "TRUE",
-							"name": "EULA"
-						}
-					],
-					"roomsPerProcess": 3,
-					"additionalContainerPorts": [{
-						"transportType": "tcp",
-						"port": 4000,
-						"name": "debug"
-					}],
-					"defaultContainerPort": {
-						"transportType": "tcp",
-						"port": 8000,
-						"name": "default"
-					},
-					"createdAt": "2019-08-24T14:15:22Z",
-					"createdBy": "google-oauth2|107030234048588177467",
-					"requestedMemoryMB": 1024,
-					"requestedCPU": 0.5,
-					"deploymentId": 1,
-					"buildId": 1,
-					"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-				}
-			]`,
+			responseBody: `{
+				"deployments": [
+					{
+						"idleTimeoutEnabled": true,
+						"env": [
+							{
+								"value": "TRUE",
+								"name": "EULA"
+							}
+						],
+						"roomsPerProcess": 3,
+						"additionalContainerPorts": [{
+							"transportType": "tcp",
+							"port": 4000,
+							"name": "debug"
+						}],
+						"defaultContainerPort": {
+							"transportType": "tcp",
+							"port": 8000,
+							"name": "default"
+						},
+						"createdAt": "2019-08-24T14:15:22Z",
+						"createdBy": "google-oauth2|107030234048588177467",
+						"requestedMemoryMB": 1024,
+						"requestedCPU": 0.5,
+						"deploymentId": "dep-1",
+						"buildId": "bld-1",
+						"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+					}
+				]
+			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
-				assert.Equal(t, "/deployments/v2/test-app-id/list", r.URL.Path, "request path should contain app id")
+				assert.Equal(t, "/deployments/v3/apps/test-app-id/deployments", r.URL.Path, "request path should contain app id")
 				assert.Empty(t, requestBody, "request body should be empty")
 			},
 		},
 		{
 			name: "create a deployment",
-			command: "create --build-id 1 --idle-timeout-enabled --rooms-per-process 3" +
+			command: "create --build-id bld-1 --idle-timeout-enabled --rooms-per-process 3" +
 				" --transport-type tcp --container-port 8000 --requested-memory-mb 1024 --requested-cpu 0.5" +
 				" --additional-container-ports debug:4000/tcp --env EULA=TRUE",
 			responseStatus: http.StatusCreated,
@@ -180,11 +182,12 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 				"transportType": "tcp",
 				"containerPort": 8000,
 				"requestedMemoryMB": 1024,
-				"requestedCPU": 0.5
+				"requestedCPU": 0.5,
+				"buildId": "bld-1"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodPost, "request method should be POST")
-				assert.Equal(t, "/deployments/v2/test-app-id/create/1", r.URL.Path, "request path should contain app id and build id")
+				assert.Equal(t, "/deployments/v3/apps/test-app-id/deployments", r.URL.Path, "request path should contain app id and build id")
 				assert.NotNil(t, requestBody, "request body should not be nil")
 				assert.JSONEq(t, `{
 					"idleTimeoutEnabled": true,
@@ -205,7 +208,8 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 							"value": "TRUE",
 							"name": "EULA"
 						}
-					]
+					],
+				  "buildId": "bld-1"
 				}`, string(*requestBody), "request body should match expected")
 			},
 		},
@@ -294,8 +298,8 @@ func Test_Integration_DeploymentCommands_CreateFromLatest(t *testing.T) {
 						"createdBy": "google-oauth2|107030234048588177467",
 						"requestedMemoryMB": 1024,
 						"requestedCPU": 0.5,
-						"deploymentId": 1,
-						"buildId": 1,
+						"deploymentId": "dep-1",
+						"buildId": "bld-1",
 						"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 					}`,
 				},
@@ -348,7 +352,7 @@ func Test_Integration_DeploymentCommands_CreateFromLatest(t *testing.T) {
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodPost, "request method should be POST")
-				assert.Equal(t, "/deployments/v2/test-app-id/create/1", r.URL.Path, "request path should contain app id and build id")
+				assert.Equal(t, "/deployments/v3/apps/test-app-id/deployments", r.URL.Path, "request path should contain app id and build id")
 				assert.NotNil(t, requestBody, "request body should not be nil")
 				assert.JSONEq(t, `{
 					"idleTimeoutEnabled": true,
@@ -405,8 +409,8 @@ func Test_Integration_DeploymentCommands_CreateFromLatest(t *testing.T) {
 						"createdBy": "google-oauth2|107030234048588177467",
 						"requestedMemoryMB": 1024,
 						"requestedCPU": 0.5,
-						"deploymentId": 1,
-						"buildId": 1,
+						"deploymentId": "dep-1",
+						"buildId": "bld-1",
 						"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 					}`,
 				},

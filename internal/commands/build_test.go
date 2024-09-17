@@ -40,7 +40,7 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 	}{
 		{
 			name:           "get build info",
-			command:        "info --build-id 1",
+			command:        "info --build-id bld-1",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"buildTag": "0.1.14-14c793",
@@ -57,12 +57,12 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 				"startedAt": "2019-08-24T14:15:22Z",
 				"createdAt": "2019-08-24T14:15:22Z",
 				"createdBy": "google-oauth2|107030234048588177467",
-				"buildId": 1,
+				"buildId": "bld-1",
 				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
-				assert.Equal(t, "/builds/v2/test-app-id/info/1", r.URL.Path, "request path should contain app id and build id")
+				assert.Equal(t, "/builds/v3/builds/bld-1", r.URL.Path, "request path should contain build id")
 				assert.Empty(t, requestBody, "request body should be empty")
 			},
 		},
@@ -70,29 +70,31 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 			name:           "get all builds",
 			command:        "list",
 			responseStatus: http.StatusOK,
-			responseBody: `[
-				{
-					"buildTag": "0.1.14-14c793",
-					"regionalContainerTags": [
+			responseBody: `{
+				"builds": [
 					{
-						"containerTag": "string",
-						"region": "Seattle"
+						"buildTag": "0.1.14-14c793",
+						"regionalContainerTags": [
+						{
+							"containerTag": "string",
+							"region": "Seattle"
+						}
+						],
+						"imageSize": 0,
+						"status": "created",
+						"deletedAt": "2019-08-24T14:15:22Z",
+						"finishedAt": "2019-08-24T14:15:22Z",
+						"startedAt": "2019-08-24T14:15:22Z",
+						"createdAt": "2019-08-24T14:15:22Z",
+						"createdBy": "google-oauth2|107030234048588177467",
+						"buildId": "bld-1",
+						"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 					}
-					],
-					"imageSize": 0,
-					"status": "created",
-					"deletedAt": "2019-08-24T14:15:22Z",
-					"finishedAt": "2019-08-24T14:15:22Z",
-					"startedAt": "2019-08-24T14:15:22Z",
-					"createdAt": "2019-08-24T14:15:22Z",
-					"createdBy": "google-oauth2|107030234048588177467",
-					"buildId": 1,
-					"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-				}
-			]`,
+				]
+			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
-				assert.Equal(t, "/builds/v2/test-app-id/list", r.URL.Path, "request path should contain app id")
+				assert.Equal(t, "/builds/v3/builds", r.URL.Path, "request path should contain app id")
 				assert.Empty(t, requestBody, "request body should be empty")
 			},
 		},
@@ -117,12 +119,12 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 				"startedAt": "2019-08-24T14:15:22Z",
 				"createdAt": "2019-08-24T14:15:22Z",
 				"createdBy": "google-oauth2|107030234048588177467",
-				"buildId": 1,
+				"buildId": "bld-1",
 				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodPost, "request method should be POST")
-				assert.Equal(t, "/builds/v2/test-app-id/create", r.URL.Path, "request path should contain app id")
+				assert.Equal(t, "/builds/v3/test-app-id/create", r.URL.Path, "request path should contain app id")
 				assert.Equal(t, "application/json", r.Header.Get("Content-Type"), "request should have a JSON content type")
 				assert.NotNil(t, requestBody, "request body should not be nil")
 				assert.Equal(t, `{"buildTag":"test-build-tag"}`, string(*requestBody), "request body should have supplied build tag")
@@ -130,17 +132,17 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 		},
 		{
 			name:           "delete a build",
-			command:        "delete --build-id 1",
-			responseStatus: http.StatusNoContent,
-			responseBody:   "",
+			command:        "delete --build-id bld-1",
+			responseStatus: http.StatusOK,
+			responseBody:   "{}",
 			expectOutput: `{
 				"status": "success"
 				"message": "Build successfully deleted.",
-				"code": 204
+				"code": 200
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodDelete, "request method should be DELETE")
-				assert.Equal(t, "/builds/v2/test-app-id/delete/1", r.URL.Path, "request path should contain app id and build id")
+				assert.Equal(t, "/builds/v3/builds/bld-1", r.URL.Path, "request path should contain build id")
 				assert.Empty(t, requestBody, "request body should be empty")
 			},
 		},
@@ -193,7 +195,7 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 	}{
 		{
 			name:           "use global args after domain-level command",
-			command:        "build --app-id test-app-id --token test-token info --build-id 1",
+			command:        "build --app-id test-app-id --token test-token info --build-id bld-1",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"buildTag": "0.1.14-14c793",
@@ -210,18 +212,18 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 				"startedAt": "2019-08-24T14:15:22Z",
 				"createdAt": "2019-08-24T14:15:22Z",
 				"createdBy": "google-oauth2|107030234048588177467",
-				"buildId": 1,
+				"buildId": "bld-1",
 				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
-				assert.Equal(t, "/builds/v2/test-app-id/info/1", r.URL.Path, "request path should contain app id and build id")
+				assert.Equal(t, "/builds/v3/builds/bld-1", r.URL.Path, "request path should contain build id")
 				assert.Empty(t, requestBody, "request body should be empty")
 			},
 		},
 		{
 			name:           "use global args after action-level command",
-			command:        "build info --build-id 1 --app-id test-app-id --token test-token",
+			command:        "build info --build-id bld-1 --app-id test-app-id --token test-token",
 			responseStatus: http.StatusOK,
 			responseBody: `{
 				"buildTag": "0.1.14-14c793",
@@ -238,12 +240,12 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 				"startedAt": "2019-08-24T14:15:22Z",
 				"createdAt": "2019-08-24T14:15:22Z",
 				"createdBy": "google-oauth2|107030234048588177467",
-				"buildId": 1,
+				"buildId": "bld-1",
 				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
-				assert.Equal(t, "/builds/v2/test-app-id/info/1", r.URL.Path, "request path should contain app id and build id")
+				assert.Equal(t, "/builds/v3/builds/bld-1", r.URL.Path, "request path should contain build id")
 				assert.Empty(t, requestBody, "request body should be empty")
 			},
 		},

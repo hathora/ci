@@ -44,7 +44,7 @@ type Build struct {
 	CreatedAt time.Time `json:"createdAt"`
 	CreatedBy string    `json:"createdBy"`
 	// System generated id for a build. Increments by 1.
-	BuildID int `json:"buildId"`
+	BuildID string `json:"buildId"`
 	// System generated unique identifier for an application.
 	AppID string `json:"appId"`
 }
@@ -123,9 +123,9 @@ func (o *Build) GetCreatedBy() string {
 	return o.CreatedBy
 }
 
-func (o *Build) GetBuildID() int {
+func (o *Build) GetBuildID() string {
 	if o == nil {
-		return 0
+		return ""
 	}
 	return o.BuildID
 }

@@ -17,10 +17,8 @@ import (
 	"github.com/hathora/ci/internal/commands/altsrc"
 	"github.com/hathora/ci/internal/output"
 	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/operations"
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/setup"
-	"github.com/hathora/ci/internal/workaround"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -47,12 +45,12 @@ var Build = &cli.Command{
 				}
 				build.Log.Debug("getting build info...")
 
-				res, err := build.SDK.BuildsV2.GetBuildInfoV2Deprecated(ctx, build.BuildID, build.AppID)
+				res, err := build.SDK.BuildsV3.GetBuild(ctx, build.BuildID, nil)
 				if err != nil {
 					return fmt.Errorf("failed to get build info: %w", err)
 				}
 
-				return build.Output.Write(res.Build, os.Stdout)
+				return build.Output.Write(res.BuildV3, os.Stdout)
 			},
 		},
 		{
@@ -69,23 +67,23 @@ var Build = &cli.Command{
 				}
 				build.Log.Debug("getting all builds...")
 
-				res, err := build.SDK.BuildsV2.GetBuildsV2Deprecated(ctx, build.AppID)
+				res, err := build.SDK.BuildsV3.GetBuilds(ctx, nil)
 				if err != nil {
 					return fmt.Errorf("failed to get builds: %w", err)
 				}
 
-				if len(res.Builds) == 0 {
+				if len(res.BuildsV3Page.Builds) == 0 {
 					return fmt.Errorf("no builds found")
 				}
 
-				return build.Output.Write(res.Builds, os.Stdout)
+				return build.Output.Write(res.BuildsV3Page.Builds, os.Stdout)
 			},
 		},
 		{
 			Name:    createCommandName,
 			Aliases: []string{"create-build"},
 			Usage:   "create a build",
-			Flags:   subcommandFlags(buildTagFlag, fileFlag),
+			Flags:   subcommandFlags(buildTagFlag, buildIDFlag, fileFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				build, err := CreateBuildConfigFrom(cmd)
 				if err != nil {
@@ -93,7 +91,7 @@ var Build = &cli.Command{
 					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
-				created, err := doBuildCreate(ctx, build.SDK, build.AppID, build.BuildTag, build.FilePath)
+				created, err := doBuildCreate(ctx, build.SDK, build.BuildTag, build.BuildID, build.FilePath)
 				if err != nil {
 					return err
 				}
@@ -115,7 +113,7 @@ var Build = &cli.Command{
 				}
 				build.Log.Debug("deleting a build...")
 
-				res, err := build.SDK.BuildsV2.DeleteBuildV2Deprecated(ctx, build.BuildID, build.AppID)
+				res, err := build.SDK.BuildsV3.DeleteBuild(ctx, build.BuildID, nil)
 				if err != nil {
 					return fmt.Errorf("failed to delete build: %w", err)
 				}
@@ -130,7 +128,7 @@ var Build = &cli.Command{
 	},
 }
 
-func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTag, filePath string) (*shared.Build, error) {
+func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, buildId, filePath string) (*shared.BuildV3, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open file: %w", err)
@@ -140,13 +138,18 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		return nil, fmt.Errorf("failed to get file info: %w", err)
 	}
 
-	createRes, err := hathora.BuildsV2.CreateWithMultipartUploadsV2Deprecated(
+	params := shared.CreateMultipartBuildParams{BuildSizeInBytes: float64(fileInfo.Size())}
+	if buildTag != "" {
+		params.BuildTag = sdk.String(buildTag)
+	}
+	if buildId != "" {
+		params.BuildID = sdk.String(buildId)
+	}
+
+	createRes, err := hathora.BuildsV3.CreateBuild(
 		ctx,
-		shared.CreateMultipartBuildParams{
-			BuildTag:         sdk.String(buildTag),
-			BuildSizeInBytes: float64(fileInfo.Size()),
-		},
-		appID,
+		params,
+		nil,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a build: %w", err)
@@ -156,20 +159,20 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		return nil, fmt.Errorf("no build file available for run: %w", err)
 	}
 
-	if createRes.BuildWithMultipartUrls == nil {
+	if createRes.CreatedBuildV3WithMultipartUrls == nil {
 		return nil, fmt.Errorf("no build object in response")
 	}
 
 	globalUploadProgress := atomic.Int64{}
 
-	var etagParts = make([]etagPart, len(createRes.BuildWithMultipartUrls.UploadParts))
+	var etagParts = make([]etagPart, len(createRes.CreatedBuildV3WithMultipartUrls.UploadParts))
 	var eg errgroup.Group
-	for i, uploadPart := range createRes.BuildWithMultipartUrls.UploadParts {
+	for i, uploadPart := range createRes.CreatedBuildV3WithMultipartUrls.UploadParts {
 		partNum := int64(uploadPart.PartNumber)
 		reqURL := uploadPart.PutRequestURL
 		index := i
 		eg.Go(func() error {
-			maxChunkSize := int64(createRes.BuildWithMultipartUrls.MaxChunkSize)
+			maxChunkSize := int64(createRes.CreatedBuildV3WithMultipartUrls.MaxChunkSize)
 
 			start := maxChunkSize * (partNum - 1)
 			end := min(partNum*maxChunkSize, fileInfo.Size())
@@ -192,7 +195,7 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		return nil, fmt.Errorf("failed to upload parts: %w", err)
 	}
 
-	resp, err := http.Post(createRes.BuildWithMultipartUrls.CompleteUploadPostRequestURL, "application/xml", bytes.NewBufferString(createEtagXML(etagParts...)))
+	resp, err := http.Post(createRes.CreatedBuildV3WithMultipartUrls.CompleteUploadPostRequestURL, "application/xml", bytes.NewBufferString(createEtagXML(etagParts...)))
 	if err != nil {
 		return nil, err
 	}
@@ -204,11 +207,10 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		fmt.Println("\nComplete multipart upload succeeded.")
 	}
 
-	runRes, err := hathora.BuildsV2.RunBuildV2Deprecated(
+	runRes, err := hathora.BuildsV3.RunBuild(
 		ctx,
-		createRes.BuildWithMultipartUrls.BuildID,
-		operations.RunBuildV2DeprecatedRequestBody{},
-		appID,
+		createRes.CreatedBuildV3WithMultipartUrls.BuildID,
+		nil,
 	)
 
 	if err != nil {
@@ -221,16 +223,16 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, appID *string, buildTa
 		zap.L().Error("failed to stream output to console", zap.Error(err))
 	}
 
-	infoRes, err := hathora.BuildsV2.GetBuildInfoV2Deprecated(
+	infoRes, err := hathora.BuildsV3.GetBuild(
 		ctx,
-		createRes.BuildWithMultipartUrls.BuildID,
-		appID,
+		createRes.CreatedBuildV3WithMultipartUrls.BuildID,
+		nil,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve build info: %w", err)
 	}
 
-	return infoRes.Build, nil
+	return infoRes.BuildV3, nil
 }
 
 func createEtagXML(etags ...etagPart) string {
@@ -258,7 +260,7 @@ func buildFlagEnvVar(name string) string {
 var (
 	buildFlagEnvVarPrefix = globalFlagEnvVarPrefix + "BUILD_"
 
-	buildIDFlag = &workaround.IntFlag{
+	buildIDFlag = &cli.StringFlag{
 		Name:    "build-id",
 		Aliases: []string{"b"},
 		Sources: cli.NewValueSourceChain(
@@ -314,7 +316,7 @@ func (c *BuildConfig) Load(cmd *cli.Command) error {
 	}
 	c.GlobalConfig = global
 	c.SDK = setup.SDK(c.Token, c.BaseURL, c.Verbosity)
-	var build shared.Build
+	var build shared.BuildV3
 	output, err := OutputFormatterFor(cmd, build)
 	if err != nil {
 		return err
@@ -338,6 +340,7 @@ var (
 type CreateBuildConfig struct {
 	*BuildConfig
 	BuildTag string
+	BuildID  string
 	FilePath string
 }
 
@@ -350,8 +353,9 @@ func (c *CreateBuildConfig) Load(cmd *cli.Command) error {
 	}
 	c.BuildConfig = build
 	c.BuildTag = cmd.String(buildTagFlag.Name)
+	c.BuildID = cmd.String(buildIDFlag.Name)
 	c.FilePath = cmd.String(fileFlag.Name)
-	c.Log = c.Log.With(zap.String("build.tag", c.BuildTag))
+	c.Log = c.Log.With(zap.String("build.tag", c.BuildTag)).With(zap.String("build.id", c.BuildID))
 	return nil
 }
 
@@ -369,7 +373,7 @@ var (
 
 type OneBuildConfig struct {
 	*BuildConfig
-	BuildID int
+	BuildID string
 }
 
 var _ LoadableConfig = (*OneBuildConfig)(nil)
@@ -380,8 +384,8 @@ func (c *OneBuildConfig) Load(cmd *cli.Command) error {
 		return err
 	}
 	c.BuildConfig = build
-	c.BuildID = int(cmd.Int(buildIDFlag.Name))
-	c.Log = c.Log.With(zap.Int("build.id", c.BuildID))
+	c.BuildID = cmd.String(buildIDFlag.Name)
+	c.Log = c.Log.With(zap.String("build.id", c.BuildID))
 	return nil
 }
 

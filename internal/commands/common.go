@@ -110,10 +110,9 @@ func (c *GlobalConfig) Load(cmd *cli.Command) error {
 	if c.BaseURL == "" {
 		err = errors.Join(err, missingRequiredFlag(hathoraCloudEndpointFlag.Name))
 	}
-
 	appID := cmd.String(appIDFlag.Name)
 	if appID == "" {
-		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+		c.AppID = nil
 	} else {
 		c.AppID = &appID
 	}
@@ -167,9 +166,9 @@ func OutputFormatterFor(cmd *cli.Command, outputType any) (output.FormatWriter, 
 
 func BuildTextFormatter() output.FormatWriter {
 	// TODO: Allow commands to register their own formatters so that this one function doesn't have to know the desired format for every type
-	var build shared.Build
-	var deployment shared.DeploymentV2
-	var envVar shared.DeploymentV2Env
+	var build shared.BuildV3
+	var deployment shared.DeploymentV3
+	var envVar shared.DeploymentV3Env
 	var containerPort shared.ContainerPort
 	var timestamp time.Time
 	var long int64
@@ -201,7 +200,7 @@ func BuildTextFormatter() output.FormatWriter {
 		}),
 		output.WithoutFields(deployment, "AppID", "CreatedBy", "Env"),
 		output.WithFormatter(envVar,
-			func(e shared.DeploymentV2Env) string {
+			func(e shared.DeploymentV3Env) string {
 				return fmt.Sprintf("%s=%s", e.Name, e.Value)
 			},
 		),
@@ -253,7 +252,6 @@ func handleNewVersionAvailable(currentVersion string) {
 
 	prefixedVersion := "go" + currentVersion
 	showLatest := false
-	zap.L().Warn("Upgrade to CLI v1.0.0+ required. Builds/deployments created via this version are not supported on earlier versions. Update now to ensure full compatibility.")
 	if !version.IsValid(prefixedVersion) {
 		zap.L().Warn("You are using a development version of the hathora cli.")
 		showLatest = true

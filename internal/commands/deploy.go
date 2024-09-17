@@ -17,6 +17,7 @@ var Deploy = &cli.Command{
 	Name:  "deploy",
 	Usage: "create a build and a deployment in a combined flow",
 	Flags: subcommandFlags(
+		buildIDFlag,
 		buildTagFlag,
 		fileFlag,
 		fromLatestFlag,
@@ -40,12 +41,12 @@ var Deploy = &cli.Command{
 
 		useLatest := cmd.Bool(fromLatestFlag.Name)
 		if useLatest {
-			res, err := deploy.SDK.DeploymentsV2.GetLatestDeploymentV2Deprecated(ctx, deploy.AppID)
+			res, err := deploy.SDK.DeploymentsV3.GetLatestDeployment(ctx, deploy.AppID)
 			if err != nil {
 				return fmt.Errorf("unable to retrieve latest deployment: %w", err)
 			}
 
-			deploy.Merge(res.DeploymentV2, cmd.IsSet(idleTimeoutFlag.Name))
+			deploy.Merge(res.DeploymentV3, cmd.IsSet(idleTimeoutFlag.Name))
 		}
 
 		if err := deploy.Validate(); err != nil {
@@ -54,15 +55,15 @@ var Deploy = &cli.Command{
 			return err
 		}
 
-		createdBuild, err := doBuildCreate(ctx, deploy.SDK, deploy.AppID, deploy.BuildTag, deploy.FilePath)
+		createdBuild, err := doBuildCreate(ctx, deploy.SDK, deploy.BuildTag, deploy.BuildID, deploy.FilePath)
 		if err != nil {
 			return err
 		}
 
-		res, err := deploy.SDK.DeploymentsV2.CreateDeploymentV2Deprecated(
+		res, err := deploy.SDK.DeploymentsV3.CreateDeployment(
 			ctx,
-			createdBuild.BuildID,
-			shared.DeploymentConfigV2{
+			shared.DeploymentConfigV3{
+				BuildID:                  createdBuild.BuildID,
 				IdleTimeoutEnabled:       *deploy.IdleTimeoutEnabled,
 				RoomsPerProcess:          deploy.RoomsPerProcess,
 				TransportType:            deploy.TransportType,
@@ -78,7 +79,7 @@ var Deploy = &cli.Command{
 			return fmt.Errorf("failed to create a deployment: %w", err)
 		}
 
-		return deploy.Output.Write(res.DeploymentV2, os.Stdout)
+		return deploy.Output.Write(res.DeploymentV3, os.Stdout)
 	},
 }
 
@@ -102,13 +103,14 @@ func (c *DeployConfig) Load(cmd *cli.Command) error {
 	c.CreateDeploymentConfig = deployment
 
 	c.BuildTag = cmd.String(buildTagFlag.Name)
+	c.BuildID = cmd.String(buildIDFlag.Name)
 	c.FilePath = cmd.String(fileFlag.Name)
-	c.Log = c.Log.With(zap.String("build.tag", c.BuildTag))
+	c.Log = c.Log.With(zap.String("build.tag", c.BuildTag)).With(zap.String("build.id", c.BuildID))
 
 	return nil
 }
 
-func (c *DeployConfig) Merge(latest *shared.DeploymentV2, isIdleTimeoutDefault bool) {
+func (c *DeployConfig) Merge(latest *shared.DeploymentV3, isIdleTimeoutDefault bool) {
 	if latest == nil {
 		return
 	}
@@ -148,6 +150,10 @@ func (c *DeployConfig) Merge(latest *shared.DeploymentV2, isIdleTimeoutDefault b
 
 func (c *DeployConfig) Validate() error {
 	var err error
+
+	if c.AppID == nil || *c.AppID == "" {
+		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+	}
 
 	if c.RoomsPerProcess == 0 {
 		err = errors.Join(err, missingRequiredFlag(roomsPerProcessFlag.Name))
