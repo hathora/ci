@@ -2,6 +2,36 @@
 
 This repo houses the CLI that can be used to deploy your game server builds to Hathora Cloud in your CI/CD pipelines.
 
+## Hathora CLI Upgrade Notes
+
+This covers the relevant notes for users upgrading from previous CLI versions. We aim to cover compatibility changes that you must be aware of.
+
+For more details about changes on each release please refer to the [Official Release Notes](https://github.com/hathora/ci/releases).
+
+### Hathora CLI v1.0.0
+
+Hathora CLI v1.0.0 now uses Hathora AppsV2, ProcessesV3, BuildsV3 and DeploymentsV3 APIs. Using these APIs for a given application implicitly migrates it to Global Builds.
+
+**Nothing in your CLI command needs to be changed to migrate**. However,  usage of old SDKs should be updated to the latest versions (AppsV2, ProcessesV3, BuildsV3 and DeploymentsV3). This should be done before upgrading your continuous deployment to use Global Builds (CLI v1.0.0).
+
+When you create build with CLI v1.0.0, the following will be impacted on old APIs:
+
+- listing builds - new builds will not appear
+
+When you create a deployment with CLI v1.0.0, the following will be impacted on old APIs:
+
+- listing applications - deployment id and build id returned will be invalid
+- listing deployments - new deployments will not appear
+- listing processes - deployment id returned will be invalid
+
+Notes:
+
+- *appId* being passed into `hathora build` will now be ignored - it can safely be removed
+
+### Hathora CLI v 0.x.x
+
+Hathora CLI v0.x.x is no longer compatible with builds and application deployments created via the Hathora UI Console.
+
 ## Docs
 
 For documentation on how to use this CLI, check out our [docs.](https://hathora.dev/docs/guides/ci-cd)
