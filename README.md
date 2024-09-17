@@ -28,9 +28,9 @@ Notes:
 
 - *appId* being passed into `hathora build` will now be ignored - it can safely be removed
 
-### Hathora CLI v 0.x.x
+### Hathora CLI v0.1.13
 
-Hathora CLI v0.x.x is no longer compatible with builds and application deployments created via the Hathora UI Console.
+Hathora CLI v0.1.13 is no longer compatible with builds and application deployments created via the Hathora UI Console.
 
 ## Docs
 
