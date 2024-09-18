@@ -13,17 +13,17 @@ This covers the relevant notes for users upgrading from previous CLI versions. W
 
 For more details about changes on each release please refer to the [Official Release Notes](https://github.com/hathora/ci/releases).
 
-### Hathora CLI v1.0.0
+### Hathora CLI v0.2.0
 
-Hathora CLI v1.0.0 now uses Hathora AppsV2, ProcessesV3, BuildsV3 and DeploymentsV3 APIs. Using these APIs for a given application implicitly migrates it to Global Builds.
+Hathora CLI v0.2.0 now uses Hathora AppsV2, ProcessesV3, BuildsV3 and DeploymentsV3 APIs. Using these APIs for a given application implicitly migrates it to Global Builds.
 
-**Nothing in your CLI command needs to be changed to migrate**. However,  usage of old SDKs should be updated to the latest versions (AppsV2, ProcessesV3, BuildsV3 and DeploymentsV3). This should be done before upgrading your continuous deployment to use Global Builds (CLI v1.0.0).
+**Nothing in your CLI command needs to be changed to migrate**. However,  usage of old SDKs should be updated to the latest versions (AppsV2, ProcessesV3, BuildsV3 and DeploymentsV3). This should be done before upgrading your continuous deployment to use Global Builds (CLI v0.2.0).
 
-When you create build with CLI v1.0.0, the following will be impacted on old APIs:
+When you create build with CLI v0.2.0, the following will be impacted on old APIs:
 
 - listing builds - new builds will not appear
 
-When you create a deployment with CLI v1.0.0, the following will be impacted on old APIs:
+When you create a deployment with CLI v0.2.0, the following will be impacted on old APIs:
 
 - listing applications - deployment id and build id returned will be invalid
 - listing deployments - new deployments will not appear
@@ -33,9 +33,9 @@ Notes:
 
 - *appId* being passed into `hathora build` will now be ignored - it can safely be removed
 
-### Hathora CLI v0.x.x
+### Hathora CLI v0.1.x
 
-Hathora CLI v0.x.x is no longer compatible with builds and application deployments created via the Hathora UI Console.
+Hathora CLI v0.1.x is no longer compatible with builds and application deployments created via the Hathora UI Console.
 
 ## Development
 
