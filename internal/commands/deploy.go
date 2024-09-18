@@ -20,6 +20,7 @@ var Deploy = &cli.Command{
 		buildIDFlag,
 		buildTagFlag,
 		fileFlag,
+		hideUploadProgressFlag,
 		fromLatestFlag,
 		roomsPerProcessFlag,
 		transportTypeFlag,
@@ -55,7 +56,7 @@ var Deploy = &cli.Command{
 			return err
 		}
 
-		createdBuild, err := doBuildCreate(ctx, deploy.SDK, deploy.BuildTag, deploy.BuildID, deploy.FilePath)
+		createdBuild, err := doBuildCreate(ctx, deploy.SDK, deploy.BuildTag, deploy.BuildID, deploy.FilePath, deploy.HideUploadProgress)
 		if err != nil {
 			return err
 		}
@@ -89,8 +90,9 @@ var (
 
 type DeployConfig struct {
 	*CreateDeploymentConfig
-	BuildTag string
-	FilePath string
+	BuildTag           string
+	FilePath           string
+	HideUploadProgress bool
 }
 
 var _ LoadableConfig = (*DeployConfig)(nil)
@@ -105,6 +107,7 @@ func (c *DeployConfig) Load(cmd *cli.Command) error {
 	c.BuildTag = cmd.String(buildTagFlag.Name)
 	c.BuildID = cmd.String(buildIDFlag.Name)
 	c.FilePath = cmd.String(fileFlag.Name)
+	c.HideUploadProgress = cmd.Bool(hideUploadProgressFlag.Name)
 	c.Log = c.Log.With(zap.String("build.tag", c.BuildTag)).With(zap.String("build.id", c.BuildID))
 
 	return nil
