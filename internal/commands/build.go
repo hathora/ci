@@ -83,7 +83,7 @@ var Build = &cli.Command{
 			Name:    createCommandName,
 			Aliases: []string{"create-build"},
 			Usage:   "create a build",
-			Flags:   subcommandFlags(buildTagFlag, buildIDFlag, fileFlag),
+			Flags:   subcommandFlags(buildTagFlag, buildIDFlag, fileFlag, hideUploadProgressFlag),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				build, err := CreateBuildConfigFrom(cmd)
 				if err != nil {
@@ -91,7 +91,7 @@ var Build = &cli.Command{
 					cli.ShowSubcommandHelp(cmd)
 					return err
 				}
-				created, err := doBuildCreate(ctx, build.SDK, build.BuildTag, build.BuildID, build.FilePath)
+				created, err := doBuildCreate(ctx, build.SDK, build.BuildTag, build.BuildID, build.FilePath, build.HideUploadProgress)
 				if err != nil {
 					return err
 				}
@@ -128,7 +128,7 @@ var Build = &cli.Command{
 	},
 }
 
-func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, buildId, filePath string) (*shared.BuildV3, error) {
+func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, buildId, filePath string, hideUploadProgress bool) (*shared.BuildV3, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open file: %w", err)
@@ -182,7 +182,7 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, buildId, fil
 			if _, err := file.ReadAt(buf, start); err != nil {
 				fmt.Printf("failed to read part %d: %v\n", partNum, err)
 			}
-			etag, err := uploadFileToS3(reqURL, buf, &globalUploadProgress, fileInfo.Size())
+			etag, err := uploadFileToS3(reqURL, buf, &globalUploadProgress, fileInfo.Size(), hideUploadProgress)
 			if err != nil {
 				fmt.Printf("failed to upload part %d: %v\n", partNum, err)
 			}
@@ -295,6 +295,17 @@ var (
 		TakesFile: true,
 		Value:     ".", // default to current working directory
 	}
+	hideUploadProgressFlag = &cli.BoolFlag{
+		Name:    "hide-upload-progress",
+		Aliases: []string{"hup"},
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(buildFlagEnvVar("HIDE_UPLOAD_PROGRESS")),
+			altsrc.ConfigFile(configFlag.Name, "build.hide_upload_progress"),
+		),
+		Usage:      "hide the upload progress percentage from output",
+		Category:   "Build:",
+		Persistent: true,
+	}
 )
 
 var (
@@ -339,9 +350,10 @@ var (
 
 type CreateBuildConfig struct {
 	*BuildConfig
-	BuildTag string
-	BuildID  string
-	FilePath string
+	BuildTag           string
+	BuildID            string
+	FilePath           string
+	HideUploadProgress bool
 }
 
 var _ LoadableConfig = (*CreateBuildConfig)(nil)
@@ -355,6 +367,7 @@ func (c *CreateBuildConfig) Load(cmd *cli.Command) error {
 	c.BuildTag = cmd.String(buildTagFlag.Name)
 	c.BuildID = cmd.String(buildIDFlag.Name)
 	c.FilePath = cmd.String(fileFlag.Name)
+	c.HideUploadProgress = cmd.Bool(hideUploadProgressFlag.Name)
 	c.Log = c.Log.With(zap.String("build.tag", c.BuildTag)).With(zap.String("build.id", c.BuildID))
 	return nil
 }
@@ -401,11 +414,12 @@ type progressReaderType struct {
 	reader               io.Reader
 	globalTotal          int64
 	globalUploadProgress *atomic.Int64
+	hideUploadProgress   bool
 }
 
 func (pr *progressReaderType) Read(p []byte) (int, error) {
 	n, err := pr.reader.Read(p)
-	if n > 0 {
+	if n > 0 && !pr.hideUploadProgress {
 		pr.globalUploadProgress.Add(int64(n))
 		loaded := pr.globalUploadProgress.Load()
 		percentage := float64(loaded*100) / float64(pr.globalTotal)
@@ -414,12 +428,13 @@ func (pr *progressReaderType) Read(p []byte) (int, error) {
 	return n, err
 }
 
-func uploadFileToS3(preSignedURL string, byteBuffer []byte, globalUploadProgress *atomic.Int64, globalTotal int64) (string, error) {
+func uploadFileToS3(preSignedURL string, byteBuffer []byte, globalUploadProgress *atomic.Int64, globalTotal int64, hideUploadProgress bool) (string, error) {
 	requestBody := bytes.NewReader(byteBuffer)
 	progressReader := &progressReaderType{
 		reader:               requestBody,
 		globalTotal:          globalTotal,
 		globalUploadProgress: globalUploadProgress,
+		hideUploadProgress:   hideUploadProgress,
 	}
 	req, err := http.NewRequest("PUT", preSignedURL, progressReader)
 	if err != nil {
