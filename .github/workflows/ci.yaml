@@ -62,51 +62,51 @@ jobs:
         run: make test
 
 
-  publish-container-images:
-    name: Publish container images
-    runs-on: ubuntu-latest
-    needs: [prepare, test]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  # publish-container-images:
+  #   name: Publish container images
+  #   runs-on: ubuntu-latest
+  #   needs: [prepare, test]
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v3
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/hathora/ci
-          tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=ref,event=branch
-            type=sha
-          flavor: |
-            latest=auto
+  #     - name: Docker meta
+  #       id: meta
+  #       uses: docker/metadata-action@v5
+  #       with:
+  #         images: ghcr.io/hathora/ci
+  #         tags: |
+  #           type=semver,pattern={{version}}
+  #           type=semver,pattern={{major}}.{{minor}}
+  #           type=semver,pattern={{major}}
+  #           type=ref,event=branch
+  #           type=sha
+  #         flavor: |
+  #           latest=auto
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Login to GitHub Container Registry
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/bake-action@v4
-        with:
-          files: |
-            ./docker-bake.hcl
-            ${{ steps.meta.outputs.bake-file }}
-          targets: default
-          push: ${{ github.event_name != 'pull_request' }}
-          set: |
-            default.args.BUILD_VERSION=${{ needs.prepare.outputs.version }}
+  #     - name: Build and push
+  #       uses: docker/bake-action@v4
+  #       with:
+  #         files: |
+  #           ./docker-bake.hcl
+  #           ${{ steps.meta.outputs.bake-file }}
+  #         targets: default
+  #         push: ${{ github.event_name != 'pull_request' }}
+  #         set: |
+  #           default.args.BUILD_VERSION=${{ needs.prepare.outputs.version }}
 
   publish-binaries:
     name: Publish binary for ${{ matrix.os }} ${{ matrix.arch }}
