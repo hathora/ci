@@ -133,12 +133,6 @@ jobs:
           BINARY_SUFFIX: ${{ matrix.os == 'windows' && '.exe' || '' }}
         run: make build
 
-      - name: Install signtool
-        if: matrix.os == 'windows'
-        uses: crazy-max/ghaction-chocolatey@v3
-        with:
-          args: install signtool
-
       - name: Sign the Windows binary
         if: matrix.os == 'windows'
         run: |
