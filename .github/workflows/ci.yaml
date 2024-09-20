@@ -164,7 +164,7 @@ jobs:
         if: matrix.platform.os == 'windows'
         run: |
           echo "${{ secrets.CERTIFICATE_PFX }}" | base64 --decode > certificate.pfx
-          signtool.exe" sign /fd sha256 /a /tr http://timestamp.digicert.com /td sha256 /f certificate.pfx bin/hathora-windows-${{ matrix.arch }}.exe
+          signtool.exe sign /fd sha256 /a /tr http://timestamp.digicert.com /td sha256 /f certificate.pfx bin/hathora-windows-${{ matrix.arch }}.exe
           del certificate.pfx
 
       - name: Upload artifacts
