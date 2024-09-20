@@ -4,6 +4,7 @@ on:
   schedule:
     # Run at 10am PST / 5pm UTC weekdays
     - cron: '0 17 * * 1-5'
+  workflow_dispatch:
 
 env:
   AWS_ACCOUNT_ID: REPLACE_ME
