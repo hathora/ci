@@ -140,10 +140,9 @@ jobs:
       - name: Sign the Windows binary
         if: matrix.platform.os == 'windows'
         run: |
-          Get-ChildItem "C:\Program Files (x86)\Windows Kits\10" -Recurse
-#          echo "${{ secrets.CERTIFICATE_PFX }}" | base64 --decode > certificate.pfx
-#          & "C:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe" sign /fd sha256 /a /tr http://timestamp.digicert.com /td sha256 /f certificate.pfx "bin\hathora-windows-${{ matrix.arch }}.exe"
-#          del certificate.pfx
+          echo "${{ secrets.CERTIFICATE_PFX }}" | base64 --decode > certificate.pfx
+          & "C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe" sign /fd sha256 /a /tr http://timestamp.digicert.com /td sha256 /f certificate.pfx "bin\hathora-windows-${{ matrix.arch }}.exe"
+          del certificate.pfx
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
