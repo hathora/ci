@@ -5,6 +5,9 @@ on:
     # Run at 10am PST / 5pm UTC weekdays
     - cron: '0 17 * * 1-5'
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 env:
   AWS_ACCOUNT_ID: REPLACE_ME
