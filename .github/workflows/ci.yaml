@@ -135,6 +135,7 @@ jobs:
 
       - name: Add signtool to the PATH
         if: matrix.os == 'windows'
+        shell: pwsh
         run: |
           $signtoolPath = Get-ChildItem -Path C:\ -Recurse -Filter signtool.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
             if ($signtoolPath) {
