@@ -124,6 +124,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check signtool
+        if: matrix.platform.os == 'windows'
+        run: where signtool.exe
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
