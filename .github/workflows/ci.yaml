@@ -109,13 +109,17 @@ jobs:
             default.args.BUILD_VERSION=${{ needs.prepare.outputs.version }}
 
   publish-binaries:
-    name: Publish binary for ${{ matrix.os }} ${{ matrix.arch }}
+    name: Publish binary for ${{ matrix.platform.os }} ${{ matrix.arch }}
     needs: [prepare, test]
     strategy:
       matrix:
-        os: [linux, darwin, windows]
+        platform: [
+          { os: 'linux', runner: 'ubuntu-latest' },
+          { os: 'darwin', runner: 'macos-latest' },
+          { os: 'windows', runner: 'windows-latest' }
+        ]
         arch: [amd64, arm64]
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.platform.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -127,47 +131,46 @@ jobs:
 
       - name: Build binaries
         env:
-          TARGETOS: ${{ matrix.os }}
+          TARGETOS: ${{ matrix.platform.os }}
           TARGETARCH: ${{ matrix.arch }}
           BUILD_VERSION: ${{ needs.prepare.outputs.version }}
-          BINARY_SUFFIX: ${{ matrix.os == 'windows' && '.exe' || '' }}
+          BINARY_SUFFIX: ${{ matrix.platform.os == 'windows' && '.exe' || '' }}
         run: make build
 
-#      - name: Add signtool to the PATH
+      - name: Add signtool to the PATH
+        if: matrix.platform.os == 'windows'
+        run: |
+          $signtoolPath = Get-ChildItem -Path "C:\Program Files (x86)\Windows Kits" -Recurse -Filter signtool.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
+            if ($signtoolPath) {
+            Write-Output "::set-output name=path::$signtoolPath"
+          } else {
+            Write-Output "::error::signtool.exe not found!"
+          }
+          echo "${{ steps.find-signtool.outputs.path }}" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+#      - name: Add signtool.exe
 #        if: matrix.os == 'windows'
+#        uses: KamaranL/add-signtool-action@v1
+#        id: signtool
+
+#      - name: Set SIGNTOOL_DIR to signtool.exe path
+#        if: matrix.os == 'windows'
+#        run: Write-Output "$env:SIGNTOOL_DIR"
 #        shell: pwsh
-#        run: |
-#          $signtoolPath = Get-ChildItem -Path C:\ -Recurse -Filter signtool.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
-#            if ($signtoolPath) {
-#            Write-Output "::set-output name=path::$signtoolPath"
-#          } else {
-#            Write-Output "::error::signtool.exe not found!"
-#          }
-#          echo "${{ steps.find-signtool.outputs.path }}" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-
-      - name: Add signtool.exe
-        if: matrix.os == 'windows'
-        uses: KamaranL/add-signtool-action@v1
-        id: signtool
-
-      - name: Set SIGNTOOL_DIR to signtool.exe path
-        if: matrix.os == 'windows'
-        run: Write-Output "$env:SIGNTOOL_DIR"
-        shell: pwsh
-        env:
-          SIGNTOOL_DIR: ${{ steps.signtool.outputs.signtool-x64 }}
+#        env:
+#          SIGNTOOL_DIR: ${{ steps.signtool.outputs.signtool-x64 }}
 
       - name: Sign the Windows binary
-        if: matrix.os == 'windows'
+        if: matrix.platform.os == 'windows'
         run: |
           echo "${{ secrets.CERTIFICATE_PFX }}" | base64 --decode > certificate.pfx
-          "${{ env.SIGNTOOL_DIR }}\signtool.exe" sign /fd sha256 /a /tr http://timestamp.digicert.com /td sha256 /f certificate.pfx bin/hathora-windows-${{ matrix.arch }}.exe
+          signtool.exe" sign /fd sha256 /a /tr http://timestamp.digicert.com /td sha256 /f certificate.pfx bin/hathora-windows-${{ matrix.arch }}.exe
           del certificate.pfx
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: hathora-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.os == 'windows' && '.exe' || '' }}
+          name: hathora-${{ matrix.platform.os }}-${{ matrix.arch }}${{ matrix.platform.os == 'windows' && '.exe' || '' }}
           path: bin/hathora-*
 
   release:
