@@ -164,17 +164,17 @@ jobs:
 #          }
 #          echo "${{ steps.find-signtool.outputs.path }}" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      - name: Add signtool.exe
-        if: matrix.platform.os == 'windows'
-        uses: KamaranL/add-signtool-action@v1
-        id: signtool
-
-      - name: Set SIGNTOOL_DIR to signtool.exe path
-        if: matrix.platform.os == 'windows'
-        run: Write-Output "$env:SIGNTOOL_DIR"
-        shell: pwsh
-        env:
-          SIGNTOOL_DIR: ${{ steps.signtool.outputs.signtool-x64 }}
+#      - name: Add signtool.exe
+#        if: matrix.platform.os == 'windows'
+#        uses: KamaranL/add-signtool-action@v1
+#        id: signtool
+#
+#      - name: Set SIGNTOOL_DIR to signtool.exe path
+#        if: matrix.platform.os == 'windows'
+#        run: Write-Output "$env:SIGNTOOL_DIR"
+#        shell: pwsh
+#        env:
+#          SIGNTOOL_DIR: ${{ steps.signtool.outputs.signtool-x64 }}
 
       - name: Sign the Windows binary
         if: matrix.platform.os == 'windows'
