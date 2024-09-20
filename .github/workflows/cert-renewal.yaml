@@ -8,6 +8,7 @@ on:
 
 env:
   AWS_ACCOUNT_ID: REPLACE_ME
+  AWS_ROLE_ARN: REPLACE_ME
   TERRAFORM_PATH: terraform
 
 jobs:
@@ -25,7 +26,7 @@ jobs:
      - name: Configure AWS Credentials
        uses: aws-actions/configure-aws-credentials@v4
        with:
-         role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/ci-runner
+         role-to-assume: ${{ env.AWS_ROLE_ARN }}
          aws-region: us-west-2
 
      - name: Terraform Init
