@@ -129,16 +129,12 @@ var Build = &cli.Command{
 }
 
 func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, buildId, filePath string, hideUploadProgress bool) (*shared.BuildV3, error) {
-	file, err := os.Open(filePath)
+	file, err := archive.RequireTGZ(filePath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to open file: %w", err)
+		return nil, fmt.Errorf("no build file available for run: %w", err)
 	}
-	fileInfo, err := file.Stat()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get file info: %w", err)
-	}
-
-	params := shared.CreateMultipartBuildParams{BuildSizeInBytes: float64(fileInfo.Size())}
+	fileSize := int64(len(file.Content))
+	params := shared.CreateMultipartBuildParams{BuildSizeInBytes: float64(fileSize)}
 	if buildTag != "" {
 		params.BuildTag = sdk.String(buildTag)
 	}
@@ -153,10 +149,6 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, buildId, fil
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a build: %w", err)
-	}
-
-	if _, err = archive.RequireTGZ(filePath); err != nil {
-		return nil, fmt.Errorf("no build file available for run: %w", err)
 	}
 
 	if createRes.CreatedBuildV3WithMultipartUrls == nil {
@@ -175,14 +167,12 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, buildId, fil
 			maxChunkSize := int64(createRes.CreatedBuildV3WithMultipartUrls.MaxChunkSize)
 
 			start := maxChunkSize * (partNum - 1)
-			end := min(partNum*maxChunkSize, fileInfo.Size())
+			end := min(partNum*maxChunkSize, fileSize)
 			size := end - start
 			buf := make([]byte, size)
 
-			if _, err := file.ReadAt(buf, start); err != nil {
-				fmt.Printf("failed to read part %d: %v\n", partNum, err)
-			}
-			etag, err := uploadFileToS3(reqURL, buf, &globalUploadProgress, fileInfo.Size(), hideUploadProgress)
+			copy(buf, file.Content[start:])
+			etag, err := uploadFileToS3(reqURL, buf, &globalUploadProgress, fileSize, hideUploadProgress)
 			if err != nil {
 				fmt.Printf("failed to upload part %d: %v\n", partNum, err)
 			}
