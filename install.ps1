@@ -1,6 +1,7 @@
 # Enable strict mode and exit on error
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+$ProgressPreference = "SilentlyContinue"
 
 $repoOwner = "hathora"
 $repoName = "ci"
