@@ -48,6 +48,22 @@ func Test_DeploymentEnvVarShorthand(t *testing.T) {
 			input:     "",
 			expectErr: true,
 		},
+		{
+			name:  "complex cli flag in single quotes",
+			input: `KEY='-SomeFlag="With Spaces,And Commas"'`,
+			expect: &shared.DeploymentConfigV3Env{
+				Name:  "KEY",
+				Value: `-SomeFlag="With Spaces,And Commas"`,
+			},
+		},
+		{
+			name:  "complex cli flag in double quotes",
+			input: `KEY="-SomeFlag='With Spaces,And Commas'"`,
+			expect: &shared.DeploymentConfigV3Env{
+				Name:  "KEY",
+				Value: `-SomeFlag='With Spaces,And Commas'`,
+			},
+		},
 	}
 
 	for _, tt := range tests {
