@@ -18,14 +18,19 @@ if ($arch -eq "AMD64") {
     exit 1
 }
 
-# Set the download URL for the Windows binary based on the architecture
-$downloadUrl = "https://github.com/$repoOwner/$repoName/releases/latest/download/$binaryName-windows-$arch.exe"
-
 # Set the install directory
 $installDir = "$env:LOCALAPPDATA\Microsoft\WindowsApps"
 
+# Set the download URL for the Windows binary based on the architecture and version
+if ($env:HATHORA_CLI_VERSION) {
+    $downloadUrl = "https://github.com/$repoOwner/$repoName/releases/download/$env:HATHORA_CLI_VERSION/$binaryName-windows-$arch.exe"
+    Write-Host "Downloading and installing $binaryName version $env:HATHORA_CLI_VERSION for $arch to $installDir..."
+} else {
+    $downloadUrl = "https://github.com/$repoOwner/$repoName/releases/latest/download/$binaryName-windows-$arch.exe"
+    Write-Host "Downloading and installing latest version of $binaryName for $arch to $installDir..."
+}
+
 # Download and install the binary directly to the destination
-Write-Host "Downloading and installing $binaryName for $arch to $installDir..."
 Invoke-WebRequest -Uri $downloadUrl -OutFile "$installDir\$binaryName.exe"
 
 Write-Host "Installation complete!"
