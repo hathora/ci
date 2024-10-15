@@ -44,19 +44,11 @@ func Test_DeploymentEnvVarShorthand(t *testing.T) {
 			expectErr: true,
 		},
 		{
-			name:  "value with double quotes within single quotes",
-			input: `KEY='-SomeFlag="With Spaces,And Commas"'`,
+			name:  "nested flag",
+			input: `KEY=-SomeFlag="With Spaces,And Commas"`,
 			expect: &shared.DeploymentConfigV3Env{
 				Name:  "KEY",
 				Value: `-SomeFlag="With Spaces,And Commas"`,
-			},
-		},
-		{
-			name:  "value with singles quotes within double quotes",
-			input: `KEY="-SomeFlag='With Spaces,And Commas'"`,
-			expect: &shared.DeploymentConfigV3Env{
-				Name:  "KEY",
-				Value: `-SomeFlag='With Spaces,And Commas'`,
 			},
 		},
 	}

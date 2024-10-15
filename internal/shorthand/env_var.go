@@ -17,28 +17,10 @@ func ParseDeploymentEnvVar(s string) (*shared.DeploymentConfigV3Env, error) {
 		return nil, fmt.Errorf("invalid env var format: %s", s)
 	}
 
-	key := strings.TrimSpace(parts[0])
-	value := strings.TrimSpace(parts[1])
-	value = TrimSingleOuterQuote(value)
-
 	return &shared.DeploymentConfigV3Env{
-		Name:  key,
-		Value: value,
+		Name:  strings.TrimSpace(parts[0]),
+		Value: strings.TrimSpace(parts[1]),
 	}, nil
-}
-
-func TrimSingleOuterQuote(s string) string {
-	if len(s) > 0 {
-		lastChar := s[len(s)-1]
-		if lastChar == '"' {
-			s = strings.Trim(s, `"`)
-		}
-		if lastChar == '\'' {
-			s = strings.Trim(s, `'`)
-		}
-	}
-
-	return s
 }
 
 func MapEnvToEnvConfig(input []shared.DeploymentV3Env) []shared.DeploymentConfigV3Env {
