@@ -34,11 +34,6 @@ func Test_DeploymentEnvVarShorthand(t *testing.T) {
 			},
 		},
 		{
-			name:      "name and value and extra",
-			input:     "NAME=VALUE=EXTRA",
-			expectErr: true,
-		},
-		{
 			name:      "key only",
 			input:     "KEY",
 			expectErr: true,
@@ -47,6 +42,14 @@ func Test_DeploymentEnvVarShorthand(t *testing.T) {
 			name:      "empty string",
 			input:     "",
 			expectErr: true,
+		},
+		{
+			name:  "nested flag",
+			input: `KEY=-SomeFlag="With Spaces,And Commas"`,
+			expect: &shared.DeploymentConfigV3Env{
+				Name:  "KEY",
+				Value: `-SomeFlag="With Spaces,And Commas"`,
+			},
 		},
 	}
 

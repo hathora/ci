@@ -12,7 +12,7 @@ func ParseDeploymentEnvVar(s string) (*shared.DeploymentConfigV3Env, error) {
 		return nil, fmt.Errorf("env var cannot be empty")
 	}
 
-	parts := strings.Split(s, "=")
+	parts := strings.SplitN(s, "=", 2)
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("invalid env var format: %s", s)
 	}
