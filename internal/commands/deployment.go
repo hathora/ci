@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/urfave/cli/v3"
 	"go.uber.org/zap"
@@ -259,7 +260,7 @@ var (
 	envVarsFlag = &cli.StringSliceFlag{
 		Name:     "env",
 		Sources:  cli.EnvVars(deploymentEnvVar("ENV")),
-		Usage:    "`<KEY=VALUE>` formatted environment variables",
+		Usage:    "`<KEY=VALUE>` formatted environment variables (use quotes for values with spaces or commas)",
 		Category: "Deployment:",
 	}
 
@@ -306,6 +307,7 @@ func parseContainerPorts(ports []string) ([]shared.ContainerPort, error) {
 }
 
 func parseEnvVars(envVars []string) ([]shared.DeploymentConfigV3Env, error) {
+	envVars = fixOverZealousCommaSplitting(envVars)
 	output := make([]shared.DeploymentConfigV3Env, 0, len(envVars))
 	for _, envVar := range envVars {
 		env, err := shorthand.ParseDeploymentEnvVar(envVar)
@@ -315,6 +317,28 @@ func parseEnvVars(envVars []string) ([]shared.DeploymentConfigV3Env, error) {
 		output = append(output, *env)
 	}
 	return output, nil
+}
+
+func fixOverZealousCommaSplitting(envVars []string) []string {
+	var fixedEnvVars []string
+	var currentPair string
+	for _, val := range envVars {
+		if strings.Contains(val, "=") && !strings.HasSuffix(currentPair, "=") {
+			// Start a new key-value pair
+			if currentPair != "" {
+				fixedEnvVars = append(fixedEnvVars, currentPair)
+			}
+			currentPair = val
+		} else {
+			// Append to the current key-value pair
+			currentPair += "," + val
+		}
+	}
+	if currentPair != "" {
+		fixedEnvVars = append(fixedEnvVars, currentPair)
+	}
+
+	return fixedEnvVars
 }
 
 var (
