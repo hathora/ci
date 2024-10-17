@@ -109,13 +109,17 @@ jobs:
             default.args.BUILD_VERSION=${{ needs.prepare.outputs.version }}
 
   publish-binaries:
-    name: Publish binary for ${{ matrix.os }} ${{ matrix.arch }}
-    runs-on: ubuntu-latest
+    name: Publish binary for ${{ matrix.platform.os }} ${{ matrix.arch }}
     needs: [prepare, test]
     strategy:
       matrix:
-        os: [linux, darwin, windows]
+        platform: [
+          { os: 'linux', runner: 'ubuntu-latest' },
+          { os: 'darwin', runner: 'macos-latest' },
+          { os: 'windows', runner: 'windows-latest' }
+        ]
         arch: [amd64, arm64]
+    runs-on: ${{ matrix.platform.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -127,16 +131,23 @@ jobs:
 
       - name: Build binaries
         env:
-          TARGETOS: ${{ matrix.os }}
+          TARGETOS: ${{ matrix.platform.os }}
           TARGETARCH: ${{ matrix.arch }}
           BUILD_VERSION: ${{ needs.prepare.outputs.version }}
-          BINARY_SUFFIX: ${{ matrix.os == 'windows' && '.exe' || '' }}
+          BINARY_SUFFIX: ${{ matrix.platform.os == 'windows' && '.exe' || '' }}
         run: make build
+
+      - name: Sign the Windows binary
+        if: matrix.platform.os == 'windows'
+        run: |
+          echo "${{ secrets.SIGNING_CERTIFICATE_PFX }}" | base64 --decode > certificate.pfx
+          & "C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe" sign /fd sha256 /a /tr http://timestamp.digicert.com /td sha256 /f certificate.pfx "bin\hathora-windows-${{ matrix.arch }}.exe"
+          del certificate.pfx
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: hathora-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.os == 'windows' && '.exe' || '' }}
+          name: hathora-${{ matrix.platform.os }}-${{ matrix.arch }}${{ matrix.platform.os == 'windows' && '.exe' || '' }}
           path: bin/hathora-*
 
   release:
