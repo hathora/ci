@@ -140,7 +140,7 @@ jobs:
       - name: Sign the Windows binary
         if: matrix.platform.os == 'windows'
         run: |
-          echo "${{ secrets.SIGNING_CERTIFICATE_PFX }}" > certificate.pfx
+          echo "${{ secrets.SIGNING_CERTIFICATE_PFX }}" | base64 --decode > certificate.pfx
           & "C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe" sign /fd sha256 /a /tr http://timestamp.digicert.com /td sha256 /f certificate.pfx "bin\hathora-windows-${{ matrix.arch }}.exe"
           del certificate.pfx
 
