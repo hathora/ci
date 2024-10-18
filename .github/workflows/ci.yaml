@@ -5,13 +5,12 @@ on:
     branches:
       - main
     tags:
-      - '*'
+      - "*"
   pull_request:
     branches:
       - main
 
 jobs:
-
   prepare:
     name: Prepare
     runs-on: ubuntu-latest
@@ -60,7 +59,6 @@ jobs:
 
       - name: Test
         run: make test
-
 
   publish-container-images:
     name: Publish container images
@@ -113,11 +111,12 @@ jobs:
     needs: [prepare, test]
     strategy:
       matrix:
-        platform: [
-          { os: 'linux', runner: 'ubuntu-latest' },
-          { os: 'darwin', runner: 'macos-latest' },
-          { os: 'windows', runner: 'windows-latest' }
-        ]
+        platform:
+          [
+            { os: "linux", runner: "ubuntu-latest" },
+            { os: "darwin", runner: "macos-latest" },
+            { os: "windows", runner: "windows-latest" },
+          ]
         arch: [amd64, arm64]
     runs-on: ${{ matrix.platform.runner }}
     steps:
@@ -141,7 +140,7 @@ jobs:
         if: matrix.platform.os == 'windows'
         run: |
           echo "${{ secrets.SIGNING_CERTIFICATE_PFX }}" | base64 --decode > certificate.pfx
-          & "C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe" sign /fd sha256 /a /tr http://timestamp.digicert.com /td sha256 /f certificate.pfx "bin\hathora-windows-${{ matrix.arch }}.exe"
+          & "C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe" sign /debug /fd sha256 /a /tr http://timestamp.digicert.com /td sha256 /f certificate.pfx "bin\hathora-windows-${{ matrix.arch }}.exe"
           del certificate.pfx
 
       - name: Upload artifacts
