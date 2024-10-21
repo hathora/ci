@@ -141,7 +141,7 @@ jobs:
         run: |
           $decodedCertificate = [System.Convert]::FromBase64String("${{ secrets.SIGNING_CERTIFICATE_PFX }}")
           [System.IO.File]::WriteAllBytes("certificate.pfx", $decodedCertificate)
-          & "C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe" sign /debug /fd sha256 /a /tr http://timestamp.digicert.com /td sha256 /f certificate.pfx "bin\hathora-windows-${{ matrix.arch }}.exe"
+          & "C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe" sign /debug /fd sha384 /f certificate.pfx "bin\hathora-windows-${{ matrix.arch }}.exe"
           del certificate.pfx
 
       - name: Upload artifacts
