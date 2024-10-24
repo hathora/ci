@@ -5,13 +5,12 @@ on:
     branches:
       - main
     tags:
-      - '*'
+      - "*"
   pull_request:
     branches:
       - main
 
 jobs:
-
   prepare:
     name: Prepare
     runs-on: ubuntu-latest
@@ -61,7 +60,6 @@ jobs:
       - name: Test
         run: make test
 
-
   publish-container-images:
     name: Publish container images
     runs-on: ubuntu-latest
@@ -109,13 +107,18 @@ jobs:
             default.args.BUILD_VERSION=${{ needs.prepare.outputs.version }}
 
   publish-binaries:
-    name: Publish binary for ${{ matrix.os }} ${{ matrix.arch }}
-    runs-on: ubuntu-latest
+    name: Publish binary for ${{ matrix.platform.os }} ${{ matrix.arch }}
     needs: [prepare, test]
     strategy:
       matrix:
-        os: [linux, darwin, windows]
+        platform:
+          [
+            { os: "linux", runner: "ubuntu-latest" },
+            { os: "darwin", runner: "macos-latest" },
+            { os: "windows", runner: "windows-latest" },
+          ]
         arch: [amd64, arm64]
+    runs-on: ${{ matrix.platform.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -127,16 +130,24 @@ jobs:
 
       - name: Build binaries
         env:
-          TARGETOS: ${{ matrix.os }}
+          TARGETOS: ${{ matrix.platform.os }}
           TARGETARCH: ${{ matrix.arch }}
           BUILD_VERSION: ${{ needs.prepare.outputs.version }}
-          BINARY_SUFFIX: ${{ matrix.os == 'windows' && '.exe' || '' }}
+          BINARY_SUFFIX: ${{ matrix.platform.os == 'windows' && '.exe' || '' }}
         run: make build
+
+      - name: Sign the Windows binary
+        if: matrix.platform.os == 'windows'
+        run: |
+          $decodedCertificate = [System.Convert]::FromBase64String("${{ secrets.SIGNING_CERTIFICATE_PFX }}")
+          [System.IO.File]::WriteAllBytes("certificate.pfx", $decodedCertificate)
+          & "C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe" sign /debug /fd sha256 /f certificate.pfx /u 1.3.6.1.5.5.7.3.2 "bin\hathora-windows-${{ matrix.arch }}.exe"
+          del certificate.pfx
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: hathora-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.os == 'windows' && '.exe' || '' }}
+          name: hathora-${{ matrix.platform.os }}-${{ matrix.arch }}${{ matrix.platform.os == 'windows' && '.exe' || '' }}
           path: bin/hathora-*
 
   release:
