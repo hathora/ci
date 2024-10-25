@@ -194,7 +194,7 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, buildId, fil
 	if resp.StatusCode != http.StatusOK {
 		fmt.Printf("\nComplete multipart upload failed with status: %s\n", resp.Status)
 	} else {
-		fmt.Println("\nComplete multipart upload succeeded.")
+		zap.L().Debug("Complete multiplart upload succeeded")
 	}
 
 	runRes, err := hathora.BuildsV3.RunBuild(
