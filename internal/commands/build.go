@@ -257,9 +257,8 @@ var (
 			cli.EnvVar(buildFlagEnvVar("ID")),
 			altsrc.ConfigFile(configFlag.Name, "build.id"),
 		),
-		Usage:      "the `<id>` of the build in Hathora",
-		Category:   "Build:",
-		Persistent: true,
+		Usage:    "the `<id>` of the build in Hathora",
+		Category: "Build:",
 	}
 
 	buildTagFlag = &cli.StringFlag{
@@ -271,6 +270,7 @@ var (
 		),
 		Category: "Build:",
 		Usage:    "`<tag>` or external version to associate with the build",
+		Local:    true,
 	}
 
 	fileFlag = &cli.StringFlag{
@@ -284,6 +284,7 @@ var (
 		Category:  "Build:",
 		TakesFile: true,
 		Value:     ".", // default to current working directory
+		Local:     true,
 	}
 	hideUploadProgressFlag = &cli.BoolFlag{
 		Name:    "hide-upload-progress",
@@ -292,9 +293,8 @@ var (
 			cli.EnvVar(buildFlagEnvVar("HIDE_UPLOAD_PROGRESS")),
 			altsrc.ConfigFile(configFlag.Name, "build.hide_upload_progress"),
 		),
-		Usage:      "hide the upload progress percentage from output",
-		Category:   "Build:",
-		Persistent: true,
+		Usage:    "hide the upload progress percentage from output",
+		Category: "Build:",
 	}
 )
 

@@ -20,7 +20,6 @@ var _ cli.VisibleFlag = &IntFlag{}
 var _ cli.ActionableFlag = &IntFlag{}
 var _ cli.DocGenerationMultiValueFlag = &IntFlag{}
 var _ cli.CategorizableFlag = &IntFlag{}
-var _ cli.PersistentFlag = &IntFlag{}
 
 // Apply implements cli.Flag.
 func (i *IntFlag) Apply(fs *flag.FlagSet) error {
@@ -80,9 +79,9 @@ func (i *IntFlag) IsVisible() bool {
 	return i.unwrap().IsVisible()
 }
 
-// IsPersistent implements cli.PersistentFlag.
-func (i *IntFlag) IsPersistent() bool {
-	return i.unwrap().IsPersistent()
+// IsPersistent implements cli.DefaultVisibleFlag
+func (i *IntFlag) IsDefaultVisible() bool {
+	return i.unwrap().IsDefaultVisible()
 }
 
 // GetCategory implements cli.CategorizableFlag.

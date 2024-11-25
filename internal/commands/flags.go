@@ -17,16 +17,14 @@ var (
 		Usage:       "the `<format>` of the output. Supported values: (json, text, buildIdValue)",
 		Value:       "text",
 		DefaultText: "text",
-		Persistent:  true,
 		Category:    "Global:",
 	}
 
 	outputPrettyFlag = &cli.BoolFlag{
-		Name:       "pretty",
-		Usage:      "enable pretty output (json only)",
-		Value:      true,
-		Category:   "Global:",
-		Persistent: true,
+		Name:     "pretty",
+		Usage:    "enable pretty output (json only)",
+		Value:    true,
+		Category: "Global:",
 	}
 
 	appIDFlag = &cli.StringFlag{
@@ -36,17 +34,15 @@ var (
 			cli.EnvVar(globalFlagEnvVar("APP_ID")),
 			altsrc.ConfigFile(configFlag.Name, "app.id"),
 		),
-		Usage:      "the `<id>` of the app in Hathora",
-		Category:   "Global:",
-		Persistent: true,
+		Usage:    "the `<id>` of the app in Hathora",
+		Category: "Global:",
 	}
 
 	verboseFlag = &cli.BoolFlag{
-		Name:       "verbose",
-		Aliases:    []string{"v"},
-		Usage:      "enable verbose logging",
-		Category:   "Global:",
-		Persistent: true,
+		Name:     "verbose",
+		Aliases:  []string{"v"},
+		Usage:    "enable verbose logging",
+		Category: "Global:",
 	}
 
 	verbosityFlag = &cli.IntFlag{
@@ -55,10 +51,9 @@ var (
 			cli.EnvVar(globalFlagEnvVar("VERBOSITY")),
 			altsrc.ConfigFile(configFlag.Name, "global.verbosity"),
 		),
-		Usage:      "set the logging verbosity `<level>` (0-3)",
-		Value:      0,
-		Category:   "Global:",
-		Persistent: true,
+		Usage:    "set the logging verbosity `<level>` (0-3)",
+		Value:    0,
+		Category: "Global:",
 	}
 
 	hathoraCloudEndpointFlag = &cli.StringFlag{
@@ -71,24 +66,21 @@ var (
 		Value:       "https://api.hathora.dev",
 		DefaultText: "https://api.hathora.dev",
 		Category:    "Global:",
-		Persistent:  true,
 	}
 
 	tokenFlag = &cli.StringFlag{
-		Name:       "token",
-		Aliases:    []string{"t"},
-		Sources:    cli.EnvVars(globalFlagEnvVar("TOKEN")),
-		Usage:      "`<access-token>` for authenticating with the API",
-		Category:   "Global:",
-		Persistent: true,
+		Name:     "token",
+		Aliases:  []string{"t"},
+		Sources:  cli.EnvVars(globalFlagEnvVar("TOKEN")),
+		Usage:    "`<access-token>` for authenticating with the API",
+		Category: "Global:",
 	}
 
 	configFlag = &cli.StringFlag{
-		Name:       "config",
-		Aliases:    []string{"c"},
-		Usage:      "`<path>` to the configuration file",
-		Category:   "Global:",
-		Persistent: true,
+		Name:     "config",
+		Aliases:  []string{"c"},
+		Usage:    "`<path>` to the configuration file",
+		Category: "Global:",
 	}
 
 	GlobalFlags = []cli.Flag{

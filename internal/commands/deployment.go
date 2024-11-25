@@ -201,6 +201,7 @@ var (
 		Usage:    "the `<id>` of the deployment in Hathora",
 		Required: true,
 		Category: "Deployment:",
+		Local:    true,
 	}
 
 	idleTimeoutFlag = &cli.BoolFlag{
@@ -209,9 +210,8 @@ var (
 			cli.EnvVar(deploymentEnvVar("IDLE_TIMEOUT_ENABLED")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.idle-timeout-enabled"),
 		),
-		Usage:      "whether to shut down processes that have had no new connections or rooms for five minutes",
-		Persistent: true,
-		Category:   "Deployment:",
+		Usage:    "whether to shut down processes that have had no new connections or rooms for five minutes",
+		Category: "Deployment:",
 	}
 
 	roomsPerProcessFlag = &workaround.IntFlag{
@@ -220,9 +220,8 @@ var (
 			cli.EnvVar(deploymentEnvVar("ROOMS_PER_PROCESS")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.rooms-per-process"),
 		),
-		Usage:      "`<count>` of the rooms that can be scheduled in a process",
-		Persistent: true,
-		Category:   "Deployment:",
+		Usage:    "`<count>` of the rooms that can be scheduled in a process",
+		Category: "Deployment:",
 	}
 
 	transportTypeFlag = &cli.StringFlag{
@@ -231,9 +230,8 @@ var (
 			cli.EnvVar(deploymentEnvVar("TRANSPORT_TYPE")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.transport-type"),
 		),
-		Usage:      "`<protocol>` for the exposed port to use (tcp, udp, tls)",
-		Persistent: true,
-		Category:   "Deployment:",
+		Usage:    "`<protocol>` for the exposed port to use (tcp, udp, tls)",
+		Category: "Deployment:",
 	}
 
 	containerPortFlag = &workaround.IntFlag{
@@ -242,9 +240,8 @@ var (
 			cli.EnvVar(deploymentEnvVar("CONTAINER_PORT")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.container-port"),
 		),
-		Usage:      "`<port>` to expose on the deployed container",
-		Persistent: true,
-		Category:   "Deployment:",
+		Usage:    "`<port>` to expose on the deployed container",
+		Category: "Deployment:",
 	}
 
 	additionalContainerPortsFlag = &cli.StringSliceFlag{
@@ -255,6 +252,7 @@ var (
 		),
 		Usage:    "additional `<port>` to expose; format: name:port/protocol",
 		Category: "Deployment:",
+		Local:    true,
 	}
 
 	envVarsFlag = &cli.StringSliceFlag{
@@ -262,6 +260,7 @@ var (
 		Sources:  cli.EnvVars(deploymentEnvVar("ENV")),
 		Usage:    "`<KEY=VALUE>` formatted environment variables (use quotes for values with spaces or commas)",
 		Category: "Deployment:",
+		Local:    true,
 	}
 
 	requestedMemoryFlag = &workaround.FloatFlag{
@@ -270,9 +269,8 @@ var (
 			cli.EnvVar(deploymentEnvVar("REQUESTED_MEMORY_MB")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.requested-memory-mb"),
 		),
-		Usage:      "`<memory-in-mb>` to allocate to your process",
-		Persistent: true,
-		Category:   "Deployment:",
+		Usage:    "`<memory-in-mb>` to allocate to your process",
+		Category: "Deployment:",
 	}
 
 	requestedCPUFlag = &workaround.FloatFlag{
@@ -281,9 +279,8 @@ var (
 			cli.EnvVar(deploymentEnvVar("REQUESTED_CPU")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.requested-cpu"),
 		),
-		Usage:      "`<cores>` to allocate to your process",
-		Persistent: true,
-		Category:   "Deployment:",
+		Usage:    "`<cores>` to allocate to your process",
+		Category: "Deployment:",
 	}
 
 	fromLatestFlag = &cli.BoolFlag{
@@ -291,6 +288,7 @@ var (
 		Sources:  cli.EnvVars(deploymentEnvVar("FROM_LATEST")),
 		Usage:    "whether to use settings from the latest deployment; if true other flags act as overrides",
 		Category: "Deployment:",
+		Local:    true,
 	}
 )
 

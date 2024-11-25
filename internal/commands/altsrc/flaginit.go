@@ -20,17 +20,17 @@ func InitializeValueSourcesFromFlags(ctx context.Context, cmd *cli.Command, args
 
 	for _, sub := range cmd.Commands {
 		oldBefore := sub.Before
-		sub.Before = func(ctx context.Context, cmd *cli.Command) error {
+		sub.Before = func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
 			err := InitializeValueSourcesFromFlags(ctx, cmd, args)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
 			if oldBefore != nil {
 				return oldBefore(ctx, cmd)
 			}
 
-			return nil
+			return ctx, nil
 		}
 	}
 

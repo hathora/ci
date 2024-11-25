@@ -73,10 +73,9 @@ var (
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(logFlagEnvVar("FOLLOW")),
 			altsrc.ConfigFile(configFlag.Name, "log.follow")),
-		Usage:      "whether to stream logs in real time",
-		Value:      false,
-		Category:   "Log:",
-		Persistent: true,
+		Usage:    "whether to stream logs in real time",
+		Value:    false,
+		Category: "Log:",
 	}
 
 	processIDFlag = &cli.StringFlag{
@@ -88,6 +87,7 @@ var (
 		),
 		Category: "Log:",
 		Usage:    "`<id>` of the runtime instance of your game server",
+		Local:    true,
 	}
 
 	tailLinesFlag = &workaround.IntFlag{
@@ -96,10 +96,9 @@ var (
 			cli.EnvVar(buildFlagEnvVar("TAIL_LINES")),
 			altsrc.ConfigFile(configFlag.Name, "log.tail-lines"),
 		),
-		Usage:      "`<number>` of lines to return from the most recent log history (1-5000)",
-		Value:      100,
-		Category:   "Log:",
-		Persistent: true,
+		Usage:    "`<number>` of lines to return from the most recent log history (1-5000)",
+		Value:    100,
+		Category: "Log:",
 	}
 )
 

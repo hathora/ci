@@ -41,24 +41,24 @@ func App() *cli.Command {
 		Flags:                         GlobalFlags,
 		Version:                       BuildVersion,
 		CustomRootCommandHelpTemplate: cli.SubcommandHelpTemplate,
-		Before: func(ctx context.Context, cmd *cli.Command) error {
+		Before: func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
 			cfg, err := VerbosityConfigFrom(cmd)
 			if err != nil {
-				return err
+				return nil, err
 			}
 			_, cleanupLogger := setup.Logger(cfg.Verbosity)
 			cleanup = append(cleanup, cleanupLogger)
 			handleNewVersionAvailable(BuildVersion)
 
 			if isCallForHelp(cmd) {
-				return nil
+				return ctx, nil
 			}
 
 			err = altsrc.InitializeValueSourcesFromFlags(ctx, cmd, os.Args[1:])
 			if err != nil {
-				return err
+				return nil, err
 			}
-			return nil
+			return ctx, nil
 		},
 		Commands: []*cli.Command{
 			Build,
