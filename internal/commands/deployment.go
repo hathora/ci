@@ -16,7 +16,6 @@ import (
 	"github.com/hathora/ci/internal/sdk/models/shared"
 	"github.com/hathora/ci/internal/setup"
 	"github.com/hathora/ci/internal/shorthand"
-	"github.com/hathora/ci/internal/workaround"
 )
 
 var (
@@ -214,14 +213,15 @@ var (
 		Category: "Deployment:",
 	}
 
-	roomsPerProcessFlag = &workaround.IntFlag{
+	roomsPerProcessFlag = &cli.IntFlag{
 		Name: "rooms-per-process",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("ROOMS_PER_PROCESS")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.rooms-per-process"),
 		),
-		Usage:    "`<count>` of the rooms that can be scheduled in a process",
-		Category: "Deployment:",
+		Usage:       "`<count>` of the rooms that can be scheduled in a process",
+		Category:    "Deployment:",
+		HideDefault: true,
 	}
 
 	transportTypeFlag = &cli.StringFlag{
@@ -234,14 +234,15 @@ var (
 		Category: "Deployment:",
 	}
 
-	containerPortFlag = &workaround.IntFlag{
+	containerPortFlag = &cli.IntFlag{
 		Name: "container-port",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("CONTAINER_PORT")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.container-port"),
 		),
-		Usage:    "`<port>` to expose on the deployed container",
-		Category: "Deployment:",
+		Usage:       "`<port>` to expose on the deployed container",
+		Category:    "Deployment:",
+		HideDefault: true,
 	}
 
 	additionalContainerPortsFlag = &cli.StringSliceFlag{
@@ -263,24 +264,26 @@ var (
 		Local:    true,
 	}
 
-	requestedMemoryFlag = &workaround.FloatFlag{
+	requestedMemoryFlag = &cli.FloatFlag{
 		Name: "requested-memory-mb",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("REQUESTED_MEMORY_MB")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.requested-memory-mb"),
 		),
-		Usage:    "`<memory-in-mb>` to allocate to your process",
-		Category: "Deployment:",
+		Usage:       "`<memory-in-mb>` to allocate to your process",
+		Category:    "Deployment:",
+		HideDefault: true,
 	}
 
-	requestedCPUFlag = &workaround.FloatFlag{
+	requestedCPUFlag = &cli.FloatFlag{
 		Name: "requested-cpu",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("REQUESTED_CPU")),
 			altsrc.ConfigFile(configFlag.Name, "deployment.requested-cpu"),
 		),
-		Usage:    "`<cores>` to allocate to your process",
-		Category: "Deployment:",
+		Usage:       "`<cores>` to allocate to your process",
+		Category:    "Deployment:",
+		HideDefault: true,
 	}
 
 	fromLatestFlag = &cli.BoolFlag{

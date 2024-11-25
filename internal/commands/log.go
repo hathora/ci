@@ -13,7 +13,6 @@ import (
 	"github.com/hathora/ci/internal/output"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/setup"
-	"github.com/hathora/ci/internal/workaround"
 )
 
 var (
@@ -90,15 +89,16 @@ var (
 		Local:    true,
 	}
 
-	tailLinesFlag = &workaround.IntFlag{
+	tailLinesFlag = &cli.IntFlag{
 		Name: "tail-lines",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("TAIL_LINES")),
 			altsrc.ConfigFile(configFlag.Name, "log.tail-lines"),
 		),
-		Usage:    "`<number>` of lines to return from the most recent log history (1-5000)",
-		Value:    100,
-		Category: "Log:",
+		Usage:       "`<number>` of lines to return from the most recent log history (1-5000)",
+		Value:       100,
+		Category:    "Log:",
+		HideDefault: true,
 	}
 )
 
