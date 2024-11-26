@@ -13,75 +13,77 @@ import (
 	"github.com/hathora/ci/internal/shorthand"
 )
 
-var Deploy = &cli.Command{
-	Name:  "deploy",
-	Usage: "create a build and a deployment in a combined flow",
-	Flags: subcommandFlags(
-		buildIDFlag(),
-		buildTagFlag(),
-		fileFlag(),
-		hideUploadProgressFlag(),
-		fromLatestFlag,
-		roomsPerProcessFlag,
-		transportTypeFlag,
-		containerPortFlag,
-		requestedMemoryFlag,
-		requestedCPUFlag,
-		additionalContainerPortsFlag,
-		envVarsFlag,
-		idleTimeoutFlag,
-	),
-	UsageText: `hathora deploy [options]`,
-	Action: func(ctx context.Context, cmd *cli.Command) error {
-		deploy, err := DeployConfigFrom(cmd)
-		if err != nil {
-			//nolint:errcheck
-			cli.ShowSubcommandHelp(cmd)
-			return err
-		}
-
-		useLatest := cmd.Bool(fromLatestFlag.Name)
-		if useLatest {
-			res, err := deploy.SDK.DeploymentsV3.GetLatestDeployment(ctx, deploy.AppID)
+func Deploy() *cli.Command {
+	return &cli.Command{
+		Name:  "deploy",
+		Usage: "create a build and a deployment in a combined flow",
+		Flags: subcommandFlags(
+			buildIDFlag(),
+			buildTagFlag(),
+			fileFlag(),
+			hideUploadProgressFlag(),
+			fromLatestFlag(),
+			roomsPerProcessFlag(),
+			transportTypeFlag(),
+			containerPortFlag(),
+			requestedMemoryFlag(),
+			requestedCPUFlag(),
+			additionalContainerPortsFlag(),
+			envVarsFlag(),
+			idleTimeoutFlag(),
+		),
+		UsageText: `hathora deploy [options]`,
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			deploy, err := DeployConfigFrom(cmd)
 			if err != nil {
-				return fmt.Errorf("unable to retrieve latest deployment: %w", err)
+				//nolint:errcheck
+				cli.ShowSubcommandHelp(cmd)
+				return err
 			}
 
-			deploy.Merge(res.DeploymentV3, cmd.IsSet(idleTimeoutFlag.Name))
-		}
+			useLatest := cmd.Bool(fromLatestFlagName)
+			if useLatest {
+				res, err := deploy.SDK.DeploymentsV3.GetLatestDeployment(ctx, deploy.AppID)
+				if err != nil {
+					return fmt.Errorf("unable to retrieve latest deployment: %w", err)
+				}
 
-		if err := deploy.Validate(); err != nil {
-			//nolint:errcheck
-			cli.ShowSubcommandHelp(cmd)
-			return err
-		}
+				deploy.Merge(res.DeploymentV3, cmd.IsSet(idleTimeoutFlagName))
+			}
 
-		createdBuild, err := doBuildCreate(ctx, deploy.SDK, deploy.BuildTag, deploy.BuildID, deploy.FilePath, deploy.HideUploadProgress)
-		if err != nil {
-			return err
-		}
+			if err := deploy.Validate(); err != nil {
+				//nolint:errcheck
+				cli.ShowSubcommandHelp(cmd)
+				return err
+			}
 
-		res, err := deploy.SDK.DeploymentsV3.CreateDeployment(
-			ctx,
-			shared.DeploymentConfigV3{
-				BuildID:                  createdBuild.BuildID,
-				IdleTimeoutEnabled:       *deploy.IdleTimeoutEnabled,
-				RoomsPerProcess:          deploy.RoomsPerProcess,
-				TransportType:            deploy.TransportType,
-				ContainerPort:            deploy.ContainerPort,
-				RequestedMemoryMB:        deploy.RequestedMemoryMB,
-				RequestedCPU:             deploy.RequestedCPU,
-				AdditionalContainerPorts: deploy.AdditionalContainerPorts,
-				Env:                      deploy.Env,
-			},
-			deploy.AppID,
-		)
-		if err != nil {
-			return fmt.Errorf("failed to create a deployment: %w", err)
-		}
+			createdBuild, err := doBuildCreate(ctx, deploy.SDK, deploy.BuildTag, deploy.BuildID, deploy.FilePath, deploy.HideUploadProgress)
+			if err != nil {
+				return err
+			}
 
-		return deploy.Output.Write(res.DeploymentV3, os.Stdout)
-	},
+			res, err := deploy.SDK.DeploymentsV3.CreateDeployment(
+				ctx,
+				shared.DeploymentConfigV3{
+					BuildID:                  createdBuild.BuildID,
+					IdleTimeoutEnabled:       *deploy.IdleTimeoutEnabled,
+					RoomsPerProcess:          deploy.RoomsPerProcess,
+					TransportType:            deploy.TransportType,
+					ContainerPort:            deploy.ContainerPort,
+					RequestedMemoryMB:        deploy.RequestedMemoryMB,
+					RequestedCPU:             deploy.RequestedCPU,
+					AdditionalContainerPorts: deploy.AdditionalContainerPorts,
+					Env:                      deploy.Env,
+				},
+				deploy.AppID,
+			)
+			if err != nil {
+				return fmt.Errorf("failed to create a deployment: %w", err)
+			}
+
+			return deploy.Output.Write(res.DeploymentV3, os.Stdout)
+		},
+	}
 }
 
 var (
@@ -159,31 +161,31 @@ func (c *DeployConfig) Validate() error {
 	}
 
 	if c.RoomsPerProcess == 0 {
-		err = errors.Join(err, missingRequiredFlag(roomsPerProcessFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(roomsPerProcessFlagName))
 	}
 
-	err = errors.Join(err, requireIntInRange(c.RoomsPerProcess, minRoomsPerProcess, maxRoomsPerProcess, roomsPerProcessFlag.Name))
+	err = errors.Join(err, requireIntInRange(c.RoomsPerProcess, minRoomsPerProcess, maxRoomsPerProcess, roomsPerProcessFlagName))
 
 	if c.TransportType == "" {
-		err = errors.Join(err, missingRequiredFlag(transportTypeFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(transportTypeFlagName))
 	}
-	err = errors.Join(err, requireValidEnumValue(c.TransportType, allowedTransportTypes, transportTypeFlag.Name))
+	err = errors.Join(err, requireValidEnumValue(c.TransportType, allowedTransportTypes, transportTypeFlagName))
 
 	if c.ContainerPort == 0 {
-		err = errors.Join(err, missingRequiredFlag(containerPortFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(containerPortFlagName))
 	}
-	err = errors.Join(err, requireIntInRange(c.ContainerPort, minPort, maxPort, containerPortFlag.Name))
+	err = errors.Join(err, requireIntInRange(c.ContainerPort, minPort, maxPort, containerPortFlagName))
 
 	if c.RequestedMemoryMB == 0 {
-		err = errors.Join(err, missingRequiredFlag(requestedMemoryFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(requestedMemoryFlagName))
 	}
-	err = errors.Join(err, requireFloatInRange(c.RequestedMemoryMB, minMemoryMB, maxMemoryMB, requestedMemoryFlag.Name))
+	err = errors.Join(err, requireFloatInRange(c.RequestedMemoryMB, minMemoryMB, maxMemoryMB, requestedMemoryFlagName))
 	if c.RequestedCPU == 0 {
-		err = errors.Join(err, missingRequiredFlag(requestedCPUFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(requestedCPUFlagName))
 	}
 
-	err = errors.Join(err, requireFloatInRange(c.RequestedCPU, minCPU, maxCPU, requestedCPUFlag.Name))
-	err = errors.Join(err, requireMaxDecimals(c.RequestedCPU, maxCPUDecimalPlaces, requestedCPUFlag.Name))
+	err = errors.Join(err, requireFloatInRange(c.RequestedCPU, minCPU, maxCPU, requestedCPUFlagName))
+	err = errors.Join(err, requireMaxDecimals(c.RequestedCPU, maxCPUDecimalPlaces, requestedCPUFlagName))
 
 	return err
 }

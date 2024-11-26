@@ -62,8 +62,8 @@ func App() *cli.Command {
 		},
 		Commands: []*cli.Command{
 			Build(),
-			Deploy,
-			Deployment,
+			Deploy(),
+			Deployment(),
 			Log,
 		},
 		After: func(ctx context.Context, c *cli.Command) error {

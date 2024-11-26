@@ -31,170 +31,183 @@ var (
 	maxMemoryMB           = float64(8192)
 )
 
-var Deployment = &cli.Command{
-	Name:  "deployment",
-	Usage: "options for deployments",
-	Commands: []*cli.Command{
-		{
-			Name:    infoCommandName,
-			Aliases: []string{"get-deployment-info"},
-			Usage:   "get a deployment by id",
-			Flags:   subcommandFlags(deploymentIDFlag),
-			Action: func(ctx context.Context, cmd *cli.Command) error {
-				deployment, err := OneDeploymentConfigFrom(cmd)
+const (
+	fromLatestFlagName               = "from-latest"
+	deploymentIDFlagName             = "deployment-id"
+	roomsPerProcessFlagName          = "rooms-per-process"
+	transportTypeFlagName            = "transport-type"
+	containerPortFlagName            = "container-port"
+	requestedCPUFlagName             = "requested-cpu"
+	requestedMemoryFlagName          = "requested-memory-mb"
+	idleTimeoutFlagName              = "idle-timeout-enabled"
+	additionalContainerPortsFlagName = "additional-container-ports"
+	envVarsFlagName                  = "env"
+)
 
-				if deployment.AppID == nil || *deployment.AppID == "" {
-					err = errors.Join(err, missingRequiredFlag(appIDFlagName))
-				}
+func Deployment() *cli.Command {
+	return &cli.Command{
+		Name:  "deployment",
+		Usage: "options for deployments",
+		Commands: []*cli.Command{
+			{
+				Name:    infoCommandName,
+				Aliases: []string{"get-deployment-info"},
+				Usage:   "get a deployment by id",
+				Flags:   subcommandFlags(deploymentIDFlag()),
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					deployment, err := OneDeploymentConfigFrom(cmd)
 
-				if err != nil {
-					//nolint:errcheck
-					cli.ShowSubcommandHelp(cmd)
-					return err
-				}
-				deployment.Log.Debug("getting deployment info...")
-
-				res, err := deployment.SDK.DeploymentsV3.GetDeployment(
-					ctx,
-					deployment.DeploymentID,
-					deployment.AppID,
-				)
-				if err != nil {
-					return fmt.Errorf("failed to get deployment info: %w", err)
-				}
-
-				return deployment.Output.Write(res.DeploymentV3, os.Stdout)
-			},
-		},
-		{
-			Name:    latestCommandName,
-			Aliases: []string{"get-latest-deployment"},
-			Usage:   "get the latest deployment",
-			Flags:   subcommandFlags(),
-			Action: func(ctx context.Context, cmd *cli.Command) error {
-				deployment, err := DeploymentConfigFrom(cmd)
-				if deployment.AppID == nil || *deployment.AppID == "" {
-					err = errors.Join(err, missingRequiredFlag(appIDFlagName))
-				}
-				if err != nil {
-					//nolint:errcheck
-					cli.ShowSubcommandHelp(cmd)
-					return err
-				}
-				deployment.Log.Debug("getting the latest deployment...")
-
-				res, err := deployment.SDK.DeploymentsV3.GetLatestDeployment(ctx, deployment.AppID)
-				if err != nil {
-					return fmt.Errorf("failed to get the latest deployment: %w", err)
-				}
-
-				return deployment.Output.Write(res.DeploymentV3, os.Stdout)
-			},
-		},
-		{
-			Name:    listCommandName,
-			Aliases: []string{"get-deployments"},
-			Usage:   "get all deployments",
-			Flags:   subcommandFlags(),
-			Action: func(ctx context.Context, cmd *cli.Command) error {
-				deployment, err := DeploymentConfigFrom(cmd)
-				if deployment.AppID == nil || *deployment.AppID == "" {
-					err = errors.Join(err, missingRequiredFlag(appIDFlagName))
-				}
-				if err != nil {
-					//nolint:errcheck
-					cli.ShowSubcommandHelp(cmd)
-					return err
-				}
-				deployment.Log.Debug("getting all deployments...")
-
-				res, err := deployment.SDK.DeploymentsV3.GetDeployments(ctx, deployment.AppID)
-				if err != nil {
-					return fmt.Errorf("failed to get deployments: %w", err)
-				}
-
-				if len(res.DeploymentsV3Page.Deployments) == 0 {
-					return fmt.Errorf("no deployments found")
-				}
-
-				return deployment.Output.Write(res.DeploymentsV3Page.Deployments, os.Stdout)
-			},
-		},
-		{
-			Name:    createCommandName,
-			Aliases: []string{"create-deployment"},
-			Usage:   "create a deployment",
-			Flags: subcommandFlags(
-				buildIDFlag(),
-				idleTimeoutFlag,
-				roomsPerProcessFlag,
-				transportTypeFlag,
-				containerPortFlag,
-				requestedMemoryFlag,
-				requestedCPUFlag,
-				additionalContainerPortsFlag,
-				envVarsFlag,
-				fromLatestFlag,
-			),
-			Action: func(ctx context.Context, cmd *cli.Command) error {
-				zap.L().Debug("creating a deployment...")
-				deployment, err := CreateDeploymentConfigFrom(cmd)
-				if err != nil {
-					//nolint:errcheck
-					cli.ShowSubcommandHelp(cmd)
-					return err
-				}
-
-				useLatest := cmd.Bool(fromLatestFlag.Name)
-				if useLatest {
-					res, err := deployment.SDK.DeploymentsV3.GetLatestDeployment(ctx, deployment.AppID)
-					if err != nil {
-						return fmt.Errorf("unable to retrieve latest deployment: %w", err)
+					if deployment.AppID == nil || *deployment.AppID == "" {
+						err = errors.Join(err, missingRequiredFlag(appIDFlagName))
 					}
 
-					deployment.Merge(res.DeploymentV3)
-				}
+					if err != nil {
+						//nolint:errcheck
+						cli.ShowSubcommandHelp(cmd)
+						return err
+					}
+					deployment.Log.Debug("getting deployment info...")
 
-				if err := deployment.Validate(); err != nil {
-					//nolint:errcheck
-					cli.ShowSubcommandHelp(cmd)
-					return err
-				}
+					res, err := deployment.SDK.DeploymentsV3.GetDeployment(
+						ctx,
+						deployment.DeploymentID,
+						deployment.AppID,
+					)
+					if err != nil {
+						return fmt.Errorf("failed to get deployment info: %w", err)
+					}
 
-				res, err := deployment.SDK.DeploymentsV3.CreateDeployment(
-					ctx,
-					shared.DeploymentConfigV3{
-						BuildID:                  deployment.BuildID,
-						IdleTimeoutEnabled:       *deployment.IdleTimeoutEnabled,
-						RoomsPerProcess:          deployment.RoomsPerProcess,
-						TransportType:            deployment.TransportType,
-						ContainerPort:            deployment.ContainerPort,
-						RequestedMemoryMB:        deployment.RequestedMemoryMB,
-						RequestedCPU:             deployment.RequestedCPU,
-						AdditionalContainerPorts: deployment.AdditionalContainerPorts,
-						Env:                      deployment.Env,
-					},
-					deployment.AppID,
-				)
-				if err != nil {
-					return fmt.Errorf("failed to create a deployment: %w", err)
-				}
+					return deployment.Output.Write(res.DeploymentV3, os.Stdout)
+				},
+			},
+			{
+				Name:    latestCommandName,
+				Aliases: []string{"get-latest-deployment"},
+				Usage:   "get the latest deployment",
+				Flags:   subcommandFlags(),
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					deployment, err := DeploymentConfigFrom(cmd)
+					if deployment.AppID == nil || *deployment.AppID == "" {
+						err = errors.Join(err, missingRequiredFlag(appIDFlagName))
+					}
+					if err != nil {
+						//nolint:errcheck
+						cli.ShowSubcommandHelp(cmd)
+						return err
+					}
+					deployment.Log.Debug("getting the latest deployment...")
 
-				return deployment.Output.Write(res.DeploymentV3, os.Stdout)
+					res, err := deployment.SDK.DeploymentsV3.GetLatestDeployment(ctx, deployment.AppID)
+					if err != nil {
+						return fmt.Errorf("failed to get the latest deployment: %w", err)
+					}
+
+					return deployment.Output.Write(res.DeploymentV3, os.Stdout)
+				},
+			},
+			{
+				Name:    listCommandName,
+				Aliases: []string{"get-deployments"},
+				Usage:   "get all deployments",
+				Flags:   subcommandFlags(),
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					deployment, err := DeploymentConfigFrom(cmd)
+					if deployment.AppID == nil || *deployment.AppID == "" {
+						err = errors.Join(err, missingRequiredFlag(appIDFlagName))
+					}
+					if err != nil {
+						//nolint:errcheck
+						cli.ShowSubcommandHelp(cmd)
+						return err
+					}
+					deployment.Log.Debug("getting all deployments...")
+
+					res, err := deployment.SDK.DeploymentsV3.GetDeployments(ctx, deployment.AppID)
+					if err != nil {
+						return fmt.Errorf("failed to get deployments: %w", err)
+					}
+
+					if len(res.DeploymentsV3Page.Deployments) == 0 {
+						return fmt.Errorf("no deployments found")
+					}
+
+					return deployment.Output.Write(res.DeploymentsV3Page.Deployments, os.Stdout)
+				},
+			},
+			{
+				Name:    createCommandName,
+				Aliases: []string{"create-deployment"},
+				Usage:   "create a deployment",
+				Flags: subcommandFlags(
+					buildIDFlag(),
+					idleTimeoutFlag(),
+					roomsPerProcessFlag(),
+					transportTypeFlag(),
+					containerPortFlag(),
+					requestedMemoryFlag(),
+					requestedCPUFlag(),
+					additionalContainerPortsFlag(),
+					envVarsFlag(),
+					fromLatestFlag(),
+				),
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					zap.L().Debug("creating a deployment...")
+					deployment, err := CreateDeploymentConfigFrom(cmd)
+					if err != nil {
+						//nolint:errcheck
+						cli.ShowSubcommandHelp(cmd)
+						return err
+					}
+
+					useLatest := cmd.Bool(fromLatestFlagName)
+					if useLatest {
+						res, err := deployment.SDK.DeploymentsV3.GetLatestDeployment(ctx, deployment.AppID)
+						if err != nil {
+							return fmt.Errorf("unable to retrieve latest deployment: %w", err)
+						}
+
+						deployment.Merge(res.DeploymentV3)
+					}
+
+					if err := deployment.Validate(); err != nil {
+						//nolint:errcheck
+						cli.ShowSubcommandHelp(cmd)
+						return err
+					}
+
+					res, err := deployment.SDK.DeploymentsV3.CreateDeployment(
+						ctx,
+						shared.DeploymentConfigV3{
+							BuildID:                  deployment.BuildID,
+							IdleTimeoutEnabled:       *deployment.IdleTimeoutEnabled,
+							RoomsPerProcess:          deployment.RoomsPerProcess,
+							TransportType:            deployment.TransportType,
+							ContainerPort:            deployment.ContainerPort,
+							RequestedMemoryMB:        deployment.RequestedMemoryMB,
+							RequestedCPU:             deployment.RequestedCPU,
+							AdditionalContainerPorts: deployment.AdditionalContainerPorts,
+							Env:                      deployment.Env,
+						},
+						deployment.AppID,
+					)
+					if err != nil {
+						return fmt.Errorf("failed to create a deployment: %w", err)
+					}
+
+					return deployment.Output.Write(res.DeploymentV3, os.Stdout)
+				},
 			},
 		},
-	},
+	}
 }
 
 func deploymentEnvVar(name string) string {
 	return fmt.Sprintf("%s%s", deploymentFlagEnvVarPrefix, name)
 }
 
-var (
-	deploymentFlagEnvVarPrefix = fmt.Sprintf("%s%s", globalFlagEnvVarPrefix, "DEPLOYMENT_")
-
-	deploymentIDFlag = &cli.StringFlag{
-		Name:     "deployment-id",
+func deploymentIDFlag() *cli.StringFlag {
+	return &cli.StringFlag{
+		Name:     deploymentIDFlagName,
 		Aliases:  []string{"d"},
 		Sources:  cli.EnvVars(deploymentEnvVar("ID")),
 		Usage:    "the `<id>` of the deployment in Hathora",
@@ -202,9 +215,11 @@ var (
 		Category: "Deployment:",
 		Local:    true,
 	}
+}
 
-	idleTimeoutFlag = &cli.BoolFlag{
-		Name: "idle-timeout-enabled",
+func idleTimeoutFlag() *cli.BoolFlag {
+	return &cli.BoolFlag{
+		Name: idleTimeoutFlagName,
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("IDLE_TIMEOUT_ENABLED")),
 			altsrc.ConfigFile(configFlagName, "deployment.idle-timeout-enabled"),
@@ -212,9 +227,11 @@ var (
 		Usage:    "whether to shut down processes that have had no new connections or rooms for five minutes",
 		Category: "Deployment:",
 	}
+}
 
-	roomsPerProcessFlag = &cli.IntFlag{
-		Name: "rooms-per-process",
+func roomsPerProcessFlag() *cli.IntFlag {
+	return &cli.IntFlag{
+		Name: roomsPerProcessFlagName,
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("ROOMS_PER_PROCESS")),
 			altsrc.ConfigFile(configFlagName, "deployment.rooms-per-process"),
@@ -223,9 +240,11 @@ var (
 		Category:    "Deployment:",
 		HideDefault: true,
 	}
+}
 
-	transportTypeFlag = &cli.StringFlag{
-		Name: "transport-type",
+func transportTypeFlag() *cli.StringFlag {
+	return &cli.StringFlag{
+		Name: transportTypeFlagName,
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("TRANSPORT_TYPE")),
 			altsrc.ConfigFile(configFlagName, "deployment.transport-type"),
@@ -233,9 +252,11 @@ var (
 		Usage:    "`<protocol>` for the exposed port to use (tcp, udp, tls)",
 		Category: "Deployment:",
 	}
+}
 
-	containerPortFlag = &cli.IntFlag{
-		Name: "container-port",
+func containerPortFlag() *cli.IntFlag {
+	return &cli.IntFlag{
+		Name: containerPortFlagName,
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("CONTAINER_PORT")),
 			altsrc.ConfigFile(configFlagName, "deployment.container-port"),
@@ -244,9 +265,12 @@ var (
 		Category:    "Deployment:",
 		HideDefault: true,
 	}
+}
 
-	additionalContainerPortsFlag = &cli.StringSliceFlag{
-		Name: "additional-container-ports",
+func additionalContainerPortsFlag() *cli.StringSliceFlag {
+
+	return &cli.StringSliceFlag{
+		Name: additionalContainerPortsFlagName,
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("ADDITIONAL_CONTAINER_PORTS")),
 			altsrc.ConfigFile(configFlagName, "deployment.additional-container-ports"),
@@ -255,17 +279,21 @@ var (
 		Category: "Deployment:",
 		Local:    true,
 	}
+}
 
-	envVarsFlag = &cli.StringSliceFlag{
-		Name:     "env",
+func envVarsFlag() *cli.StringSliceFlag {
+	return &cli.StringSliceFlag{
+		Name:     envVarsFlagName,
 		Sources:  cli.EnvVars(deploymentEnvVar("ENV")),
 		Usage:    "`<KEY=VALUE>` formatted environment variables (use quotes for values with spaces or commas)",
 		Category: "Deployment:",
 		Local:    true,
 	}
+}
 
-	requestedMemoryFlag = &cli.FloatFlag{
-		Name: "requested-memory-mb",
+func requestedMemoryFlag() *cli.FloatFlag {
+	return &cli.FloatFlag{
+		Name: requestedMemoryFlagName,
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("REQUESTED_MEMORY_MB")),
 			altsrc.ConfigFile(configFlagName, "deployment.requested-memory-mb"),
@@ -274,9 +302,11 @@ var (
 		Category:    "Deployment:",
 		HideDefault: true,
 	}
+}
 
-	requestedCPUFlag = &cli.FloatFlag{
-		Name: "requested-cpu",
+func requestedCPUFlag() *cli.FloatFlag {
+	return &cli.FloatFlag{
+		Name: requestedCPUFlagName,
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("REQUESTED_CPU")),
 			altsrc.ConfigFile(configFlagName, "deployment.requested-cpu"),
@@ -285,14 +315,20 @@ var (
 		Category:    "Deployment:",
 		HideDefault: true,
 	}
+}
 
-	fromLatestFlag = &cli.BoolFlag{
-		Name:     "from-latest",
+func fromLatestFlag() *cli.BoolFlag {
+	return &cli.BoolFlag{
+		Name:     fromLatestFlagName,
 		Sources:  cli.EnvVars(deploymentEnvVar("FROM_LATEST")),
 		Usage:    "whether to use settings from the latest deployment; if true other flags act as overrides",
 		Category: "Deployment:",
 		Local:    true,
 	}
+}
+
+var (
+	deploymentFlagEnvVarPrefix = fmt.Sprintf("%s%s", globalFlagEnvVarPrefix, "DEPLOYMENT_")
 )
 
 func parseContainerPorts(ports []string) ([]shared.ContainerPort, error) {
@@ -396,7 +432,7 @@ func (c *OneDeploymentConfig) Load(cmd *cli.Command) error {
 		return err
 	}
 	c.DeploymentConfig = deployment
-	c.DeploymentID = cmd.String(deploymentIDFlag.Name)
+	c.DeploymentID = cmd.String(deploymentIDFlagName)
 	c.Log = c.Log.With(zap.String("deployment.id", c.DeploymentID))
 	return nil
 }
@@ -441,28 +477,28 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 	// Passed in as an argument
 	// From latest deployment config (if from-latest is true)
 	// Default true
-	if cmd.IsSet(idleTimeoutFlag.Name) {
-		idleTimeoutEnabled := cmd.Bool(idleTimeoutFlag.Name)
+	if cmd.IsSet(idleTimeoutFlagName) {
+		idleTimeoutEnabled := cmd.Bool(idleTimeoutFlagName)
 		c.IdleTimeoutEnabled = &idleTimeoutEnabled
 	} else {
 		idleTimeoutEnabled := true
 		c.IdleTimeoutEnabled = &idleTimeoutEnabled
 	}
 
-	c.RoomsPerProcess = int(cmd.Int(roomsPerProcessFlag.Name))
-	c.TransportType = shared.TransportType(cmd.String(transportTypeFlag.Name))
-	c.ContainerPort = int(cmd.Int(containerPortFlag.Name))
-	c.RequestedMemoryMB = cmd.Float(requestedMemoryFlag.Name)
-	c.RequestedCPU = cmd.Float(requestedCPUFlag.Name)
+	c.RoomsPerProcess = int(cmd.Int(roomsPerProcessFlagName))
+	c.TransportType = shared.TransportType(cmd.String(transportTypeFlagName))
+	c.ContainerPort = int(cmd.Int(containerPortFlagName))
+	c.RequestedMemoryMB = cmd.Float(requestedMemoryFlagName)
+	c.RequestedCPU = cmd.Float(requestedCPUFlagName)
 
-	addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
+	addlPorts := cmd.StringSlice(additionalContainerPortsFlagName)
 	parsedAddlPorts, err := parseContainerPorts(addlPorts)
 	if err != nil {
 		return fmt.Errorf("invalid additional container ports: %w", err)
 	}
 	c.AdditionalContainerPorts = parsedAddlPorts
 
-	envVars := cmd.StringSlice(envVarsFlag.Name)
+	envVars := cmd.StringSlice(envVarsFlagName)
 	env, err := parseEnvVars(envVars)
 	if err != nil {
 		return fmt.Errorf("invalid environment variables: %w", err)
@@ -526,31 +562,31 @@ func (c *CreateDeploymentConfig) Validate() error {
 	}
 
 	if c.RoomsPerProcess == 0 {
-		err = errors.Join(err, missingRequiredFlag(roomsPerProcessFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(roomsPerProcessFlagName))
 	}
 
-	err = errors.Join(err, requireIntInRange(c.RoomsPerProcess, minRoomsPerProcess, maxRoomsPerProcess, roomsPerProcessFlag.Name))
+	err = errors.Join(err, requireIntInRange(c.RoomsPerProcess, minRoomsPerProcess, maxRoomsPerProcess, roomsPerProcessFlagName))
 
 	if c.TransportType == "" {
-		err = errors.Join(err, missingRequiredFlag(transportTypeFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(transportTypeFlagName))
 	}
-	err = errors.Join(err, requireValidEnumValue(c.TransportType, allowedTransportTypes, transportTypeFlag.Name))
+	err = errors.Join(err, requireValidEnumValue(c.TransportType, allowedTransportTypes, transportTypeFlagName))
 
 	if c.ContainerPort == 0 {
-		err = errors.Join(err, missingRequiredFlag(containerPortFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(containerPortFlagName))
 	}
-	err = errors.Join(err, requireIntInRange(c.ContainerPort, minPort, maxPort, containerPortFlag.Name))
+	err = errors.Join(err, requireIntInRange(c.ContainerPort, minPort, maxPort, containerPortFlagName))
 
 	if c.RequestedMemoryMB == 0 {
-		err = errors.Join(err, missingRequiredFlag(requestedMemoryFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(requestedMemoryFlagName))
 	}
-	err = errors.Join(err, requireFloatInRange(c.RequestedMemoryMB, minMemoryMB, maxMemoryMB, requestedMemoryFlag.Name))
+	err = errors.Join(err, requireFloatInRange(c.RequestedMemoryMB, minMemoryMB, maxMemoryMB, requestedMemoryFlagName))
 	if c.RequestedCPU == 0 {
-		err = errors.Join(err, missingRequiredFlag(requestedCPUFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(requestedCPUFlagName))
 	}
 
-	err = errors.Join(err, requireFloatInRange(c.RequestedCPU, minCPU, maxCPU, requestedCPUFlag.Name))
-	err = errors.Join(err, requireMaxDecimals(c.RequestedCPU, maxCPUDecimalPlaces, requestedCPUFlag.Name))
+	err = errors.Join(err, requireFloatInRange(c.RequestedCPU, minCPU, maxCPU, requestedCPUFlagName))
+	err = errors.Join(err, requireMaxDecimals(c.RequestedCPU, maxCPUDecimalPlaces, requestedCPUFlagName))
 
 	return err
 }
