@@ -27,105 +27,107 @@ type etagPart struct {
 	etag       string
 }
 
-var Build = &cli.Command{
-	Name:  "build",
-	Usage: "options for builds",
-	Commands: []*cli.Command{
-		{
-			Name:    infoCommandName,
-			Aliases: []string{"get-build-info"},
-			Usage:   "get a build",
-			Flags:   subcommandFlags(buildIDFlag),
-			Action: func(ctx context.Context, cmd *cli.Command) error {
-				build, err := OneBuildConfigFrom(cmd)
-				if err != nil {
-					//nolint:errcheck
-					cli.ShowSubcommandHelp(cmd)
-					return err
-				}
-				build.Log.Debug("getting build info...")
+func Build() *cli.Command {
+	return &cli.Command{
+		Name:  "build",
+		Usage: "options for builds",
+		Commands: []*cli.Command{
+			{
+				Name:    infoCommandName,
+				Aliases: []string{"get-build-info"},
+				Usage:   "get a build",
+				Flags:   subcommandFlags(buildIDFlag()),
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					build, err := OneBuildConfigFrom(cmd)
+					if err != nil {
+						//nolint:errcheck
+						cli.ShowSubcommandHelp(cmd)
+						return err
+					}
+					build.Log.Debug("getting build info...")
 
-				res, err := build.SDK.BuildsV3.GetBuild(ctx, build.BuildID, nil)
-				if err != nil {
-					return fmt.Errorf("failed to get build info: %w", err)
-				}
+					res, err := build.SDK.BuildsV3.GetBuild(ctx, build.BuildID, nil)
+					if err != nil {
+						return fmt.Errorf("failed to get build info: %w", err)
+					}
 
-				return build.Output.Write(res.BuildV3, os.Stdout)
+					return build.Output.Write(res.BuildV3, os.Stdout)
+				},
+			},
+			{
+				Name:    listCommandName,
+				Aliases: []string{"get-builds"},
+				Usage:   "get all builds",
+				Flags:   subcommandFlags(),
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					build, err := BuildConfigFrom(cmd)
+					if err != nil {
+						//nolint:errcheck
+						cli.ShowSubcommandHelp(cmd)
+						return err
+					}
+					build.Log.Debug("getting all builds...")
+
+					res, err := build.SDK.BuildsV3.GetBuilds(ctx, nil)
+					if err != nil {
+						return fmt.Errorf("failed to get builds: %w", err)
+					}
+
+					if len(res.BuildsV3Page.Builds) == 0 {
+						return fmt.Errorf("no builds found")
+					}
+
+					return build.Output.Write(res.BuildsV3Page.Builds, os.Stdout)
+				},
+			},
+			{
+				Name:    createCommandName,
+				Aliases: []string{"create-build"},
+				Usage:   "create a build",
+				Flags:   subcommandFlags(buildTagFlag(), buildIDFlag(), fileFlag(), hideUploadProgressFlag()),
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					build, err := CreateBuildConfigFrom(cmd)
+					if err != nil {
+						//nolint:errcheck
+						cli.ShowSubcommandHelp(cmd)
+						return err
+					}
+					created, err := doBuildCreate(ctx, build.SDK, build.BuildTag, build.BuildID, build.FilePath, build.HideUploadProgress)
+					if err != nil {
+						return err
+					}
+
+					return build.Output.Write(created, os.Stdout)
+				},
+			},
+			{
+				Name:    deleteCommandName,
+				Aliases: []string{"delete-build"},
+				Usage:   "delete a build",
+				Flags:   subcommandFlags(buildIDFlag()),
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					build, err := OneBuildConfigFrom(cmd)
+					if err != nil {
+						//nolint:errcheck
+						cli.ShowSubcommandHelp(cmd)
+						return err
+					}
+					build.Log.Debug("deleting a build...")
+
+					res, err := build.SDK.BuildsV3.DeleteBuild(ctx, build.BuildID, nil)
+					if err != nil {
+						return fmt.Errorf("failed to delete build: %w", err)
+					}
+
+					return build.Output.Write(&DefaultResult{
+						Success: true,
+						Message: "Build deleted successfully",
+						Code:    res.StatusCode,
+					}, os.Stdout)
+				},
 			},
 		},
-		{
-			Name:    listCommandName,
-			Aliases: []string{"get-builds"},
-			Usage:   "get all builds",
-			Flags:   subcommandFlags(),
-			Action: func(ctx context.Context, cmd *cli.Command) error {
-				build, err := BuildConfigFrom(cmd)
-				if err != nil {
-					//nolint:errcheck
-					cli.ShowSubcommandHelp(cmd)
-					return err
-				}
-				build.Log.Debug("getting all builds...")
-
-				res, err := build.SDK.BuildsV3.GetBuilds(ctx, nil)
-				if err != nil {
-					return fmt.Errorf("failed to get builds: %w", err)
-				}
-
-				if len(res.BuildsV3Page.Builds) == 0 {
-					return fmt.Errorf("no builds found")
-				}
-
-				return build.Output.Write(res.BuildsV3Page.Builds, os.Stdout)
-			},
-		},
-		{
-			Name:    createCommandName,
-			Aliases: []string{"create-build"},
-			Usage:   "create a build",
-			Flags:   subcommandFlags(buildTagFlag, buildIDFlag, fileFlag, hideUploadProgressFlag),
-			Action: func(ctx context.Context, cmd *cli.Command) error {
-				build, err := CreateBuildConfigFrom(cmd)
-				if err != nil {
-					//nolint:errcheck
-					cli.ShowSubcommandHelp(cmd)
-					return err
-				}
-				created, err := doBuildCreate(ctx, build.SDK, build.BuildTag, build.BuildID, build.FilePath, build.HideUploadProgress)
-				if err != nil {
-					return err
-				}
-
-				return build.Output.Write(created, os.Stdout)
-			},
-		},
-		{
-			Name:    deleteCommandName,
-			Aliases: []string{"delete-build"},
-			Usage:   "delete a build",
-			Flags:   subcommandFlags(buildIDFlag),
-			Action: func(ctx context.Context, cmd *cli.Command) error {
-				build, err := OneBuildConfigFrom(cmd)
-				if err != nil {
-					//nolint:errcheck
-					cli.ShowSubcommandHelp(cmd)
-					return err
-				}
-				build.Log.Debug("deleting a build...")
-
-				res, err := build.SDK.BuildsV3.DeleteBuild(ctx, build.BuildID, nil)
-				if err != nil {
-					return fmt.Errorf("failed to delete build: %w", err)
-				}
-
-				return build.Output.Write(&DefaultResult{
-					Success: true,
-					Message: "Build deleted successfully",
-					Code:    res.StatusCode,
-				}, os.Stdout)
-			},
-		},
-	},
+	}
 }
 
 func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, buildId, filePath string, hideUploadProgress bool) (*shared.BuildV3, error) {
@@ -247,11 +249,16 @@ func buildFlagEnvVar(name string) string {
 	return buildFlagEnvVarPrefix + name
 }
 
-var (
-	buildFlagEnvVarPrefix = globalFlagEnvVarPrefix + "BUILD_"
+const (
+	buildIDFlagName            = "build-id"
+	buildTagFlagName           = "build-tag"
+	fileFlagName               = "file"
+	hideUploadProgressFlagName = "hide-upload-progress"
+)
 
-	buildIDFlag = &cli.StringFlag{
-		Name:    "build-id",
+func buildIDFlag() *cli.StringFlag {
+	return &cli.StringFlag{
+		Name:    buildIDFlagName,
 		Aliases: []string{"b"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("ID")),
@@ -260,9 +267,11 @@ var (
 		Usage:    "the `<id>` of the build in Hathora",
 		Category: "Build:",
 	}
+}
 
-	buildTagFlag = &cli.StringFlag{
-		Name:    "build-tag",
+func buildTagFlag() *cli.StringFlag {
+	return &cli.StringFlag{
+		Name:    buildTagFlagName,
 		Aliases: []string{"bt"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("TAG")),
@@ -272,9 +281,11 @@ var (
 		Usage:    "`<tag>` or external version to associate with the build",
 		Local:    true,
 	}
+}
 
-	fileFlag = &cli.StringFlag{
-		Name:    "file",
+func fileFlag() *cli.StringFlag {
+	return &cli.StringFlag{
+		Name:    fileFlagName,
 		Aliases: []string{"f"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("FILE")),
@@ -286,8 +297,11 @@ var (
 		Value:     ".", // default to current working directory
 		Local:     true,
 	}
-	hideUploadProgressFlag = &cli.BoolFlag{
-		Name:    "hide-upload-progress",
+}
+
+func hideUploadProgressFlag() *cli.BoolFlag {
+	return &cli.BoolFlag{
+		Name:    hideUploadProgressFlagName,
 		Aliases: []string{"hup"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("HIDE_UPLOAD_PROGRESS")),
@@ -296,6 +310,10 @@ var (
 		Usage:    "hide the upload progress percentage from output",
 		Category: "Build:",
 	}
+}
+
+var (
+	buildFlagEnvVarPrefix = globalFlagEnvVarPrefix + "BUILD_"
 )
 
 var (
@@ -354,10 +372,10 @@ func (c *CreateBuildConfig) Load(cmd *cli.Command) error {
 		return err
 	}
 	c.BuildConfig = build
-	c.BuildTag = cmd.String(buildTagFlag.Name)
-	c.BuildID = cmd.String(buildIDFlag.Name)
-	c.FilePath = cmd.String(fileFlag.Name)
-	c.HideUploadProgress = cmd.Bool(hideUploadProgressFlag.Name)
+	c.BuildTag = cmd.String(buildTagFlagName)
+	c.BuildID = cmd.String(buildIDFlagName)
+	c.FilePath = cmd.String(fileFlagName)
+	c.HideUploadProgress = cmd.Bool(hideUploadProgressFlagName)
 	c.Log = c.Log.With(zap.String("build.tag", c.BuildTag)).With(zap.String("build.id", c.BuildID))
 	return nil
 }
@@ -387,7 +405,7 @@ func (c *OneBuildConfig) Load(cmd *cli.Command) error {
 		return err
 	}
 	c.BuildConfig = build
-	c.BuildID = cmd.String(buildIDFlag.Name)
+	c.BuildID = cmd.String(buildIDFlagName)
 	c.Log = c.Log.With(zap.String("build.id", c.BuildID))
 	return nil
 }

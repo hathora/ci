@@ -125,7 +125,7 @@ var Deployment = &cli.Command{
 			Aliases: []string{"create-deployment"},
 			Usage:   "create a deployment",
 			Flags: subcommandFlags(
-				buildIDFlag,
+				buildIDFlag(),
 				idleTimeoutFlag,
 				roomsPerProcessFlag,
 				transportTypeFlag,
@@ -435,7 +435,7 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 	}
 
 	c.DeploymentConfig = deployment
-	c.BuildID = cmd.String(buildIDFlag.Name)
+	c.BuildID = cmd.String(buildIDFlagName)
 
 	// Value of the idleTimeoutFlag by priority, high to low
 	// Passed in as an argument
@@ -522,7 +522,7 @@ func (c *CreateDeploymentConfig) Validate() error {
 	}
 
 	if c.BuildID == "" {
-		err = errors.Join(err, missingRequiredFlag(buildIDFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(buildIDFlagName))
 	}
 
 	if c.RoomsPerProcess == 0 {

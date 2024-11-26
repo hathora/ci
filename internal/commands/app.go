@@ -61,7 +61,7 @@ func App() *cli.Command {
 			return ctx, nil
 		},
 		Commands: []*cli.Command{
-			Build,
+			Build(),
 			Deploy,
 			Deployment,
 			Log,
