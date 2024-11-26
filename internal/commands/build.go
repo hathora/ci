@@ -409,6 +409,9 @@ type progressReaderType struct {
 
 func (pr *progressReaderType) Read(p []byte) (int, error) {
 	n, err := pr.reader.Read(p)
+	if err != nil {
+		return 0, fmt.Errorf("failed to read data: %w", err)
+	}
 	if n > 0 && !pr.hideUploadProgress {
 		pr.globalUploadProgress.Add(int64(n))
 		loaded := pr.globalUploadProgress.Load()
