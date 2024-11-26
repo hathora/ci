@@ -67,8 +67,8 @@ type VerbosityConfig struct {
 func (c *VerbosityConfig) Load(cmd *cli.Command) error {
 	// we subtract 1 because the flag is counted an additional time for the
 	// --verbose alias
-	verboseCount := cmd.Count(verboseFlag.Name) - 1
-	verbosity := cmd.Int(verbosityFlag.Name)
+	verboseCount := cmd.Count(verboseFlagName) - 1
+	verbosity := cmd.Int(verbosityFlagName)
 	c.Verbosity = int(math.Max(float64(verbosity), float64(verboseCount)))
 	return nil
 }
@@ -102,15 +102,15 @@ func (c *GlobalConfig) Load(cmd *cli.Command) error {
 		return err
 	}
 	c.VerbosityConfig = verbosityConfig
-	c.Token = cmd.String(tokenFlag.Name)
+	c.Token = cmd.String(tokenFlagName)
 	if c.Token == "" {
-		err = errors.Join(err, missingRequiredFlag(tokenFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(tokenFlagName))
 	}
-	c.BaseURL = cmd.String(hathoraCloudEndpointFlag.Name)
+	c.BaseURL = cmd.String(hathoraCloudEndpointFlagName)
 	if c.BaseURL == "" {
-		err = errors.Join(err, missingRequiredFlag(hathoraCloudEndpointFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(hathoraCloudEndpointFlagName))
 	}
-	appID := cmd.String(appIDFlag.Name)
+	appID := cmd.String(appIDFlagName)
 	if appID == "" {
 		c.AppID = nil
 	} else {
@@ -147,10 +147,10 @@ func isCallForHelp(cmd *cli.Command) bool {
 }
 
 func OutputFormatterFor(cmd *cli.Command, outputType any) (output.FormatWriter, error) {
-	outputFmt := cmd.String(outputFlag.Name)
+	outputFmt := cmd.String(outputFlagName)
 	switch output.ParseOutputType(outputFmt) {
 	case output.JSON:
-		return output.JSONFormat(cmd.Bool(outputPrettyFlag.Name)), nil
+		return output.JSONFormat(cmd.Bool(outputPrettyFlagName)), nil
 	case output.Text:
 		return BuildTextFormatter(), nil
 	case output.Value:

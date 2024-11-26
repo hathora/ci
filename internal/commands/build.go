@@ -255,7 +255,7 @@ var (
 		Aliases: []string{"b"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("ID")),
-			altsrc.ConfigFile(configFlag.Name, "build.id"),
+			altsrc.ConfigFile(configFlagName, "build.id"),
 		),
 		Usage:    "the `<id>` of the build in Hathora",
 		Category: "Build:",
@@ -266,7 +266,7 @@ var (
 		Aliases: []string{"bt"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("TAG")),
-			altsrc.ConfigFile(configFlag.Name, "build.tag"),
+			altsrc.ConfigFile(configFlagName, "build.tag"),
 		),
 		Category: "Build:",
 		Usage:    "`<tag>` or external version to associate with the build",
@@ -278,7 +278,7 @@ var (
 		Aliases: []string{"f"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("FILE")),
-			altsrc.ConfigFile(configFlag.Name, "build.file"),
+			altsrc.ConfigFile(configFlagName, "build.file"),
 		),
 		Usage:     "`<path>` to the built game server binary or archive",
 		Category:  "Build:",
@@ -291,7 +291,7 @@ var (
 		Aliases: []string{"hup"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("HIDE_UPLOAD_PROGRESS")),
-			altsrc.ConfigFile(configFlag.Name, "build.hide_upload_progress"),
+			altsrc.ConfigFile(configFlagName, "build.hide_upload_progress"),
 		),
 		Usage:    "hide the upload progress percentage from output",
 		Category: "Build:",

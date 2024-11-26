@@ -155,7 +155,7 @@ func (c *DeployConfig) Validate() error {
 	var err error
 
 	if c.AppID == nil || *c.AppID == "" {
-		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(appIDFlagName))
 	}
 
 	if c.RoomsPerProcess == 0 {

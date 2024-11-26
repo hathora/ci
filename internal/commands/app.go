@@ -38,7 +38,7 @@ func App() *cli.Command {
 		UseShortOptionHandling:        true,
 		SliceFlagSeparator:            ",",
 		Usage:                         "a CLI tool for for CI/CD workflows to manage deployments and builds in hathora.dev",
-		Flags:                         GlobalFlags,
+		Flags:                         GlobalFlags(),
 		Version:                       BuildVersion,
 		CustomRootCommandHelpTemplate: cli.SubcommandHelpTemplate,
 		Before: func(ctx context.Context, cmd *cli.Command) (context.Context, error) {

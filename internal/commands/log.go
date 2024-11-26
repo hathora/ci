@@ -71,7 +71,7 @@ var (
 		Name: "follow",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(logFlagEnvVar("FOLLOW")),
-			altsrc.ConfigFile(configFlag.Name, "log.follow")),
+			altsrc.ConfigFile(configFlagName, "log.follow")),
 		Usage:    "whether to stream logs in real time",
 		Value:    false,
 		Category: "Log:",
@@ -82,7 +82,7 @@ var (
 		Aliases: []string{"p"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(logFlagEnvVar("PROCESS_ID")),
-			altsrc.ConfigFile(configFlag.Name, "log.process-id"),
+			altsrc.ConfigFile(configFlagName, "log.process-id"),
 		),
 		Category: "Log:",
 		Usage:    "`<id>` of the runtime instance of your game server",
@@ -93,7 +93,7 @@ var (
 		Name: "tail-lines",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("TAIL_LINES")),
-			altsrc.ConfigFile(configFlag.Name, "log.tail-lines"),
+			altsrc.ConfigFile(configFlagName, "log.tail-lines"),
 		),
 		Usage:       "`<number>` of lines to return from the most recent log history (1-5000)",
 		Value:       100,

@@ -44,7 +44,7 @@ var Deployment = &cli.Command{
 				deployment, err := OneDeploymentConfigFrom(cmd)
 
 				if deployment.AppID == nil || *deployment.AppID == "" {
-					err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+					err = errors.Join(err, missingRequiredFlag(appIDFlagName))
 				}
 
 				if err != nil {
@@ -74,7 +74,7 @@ var Deployment = &cli.Command{
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				deployment, err := DeploymentConfigFrom(cmd)
 				if deployment.AppID == nil || *deployment.AppID == "" {
-					err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+					err = errors.Join(err, missingRequiredFlag(appIDFlagName))
 				}
 				if err != nil {
 					//nolint:errcheck
@@ -99,7 +99,7 @@ var Deployment = &cli.Command{
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				deployment, err := DeploymentConfigFrom(cmd)
 				if deployment.AppID == nil || *deployment.AppID == "" {
-					err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+					err = errors.Join(err, missingRequiredFlag(appIDFlagName))
 				}
 				if err != nil {
 					//nolint:errcheck
@@ -207,7 +207,7 @@ var (
 		Name: "idle-timeout-enabled",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("IDLE_TIMEOUT_ENABLED")),
-			altsrc.ConfigFile(configFlag.Name, "deployment.idle-timeout-enabled"),
+			altsrc.ConfigFile(configFlagName, "deployment.idle-timeout-enabled"),
 		),
 		Usage:    "whether to shut down processes that have had no new connections or rooms for five minutes",
 		Category: "Deployment:",
@@ -217,7 +217,7 @@ var (
 		Name: "rooms-per-process",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("ROOMS_PER_PROCESS")),
-			altsrc.ConfigFile(configFlag.Name, "deployment.rooms-per-process"),
+			altsrc.ConfigFile(configFlagName, "deployment.rooms-per-process"),
 		),
 		Usage:       "`<count>` of the rooms that can be scheduled in a process",
 		Category:    "Deployment:",
@@ -228,7 +228,7 @@ var (
 		Name: "transport-type",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("TRANSPORT_TYPE")),
-			altsrc.ConfigFile(configFlag.Name, "deployment.transport-type"),
+			altsrc.ConfigFile(configFlagName, "deployment.transport-type"),
 		),
 		Usage:    "`<protocol>` for the exposed port to use (tcp, udp, tls)",
 		Category: "Deployment:",
@@ -238,7 +238,7 @@ var (
 		Name: "container-port",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("CONTAINER_PORT")),
-			altsrc.ConfigFile(configFlag.Name, "deployment.container-port"),
+			altsrc.ConfigFile(configFlagName, "deployment.container-port"),
 		),
 		Usage:       "`<port>` to expose on the deployed container",
 		Category:    "Deployment:",
@@ -249,7 +249,7 @@ var (
 		Name: "additional-container-ports",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("ADDITIONAL_CONTAINER_PORTS")),
-			altsrc.ConfigFile(configFlag.Name, "deployment.additional-container-ports"),
+			altsrc.ConfigFile(configFlagName, "deployment.additional-container-ports"),
 		),
 		Usage:    "additional `<port>` to expose; format: name:port/protocol",
 		Category: "Deployment:",
@@ -268,7 +268,7 @@ var (
 		Name: "requested-memory-mb",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("REQUESTED_MEMORY_MB")),
-			altsrc.ConfigFile(configFlag.Name, "deployment.requested-memory-mb"),
+			altsrc.ConfigFile(configFlagName, "deployment.requested-memory-mb"),
 		),
 		Usage:       "`<memory-in-mb>` to allocate to your process",
 		Category:    "Deployment:",
@@ -279,7 +279,7 @@ var (
 		Name: "requested-cpu",
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(deploymentEnvVar("REQUESTED_CPU")),
-			altsrc.ConfigFile(configFlag.Name, "deployment.requested-cpu"),
+			altsrc.ConfigFile(configFlagName, "deployment.requested-cpu"),
 		),
 		Usage:       "`<cores>` to allocate to your process",
 		Category:    "Deployment:",
@@ -518,7 +518,7 @@ func (c *CreateDeploymentConfig) Validate() error {
 	var err error
 
 	if c.AppID == nil || *c.AppID == "" {
-		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(appIDFlagName))
 	}
 
 	if c.BuildID == "" {
