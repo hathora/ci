@@ -20,55 +20,61 @@ var (
 	maxTailLines = 5000
 )
 
-var Log = &cli.Command{
-	Name:  "log",
-	Usage: "view live process logs",
-	Flags: subcommandFlags(followFlag, processIDFlag, tailLinesFlag),
-	Action: func(ctx context.Context, cmd *cli.Command) error {
-		log, err := ProcessLogConfigFrom(cmd)
-		if err != nil {
-			//nolint:errcheck
-			cli.ShowSubcommandHelp(cmd)
-			return err
-		}
+const (
+	followFlagName    = "follow"
+	processIDFlagName = "process-id"
+	tailLinesFlagName = "tail-lines"
+)
 
-		if err := log.Validate(); err != nil {
-			//nolint:errcheck
-			cli.ShowSubcommandHelp(cmd)
-			return err
-		}
+func Log() *cli.Command {
+	return &cli.Command{
+		Name:  "log",
+		Usage: "view live process logs",
+		Flags: subcommandFlags(followFlag(), processIDFlag(), tailLinesFlag()),
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			log, err := ProcessLogConfigFrom(cmd)
+			if err != nil {
+				//nolint:errcheck
+				cli.ShowSubcommandHelp(cmd)
+				return err
+			}
 
-		log.Log.Debug("Getting build server logs...")
+			if err := log.Validate(); err != nil {
+				//nolint:errcheck
+				cli.ShowSubcommandHelp(cmd)
+				return err
+			}
 
-		res, err := log.SDK.LogsV1.GetLogsForProcess(
-			ctx,
-			log.ProcessID,
-			log.AppID,
-			sdk.Bool(log.Follow),
-			sdk.Int(log.TailLines))
+			log.Log.Debug("Getting build server logs...")
 
-		if err != nil {
-			return fmt.Errorf("failed to get logs: %w", err)
-		}
+			res, err := log.SDK.LogsV1.GetLogsForProcess(
+				ctx,
+				log.ProcessID,
+				log.AppID,
+				sdk.Bool(log.Follow),
+				sdk.Int(log.TailLines))
 
-		err = output.StreamOutput(res.ResponseStream, os.Stdout)
-		if err != nil {
-			zap.L().Error("failed to stream output to console", zap.Error(err))
-		}
+			if err != nil {
+				return fmt.Errorf("failed to get logs: %w", err)
+			}
 
-		return nil
-	},
+			err = output.StreamOutput(res.ResponseStream, os.Stdout)
+			if err != nil {
+				zap.L().Error("failed to stream output to console", zap.Error(err))
+			}
+
+			return nil
+		},
+	}
 }
 
 func logFlagEnvVar(name string) string {
 	return logFlagEnvVarPrefix + name
 }
 
-var (
-	logFlagEnvVarPrefix = globalFlagEnvVarPrefix + "LOG_"
-
-	followFlag = &cli.BoolFlag{
-		Name: "follow",
+func followFlag() *cli.BoolFlag {
+	return &cli.BoolFlag{
+		Name: followFlagName,
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(logFlagEnvVar("FOLLOW")),
 			altsrc.ConfigFile(configFlagName, "log.follow")),
@@ -76,9 +82,11 @@ var (
 		Value:    false,
 		Category: "Log:",
 	}
+}
 
-	processIDFlag = &cli.StringFlag{
-		Name:    "process-id",
+func processIDFlag() *cli.StringFlag {
+	return &cli.StringFlag{
+		Name:    processIDFlagName,
 		Aliases: []string{"p"},
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(logFlagEnvVar("PROCESS_ID")),
@@ -88,9 +96,11 @@ var (
 		Usage:    "`<id>` of the runtime instance of your game server",
 		Local:    true,
 	}
+}
 
-	tailLinesFlag = &cli.IntFlag{
-		Name: "tail-lines",
+func tailLinesFlag() *cli.IntFlag {
+	return &cli.IntFlag{
+		Name: tailLinesFlagName,
 		Sources: cli.NewValueSourceChain(
 			cli.EnvVar(buildFlagEnvVar("TAIL_LINES")),
 			altsrc.ConfigFile(configFlagName, "log.tail-lines"),
@@ -100,6 +110,10 @@ var (
 		Category:    "Log:",
 		HideDefault: true,
 	}
+}
+
+var (
+	logFlagEnvVarPrefix = globalFlagEnvVarPrefix + "LOG_"
 )
 
 var (
@@ -147,9 +161,9 @@ func (c *ProcessLogConfig) Load(cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
-	c.ProcessID = cmd.String(processIDFlag.Name)
-	c.Follow = cmd.Bool(followFlag.Name)
-	c.TailLines = int(cmd.Int(tailLinesFlag.Name))
+	c.ProcessID = cmd.String(processIDFlagName)
+	c.Follow = cmd.Bool(followFlagName)
+	c.TailLines = int(cmd.Int(tailLinesFlagName))
 	c.LogConfig = log
 	return nil
 }
@@ -162,10 +176,10 @@ func ProcessLogConfigFrom(cmd *cli.Command) (*ProcessLogConfig, error) {
 
 func (c *ProcessLogConfig) Validate() error {
 	var err error
-	err = errors.Join(err, requireIntInRange(c.TailLines, minTailLines, maxTailLines, tailLinesFlag.Name))
+	err = errors.Join(err, requireIntInRange(c.TailLines, minTailLines, maxTailLines, tailLinesFlagName))
 
 	if c.ProcessID == "" {
-		err = errors.Join(err, missingRequiredFlag(processIDFlag.Name))
+		err = errors.Join(err, missingRequiredFlag(processIDFlagName))
 	}
 
 	return err
