@@ -11,7 +11,7 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00
 	github.com/stretchr/testify v1.9.0
-	github.com/urfave/cli/v3 v3.0.0-alpha9.3
+	github.com/urfave/cli/v3 v3.0.0-alpha9.6
 	go.uber.org/zap v1.27.0
 	golang.org/x/sync v0.8.0
 	gopkg.in/yaml.v3 v3.0.1
