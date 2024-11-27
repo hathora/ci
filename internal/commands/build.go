@@ -409,6 +409,9 @@ type progressReaderType struct {
 
 func (pr *progressReaderType) Read(p []byte) (int, error) {
 	n, err := pr.reader.Read(p)
+	if err == io.EOF {
+		return n, err
+	}
 	if err != nil {
 		return n, fmt.Errorf("failed to read data: %w", err)
 	}
