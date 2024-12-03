@@ -36,7 +36,7 @@ func Build() *cli.Command {
 				Name:    infoCommandName,
 				Aliases: []string{"get-build-info"},
 				Usage:   "get a build",
-				Flags:   subcommandFlags(buildIDFlag()),
+				Flags:   []cli.Flag{buildIDFlag()},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					build, err := OneBuildConfigFrom(cmd)
 					if err != nil {
@@ -58,7 +58,6 @@ func Build() *cli.Command {
 				Name:    listCommandName,
 				Aliases: []string{"get-builds"},
 				Usage:   "get all builds",
-				Flags:   subcommandFlags(),
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					build, err := BuildConfigFrom(cmd)
 					if err != nil {
@@ -84,7 +83,7 @@ func Build() *cli.Command {
 				Name:    createCommandName,
 				Aliases: []string{"create-build"},
 				Usage:   "create a build",
-				Flags:   subcommandFlags(buildTagFlag(), buildIDFlag(), fileFlag(), hideUploadProgressFlag()),
+				Flags:   []cli.Flag{buildTagFlag(), buildIDFlag(), fileFlag(), hideUploadProgressFlag()},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					build, err := CreateBuildConfigFrom(cmd)
 					if err != nil {
@@ -104,7 +103,7 @@ func Build() *cli.Command {
 				Name:    deleteCommandName,
 				Aliases: []string{"delete-build"},
 				Usage:   "delete a build",
-				Flags:   subcommandFlags(buildIDFlag()),
+				Flags:   []cli.Flag{buildIDFlag()},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					build, err := OneBuildConfigFrom(cmd)
 					if err != nil {

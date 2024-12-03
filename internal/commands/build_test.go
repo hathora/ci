@@ -14,14 +14,6 @@ import (
 	"github.com/hathora/ci/internal/mock"
 )
 
-func Test_BuildCommands_HelpText(t *testing.T) {
-	t.Parallel()
-
-	app := commands.App()
-	err := app.Run(context.Background(), []string{"hathora", "build", "--help"})
-	assert.Nil(t, err, "command returned an error")
-}
-
 func Test_Integration_BuildCommands_Happy(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")

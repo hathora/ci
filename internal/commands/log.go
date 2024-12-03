@@ -30,7 +30,7 @@ func Log() *cli.Command {
 	return &cli.Command{
 		Name:  "log",
 		Usage: "view live process logs",
-		Flags: subcommandFlags(followFlag(), processIDFlag(), tailLinesFlag()),
+		Flags: []cli.Flag{followFlag(), processIDFlag(), tailLinesFlag()},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			log, err := ProcessLogConfigFrom(cmd)
 			if err != nil {

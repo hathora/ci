@@ -17,7 +17,7 @@ func Deploy() *cli.Command {
 	return &cli.Command{
 		Name:  "deploy",
 		Usage: "create a build and a deployment in a combined flow",
-		Flags: subcommandFlags(
+		Flags: []cli.Flag{
 			buildIDFlag(),
 			buildTagFlag(),
 			fileFlag(),
@@ -31,7 +31,7 @@ func Deploy() *cli.Command {
 			additionalContainerPortsFlag(),
 			envVarsFlag(),
 			idleTimeoutFlag(),
-		),
+		},
 		UsageText: `hathora deploy [options]`,
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			deploy, err := DeployConfigFrom(cmd)

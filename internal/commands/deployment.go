@@ -53,7 +53,7 @@ func Deployment() *cli.Command {
 				Name:    infoCommandName,
 				Aliases: []string{"get-deployment-info"},
 				Usage:   "get a deployment by id",
-				Flags:   subcommandFlags(deploymentIDFlag()),
+				Flags:   []cli.Flag{deploymentIDFlag()},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					deployment, err := OneDeploymentConfigFrom(cmd)
 
@@ -84,7 +84,6 @@ func Deployment() *cli.Command {
 				Name:    latestCommandName,
 				Aliases: []string{"get-latest-deployment"},
 				Usage:   "get the latest deployment",
-				Flags:   subcommandFlags(),
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					deployment, err := DeploymentConfigFrom(cmd)
 					if deployment.AppID == nil || *deployment.AppID == "" {
@@ -109,7 +108,6 @@ func Deployment() *cli.Command {
 				Name:    listCommandName,
 				Aliases: []string{"get-deployments"},
 				Usage:   "get all deployments",
-				Flags:   subcommandFlags(),
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					deployment, err := DeploymentConfigFrom(cmd)
 					if deployment.AppID == nil || *deployment.AppID == "" {
@@ -138,7 +136,7 @@ func Deployment() *cli.Command {
 				Name:    createCommandName,
 				Aliases: []string{"create-deployment"},
 				Usage:   "create a deployment",
-				Flags: subcommandFlags(
+				Flags: []cli.Flag{
 					buildIDFlag(),
 					idleTimeoutFlag(),
 					roomsPerProcessFlag(),
@@ -149,7 +147,7 @@ func Deployment() *cli.Command {
 					additionalContainerPortsFlag(),
 					envVarsFlag(),
 					fromLatestFlag(),
-				),
+				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					zap.L().Debug("creating a deployment...")
 					deployment, err := CreateDeploymentConfigFrom(cmd)

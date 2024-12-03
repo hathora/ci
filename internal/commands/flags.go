@@ -129,7 +129,3 @@ var (
 func globalFlagEnvVar(name string) string {
 	return globalFlagEnvVarPrefix + name
 }
-
-func subcommandFlags(flags ...cli.Flag) []cli.Flag {
-	return append(flags, GlobalFlags()...)
-}

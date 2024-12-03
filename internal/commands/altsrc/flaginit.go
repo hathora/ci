@@ -23,7 +23,7 @@ func InitializeValueSourcesFromFlags(ctx context.Context, cmd *cli.Command, args
 		sub.Before = func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
 			err := InitializeValueSourcesFromFlags(ctx, cmd, args)
 			if err != nil {
-				return nil, err
+				return ctx, err
 			}
 
 			if oldBefore != nil {
