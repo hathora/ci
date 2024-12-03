@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/hathora/ci/internal/workaround"
 	"github.com/urfave/cli/v3"
 )
 
@@ -177,6 +178,18 @@ func getSourcesFromFlag(flag cli.Flag) []cli.ValueSource {
 	}
 
 	if flag, ok := flag.(*cli.StringMapFlag); ok {
+		if flag.Sources.Chain != nil {
+			sources = append(sources, flag.Sources.Chain...)
+		}
+	}
+
+	if flag, ok := flag.(*workaround.IntFlag); ok {
+		if flag.Sources.Chain != nil {
+			sources = append(sources, flag.Sources.Chain...)
+		}
+	}
+
+	if flag, ok := flag.(*workaround.FloatFlag); ok {
 		if flag.Sources.Chain != nil {
 			sources = append(sources, flag.Sources.Chain...)
 		}
