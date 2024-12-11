@@ -292,7 +292,7 @@ var (
 	fromLatestFlag = &cli.BoolFlag{
 		Name:     "from-latest",
 		Sources:  cli.EnvVars(deploymentEnvVar("FROM_LATEST")),
-		Usage:    "whether to use settings from the latest deployment; if true other flags act as overrides",
+		Usage:    "whether to use settings from the latest deployment; if true other flags and config file values act as overrides",
 		Category: "Deployment:",
 	}
 )
