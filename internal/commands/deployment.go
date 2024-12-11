@@ -310,6 +310,17 @@ func parseContainerPorts(ports []string) ([]shared.ContainerPort, error) {
 }
 
 func parseEnvVars(envVars []string) ([]shared.DeploymentConfigV3Env, error) {
+	// Envs from a Config File are parsed from urfave/cli as a single-element
+	// string slice of all the values like:
+	// []string{`[KEY1=VAL1 KEY2=VAL2 KEY3="QUOTED VAL3"]`}
+	// This stanza parses those into a proper slice of one Env per slice element
+	if len(envVars) == 1 && strings.HasPrefix(envVars[0], "[") && strings.HasSuffix(envVars[0], "]") {
+		var err error
+		envVars, err = shorthand.ParseConfigFileVars(envVars[0])
+		if err != nil {
+			return nil, err
+		}
+	}
 	envVars = fixOverZealousCommaSplitting(envVars)
 	output := make([]shared.DeploymentConfigV3Env, 0, len(envVars))
 	for _, envVar := range envVars {
