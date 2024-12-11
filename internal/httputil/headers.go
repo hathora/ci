@@ -4,6 +4,13 @@ import (
 	"net/http"
 )
 
+const (
+	NameContentType             = "Content-Type"
+	ValueApplicationJSON        = "application/json"
+	ValueApplicationOctetStream = "application/octet-stream"
+	ValueApplicationXML         = "application/xml"
+)
+
 type contentTypeRoundTripper struct {
 	underlying http.RoundTripper
 }
@@ -19,8 +26,8 @@ func (c *contentTypeRoundTripper) RoundTrip(req *http.Request) (*http.Response, 
 		return res, err
 	}
 
-	if res.Header.Get("content-type") == "" {
-		res.Header.Set("content-type", "application/octet-stream")
+	if res.Header.Get(NameContentType) == "" {
+		res.Header.Set(NameContentType, ValueApplicationOctetStream)
 	}
 
 	return res, err
