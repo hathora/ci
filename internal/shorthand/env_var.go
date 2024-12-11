@@ -15,7 +15,7 @@ func ParseDeploymentEnvVar(s string) (*shared.DeploymentConfigV3Env, error) {
 
 	parts := strings.SplitN(s, "=", 2)
 	if len(parts) != 2 {
-		return nil, ErrInvalidEnvVarFormat(s)
+		return nil, NewErrInvalidEnvVarFormat(s)
 	}
 
 	parts[1] = strings.TrimSpace(parts[1])
@@ -39,7 +39,7 @@ func ParseConfigFileVars(input string) ([]string, error) {
 	}
 	matches := reEnvs.FindAllString(input, -1)
 	if len(matches) == 0 {
-		return nil, ErrInvalidEnvVarFormat(input)
+		return nil, NewErrInvalidEnvVarFormat(input)
 	}
 	return matches, nil
 }
@@ -54,6 +54,6 @@ func MapEnvToEnvConfig(input []shared.DeploymentV3Env) []shared.DeploymentConfig
 	return output
 }
 
-func ErrInvalidEnvVarFormat(env string) error {
+func NewErrInvalidEnvVarFormat(env string) error {
 	return fmt.Errorf("invalid env var format: %s", env)
 }
