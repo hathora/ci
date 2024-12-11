@@ -19,6 +19,8 @@ import (
 	"github.com/hathora/ci/internal/workaround"
 )
 
+const deploymentFlagEnvVarPrefix = globalFlagEnvVarPrefix + "DEPLOYMENT_"
+
 var (
 	allowedTransportTypes = []string{"tcp", "udp", "tls"}
 	minRoomsPerProcess    = 1
@@ -192,8 +194,6 @@ func deploymentEnvVar(name string) string {
 }
 
 var (
-	deploymentFlagEnvVarPrefix = fmt.Sprintf("%s%s", globalFlagEnvVarPrefix, "DEPLOYMENT_")
-
 	deploymentIDFlag = &cli.StringFlag{
 		Name:     "deployment-id",
 		Aliases:  []string{"d"},

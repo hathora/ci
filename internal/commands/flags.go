@@ -6,6 +6,8 @@ import (
 	"github.com/hathora/ci/internal/commands/altsrc"
 )
 
+const globalFlagEnvVarPrefix = "HATHORA_"
+
 var (
 	outputFlag = &cli.StringFlag{
 		Name:    "output",
@@ -101,10 +103,6 @@ var (
 		verbosityFlag,
 		configFlag,
 	}
-)
-
-var (
-	globalFlagEnvVarPrefix = "HATHORA_"
 )
 
 func globalFlagEnvVar(name string) string {

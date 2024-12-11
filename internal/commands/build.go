@@ -27,6 +27,8 @@ type etagPart struct {
 	etag       string
 }
 
+const buildFlagEnvVarPrefix = globalFlagEnvVarPrefix + "BUILD_"
+
 var Build = &cli.Command{
 	Name:  "build",
 	Usage: "options for builds",
@@ -248,8 +250,6 @@ func buildFlagEnvVar(name string) string {
 }
 
 var (
-	buildFlagEnvVarPrefix = globalFlagEnvVarPrefix + "BUILD_"
-
 	buildIDFlag = &cli.StringFlag{
 		Name:    "build-id",
 		Aliases: []string{"b"},
