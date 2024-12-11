@@ -258,8 +258,11 @@ var (
 	}
 
 	envVarsFlag = &cli.StringSliceFlag{
-		Name:     "env",
-		Sources:  cli.EnvVars(deploymentEnvVar("ENV")),
+		Name: "env",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(deploymentEnvVar("ENV")),
+			altsrc.ConfigFile(configFlag.Name, "deployment.env"),
+		),
 		Usage:    "`<KEY=VALUE>` formatted environment variables (use quotes for values with spaces or commas)",
 		Category: "Deployment:",
 	}
