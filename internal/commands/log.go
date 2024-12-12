@@ -16,6 +16,8 @@ import (
 	"github.com/hathora/ci/internal/workaround"
 )
 
+const logFlagEnvVarPrefix = globalFlagEnvVarPrefix + "LOG_"
+
 var (
 	minTailLines = 1
 	maxTailLines = 5000
@@ -66,8 +68,6 @@ func logFlagEnvVar(name string) string {
 }
 
 var (
-	logFlagEnvVarPrefix = globalFlagEnvVarPrefix + "LOG_"
-
 	followFlag = &cli.BoolFlag{
 		Name: "follow",
 		Sources: cli.NewValueSourceChain(

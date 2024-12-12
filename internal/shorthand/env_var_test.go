@@ -67,3 +67,17 @@ func Test_DeploymentEnvVarShorthand(t *testing.T) {
 	}
 
 }
+
+func TestParseConfigFileVars(t *testing.T) {
+	input := `[KEY1=VAL1 KEY3="VAL 3 WITH SPACES" KEY2=VAL2]`
+	out, err := shorthand.ParseConfigFileVars(input)
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, 3, len(out))
+	input = `[KEY1 =SHOULD_ERROR]`
+	_, err = shorthand.ParseConfigFileVars(input)
+	if err == nil {
+		t.Error("expected error for invalid env var format")
+	}
+}

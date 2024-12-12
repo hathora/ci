@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/hathora/ci/internal/commands"
+	"github.com/hathora/ci/internal/httputil"
 	"github.com/hathora/ci/internal/mock"
 )
 
@@ -125,7 +126,7 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodPost, "request method should be POST")
 				assert.Equal(t, "/builds/v3/test-app-id/create", r.URL.Path, "request path should contain app id")
-				assert.Equal(t, "application/json", r.Header.Get("Content-Type"), "request should have a JSON content type")
+				assert.Equal(t, httputil.ValueApplicationJSON, r.Header.Get(httputil.NameContentType), "request should have a JSON content type")
 				assert.NotNil(t, requestBody, "request body should not be nil")
 				assert.Equal(t, `{"buildTag":"test-build-tag"}`, string(*requestBody), "request body should have supplied build tag")
 			},

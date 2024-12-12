@@ -15,6 +15,7 @@ import (
 
 	"github.com/hathora/ci/internal/archive"
 	"github.com/hathora/ci/internal/commands/altsrc"
+	"github.com/hathora/ci/internal/httputil"
 	"github.com/hathora/ci/internal/output"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/sdk/models/shared"
@@ -26,6 +27,8 @@ type etagPart struct {
 	partNumber int
 	etag       string
 }
+
+const buildFlagEnvVarPrefix = globalFlagEnvVarPrefix + "BUILD_"
 
 var Build = &cli.Command{
 	Name:  "build",
@@ -185,7 +188,7 @@ func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, buildId, fil
 		return nil, fmt.Errorf("failed to upload parts: %w", err)
 	}
 
-	resp, err := http.Post(createRes.CreatedBuildV3WithMultipartUrls.CompleteUploadPostRequestURL, "application/xml", bytes.NewBufferString(createEtagXML(etagParts...)))
+	resp, err := http.Post(createRes.CreatedBuildV3WithMultipartUrls.CompleteUploadPostRequestURL, httputil.ValueApplicationXML, bytes.NewBufferString(createEtagXML(etagParts...)))
 	if err != nil {
 		return nil, err
 	}
@@ -248,8 +251,6 @@ func buildFlagEnvVar(name string) string {
 }
 
 var (
-	buildFlagEnvVarPrefix = globalFlagEnvVarPrefix + "BUILD_"
-
 	buildIDFlag = &cli.StringFlag{
 		Name:    "build-id",
 		Aliases: []string{"b"},
@@ -432,12 +433,12 @@ func uploadFileToS3(preSignedURL string, byteBuffer []byte, globalUploadProgress
 		globalUploadProgress: globalUploadProgress,
 		hideUploadProgress:   hideUploadProgress,
 	}
-	req, err := http.NewRequest("PUT", preSignedURL, progressReader)
+	req, err := http.NewRequest(http.MethodPut, preSignedURL, progressReader)
 	if err != nil {
 		os.Stderr.WriteString(fmt.Sprintf("failed to create request: %v", err))
 		return "", fmt.Errorf("failed to create request: %w", err)
 	}
-	req.Header.Set("Content-Type", "application/octet-stream")
+	req.Header.Set(httputil.NameContentType, httputil.ValueApplicationOctetStream)
 	req.ContentLength = int64(requestBody.Len())
 
 	client := &http.Client{}
