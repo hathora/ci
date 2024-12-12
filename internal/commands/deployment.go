@@ -298,6 +298,10 @@ var (
 )
 
 func parseContainerPorts(ports []string) ([]shared.ContainerPort, error) {
+	// this converts a string representation of the slice from a config file into a real string slice
+	if len(ports) == 1 && strings.HasPrefix(ports[0], "[") && strings.HasSuffix(ports[0], "]") {
+		ports = strings.Split(strings.TrimPrefix(strings.TrimSuffix(ports[0], "]"), "["), " ")
+	}
 	output := make([]shared.ContainerPort, 0, len(ports))
 	for _, port := range ports {
 		p, err := shorthand.ParseContainerPort(port)
