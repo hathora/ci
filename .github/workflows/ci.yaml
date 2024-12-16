@@ -137,7 +137,7 @@ jobs:
         run: make build
 
       - name: Sign the Windows binary
-        if: matrix.platform.os == 'windows'
+        if: github.repository_owner == 'hathora' && matrix.platform.os == 'windows'
         run: |
           $decodedCertificate = [System.Convert]::FromBase64String("${{ secrets.SIGNING_CERTIFICATE_PFX }}")
           [System.IO.File]::WriteAllBytes("certificate.pfx", $decodedCertificate)
