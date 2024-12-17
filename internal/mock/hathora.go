@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/hathora/ci/internal/httputil"
 	"github.com/hathora/ci/internal/sdk"
 	"github.com/stretchr/testify/require"
 )
@@ -120,7 +121,7 @@ func (m *mockHathora) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	jsonBody := json.RawMessage(body)
 	m.capturedRequestBodies = append(m.capturedRequestBodies, &jsonBody)
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set(httputil.NameContentType, httputil.ValueApplicationJSON)
 	w.WriteHeader(m.cannedStatuses[m.nextResponseIndex])
 
 	_, err = w.Write(m.cannedResponses[m.nextResponseIndex])

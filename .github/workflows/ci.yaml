@@ -119,6 +119,8 @@ jobs:
           ]
         arch: [amd64, arm64]
     runs-on: ${{ matrix.platform.runner }}
+    env:
+      HAS_SECRET: ${{ secrets.SIGNING_CERTIFICATE_PFX }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -137,7 +139,7 @@ jobs:
         run: make build
 
       - name: Sign the Windows binary
-        if: matrix.platform.os == 'windows'
+        if: env.HAS_SECRET && github.repository_owner == 'hathora' && matrix.platform.os == 'windows'
         run: |
           $decodedCertificate = [System.Convert]::FromBase64String("${{ secrets.SIGNING_CERTIFICATE_PFX }}")
           [System.IO.File]::WriteAllBytes("certificate.pfx", $decodedCertificate)

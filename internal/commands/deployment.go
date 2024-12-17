@@ -19,6 +19,8 @@ import (
 	"github.com/hathora/ci/internal/workaround"
 )
 
+const deploymentFlagEnvVarPrefix = globalFlagEnvVarPrefix + "DEPLOYMENT_"
+
 var (
 	allowedTransportTypes = []string{"tcp", "udp", "tls"}
 	minRoomsPerProcess    = 1
@@ -192,8 +194,6 @@ func deploymentEnvVar(name string) string {
 }
 
 var (
-	deploymentFlagEnvVarPrefix = fmt.Sprintf("%s%s", globalFlagEnvVarPrefix, "DEPLOYMENT_")
-
 	deploymentIDFlag = &cli.StringFlag{
 		Name:     "deployment-id",
 		Aliases:  []string{"d"},
@@ -258,8 +258,11 @@ var (
 	}
 
 	envVarsFlag = &cli.StringSliceFlag{
-		Name:     "env",
-		Sources:  cli.EnvVars(deploymentEnvVar("ENV")),
+		Name: "env",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(deploymentEnvVar("ENV")),
+			altsrc.ConfigFile(configFlag.Name, "deployment.env"),
+		),
 		Usage:    "`<KEY=VALUE>` formatted environment variables (use quotes for values with spaces or commas)",
 		Category: "Deployment:",
 	}
@@ -289,12 +292,16 @@ var (
 	fromLatestFlag = &cli.BoolFlag{
 		Name:     "from-latest",
 		Sources:  cli.EnvVars(deploymentEnvVar("FROM_LATEST")),
-		Usage:    "whether to use settings from the latest deployment; if true other flags act as overrides",
+		Usage:    "whether to use settings from the latest deployment; if true other flags and config file values act as overrides",
 		Category: "Deployment:",
 	}
 )
 
 func parseContainerPorts(ports []string) ([]shared.ContainerPort, error) {
+	// this converts a string representation of the slice from a config file into a real string slice
+	if len(ports) == 1 && strings.HasPrefix(ports[0], "[") && strings.HasSuffix(ports[0], "]") {
+		ports = strings.Split(strings.TrimPrefix(strings.TrimSuffix(ports[0], "]"), "["), " ")
+	}
 	output := make([]shared.ContainerPort, 0, len(ports))
 	for _, port := range ports {
 		p, err := shorthand.ParseContainerPort(port)
@@ -307,6 +314,17 @@ func parseContainerPorts(ports []string) ([]shared.ContainerPort, error) {
 }
 
 func parseEnvVars(envVars []string) ([]shared.DeploymentConfigV3Env, error) {
+	// Envs from a Config File are parsed from urfave/cli as a single-element
+	// string slice of all the values like:
+	// []string{`[KEY1=VAL1 KEY2=VAL2 KEY3="QUOTED VAL3"]`}
+	// This stanza parses those into a proper slice of one Env per slice element
+	if len(envVars) == 1 && strings.HasPrefix(envVars[0], "[") && strings.HasSuffix(envVars[0], "]") {
+		var err error
+		envVars, err = shorthand.ParseConfigFileVars(envVars[0])
+		if err != nil {
+			return nil, err
+		}
+	}
 	envVars = fixOverZealousCommaSplitting(envVars)
 	output := make([]shared.DeploymentConfigV3Env, 0, len(envVars))
 	for _, envVar := range envVars {
