@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/urfave/cli/v3"
@@ -561,7 +562,15 @@ func (c *CreateDeploymentConfig) Validate() error {
 	if c.RequestedMemoryMB == 0 {
 		err = errors.Join(err, missingRequiredFlag(requestedMemoryFlag.Name))
 	}
-	err = errors.Join(err, requireFloatInRange(c.RequestedMemoryMB, minMemoryMB, maxMemoryMB, requestedMemoryFlag.Name))
+
+	if c.RequestedMemoryMB < minMemoryMB {
+		err = errors.Join(err, fmt.Errorf("flag %s must be greater than %s",
+			requestedMemoryFlag.Name,
+			strconv.FormatFloat(float64(minMemoryMB), 'f', -1, 64),
+		))
+	}
+
+	// err = errors.Join(err, requireFloatInRange(c.RequestedMemoryMB, minMemoryMB, maxMemoryMB, requestedMemoryFlag.Name))
 	if c.RequestedCPU == 0 {
 		err = errors.Join(err, missingRequiredFlag(requestedCPUFlag.Name))
 	}
