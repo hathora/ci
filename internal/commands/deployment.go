@@ -570,7 +570,6 @@ func (c *CreateDeploymentConfig) Validate() error {
 		))
 	}
 
-	// err = errors.Join(err, requireFloatInRange(c.RequestedMemoryMB, minMemoryMB, maxMemoryMB, requestedMemoryFlag.Name))
 	if c.RequestedCPU == 0 {
 		err = errors.Join(err, missingRequiredFlag(requestedCPUFlag.Name))
 	}
