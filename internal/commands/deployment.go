@@ -574,7 +574,13 @@ func (c *CreateDeploymentConfig) Validate() error {
 		err = errors.Join(err, missingRequiredFlag(requestedCPUFlag.Name))
 	}
 
-	err = errors.Join(err, requireFloatInRange(c.RequestedCPU, minCPU, maxCPU, requestedCPUFlag.Name))
+	if c.RequestedCPU < minCPU {
+		err = errors.Join(err, fmt.Errorf("flag %s must be greater than %s",
+			requestedCPUFlag.Name,
+			strconv.FormatFloat(float64(minCPU), 'f', -1, 64),
+		))
+	}
+
 	err = errors.Join(err, requireMaxDecimals(c.RequestedCPU, maxCPUDecimalPlaces, requestedCPUFlag.Name))
 
 	return err
