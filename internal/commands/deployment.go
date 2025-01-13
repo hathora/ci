@@ -366,7 +366,7 @@ var (
 
 type DeploymentConfig struct {
 	*GlobalConfig
-	SDK    *sdk.SDK
+	SDK    *sdk.HathoraCloud
 	Output output.FormatWriter
 }
 

@@ -109,7 +109,7 @@ var (
 
 type LogConfig struct {
 	*GlobalConfig
-	SDK *sdk.SDK
+	SDK *sdk.HathoraCloud
 }
 
 var _ LoadableConfig = (*LogConfig)(nil)

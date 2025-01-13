@@ -14,7 +14,7 @@ import (
 
 type HathoraIntegration struct {
 	Endpoint string
-	SDK      *sdk.SDK
+	SDK      *sdk.HathoraCloud
 
 	mock *mockHathora
 }

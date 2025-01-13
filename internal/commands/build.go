@@ -131,7 +131,7 @@ var Build = &cli.Command{
 	},
 }
 
-func doBuildCreate(ctx context.Context, hathora *sdk.SDK, buildTag, buildId, filePath string, hideUploadProgress bool) (*components.BuildV3, error) {
+func doBuildCreate(ctx context.Context, hathora *sdk.HathoraCloud, buildTag, buildId, filePath string, hideUploadProgress bool) (*components.BuildV3, error) {
 	file, err := archive.RequireTGZ(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("no build file available for run: %w", err)
@@ -305,7 +305,7 @@ var (
 
 type BuildConfig struct {
 	*GlobalConfig
-	SDK    *sdk.SDK
+	SDK    *sdk.HathoraCloud
 	Output output.FormatWriter
 }
 
