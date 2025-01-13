@@ -15,7 +15,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/hathora/ci/internal/output"
-	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 var (
@@ -166,10 +166,10 @@ func OutputFormatterFor(cmd *cli.Command, outputType any) (output.FormatWriter, 
 
 func BuildTextFormatter() output.FormatWriter {
 	// TODO: Allow commands to register their own formatters so that this one function doesn't have to know the desired format for every type
-	var build shared.BuildV3
-	var deployment shared.DeploymentV3
-	var envVar shared.DeploymentV3Env
-	var containerPort shared.ContainerPort
+	var build components.BuildV3
+	var deployment components.DeploymentV3
+	var envVar components.DeploymentV3Env
+	var containerPort components.ContainerPort
 	var timestamp time.Time
 	var long int64
 	return output.TextFormat(
@@ -200,12 +200,12 @@ func BuildTextFormatter() output.FormatWriter {
 		}),
 		output.WithoutFields(deployment, "AppID", "CreatedBy", "Env"),
 		output.WithFormatter(envVar,
-			func(e shared.DeploymentV3Env) string {
+			func(e components.DeploymentV3Env) string {
 				return fmt.Sprintf("%s=%s", e.Name, e.Value)
 			},
 		),
 		output.WithFormatter(containerPort,
-			func(cp shared.ContainerPort) string {
+			func(cp components.ContainerPort) string {
 				return fmt.Sprintf("%s:%d/%s", cp.Name, cp.Port, cp.TransportType)
 			},
 		),

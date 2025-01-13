@@ -2,13 +2,13 @@ package setup
 
 import (
 	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 func SDK(token, baseURL string, loggingVerbosity int) *sdk.SDK {
 	return sdk.New(
 		sdk.WithSecurity(
-			shared.Security{
+			components.Security{
 				HathoraDevToken: sdk.String(token),
 			},
 		),

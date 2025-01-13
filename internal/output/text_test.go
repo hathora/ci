@@ -10,7 +10,7 @@ import (
 
 	"github.com/hathora/ci/internal/commands"
 	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 func Test_DeploymentTextOutput(t *testing.T) {
@@ -22,17 +22,17 @@ func Test_DeploymentTextOutput(t *testing.T) {
 	}{
 		{
 			name: "single deployment",
-			input: shared.DeploymentV3{
+			input: components.DeploymentV3{
 				IdleTimeoutEnabled: true,
 				RoomsPerProcess:    3,
-				AdditionalContainerPorts: []shared.ContainerPort{
+				AdditionalContainerPorts: []components.ContainerPort{
 					{
 						TransportType: "tcp",
 						Port:          4000,
 						Name:          "debug",
 					},
 				},
-				DefaultContainerPort: shared.ContainerPort{
+				DefaultContainerPort: components.ContainerPort{
 					TransportType: "tcp",
 					Port:          3000,
 					Name:          "default",
@@ -42,7 +42,7 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				AppID:        "appID",
 				DeploymentID: "dep-2",
 				BuildID:      "bld-1",
-				Env: []shared.DeploymentV3Env{
+				Env: []components.DeploymentV3Env{
 					{
 						Name:  "EULA",
 						Value: "TRUE",
@@ -52,23 +52,23 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				RequestedCPU:      0.5,
 			},
 			expect: [][]string{
-				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "RequestedCPU", "RequestedMemory", "DefaultContainerPort", "AdditionalContainerPorts", "BuildTag"},
-				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null"},
+				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "RequestedCPU", "RequestedMemory", "DefaultContainerPort", "AdditionalContainerPorts", "BuildTag", "DeploymentTag"},
+				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null", "null"},
 			},
 		},
 		{
 			name: "single deployment ptr",
-			input: &shared.DeploymentV3{
+			input: &components.DeploymentV3{
 				IdleTimeoutEnabled: true,
 				RoomsPerProcess:    3,
-				AdditionalContainerPorts: []shared.ContainerPort{
+				AdditionalContainerPorts: []components.ContainerPort{
 					{
 						TransportType: "tcp",
 						Port:          4000,
 						Name:          "debug",
 					},
 				},
-				DefaultContainerPort: shared.ContainerPort{
+				DefaultContainerPort: components.ContainerPort{
 					TransportType: "tcp",
 					Port:          3000,
 					Name:          "default",
@@ -78,7 +78,7 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				AppID:        "appID",
 				DeploymentID: "dep-2",
 				BuildID:      "bld-1",
-				Env: []shared.DeploymentV3Env{
+				Env: []components.DeploymentV3Env{
 					{
 						Name:  "EULA",
 						Value: "TRUE",
@@ -88,24 +88,24 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				RequestedCPU:      0.5,
 			},
 			expect: [][]string{
-				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "RequestedCPU", "RequestedMemory", "DefaultContainerPort", "AdditionalContainerPorts", "BuildTag"},
-				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null"},
+				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "RequestedCPU", "RequestedMemory", "DefaultContainerPort", "AdditionalContainerPorts", "BuildTag", "DeploymentTag"},
+				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null", "null"},
 			},
 		},
 		{
 			name: "multiple deployments",
-			input: []shared.DeploymentV3{
+			input: []components.DeploymentV3{
 				{
 					IdleTimeoutEnabled: true,
 					RoomsPerProcess:    3,
-					AdditionalContainerPorts: []shared.ContainerPort{
+					AdditionalContainerPorts: []components.ContainerPort{
 						{
 							TransportType: "tcp",
 							Port:          4000,
 							Name:          "debug",
 						},
 					},
-					DefaultContainerPort: shared.ContainerPort{
+					DefaultContainerPort: components.ContainerPort{
 						TransportType: "tcp",
 						Port:          3000,
 						Name:          "default",
@@ -115,7 +115,7 @@ func Test_DeploymentTextOutput(t *testing.T) {
 					AppID:        "appID",
 					DeploymentID: "dep-2",
 					BuildID:      "bld-1",
-					Env: []shared.DeploymentV3Env{
+					Env: []components.DeploymentV3Env{
 						{
 							Name:  "EULA",
 							Value: "TRUE",
@@ -127,14 +127,14 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				{
 					IdleTimeoutEnabled: true,
 					RoomsPerProcess:    3,
-					AdditionalContainerPorts: []shared.ContainerPort{
+					AdditionalContainerPorts: []components.ContainerPort{
 						{
 							TransportType: "tcp",
 							Port:          4000,
 							Name:          "debug",
 						},
 					},
-					DefaultContainerPort: shared.ContainerPort{
+					DefaultContainerPort: components.ContainerPort{
 						TransportType: "tcp",
 						Port:          3000,
 						Name:          "default",
@@ -144,7 +144,7 @@ func Test_DeploymentTextOutput(t *testing.T) {
 					AppID:        "appID",
 					DeploymentID: "dep-2",
 					BuildID:      "bld-1",
-					Env: []shared.DeploymentV3Env{
+					Env: []components.DeploymentV3Env{
 						{
 							Name:  "EULA",
 							Value: "TRUE",
@@ -155,9 +155,9 @@ func Test_DeploymentTextOutput(t *testing.T) {
 				},
 			},
 			expect: [][]string{
-				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "RequestedCPU", "RequestedMemory", "DefaultContainerPort", "AdditionalContainerPorts", "BuildTag"},
-				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null"},
-				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null"},
+				{"DeploymentID", "BuildID", "CreatedAt", "IdleTimeoutEnabled", "RoomsPerProcess", "RequestedCPU", "RequestedMemory", "DefaultContainerPort", "AdditionalContainerPorts", "BuildTag", "DeploymentTag"},
+				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null", "null"},
+				{"dep-2", "bld-1", "2021-01-01T00:00:00Z", "true", "3", "0.5", "1.0", "GiB", "default:3000/tcp", "debug:4000/tcp", "null", "null"},
 			},
 		},
 	}
@@ -191,7 +191,7 @@ func Test_BuildTextOutput(t *testing.T) {
 	}{
 		{
 			name: "single build",
-			input: shared.BuildV3{
+			input: components.BuildV3{
 				CreatedAt:  ts,
 				CreatedBy:  "createdBy",
 				BuildID:    "bld-1",
@@ -208,7 +208,7 @@ func Test_BuildTextOutput(t *testing.T) {
 		},
 		{
 			name: "single build ptr",
-			input: &shared.BuildV3{
+			input: &components.BuildV3{
 				CreatedAt:  ts,
 				CreatedBy:  "createdBy",
 				BuildID:    "bld-1",
@@ -225,7 +225,7 @@ func Test_BuildTextOutput(t *testing.T) {
 		},
 		{
 			name: "multiple builds",
-			input: []shared.BuildV3{
+			input: []components.BuildV3{
 				{
 					CreatedAt:  ts,
 					CreatedBy:  "createdBy",
