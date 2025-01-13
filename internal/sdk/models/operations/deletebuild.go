@@ -2,10 +2,16 @@
 
 package operations
 
-import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
-)
+type DeleteBuildGlobals struct {
+	OrgID *string `queryParam:"style=form,explode=true,name=orgId"`
+}
+
+func (o *DeleteBuildGlobals) GetOrgID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.OrgID
+}
 
 type DeleteBuildRequest struct {
 	BuildID string  `pathParam:"style=simple,explode=false,name=buildId"`
@@ -24,43 +30,4 @@ func (o *DeleteBuildRequest) GetOrgID() *string {
 		return nil
 	}
 	return o.OrgID
-}
-
-type DeleteBuildResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	DeletedBuild *shared.DeletedBuild
-}
-
-func (o *DeleteBuildResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *DeleteBuildResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *DeleteBuildResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *DeleteBuildResponse) GetDeletedBuild() *shared.DeletedBuild {
-	if o == nil {
-		return nil
-	}
-	return o.DeletedBuild
 }

@@ -2,10 +2,16 @@
 
 package operations
 
-import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
-)
+type GetBuildGlobals struct {
+	OrgID *string `queryParam:"style=form,explode=true,name=orgId"`
+}
+
+func (o *GetBuildGlobals) GetOrgID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.OrgID
+}
 
 type GetBuildRequest struct {
 	BuildID string  `pathParam:"style=simple,explode=false,name=buildId"`
@@ -24,43 +30,4 @@ func (o *GetBuildRequest) GetOrgID() *string {
 		return nil
 	}
 	return o.OrgID
-}
-
-type GetBuildResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	BuildV3 *shared.BuildV3
-}
-
-func (o *GetBuildResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *GetBuildResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *GetBuildResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *GetBuildResponse) GetBuildV3() *shared.BuildV3 {
-	if o == nil {
-		return nil
-	}
-	return o.BuildV3
 }

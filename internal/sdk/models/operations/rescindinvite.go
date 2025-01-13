@@ -3,13 +3,12 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type RescindInviteRequest struct {
-	OrgID             string                   `pathParam:"style=simple,explode=false,name=orgId"`
-	RescindUserInvite shared.RescindUserInvite `request:"mediaType=application/json"`
+	OrgID             string                       `pathParam:"style=simple,explode=false,name=orgId"`
+	RescindUserInvite components.RescindUserInvite `request:"mediaType=application/json"`
 }
 
 func (o *RescindInviteRequest) GetOrgID() string {
@@ -19,39 +18,9 @@ func (o *RescindInviteRequest) GetOrgID() string {
 	return o.OrgID
 }
 
-func (o *RescindInviteRequest) GetRescindUserInvite() shared.RescindUserInvite {
+func (o *RescindInviteRequest) GetRescindUserInvite() components.RescindUserInvite {
 	if o == nil {
-		return shared.RescindUserInvite{}
+		return components.RescindUserInvite{}
 	}
 	return o.RescindUserInvite
-}
-
-type RescindInviteResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-}
-
-func (o *RescindInviteResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *RescindInviteResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *RescindInviteResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
 }

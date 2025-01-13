@@ -2,9 +2,27 @@
 
 package operations
 
-import (
-	"net/http"
-)
+type GetUpcomingInvoiceTotalGlobals struct {
+	OrgID *string `queryParam:"style=form,explode=true,name=orgId"`
+}
+
+func (o *GetUpcomingInvoiceTotalGlobals) GetOrgID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.OrgID
+}
+
+type GetUpcomingInvoiceTotalRequest struct {
+	OrgID *string `queryParam:"style=form,explode=true,name=orgId"`
+}
+
+func (o *GetUpcomingInvoiceTotalRequest) GetOrgID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.OrgID
+}
 
 // GetUpcomingInvoiceTotalResponseBody - Ok
 type GetUpcomingInvoiceTotalResponseBody struct {
@@ -16,43 +34,4 @@ func (o *GetUpcomingInvoiceTotalResponseBody) GetValue() float64 {
 		return 0.0
 	}
 	return o.Value
-}
-
-type GetUpcomingInvoiceTotalResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	Object *GetUpcomingInvoiceTotalResponseBody
-}
-
-func (o *GetUpcomingInvoiceTotalResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *GetUpcomingInvoiceTotalResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *GetUpcomingInvoiceTotalResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *GetUpcomingInvoiceTotalResponse) GetObject() *GetUpcomingInvoiceTotalResponseBody {
-	if o == nil {
-		return nil
-	}
-	return o.Object
 }

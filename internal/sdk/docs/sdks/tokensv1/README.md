@@ -7,9 +7,9 @@
 
 ### Available Operations
 
-* [GetOrgTokens](#getorgtokens) - List all organization tokens for a given org.
-* [CreateOrgToken](#createorgtoken) - Create a new organization token.
-* [RevokeOrgToken](#revokeorgtoken) - Revoke an organization token.
+* [GetOrgTokens](#getorgtokens) - GetOrgTokens
+* [CreateOrgToken](#createorgtoken) - CreateOrgToken
+* [RevokeOrgToken](#revokeorgtoken) - RevokeOrgToken
 
 ## GetOrgTokens
 
@@ -21,27 +21,25 @@ List all organization tokens for a given org.
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
     ctx := context.Background()
-    res, err := s.TokensV1.GetOrgTokens(ctx, orgID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.TokensV1.GetOrgTokens(ctx, "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39")
     if err != nil {
         log.Fatal(err)
     }
-    if res.ListOrgTokens != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -55,14 +53,16 @@ func main() {
 | `orgID`                                                  | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39                 |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
-
 ### Response
 
-**[*operations.GetOrgTokensResponse](../../models/operations/getorgtokensresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+**[*components.ListOrgTokens](../../models/components/listorgtokens.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 404, 429    | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
 
 ## CreateOrgToken
 
@@ -74,31 +74,28 @@ Create a new organization token.
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
+	"hathoracloud/models/components"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
-
-    createOrgToken := shared.CreateOrgToken{
-        Name: "ci-token",
-    }
     ctx := context.Background()
-    res, err := s.TokensV1.CreateOrgToken(ctx, orgID, createOrgToken)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.TokensV1.CreateOrgToken(ctx, "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", components.CreateOrgToken{
+        Name: "ci-token",
+    })
     if err != nil {
         log.Fatal(err)
     }
-    if res.CreatedOrgToken != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -106,21 +103,23 @@ func main() {
 
 ### Parameters
 
-| Parameter                                                      | Type                                                           | Required                                                       | Description                                                    | Example                                                        |
-| -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- |
-| `ctx`                                                          | [context.Context](https://pkg.go.dev/context#Context)          | :heavy_check_mark:                                             | The context to use for the request.                            |                                                                |
-| `orgID`                                                        | *string*                                                       | :heavy_check_mark:                                             | N/A                                                            | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39                       |
-| `createOrgToken`                                               | [shared.CreateOrgToken](../../models/shared/createorgtoken.md) | :heavy_check_mark:                                             | N/A                                                            |                                                                |
-| `opts`                                                         | [][operations.Option](../../models/operations/option.md)       | :heavy_minus_sign:                                             | The options for this request.                                  |                                                                |
-
+| Parameter                                                              | Type                                                                   | Required                                                               | Description                                                            | Example                                                                |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `ctx`                                                                  | [context.Context](https://pkg.go.dev/context#Context)                  | :heavy_check_mark:                                                     | The context to use for the request.                                    |                                                                        |
+| `orgID`                                                                | *string*                                                               | :heavy_check_mark:                                                     | N/A                                                                    | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39                               |
+| `createOrgToken`                                                       | [components.CreateOrgToken](../../models/components/createorgtoken.md) | :heavy_check_mark:                                                     | N/A                                                                    |                                                                        |
+| `opts`                                                                 | [][operations.Option](../../models/operations/option.md)               | :heavy_minus_sign:                                                     | The options for this request.                                          |                                                                        |
 
 ### Response
 
-**[*operations.CreateOrgTokenResponse](../../models/operations/createorgtokenresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
+**[*components.CreatedOrgToken](../../models/components/createdorgtoken.md), error**
+
+### Errors
+
+| Error Type         | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,422,429    | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+| errors.APIError    | 401, 404, 422, 429 | application/json   |
+| errors.SDKError    | 4XX, 5XX           | \*/\*              |
 
 ## RevokeOrgToken
 
@@ -132,29 +131,25 @@ Revoke an organization token.
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
-
-    var orgTokenID string = "org-token-af469a92-5b45-4565-b3c4-b79878de67d2"
     ctx := context.Background()
-    res, err := s.TokensV1.RevokeOrgToken(ctx, orgID, orgTokenID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.TokensV1.RevokeOrgToken(ctx, "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "org-token-af469a92-5b45-4565-b3c4-b79878de67d2")
     if err != nil {
         log.Fatal(err)
     }
-    if res.Boolean != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -169,11 +164,13 @@ func main() {
 | `orgTokenID`                                             | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | org-token-af469a92-5b45-4565-b3c4-b79878de67d2           |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
-
 ### Response
 
-**[*operations.RevokeOrgTokenResponse](../../models/operations/revokeorgtokenresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+**[*bool](../../.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 404, 429    | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |

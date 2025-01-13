@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type UpdateRoomConfigGlobals struct {
@@ -19,9 +18,9 @@ func (o *UpdateRoomConfigGlobals) GetAppID() *string {
 }
 
 type UpdateRoomConfigRequest struct {
-	AppID                  *string                       `pathParam:"style=simple,explode=false,name=appId"`
-	RoomID                 string                        `pathParam:"style=simple,explode=false,name=roomId"`
-	UpdateRoomConfigParams shared.UpdateRoomConfigParams `request:"mediaType=application/json"`
+	AppID                  *string                           `pathParam:"style=simple,explode=false,name=appId"`
+	RoomID                 string                            `pathParam:"style=simple,explode=false,name=roomId"`
+	UpdateRoomConfigParams components.UpdateRoomConfigParams `request:"mediaType=application/json"`
 }
 
 func (o *UpdateRoomConfigRequest) GetAppID() *string {
@@ -38,39 +37,9 @@ func (o *UpdateRoomConfigRequest) GetRoomID() string {
 	return o.RoomID
 }
 
-func (o *UpdateRoomConfigRequest) GetUpdateRoomConfigParams() shared.UpdateRoomConfigParams {
+func (o *UpdateRoomConfigRequest) GetUpdateRoomConfigParams() components.UpdateRoomConfigParams {
 	if o == nil {
-		return shared.UpdateRoomConfigParams{}
+		return components.UpdateRoomConfigParams{}
 	}
 	return o.UpdateRoomConfigParams
-}
-
-type UpdateRoomConfigResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-}
-
-func (o *UpdateRoomConfigResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *UpdateRoomConfigResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *UpdateRoomConfigResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
 }

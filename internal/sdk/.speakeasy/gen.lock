@@ -1,24 +1,26 @@
 lockVersion: 2.0.0
-id: 73b126a9-5c85-4e6d-ac9e-6ba8bad8c116
+id: 56ed41a5-0983-4404-949a-09529ad93f50
 management:
-  docChecksum: 0a87a5d71a740a1c41abdb9879544197
+  docChecksum: b005fbf8a7cb5e6e0dc05d62b2fa2e3b
   docVersion: 0.0.1
-  speakeasyVersion: 1.348.2
-  generationVersion: 2.380.2
-  releaseVersion: 0.4.2
-  configChecksum: d86798337999a9191a43cc8effd616f3
+  speakeasyVersion: 1.455.7
+  generationVersion: 2.480.1
+  releaseVersion: 0.2.1
+  configChecksum: ec7116487e839b1f153d7d617e83d9e1
 features:
   go:
     additionalDependencies: 0.1.0
-    constsAndDefaults: 0.1.4
-    core: 3.5.2
+    constsAndDefaults: 0.1.6
+    core: 3.6.2
     defaultEnabledRetries: 0.2.0
     deprecations: 2.81.1
-    downloadStreams: 0.1.1
-    envVarSecurityUsage: 0.2.1
+    devContainers: 2.90.0
+    downloadStreams: 0.1.2
+    envVarSecurityUsage: 0.3.2
     flattening: 2.81.1
-    globalSecurity: 2.82.9
+    globalSecurity: 2.82.10
     globalSecurityCallbacks: 0.1.0
+    globalSecurityFlattening: 0.1.0
     globalServerURLs: 2.82.2
     globals: 2.82.2
     groups: 2.81.2
@@ -27,45 +29,624 @@ features:
     nullables: 0.1.0
     openEnums: 0.1.0
     responseFormat: 0.1.2
-    retries: 2.83.0
+    retries: 2.83.1
     sdkHooks: 0.1.0
-    unions: 2.85.8
+    unions: 2.85.10
+    uploadStreams: 0.1.0
 generatedFiles:
-  - tokensv1.go
-  - roomsv1.go
-  - roomsv2.go
-  - processesv1.go
-  - processesv2.go
-  - processesv3.go
-  - organizationsv1.go
-  - metricsv1.go
-  - managementv1.go
-  - logsv1.go
-  - lobbiesv1.go
-  - lobbiesv2.go
-  - lobbiesv3.go
-  - discoveryv1.go
-  - discoveryv2.go
-  - deploymentsv1.go
-  - deploymentsv2.go
-  - deploymentsv3.go
+  - .devcontainer/README.md
+  - .devcontainer/devcontainer.json
+  - .devcontainer/setup.sh
+  - .gitattributes
+  - /models/components/achpaymentmethod.go
+  - /models/components/activeconnectioninfo.go
+  - /models/components/appconfig.go
+  - /models/components/application.go
+  - /models/components/applicationspage.go
+  - /models/components/applicationwithlatestdeploymentandbuild.go
+  - /models/components/applicationwithlatestdeploymentandbuilddeprecated.go
+  - /models/components/authconfiguration.go
+  - /models/components/build.go
+  - /models/components/buildpart.go
+  - /models/components/buildstatus.go
+  - /models/components/buildsv3page.go
+  - /models/components/buildv3.go
+  - /models/components/buildwithmultiparturls.go
+  - /models/components/buildwithuploadurl.go
+  - /models/components/cardbrand.go
+  - /models/components/cardpaymentmethod.go
+  - /models/components/connectioninfo.go
+  - /models/components/connectioninfov2.go
+  - /models/components/containerport.go
+  - /models/components/createbuildparams.go
+  - /models/components/createdbuildv3withmultiparturls.go
+  - /models/components/createdorgtoken.go
+  - /models/components/createlobbyparams.go
+  - /models/components/createlobbyv3params.go
+  - /models/components/createmultipartbuildparams.go
+  - /models/components/createorgtoken.go
+  - /models/components/createroomparams.go
+  - /models/components/createuserinvite.go
+  - /models/components/customerportalurl.go
+  - /models/components/deletedbuild.go
+  - /models/components/deploymentconfig.go
+  - /models/components/deploymentconfigv2.go
+  - /models/components/deploymentconfigv3.go
+  - /models/components/deploymentsv3page.go
+  - /models/components/deploymentv1.go
+  - /models/components/deploymentv2.go
+  - /models/components/deploymentv3.go
+  - /models/components/deprecatedprocessmetricname.go
+  - /models/components/deprecatedprocessmetricsdata.go
+  - /models/components/exposedport.go
+  - /models/components/fleet.go
+  - /models/components/fleetmetricname.go
+  - /models/components/fleetmetricsdata.go
+  - /models/components/fleetregion.go
+  - /models/components/fleetregionconfig.go
+  - /models/components/fleetspage.go
+  - /models/components/googleidtokenobject.go
+  - /models/components/invoice.go
+  - /models/components/invoiceitem.go
+  - /models/components/invoiceitempage.go
+  - /models/components/invoicestatus.go
+  - /models/components/linkpaymentmethod.go
+  - /models/components/listorgtokens.go
+  - /models/components/lobby.go
+  - /models/components/lobbyv3.go
+  - /models/components/lobbyvisibility.go
+  - /models/components/metricvalue.go
+  - /models/components/nicknameobject.go
+  - /models/components/organization.go
+  - /models/components/orgmember.go
+  - /models/components/orgmemberspage.go
+  - /models/components/orgspage.go
+  - /models/components/orgtoken.go
+  - /models/components/orgtokenstatus.go
+  - /models/components/paymentmethod.go
+  - /models/components/pendingorginvite.go
+  - /models/components/pendingorginvitespage.go
+  - /models/components/pingendpoints.go
+  - /models/components/planname.go
+  - /models/components/playertokenobject.go
+  - /models/components/process.go
+  - /models/components/processmetricname.go
+  - /models/components/processmetricsdata.go
+  - /models/components/processstatus.go
+  - /models/components/processv2.go
+  - /models/components/processv3.go
+  - /models/components/processwithrooms.go
+  - /models/components/recordstringnever.go
+  - /models/components/region.go
+  - /models/components/rescinduserinvite.go
+  - /models/components/room.go
+  - /models/components/roomallocation.go
+  - /models/components/roomconnectiondata.go
+  - /models/components/roomreadystatus.go
+  - /models/components/roomstatus.go
+  - /models/components/roomwithoutallocations.go
+  - /models/components/scope.go
+  - /models/components/security.go
+  - /models/components/setlobbystateparams.go
+  - /models/components/startingconnectioninfo.go
+  - /models/components/transporttype.go
+  - /models/components/updateroomconfigparams.go
+  - /models/components/updateuserinvite.go
+  - /models/components/usagelimits.go
+  - /models/components/userrole.go
+  - /models/components/verificationemailrequest.go
+  - /models/components/verificationemailsuccess.go
+  - /models/errors/apierror.go
+  - /models/operations/acceptinvite.go
+  - /models/operations/createapp.go
+  - /models/operations/createbuild.go
+  - /models/operations/createbuilddeprecated.go
+  - /models/operations/createbuildv2deprecated.go
+  - /models/operations/createbuildwithuploadurlv2deprecated.go
+  - /models/operations/createdeployment.go
+  - /models/operations/createdeploymentv1deprecated.go
+  - /models/operations/createdeploymentv2deprecated.go
+  - /models/operations/createlobby.go
+  - /models/operations/createlobbydeprecated.go
+  - /models/operations/createlocallobby.go
+  - /models/operations/createorgtoken.go
+  - /models/operations/createprivatelobby.go
+  - /models/operations/createprivatelobbydeprecated.go
+  - /models/operations/createprocess.go
+  - /models/operations/createprocessv2deprecated.go
+  - /models/operations/createpubliclobby.go
+  - /models/operations/createpubliclobbydeprecated.go
+  - /models/operations/createroom.go
+  - /models/operations/createroomdeprecated.go
+  - /models/operations/createwithmultipartuploadsv2deprecated.go
+  - /models/operations/deleteapp.go
+  - /models/operations/deleteappv1deprecated.go
+  - /models/operations/deletebuild.go
+  - /models/operations/deletebuilddeprecated.go
+  - /models/operations/deletebuildv2deprecated.go
+  - /models/operations/destroyroom.go
+  - /models/operations/destroyroomdeprecated.go
+  - /models/operations/downloadlogforprocess.go
+  - /models/operations/getactiveroomsforprocess.go
+  - /models/operations/getactiveroomsforprocessdeprecated.go
+  - /models/operations/getapp.go
+  - /models/operations/getappinfov1deprecated.go
+  - /models/operations/getapps.go
+  - /models/operations/getbalance.go
+  - /models/operations/getbuild.go
+  - /models/operations/getbuildinfodeprecated.go
+  - /models/operations/getbuildinfov2deprecated.go
+  - /models/operations/getbuilds.go
+  - /models/operations/getbuildsdeprecated.go
+  - /models/operations/getbuildsv2deprecated.go
+  - /models/operations/getconnectioninfo.go
+  - /models/operations/getconnectioninfodeprecated.go
+  - /models/operations/getdeployment.go
+  - /models/operations/getdeploymentinfov1deprecated.go
+  - /models/operations/getdeploymentinfov2deprecated.go
+  - /models/operations/getdeployments.go
+  - /models/operations/getdeploymentsv1deprecated.go
+  - /models/operations/getdeploymentsv2deprecated.go
+  - /models/operations/getfleetmetrics.go
+  - /models/operations/getfleetregion.go
+  - /models/operations/getfleets.go
+  - /models/operations/getinactiveroomsforprocess.go
+  - /models/operations/getinactiveroomsforprocessdeprecated.go
+  - /models/operations/getinvoices.go
+  - /models/operations/getlatestdeployment.go
+  - /models/operations/getlatestdeploymentv1deprecated.go
+  - /models/operations/getlatestdeploymentv2deprecated.go
+  - /models/operations/getlatestprocesses.go
+  - /models/operations/getlatestprocessesv2deprecated.go
+  - /models/operations/getlobbyinfo.go
+  - /models/operations/getlobbyinfobyroomid.go
+  - /models/operations/getlobbyinfobyshortcode.go
+  - /models/operations/getlogsforprocess.go
+  - /models/operations/getmetricsdeprecated.go
+  - /models/operations/getorgmembers.go
+  - /models/operations/getorgpendinginvites.go
+  - /models/operations/getorgtokens.go
+  - /models/operations/getpaymentmethod.go
+  - /models/operations/getprocess.go
+  - /models/operations/getprocessescountexperimental.go
+  - /models/operations/getprocessescountexperimentalv2deprecated.go
+  - /models/operations/getprocessinfodeprecated.go
+  - /models/operations/getprocessinfov2deprecated.go
+  - /models/operations/getprocessmetrics.go
+  - /models/operations/getroominfo.go
+  - /models/operations/getroominfodeprecated.go
+  - /models/operations/getrunningprocesses.go
+  - /models/operations/getstoppedprocesses.go
+  - /models/operations/getupcominginvoiceitems.go
+  - /models/operations/getupcominginvoicetotal.go
+  - /models/operations/getusagelimits.go
+  - /models/operations/initstripecustomerportalurl.go
+  - /models/operations/inviteuser.go
+  - /models/operations/listactivepubliclobbies.go
+  - /models/operations/listactivepubliclobbiesdeprecatedv1.go
+  - /models/operations/listactivepubliclobbiesdeprecatedv2.go
+  - /models/operations/loginanonymous.go
+  - /models/operations/logingoogle.go
+  - /models/operations/loginnickname.go
+  - /models/operations/rejectinvite.go
+  - /models/operations/rescindinvite.go
+  - /models/operations/revokeorgtoken.go
+  - /models/operations/runbuild.go
+  - /models/operations/runbuilddeprecated.go
+  - /models/operations/runbuildv2deprecated.go
+  - /models/operations/setlobbystate.go
+  - /models/operations/stopprocess.go
+  - /models/operations/stopprocessv2deprecated.go
+  - /models/operations/suspendroomdeprecated.go
+  - /models/operations/suspendroomv2deprecated.go
+  - /models/operations/updateapp.go
+  - /models/operations/updateappv1deprecated.go
+  - /models/operations/updatefleetregion.go
+  - /models/operations/updateroomconfig.go
+  - /models/operations/updateuserinvite.go
+  - CONTRIBUTING.md
+  - USAGE.md
+  - appsv1.go
+  - appsv2.go
+  - authv1.go
+  - billingv1.go
   - buildsv1.go
   - buildsv2.go
   - buildsv3.go
-  - billingv1.go
-  - authv1.go
-  - appsv1.go
-  - appsv2.go
-  - sdk.go
+  - deploymentsv1.go
+  - deploymentsv2.go
+  - deploymentsv3.go
+  - discoveryv1.go
+  - discoveryv2.go
+  - docs/models/components/achpaymentmethod.md
+  - docs/models/components/activeconnectioninfo.md
+  - docs/models/components/activeconnectioninfostatus.md
+  - docs/models/components/appconfig.md
+  - docs/models/components/application.md
+  - docs/models/components/applicationspage.md
+  - docs/models/components/applicationwithlatestdeploymentandbuild.md
+  - docs/models/components/applicationwithlatestdeploymentandbuilddeployment.md
+  - docs/models/components/applicationwithlatestdeploymentandbuilddeprecated.md
+  - docs/models/components/applicationwithlatestdeploymentandbuilddeprecatedenv.md
+  - docs/models/components/applicationwithlatestdeploymentandbuildenv.md
+  - docs/models/components/authconfiguration.md
+  - docs/models/components/build.md
+  - docs/models/components/buildpart.md
+  - docs/models/components/buildstatus.md
+  - docs/models/components/buildsv3page.md
+  - docs/models/components/buildv3.md
+  - docs/models/components/buildwithmultiparturls.md
+  - docs/models/components/buildwithmultiparturlsregionalcontainertags.md
+  - docs/models/components/buildwithuploadurl.md
+  - docs/models/components/buildwithuploadurlregionalcontainertags.md
+  - docs/models/components/cardbrand.md
+  - docs/models/components/cardpaymentmethod.md
+  - docs/models/components/connectioninfo.md
+  - docs/models/components/connectioninfov2.md
+  - docs/models/components/containerport.md
+  - docs/models/components/createbuildparams.md
+  - docs/models/components/createdbuildv3withmultiparturls.md
+  - docs/models/components/createdby.md
+  - docs/models/components/createdorgtoken.md
+  - docs/models/components/createlobbyparams.md
+  - docs/models/components/createlobbyv3params.md
+  - docs/models/components/createmultipartbuildparams.md
+  - docs/models/components/createorgtoken.md
+  - docs/models/components/createorgtoken2.md
+  - docs/models/components/createorgtokenscopes.md
+  - docs/models/components/createroomparams.md
+  - docs/models/components/createuserinvite.md
+  - docs/models/components/createuserinvitescopes.md
+  - docs/models/components/currentallocation.md
+  - docs/models/components/customerportalurl.md
+  - docs/models/components/deletedbuild.md
+  - docs/models/components/deployment.md
+  - docs/models/components/deploymentconfig.md
+  - docs/models/components/deploymentconfigenv.md
+  - docs/models/components/deploymentconfigv2.md
+  - docs/models/components/deploymentconfigv2env.md
+  - docs/models/components/deploymentconfigv3.md
+  - docs/models/components/deploymentconfigv3env.md
+  - docs/models/components/deploymentsv3page.md
+  - docs/models/components/deploymentv1.md
+  - docs/models/components/deploymentv1transporttype.md
+  - docs/models/components/deploymentv2.md
+  - docs/models/components/deploymentv2env.md
+  - docs/models/components/deploymentv3.md
+  - docs/models/components/deploymentv3env.md
+  - docs/models/components/deprecatedprocessmetricname.md
+  - docs/models/components/deprecatedprocessmetricsdata.md
+  - docs/models/components/env.md
+  - docs/models/components/exposedport.md
+  - docs/models/components/fleet.md
+  - docs/models/components/fleetmetricname.md
+  - docs/models/components/fleetmetricsdata.md
+  - docs/models/components/fleetregion.md
+  - docs/models/components/fleetregionconfig.md
+  - docs/models/components/fleetspage.md
+  - docs/models/components/google.md
+  - docs/models/components/googleidtokenobject.md
+  - docs/models/components/invoice.md
+  - docs/models/components/invoiceitem.md
+  - docs/models/components/invoiceitempage.md
+  - docs/models/components/invoicestatus.md
+  - docs/models/components/linkpaymentmethod.md
+  - docs/models/components/listorgtokens.md
+  - docs/models/components/lobby.md
+  - docs/models/components/lobbyv3.md
+  - docs/models/components/lobbyv3createdby.md
+  - docs/models/components/lobbyvisibility.md
+  - docs/models/components/metricvalue.md
+  - docs/models/components/nicknameobject.md
+  - docs/models/components/organization.md
+  - docs/models/components/orgmember.md
+  - docs/models/components/orgmemberscopes.md
+  - docs/models/components/orgmemberspage.md
+  - docs/models/components/orgspage.md
+  - docs/models/components/orgtoken.md
+  - docs/models/components/orgtokenstatus.md
+  - docs/models/components/paymentmethod.md
+  - docs/models/components/pendingorginvite.md
+  - docs/models/components/pendingorginvitescopes.md
+  - docs/models/components/pendingorginvitespage.md
+  - docs/models/components/pingendpoints.md
+  - docs/models/components/planname.md
+  - docs/models/components/playertokenobject.md
+  - docs/models/components/process.md
+  - docs/models/components/processexposedport.md
+  - docs/models/components/processmetricname.md
+  - docs/models/components/processmetricsdata.md
+  - docs/models/components/processstatus.md
+  - docs/models/components/processv2.md
+  - docs/models/components/processv2exposedport.md
+  - docs/models/components/processv3.md
+  - docs/models/components/processv3exposedport.md
+  - docs/models/components/processwithrooms.md
+  - docs/models/components/processwithroomsexposedport.md
+  - docs/models/components/recordstringnever.md
+  - docs/models/components/region.md
+  - docs/models/components/regionalcontainertags.md
+  - docs/models/components/rescinduserinvite.md
+  - docs/models/components/room.md
+  - docs/models/components/roomallocation.md
+  - docs/models/components/roomconnectiondata.md
+  - docs/models/components/roomreadystatus.md
+  - docs/models/components/roomstatus.md
+  - docs/models/components/roomwithoutallocations.md
+  - docs/models/components/roomwithoutallocationscurrentallocation.md
+  - docs/models/components/scope.md
+  - docs/models/components/scopes.md
+  - docs/models/components/security.md
+  - docs/models/components/setlobbystateparams.md
+  - docs/models/components/startingconnectioninfo.md
+  - docs/models/components/status.md
+  - docs/models/components/transporttype.md
+  - docs/models/components/two.md
+  - docs/models/components/updateroomconfigparams.md
+  - docs/models/components/updateuserinvite.md
+  - docs/models/components/updateuserinvitescopes.md
+  - docs/models/components/uploadbodyparams.md
+  - docs/models/components/usagelimits.md
+  - docs/models/components/userrole.md
+  - docs/models/components/verificationemailrequest.md
+  - docs/models/components/verificationemailsuccess.md
+  - docs/models/errors/apierror.md
+  - docs/models/operations/acceptinviterequest.md
+  - docs/models/operations/createappglobals.md
+  - docs/models/operations/createapprequest.md
+  - docs/models/operations/createbuilddeprecatedglobals.md
+  - docs/models/operations/createbuilddeprecatedrequest.md
+  - docs/models/operations/createbuildglobals.md
+  - docs/models/operations/createbuildrequest.md
+  - docs/models/operations/createbuildv2deprecatedglobals.md
+  - docs/models/operations/createbuildv2deprecatedrequest.md
+  - docs/models/operations/createbuildwithuploadurlv2deprecatedglobals.md
+  - docs/models/operations/createbuildwithuploadurlv2deprecatedrequest.md
+  - docs/models/operations/createdeploymentglobals.md
+  - docs/models/operations/createdeploymentrequest.md
+  - docs/models/operations/createdeploymentv1deprecatedglobals.md
+  - docs/models/operations/createdeploymentv1deprecatedrequest.md
+  - docs/models/operations/createdeploymentv2deprecatedglobals.md
+  - docs/models/operations/createdeploymentv2deprecatedrequest.md
+  - docs/models/operations/createlobbydeprecatedglobals.md
+  - docs/models/operations/createlobbydeprecatedrequest.md
+  - docs/models/operations/createlobbydeprecatedsecurity.md
+  - docs/models/operations/createlobbyglobals.md
+  - docs/models/operations/createlobbyrequest.md
+  - docs/models/operations/createlobbysecurity.md
+  - docs/models/operations/createlocallobbyglobals.md
+  - docs/models/operations/createlocallobbyrequest.md
+  - docs/models/operations/createlocallobbyrequestbody.md
+  - docs/models/operations/createlocallobbysecurity.md
+  - docs/models/operations/createorgtokenrequest.md
+  - docs/models/operations/createprivatelobbydeprecatedglobals.md
+  - docs/models/operations/createprivatelobbydeprecatedrequest.md
+  - docs/models/operations/createprivatelobbydeprecatedsecurity.md
+  - docs/models/operations/createprivatelobbyglobals.md
+  - docs/models/operations/createprivatelobbyrequest.md
+  - docs/models/operations/createprivatelobbyrequestbody.md
+  - docs/models/operations/createprivatelobbysecurity.md
+  - docs/models/operations/createprocessglobals.md
+  - docs/models/operations/createprocessrequest.md
+  - docs/models/operations/createprocessv2deprecatedglobals.md
+  - docs/models/operations/createprocessv2deprecatedrequest.md
+  - docs/models/operations/createpubliclobbydeprecatedglobals.md
+  - docs/models/operations/createpubliclobbydeprecatedrequest.md
+  - docs/models/operations/createpubliclobbydeprecatedsecurity.md
+  - docs/models/operations/createpubliclobbyglobals.md
+  - docs/models/operations/createpubliclobbyrequest.md
+  - docs/models/operations/createpubliclobbyrequestbody.md
+  - docs/models/operations/createpubliclobbysecurity.md
+  - docs/models/operations/createroomdeprecatedglobals.md
+  - docs/models/operations/createroomdeprecatedrequest.md
+  - docs/models/operations/createroomglobals.md
+  - docs/models/operations/createroomrequest.md
+  - docs/models/operations/createwithmultipartuploadsv2deprecatedglobals.md
+  - docs/models/operations/createwithmultipartuploadsv2deprecatedrequest.md
+  - docs/models/operations/deleteappglobals.md
+  - docs/models/operations/deleteapprequest.md
+  - docs/models/operations/deleteappv1deprecatedglobals.md
+  - docs/models/operations/deleteappv1deprecatedrequest.md
+  - docs/models/operations/deletebuilddeprecatedglobals.md
+  - docs/models/operations/deletebuilddeprecatedrequest.md
+  - docs/models/operations/deletebuildglobals.md
+  - docs/models/operations/deletebuildrequest.md
+  - docs/models/operations/deletebuildv2deprecatedglobals.md
+  - docs/models/operations/deletebuildv2deprecatedrequest.md
+  - docs/models/operations/destroyroomdeprecatedglobals.md
+  - docs/models/operations/destroyroomdeprecatedrequest.md
+  - docs/models/operations/destroyroomglobals.md
+  - docs/models/operations/destroyroomrequest.md
+  - docs/models/operations/downloadlogforprocessglobals.md
+  - docs/models/operations/downloadlogforprocessrequest.md
+  - docs/models/operations/file.md
+  - docs/models/operations/getactiveroomsforprocessdeprecatedglobals.md
+  - docs/models/operations/getactiveroomsforprocessdeprecatedrequest.md
+  - docs/models/operations/getactiveroomsforprocessglobals.md
+  - docs/models/operations/getactiveroomsforprocessrequest.md
+  - docs/models/operations/getappglobals.md
+  - docs/models/operations/getappinfov1deprecatedglobals.md
+  - docs/models/operations/getappinfov1deprecatedrequest.md
+  - docs/models/operations/getapprequest.md
+  - docs/models/operations/getappsglobals.md
+  - docs/models/operations/getappsrequest.md
+  - docs/models/operations/getbalanceglobals.md
+  - docs/models/operations/getbalancerequest.md
+  - docs/models/operations/getbuildglobals.md
+  - docs/models/operations/getbuildinfodeprecatedglobals.md
+  - docs/models/operations/getbuildinfodeprecatedrequest.md
+  - docs/models/operations/getbuildinfov2deprecatedglobals.md
+  - docs/models/operations/getbuildinfov2deprecatedrequest.md
+  - docs/models/operations/getbuildrequest.md
+  - docs/models/operations/getbuildsdeprecatedglobals.md
+  - docs/models/operations/getbuildsdeprecatedrequest.md
+  - docs/models/operations/getbuildsglobals.md
+  - docs/models/operations/getbuildsrequest.md
+  - docs/models/operations/getbuildsv2deprecatedglobals.md
+  - docs/models/operations/getbuildsv2deprecatedrequest.md
+  - docs/models/operations/getconnectioninfodeprecatedglobals.md
+  - docs/models/operations/getconnectioninfodeprecatedrequest.md
+  - docs/models/operations/getconnectioninfoglobals.md
+  - docs/models/operations/getconnectioninforequest.md
+  - docs/models/operations/getdeploymentglobals.md
+  - docs/models/operations/getdeploymentinfov1deprecatedglobals.md
+  - docs/models/operations/getdeploymentinfov1deprecatedrequest.md
+  - docs/models/operations/getdeploymentinfov2deprecatedglobals.md
+  - docs/models/operations/getdeploymentinfov2deprecatedrequest.md
+  - docs/models/operations/getdeploymentrequest.md
+  - docs/models/operations/getdeploymentsglobals.md
+  - docs/models/operations/getdeploymentsrequest.md
+  - docs/models/operations/getdeploymentsv1deprecatedglobals.md
+  - docs/models/operations/getdeploymentsv1deprecatedrequest.md
+  - docs/models/operations/getdeploymentsv2deprecatedglobals.md
+  - docs/models/operations/getdeploymentsv2deprecatedrequest.md
+  - docs/models/operations/getfleetmetricsglobals.md
+  - docs/models/operations/getfleetmetricsrequest.md
+  - docs/models/operations/getfleetregionglobals.md
+  - docs/models/operations/getfleetregionrequest.md
+  - docs/models/operations/getfleetsglobals.md
+  - docs/models/operations/getfleetsrequest.md
+  - docs/models/operations/getinactiveroomsforprocessdeprecatedglobals.md
+  - docs/models/operations/getinactiveroomsforprocessdeprecatedrequest.md
+  - docs/models/operations/getinactiveroomsforprocessglobals.md
+  - docs/models/operations/getinactiveroomsforprocessrequest.md
+  - docs/models/operations/getinvoicesglobals.md
+  - docs/models/operations/getinvoicesrequest.md
+  - docs/models/operations/getlatestdeploymentglobals.md
+  - docs/models/operations/getlatestdeploymentrequest.md
+  - docs/models/operations/getlatestdeploymentv1deprecatedglobals.md
+  - docs/models/operations/getlatestdeploymentv1deprecatedrequest.md
+  - docs/models/operations/getlatestdeploymentv2deprecatedglobals.md
+  - docs/models/operations/getlatestdeploymentv2deprecatedrequest.md
+  - docs/models/operations/getlatestprocessesglobals.md
+  - docs/models/operations/getlatestprocessesrequest.md
+  - docs/models/operations/getlatestprocessesv2deprecatedglobals.md
+  - docs/models/operations/getlatestprocessesv2deprecatedrequest.md
+  - docs/models/operations/getlobbyinfobyroomidglobals.md
+  - docs/models/operations/getlobbyinfobyroomidrequest.md
+  - docs/models/operations/getlobbyinfobyshortcodeglobals.md
+  - docs/models/operations/getlobbyinfobyshortcoderequest.md
+  - docs/models/operations/getlobbyinfoglobals.md
+  - docs/models/operations/getlobbyinforequest.md
+  - docs/models/operations/getlogsforprocessglobals.md
+  - docs/models/operations/getlogsforprocessrequest.md
+  - docs/models/operations/getmetricsdeprecatedglobals.md
+  - docs/models/operations/getmetricsdeprecatedrequest.md
+  - docs/models/operations/getorgmembersrequest.md
+  - docs/models/operations/getorgpendinginvitesrequest.md
+  - docs/models/operations/getorgtokensrequest.md
+  - docs/models/operations/getpaymentmethodglobals.md
+  - docs/models/operations/getpaymentmethodrequest.md
+  - docs/models/operations/getprocessescountexperimentalglobals.md
+  - docs/models/operations/getprocessescountexperimentalrequest.md
+  - docs/models/operations/getprocessescountexperimentalresponsebody.md
+  - docs/models/operations/getprocessescountexperimentalv2deprecatedglobals.md
+  - docs/models/operations/getprocessescountexperimentalv2deprecatedrequest.md
+  - docs/models/operations/getprocessescountexperimentalv2deprecatedresponsebody.md
+  - docs/models/operations/getprocessglobals.md
+  - docs/models/operations/getprocessinfodeprecatedglobals.md
+  - docs/models/operations/getprocessinfodeprecatedrequest.md
+  - docs/models/operations/getprocessinfov2deprecatedglobals.md
+  - docs/models/operations/getprocessinfov2deprecatedrequest.md
+  - docs/models/operations/getprocessmetricsglobals.md
+  - docs/models/operations/getprocessmetricsrequest.md
+  - docs/models/operations/getprocessrequest.md
+  - docs/models/operations/getroominfodeprecatedglobals.md
+  - docs/models/operations/getroominfodeprecatedrequest.md
+  - docs/models/operations/getroominfoglobals.md
+  - docs/models/operations/getroominforequest.md
+  - docs/models/operations/getrunningprocessesglobals.md
+  - docs/models/operations/getrunningprocessesrequest.md
+  - docs/models/operations/getstoppedprocessesglobals.md
+  - docs/models/operations/getstoppedprocessesrequest.md
+  - docs/models/operations/getupcominginvoiceitemsglobals.md
+  - docs/models/operations/getupcominginvoiceitemsrequest.md
+  - docs/models/operations/getupcominginvoicetotalglobals.md
+  - docs/models/operations/getupcominginvoicetotalrequest.md
+  - docs/models/operations/getupcominginvoicetotalresponsebody.md
+  - docs/models/operations/getusagelimitsglobals.md
+  - docs/models/operations/getusagelimitsrequest.md
+  - docs/models/operations/initstripecustomerportalurlglobals.md
+  - docs/models/operations/initstripecustomerportalurlrequest.md
+  - docs/models/operations/inviteuserrequest.md
+  - docs/models/operations/listactivepubliclobbiesdeprecatedv1globals.md
+  - docs/models/operations/listactivepubliclobbiesdeprecatedv1request.md
+  - docs/models/operations/listactivepubliclobbiesdeprecatedv2globals.md
+  - docs/models/operations/listactivepubliclobbiesdeprecatedv2request.md
+  - docs/models/operations/listactivepubliclobbiesglobals.md
+  - docs/models/operations/listactivepubliclobbiesrequest.md
+  - docs/models/operations/loginanonymousglobals.md
+  - docs/models/operations/loginanonymousrequest.md
+  - docs/models/operations/logingoogleglobals.md
+  - docs/models/operations/logingooglerequest.md
+  - docs/models/operations/loginnicknameglobals.md
+  - docs/models/operations/loginnicknamerequest.md
+  - docs/models/operations/option.md
+  - docs/models/operations/rejectinviterequest.md
+  - docs/models/operations/rescindinviterequest.md
+  - docs/models/operations/revokeorgtokenrequest.md
+  - docs/models/operations/runbuilddeprecatedglobals.md
+  - docs/models/operations/runbuilddeprecatedrequest.md
+  - docs/models/operations/runbuilddeprecatedrequestbody.md
+  - docs/models/operations/runbuildglobals.md
+  - docs/models/operations/runbuildrequest.md
+  - docs/models/operations/runbuildv2deprecatedfile.md
+  - docs/models/operations/runbuildv2deprecatedglobals.md
+  - docs/models/operations/runbuildv2deprecatedrequest.md
+  - docs/models/operations/runbuildv2deprecatedrequestbody.md
+  - docs/models/operations/setlobbystateglobals.md
+  - docs/models/operations/setlobbystaterequest.md
+  - docs/models/operations/stopprocessglobals.md
+  - docs/models/operations/stopprocessrequest.md
+  - docs/models/operations/stopprocessv2deprecatedglobals.md
+  - docs/models/operations/stopprocessv2deprecatedrequest.md
+  - docs/models/operations/suspendroomdeprecatedglobals.md
+  - docs/models/operations/suspendroomdeprecatedrequest.md
+  - docs/models/operations/suspendroomv2deprecatedglobals.md
+  - docs/models/operations/suspendroomv2deprecatedrequest.md
+  - docs/models/operations/updateappglobals.md
+  - docs/models/operations/updateapprequest.md
+  - docs/models/operations/updateappv1deprecatedglobals.md
+  - docs/models/operations/updateappv1deprecatedrequest.md
+  - docs/models/operations/updatefleetregionglobals.md
+  - docs/models/operations/updatefleetregionrequest.md
+  - docs/models/operations/updateroomconfigglobals.md
+  - docs/models/operations/updateroomconfigrequest.md
+  - docs/models/operations/updateuserinviterequest.md
+  - docs/sdks/appsv1/README.md
+  - docs/sdks/appsv2/README.md
+  - docs/sdks/authv1/README.md
+  - docs/sdks/billingv1/README.md
+  - docs/sdks/buildsv1/README.md
+  - docs/sdks/buildsv2/README.md
+  - docs/sdks/buildsv3/README.md
+  - docs/sdks/deploymentsv1/README.md
+  - docs/sdks/deploymentsv2/README.md
+  - docs/sdks/deploymentsv3/README.md
+  - docs/sdks/discoveryv1/README.md
+  - docs/sdks/discoveryv2/README.md
+  - docs/sdks/fleetsv1/README.md
+  - docs/sdks/hathoracloud/README.md
+  - docs/sdks/lobbiesv1/README.md
+  - docs/sdks/lobbiesv2/README.md
+  - docs/sdks/lobbiesv3/README.md
+  - docs/sdks/logsv1/README.md
+  - docs/sdks/managementv1/README.md
+  - docs/sdks/metricsv1/README.md
+  - docs/sdks/organizationsv1/README.md
+  - docs/sdks/processesv1/README.md
+  - docs/sdks/processesv2/README.md
+  - docs/sdks/processesv3/README.md
+  - docs/sdks/roomsv1/README.md
+  - docs/sdks/roomsv2/README.md
+  - docs/sdks/tokensv1/README.md
+  - fleetsv1.go
   - go.mod
-  - models/sdkerrors/sdkerror.go
-  - retry/config.go
-  - types/bigint.go
-  - types/date.go
-  - types/datetime.go
-  - types/decimal.go
-  - types/pointers.go
+  - hathoracloud.go
+  - internal/globals/globals.go
+  - internal/hooks/hooks.go
   - internal/utils/contenttype.go
+  - internal/utils/env.go
   - internal/utils/form.go
   - internal/utils/headers.go
   - internal/utils/json.go
@@ -75,647 +656,1251 @@ generatedFiles:
   - internal/utils/retries.go
   - internal/utils/security.go
   - internal/utils/utils.go
-  - internal/globals/globals.go
-  - /models/operations/getorgtokens.go
-  - /models/operations/createorgtoken.go
-  - /models/operations/revokeorgtoken.go
-  - /models/operations/createroomdeprecated.go
-  - /models/operations/getroominfodeprecated.go
-  - /models/operations/getactiveroomsforprocessdeprecated.go
-  - /models/operations/getinactiveroomsforprocessdeprecated.go
-  - /models/operations/destroyroomdeprecated.go
-  - /models/operations/suspendroomdeprecated.go
-  - /models/operations/getconnectioninfodeprecated.go
-  - /models/operations/createroom.go
-  - /models/operations/getroominfo.go
-  - /models/operations/getactiveroomsforprocess.go
-  - /models/operations/getinactiveroomsforprocess.go
-  - /models/operations/destroyroom.go
-  - /models/operations/suspendroomv2deprecated.go
-  - /models/operations/getconnectioninfo.go
-  - /models/operations/updateroomconfig.go
-  - /models/operations/getrunningprocesses.go
-  - /models/operations/getstoppedprocesses.go
-  - /models/operations/getprocessinfodeprecated.go
-  - /models/operations/getprocessinfov2deprecated.go
-  - /models/operations/getlatestprocessesv2deprecated.go
-  - /models/operations/getprocessescountexperimentalv2deprecated.go
-  - /models/operations/stopprocessv2deprecated.go
-  - /models/operations/createprocessv2deprecated.go
-  - /models/operations/getlatestprocesses.go
-  - /models/operations/getprocessescountexperimental.go
-  - /models/operations/createprocess.go
-  - /models/operations/getprocess.go
-  - /models/operations/stopprocess.go
-  - /models/operations/getorgs.go
-  - /models/operations/getuserpendinginvites.go
-  - /models/operations/getorgmembers.go
-  - /models/operations/inviteuser.go
-  - /models/operations/rescindinvite.go
-  - /models/operations/getorgpendinginvites.go
-  - /models/operations/acceptinvite.go
-  - /models/operations/rejectinvite.go
-  - /models/operations/getmetrics.go
-  - /models/operations/sendverificationemail.go
-  - /models/operations/getlogsforapp.go
-  - /models/operations/getlogsforprocess.go
-  - /models/operations/downloadlogforprocess.go
-  - /models/operations/getlogsfordeployment.go
-  - /models/operations/createprivatelobbydeprecated.go
-  - /models/operations/createpubliclobbydeprecated.go
-  - /models/operations/listactivepubliclobbiesdeprecatedv1.go
-  - /models/operations/createprivatelobby.go
-  - /models/operations/createpubliclobby.go
-  - /models/operations/createlocallobby.go
-  - /models/operations/createlobbydeprecated.go
-  - /models/operations/listactivepubliclobbiesdeprecatedv2.go
-  - /models/operations/getlobbyinfo.go
-  - /models/operations/setlobbystate.go
-  - /models/operations/createlobby.go
-  - /models/operations/listactivepubliclobbies.go
-  - /models/operations/getlobbyinfobyroomid.go
-  - /models/operations/getlobbyinfobyshortcode.go
-  - /models/operations/getpingserviceendpointsdeprecated.go
-  - /models/operations/getpingserviceendpoints.go
-  - /models/operations/getdeploymentsv1deprecated.go
-  - /models/operations/getlatestdeploymentv1deprecated.go
-  - /models/operations/getdeploymentinfov1deprecated.go
-  - /models/operations/createdeploymentv1deprecated.go
-  - /models/operations/getdeploymentsv2deprecated.go
-  - /models/operations/getlatestdeploymentv2deprecated.go
-  - /models/operations/getdeploymentinfov2deprecated.go
-  - /models/operations/createdeploymentv2deprecated.go
-  - /models/operations/getdeployments.go
-  - /models/operations/createdeployment.go
-  - /models/operations/getlatestdeployment.go
-  - /models/operations/getdeployment.go
-  - /models/operations/getbuildsdeprecated.go
-  - /models/operations/getbuildinfodeprecated.go
-  - /models/operations/createbuilddeprecated.go
-  - /models/operations/deletebuilddeprecated.go
-  - /models/operations/runbuilddeprecated.go
-  - /models/operations/getbuildsv2deprecated.go
-  - /models/operations/getbuildinfov2deprecated.go
-  - /models/operations/createbuildv2deprecated.go
-  - /models/operations/createbuildwithuploadurlv2deprecated.go
-  - /models/operations/createwithmultipartuploadsv2deprecated.go
-  - /models/operations/deletebuildv2deprecated.go
-  - /models/operations/runbuildv2deprecated.go
-  - /models/operations/getbuilds.go
-  - /models/operations/createbuild.go
-  - /models/operations/getbuild.go
-  - /models/operations/deletebuild.go
-  - /models/operations/runbuild.go
-  - /models/operations/getbalance.go
-  - /models/operations/getupcominginvoiceitems.go
-  - /models/operations/getupcominginvoicetotal.go
-  - /models/operations/getpaymentmethod.go
-  - /models/operations/initstripecustomerportalurl.go
-  - /models/operations/getinvoices.go
-  - /models/operations/loginanonymous.go
-  - /models/operations/loginnickname.go
-  - /models/operations/logingoogle.go
-  - /models/operations/getappsv1deprecated.go
-  - /models/operations/createappv1deprecated.go
-  - /models/operations/updateappv1deprecated.go
-  - /models/operations/getappinfov1deprecated.go
-  - /models/operations/deleteappv1deprecated.go
-  - /models/operations/getapps.go
-  - /models/operations/createapp.go
-  - /models/operations/updateapp.go
-  - /models/operations/getapp.go
-  - /models/operations/deleteapp.go
-  - /models/shared/listorgtokens.go
-  - /models/shared/orgtoken.go
-  - /models/shared/orgtokenstatus.go
-  - /models/shared/createdorgtoken.go
-  - /models/shared/createorgtoken.go
-  - /models/shared/createroomparams.go
-  - /models/shared/region.go
-  - /models/shared/room.go
-  - /models/shared/roomallocation.go
-  - /models/shared/roomstatus.go
-  - /models/shared/roomwithoutallocations.go
-  - /models/shared/connectioninfo.go
-  - /models/shared/startingconnectioninfo.go
-  - /models/shared/activeconnectioninfo.go
-  - /models/shared/transporttype.go
-  - /models/shared/roomconnectiondata.go
-  - /models/shared/roomreadystatus.go
-  - /models/shared/exposedport.go
-  - /models/shared/connectioninfov2.go
-  - /models/shared/updateroomconfigparams.go
-  - /models/shared/processwithrooms.go
-  - /models/shared/process.go
-  - /models/shared/processv2.go
-  - /models/shared/processstatus.go
-  - /models/shared/processv3.go
-  - /models/shared/orgspage.go
-  - /models/shared/organization.go
-  - /models/shared/pendingorginvitespage.go
-  - /models/shared/pendingorginvite.go
-  - /models/shared/orgmemberspage.go
-  - /models/shared/orgmember.go
-  - /models/shared/createuserinvite.go
-  - /models/shared/rescinduserinvite.go
-  - /models/shared/metricsdata.go
-  - /models/shared/metricvalue.go
-  - /models/shared/metricname.go
-  - /models/shared/verificationemailsuccess.go
-  - /models/shared/verificationemailrequest.go
-  - /models/shared/lobby.go
-  - /models/shared/lobbyvisibility.go
-  - /models/shared/createlobbyparams.go
-  - /models/shared/setlobbystateparams.go
-  - /models/shared/lobbyv3.go
-  - /models/shared/createlobbyv3params.go
-  - /models/shared/pingendpoints.go
-  - /models/shared/deploymentv1.go
-  - /models/shared/containerport.go
-  - /models/shared/planname.go
-  - /models/shared/deploymentconfig.go
-  - /models/shared/deploymentv2.go
-  - /models/shared/deploymentconfigv2.go
-  - /models/shared/deploymentsv3page.go
-  - /models/shared/deploymentv3.go
-  - /models/shared/deploymentconfigv3.go
-  - /models/shared/build.go
-  - /models/shared/buildstatus.go
-  - /models/shared/createbuildparams.go
-  - /models/shared/buildwithuploadurl.go
-  - /models/shared/buildwithmultiparturls.go
-  - /models/shared/buildpart.go
-  - /models/shared/createmultipartbuildparams.go
-  - /models/shared/buildsv3page.go
-  - /models/shared/buildv3.go
-  - /models/shared/createdbuildv3withmultiparturls.go
-  - /models/shared/deletedbuild.go
-  - /models/shared/invoiceitempage.go
-  - /models/shared/invoiceitem.go
-  - /models/shared/paymentmethod.go
-  - /models/shared/linkpaymentmethod.go
-  - /models/shared/achpaymentmethod.go
-  - /models/shared/cardpaymentmethod.go
-  - /models/shared/cardbrand.go
-  - /models/shared/customerportalurl.go
-  - /models/shared/invoice.go
-  - /models/shared/invoicestatus.go
-  - /models/shared/playertokenobject.go
-  - /models/shared/nicknameobject.go
-  - /models/shared/googleidtokenobject.go
-  - /models/shared/applicationwithlatestdeploymentandbuilddeprecated.go
-  - /models/shared/authconfiguration.go
-  - /models/shared/recordstringnever.go
-  - /models/shared/application.go
-  - /models/shared/appconfig.go
-  - /models/shared/applicationspage.go
-  - /models/shared/applicationwithlatestdeploymentandbuild.go
-  - /models/shared/security.go
-  - /models/sdkerrors/apierror.go
-  - docs/models/operations/getorgtokensrequest.md
-  - docs/models/operations/getorgtokensresponse.md
-  - docs/models/operations/createorgtokenrequest.md
-  - docs/models/operations/createorgtokenresponse.md
-  - docs/models/operations/revokeorgtokenrequest.md
-  - docs/models/operations/revokeorgtokenresponse.md
-  - docs/models/operations/createroomdeprecatedglobals.md
-  - docs/models/operations/createroomdeprecatedrequest.md
-  - docs/models/operations/createroomdeprecatedresponse.md
-  - docs/models/operations/getroominfodeprecatedglobals.md
-  - docs/models/operations/getroominfodeprecatedrequest.md
-  - docs/models/operations/getroominfodeprecatedresponse.md
-  - docs/models/operations/getactiveroomsforprocessdeprecatedglobals.md
-  - docs/models/operations/getactiveroomsforprocessdeprecatedrequest.md
-  - docs/models/operations/getactiveroomsforprocessdeprecatedresponse.md
-  - docs/models/operations/getinactiveroomsforprocessdeprecatedglobals.md
-  - docs/models/operations/getinactiveroomsforprocessdeprecatedrequest.md
-  - docs/models/operations/getinactiveroomsforprocessdeprecatedresponse.md
-  - docs/models/operations/destroyroomdeprecatedglobals.md
-  - docs/models/operations/destroyroomdeprecatedrequest.md
-  - docs/models/operations/destroyroomdeprecatedresponse.md
-  - docs/models/operations/suspendroomdeprecatedglobals.md
-  - docs/models/operations/suspendroomdeprecatedrequest.md
-  - docs/models/operations/suspendroomdeprecatedresponse.md
-  - docs/models/operations/getconnectioninfodeprecatedglobals.md
-  - docs/models/operations/getconnectioninfodeprecatedrequest.md
-  - docs/models/operations/getconnectioninfodeprecatedresponse.md
-  - docs/models/operations/createroomglobals.md
-  - docs/models/operations/createroomrequest.md
-  - docs/models/operations/createroomresponse.md
-  - docs/models/operations/getroominfoglobals.md
-  - docs/models/operations/getroominforequest.md
-  - docs/models/operations/getroominforesponse.md
-  - docs/models/operations/getactiveroomsforprocessglobals.md
-  - docs/models/operations/getactiveroomsforprocessrequest.md
-  - docs/models/operations/getactiveroomsforprocessresponse.md
-  - docs/models/operations/getinactiveroomsforprocessglobals.md
-  - docs/models/operations/getinactiveroomsforprocessrequest.md
-  - docs/models/operations/getinactiveroomsforprocessresponse.md
-  - docs/models/operations/destroyroomglobals.md
-  - docs/models/operations/destroyroomrequest.md
-  - docs/models/operations/destroyroomresponse.md
-  - docs/models/operations/suspendroomv2deprecatedglobals.md
-  - docs/models/operations/suspendroomv2deprecatedrequest.md
-  - docs/models/operations/suspendroomv2deprecatedresponse.md
-  - docs/models/operations/getconnectioninfoglobals.md
-  - docs/models/operations/getconnectioninforequest.md
-  - docs/models/operations/getconnectioninforesponse.md
-  - docs/models/operations/updateroomconfigglobals.md
-  - docs/models/operations/updateroomconfigrequest.md
-  - docs/models/operations/updateroomconfigresponse.md
-  - docs/models/operations/getrunningprocessesglobals.md
-  - docs/models/operations/getrunningprocessesrequest.md
-  - docs/models/operations/getrunningprocessesresponse.md
-  - docs/models/operations/getstoppedprocessesglobals.md
-  - docs/models/operations/getstoppedprocessesrequest.md
-  - docs/models/operations/getstoppedprocessesresponse.md
-  - docs/models/operations/getprocessinfodeprecatedglobals.md
-  - docs/models/operations/getprocessinfodeprecatedrequest.md
-  - docs/models/operations/getprocessinfodeprecatedresponse.md
-  - docs/models/operations/getprocessinfov2deprecatedglobals.md
-  - docs/models/operations/getprocessinfov2deprecatedrequest.md
-  - docs/models/operations/getprocessinfov2deprecatedresponse.md
-  - docs/models/operations/getlatestprocessesv2deprecatedglobals.md
-  - docs/models/operations/getlatestprocessesv2deprecatedrequest.md
-  - docs/models/operations/getlatestprocessesv2deprecatedresponse.md
-  - docs/models/operations/getprocessescountexperimentalv2deprecatedglobals.md
-  - docs/models/operations/getprocessescountexperimentalv2deprecatedrequest.md
-  - docs/models/operations/getprocessescountexperimentalv2deprecatedresponsebody.md
-  - docs/models/operations/getprocessescountexperimentalv2deprecatedresponse.md
-  - docs/models/operations/stopprocessv2deprecatedglobals.md
-  - docs/models/operations/stopprocessv2deprecatedrequest.md
-  - docs/models/operations/stopprocessv2deprecatedresponse.md
-  - docs/models/operations/createprocessv2deprecatedglobals.md
-  - docs/models/operations/createprocessv2deprecatedrequest.md
-  - docs/models/operations/createprocessv2deprecatedresponse.md
-  - docs/models/operations/getlatestprocessesglobals.md
-  - docs/models/operations/getlatestprocessesrequest.md
-  - docs/models/operations/getlatestprocessesresponse.md
-  - docs/models/operations/getprocessescountexperimentalglobals.md
-  - docs/models/operations/getprocessescountexperimentalrequest.md
-  - docs/models/operations/getprocessescountexperimentalresponsebody.md
-  - docs/models/operations/getprocessescountexperimentalresponse.md
-  - docs/models/operations/createprocessglobals.md
-  - docs/models/operations/createprocessrequest.md
-  - docs/models/operations/createprocessresponse.md
-  - docs/models/operations/getprocessglobals.md
-  - docs/models/operations/getprocessrequest.md
-  - docs/models/operations/getprocessresponse.md
-  - docs/models/operations/stopprocessglobals.md
-  - docs/models/operations/stopprocessrequest.md
-  - docs/models/operations/stopprocessresponse.md
-  - docs/models/operations/getorgsresponse.md
-  - docs/models/operations/getuserpendinginvitesresponse.md
-  - docs/models/operations/getorgmembersrequest.md
-  - docs/models/operations/getorgmembersresponse.md
-  - docs/models/operations/inviteuserrequest.md
-  - docs/models/operations/inviteuserresponse.md
-  - docs/models/operations/rescindinviterequest.md
-  - docs/models/operations/rescindinviteresponse.md
-  - docs/models/operations/getorgpendinginvitesrequest.md
-  - docs/models/operations/getorgpendinginvitesresponse.md
-  - docs/models/operations/acceptinviterequest.md
-  - docs/models/operations/acceptinviteresponse.md
-  - docs/models/operations/rejectinviterequest.md
-  - docs/models/operations/rejectinviteresponse.md
-  - docs/models/operations/getmetricsglobals.md
-  - docs/models/operations/getmetricsrequest.md
-  - docs/models/operations/getmetricsresponse.md
-  - docs/models/operations/sendverificationemailresponse.md
-  - docs/models/operations/getlogsforappglobals.md
-  - docs/models/operations/getlogsforapprequest.md
-  - docs/models/operations/getlogsforappresponse.md
-  - docs/models/operations/getlogsforprocessglobals.md
-  - docs/models/operations/getlogsforprocessrequest.md
-  - docs/models/operations/getlogsforprocessresponse.md
-  - docs/models/operations/downloadlogforprocessglobals.md
-  - docs/models/operations/downloadlogforprocessrequest.md
-  - docs/models/operations/downloadlogforprocessresponse.md
-  - docs/models/operations/getlogsfordeploymentglobals.md
-  - docs/models/operations/getlogsfordeploymentrequest.md
-  - docs/models/operations/getlogsfordeploymentresponse.md
-  - docs/models/operations/createprivatelobbydeprecatedglobals.md
-  - docs/models/operations/createprivatelobbydeprecatedsecurity.md
-  - docs/models/operations/createprivatelobbydeprecatedrequest.md
-  - docs/models/operations/createprivatelobbydeprecatedresponse.md
-  - docs/models/operations/createpubliclobbydeprecatedglobals.md
-  - docs/models/operations/createpubliclobbydeprecatedsecurity.md
-  - docs/models/operations/createpubliclobbydeprecatedrequest.md
-  - docs/models/operations/createpubliclobbydeprecatedresponse.md
-  - docs/models/operations/listactivepubliclobbiesdeprecatedv1globals.md
-  - docs/models/operations/listactivepubliclobbiesdeprecatedv1request.md
-  - docs/models/operations/listactivepubliclobbiesdeprecatedv1response.md
-  - docs/models/operations/createprivatelobbyglobals.md
-  - docs/models/operations/createprivatelobbysecurity.md
-  - docs/models/operations/createprivatelobbyrequestbody.md
-  - docs/models/operations/createprivatelobbyrequest.md
-  - docs/models/operations/createprivatelobbyresponse.md
-  - docs/models/operations/createpubliclobbyglobals.md
-  - docs/models/operations/createpubliclobbysecurity.md
-  - docs/models/operations/createpubliclobbyrequestbody.md
-  - docs/models/operations/createpubliclobbyrequest.md
-  - docs/models/operations/createpubliclobbyresponse.md
-  - docs/models/operations/createlocallobbyglobals.md
-  - docs/models/operations/createlocallobbysecurity.md
-  - docs/models/operations/createlocallobbyrequestbody.md
-  - docs/models/operations/createlocallobbyrequest.md
-  - docs/models/operations/createlocallobbyresponse.md
-  - docs/models/operations/createlobbydeprecatedglobals.md
-  - docs/models/operations/createlobbydeprecatedsecurity.md
-  - docs/models/operations/createlobbydeprecatedrequest.md
-  - docs/models/operations/createlobbydeprecatedresponse.md
-  - docs/models/operations/listactivepubliclobbiesdeprecatedv2globals.md
-  - docs/models/operations/listactivepubliclobbiesdeprecatedv2request.md
-  - docs/models/operations/listactivepubliclobbiesdeprecatedv2response.md
-  - docs/models/operations/getlobbyinfoglobals.md
-  - docs/models/operations/getlobbyinforequest.md
-  - docs/models/operations/getlobbyinforesponse.md
-  - docs/models/operations/setlobbystateglobals.md
-  - docs/models/operations/setlobbystaterequest.md
-  - docs/models/operations/setlobbystateresponse.md
-  - docs/models/operations/createlobbyglobals.md
-  - docs/models/operations/createlobbysecurity.md
-  - docs/models/operations/createlobbyrequest.md
-  - docs/models/operations/createlobbyresponse.md
-  - docs/models/operations/listactivepubliclobbiesglobals.md
-  - docs/models/operations/listactivepubliclobbiesrequest.md
-  - docs/models/operations/listactivepubliclobbiesresponse.md
-  - docs/models/operations/getlobbyinfobyroomidglobals.md
-  - docs/models/operations/getlobbyinfobyroomidrequest.md
-  - docs/models/operations/getlobbyinfobyroomidresponse.md
-  - docs/models/operations/getlobbyinfobyshortcodeglobals.md
-  - docs/models/operations/getlobbyinfobyshortcoderequest.md
-  - docs/models/operations/getlobbyinfobyshortcoderesponse.md
-  - docs/models/operations/getpingserviceendpointsdeprecatedresponse.md
-  - docs/models/operations/getpingserviceendpointsresponse.md
-  - docs/models/operations/getdeploymentsv1deprecatedglobals.md
-  - docs/models/operations/getdeploymentsv1deprecatedrequest.md
-  - docs/models/operations/getdeploymentsv1deprecatedresponse.md
-  - docs/models/operations/getlatestdeploymentv1deprecatedglobals.md
-  - docs/models/operations/getlatestdeploymentv1deprecatedrequest.md
-  - docs/models/operations/getlatestdeploymentv1deprecatedresponse.md
-  - docs/models/operations/getdeploymentinfov1deprecatedglobals.md
-  - docs/models/operations/getdeploymentinfov1deprecatedrequest.md
-  - docs/models/operations/getdeploymentinfov1deprecatedresponse.md
-  - docs/models/operations/createdeploymentv1deprecatedglobals.md
-  - docs/models/operations/createdeploymentv1deprecatedrequest.md
-  - docs/models/operations/createdeploymentv1deprecatedresponse.md
-  - docs/models/operations/getdeploymentsv2deprecatedglobals.md
-  - docs/models/operations/getdeploymentsv2deprecatedrequest.md
-  - docs/models/operations/getdeploymentsv2deprecatedresponse.md
-  - docs/models/operations/getlatestdeploymentv2deprecatedglobals.md
-  - docs/models/operations/getlatestdeploymentv2deprecatedrequest.md
-  - docs/models/operations/getlatestdeploymentv2deprecatedresponse.md
-  - docs/models/operations/getdeploymentinfov2deprecatedglobals.md
-  - docs/models/operations/getdeploymentinfov2deprecatedrequest.md
-  - docs/models/operations/getdeploymentinfov2deprecatedresponse.md
-  - docs/models/operations/createdeploymentv2deprecatedglobals.md
-  - docs/models/operations/createdeploymentv2deprecatedrequest.md
-  - docs/models/operations/createdeploymentv2deprecatedresponse.md
-  - docs/models/operations/getdeploymentsglobals.md
-  - docs/models/operations/getdeploymentsrequest.md
-  - docs/models/operations/getdeploymentsresponse.md
-  - docs/models/operations/createdeploymentglobals.md
-  - docs/models/operations/createdeploymentrequest.md
-  - docs/models/operations/createdeploymentresponse.md
-  - docs/models/operations/getlatestdeploymentglobals.md
-  - docs/models/operations/getlatestdeploymentrequest.md
-  - docs/models/operations/getlatestdeploymentresponse.md
-  - docs/models/operations/getdeploymentglobals.md
-  - docs/models/operations/getdeploymentrequest.md
-  - docs/models/operations/getdeploymentresponse.md
-  - docs/models/operations/getbuildsdeprecatedglobals.md
-  - docs/models/operations/getbuildsdeprecatedrequest.md
-  - docs/models/operations/getbuildsdeprecatedresponse.md
-  - docs/models/operations/getbuildinfodeprecatedglobals.md
-  - docs/models/operations/getbuildinfodeprecatedrequest.md
-  - docs/models/operations/getbuildinfodeprecatedresponse.md
-  - docs/models/operations/createbuilddeprecatedglobals.md
-  - docs/models/operations/createbuilddeprecatedrequest.md
-  - docs/models/operations/createbuilddeprecatedresponse.md
-  - docs/models/operations/deletebuilddeprecatedglobals.md
-  - docs/models/operations/deletebuilddeprecatedrequest.md
-  - docs/models/operations/deletebuilddeprecatedresponse.md
-  - docs/models/operations/runbuilddeprecatedglobals.md
-  - docs/models/operations/file.md
-  - docs/models/operations/runbuilddeprecatedrequestbody.md
-  - docs/models/operations/runbuilddeprecatedrequest.md
-  - docs/models/operations/runbuilddeprecatedresponse.md
-  - docs/models/operations/getbuildsv2deprecatedglobals.md
-  - docs/models/operations/getbuildsv2deprecatedrequest.md
-  - docs/models/operations/getbuildsv2deprecatedresponse.md
-  - docs/models/operations/getbuildinfov2deprecatedglobals.md
-  - docs/models/operations/getbuildinfov2deprecatedrequest.md
-  - docs/models/operations/getbuildinfov2deprecatedresponse.md
-  - docs/models/operations/createbuildv2deprecatedglobals.md
-  - docs/models/operations/createbuildv2deprecatedrequest.md
-  - docs/models/operations/createbuildv2deprecatedresponse.md
-  - docs/models/operations/createbuildwithuploadurlv2deprecatedglobals.md
-  - docs/models/operations/createbuildwithuploadurlv2deprecatedrequest.md
-  - docs/models/operations/createbuildwithuploadurlv2deprecatedresponse.md
-  - docs/models/operations/createwithmultipartuploadsv2deprecatedglobals.md
-  - docs/models/operations/createwithmultipartuploadsv2deprecatedrequest.md
-  - docs/models/operations/createwithmultipartuploadsv2deprecatedresponse.md
-  - docs/models/operations/deletebuildv2deprecatedglobals.md
-  - docs/models/operations/deletebuildv2deprecatedrequest.md
-  - docs/models/operations/deletebuildv2deprecatedresponse.md
-  - docs/models/operations/runbuildv2deprecatedglobals.md
-  - docs/models/operations/runbuildv2deprecatedfile.md
-  - docs/models/operations/runbuildv2deprecatedrequestbody.md
-  - docs/models/operations/runbuildv2deprecatedrequest.md
-  - docs/models/operations/runbuildv2deprecatedresponse.md
-  - docs/models/operations/getbuildsrequest.md
-  - docs/models/operations/getbuildsresponse.md
-  - docs/models/operations/createbuildrequest.md
-  - docs/models/operations/createbuildresponse.md
-  - docs/models/operations/getbuildrequest.md
-  - docs/models/operations/getbuildresponse.md
-  - docs/models/operations/deletebuildrequest.md
-  - docs/models/operations/deletebuildresponse.md
-  - docs/models/operations/runbuildrequest.md
-  - docs/models/operations/runbuildresponse.md
-  - docs/models/operations/getbalanceresponse.md
-  - docs/models/operations/getupcominginvoiceitemsresponse.md
-  - docs/models/operations/getupcominginvoicetotalresponsebody.md
-  - docs/models/operations/getupcominginvoicetotalresponse.md
-  - docs/models/operations/getpaymentmethodresponse.md
-  - docs/models/operations/initstripecustomerportalurlresponse.md
-  - docs/models/operations/getinvoicesresponse.md
-  - docs/models/operations/loginanonymousglobals.md
-  - docs/models/operations/loginanonymousrequest.md
-  - docs/models/operations/loginanonymousresponse.md
-  - docs/models/operations/loginnicknameglobals.md
-  - docs/models/operations/loginnicknamerequest.md
-  - docs/models/operations/loginnicknameresponse.md
-  - docs/models/operations/logingoogleglobals.md
-  - docs/models/operations/logingooglerequest.md
-  - docs/models/operations/logingoogleresponse.md
-  - docs/models/operations/getappsv1deprecatedresponse.md
-  - docs/models/operations/createappv1deprecatedresponse.md
-  - docs/models/operations/updateappv1deprecatedglobals.md
-  - docs/models/operations/updateappv1deprecatedrequest.md
-  - docs/models/operations/updateappv1deprecatedresponse.md
-  - docs/models/operations/getappinfov1deprecatedglobals.md
-  - docs/models/operations/getappinfov1deprecatedrequest.md
-  - docs/models/operations/getappinfov1deprecatedresponse.md
-  - docs/models/operations/deleteappv1deprecatedglobals.md
-  - docs/models/operations/deleteappv1deprecatedrequest.md
-  - docs/models/operations/deleteappv1deprecatedresponse.md
-  - docs/models/operations/getappsrequest.md
-  - docs/models/operations/getappsresponse.md
-  - docs/models/operations/createapprequest.md
-  - docs/models/operations/createappresponse.md
-  - docs/models/operations/updateappglobals.md
-  - docs/models/operations/updateapprequest.md
-  - docs/models/operations/updateappresponse.md
-  - docs/models/operations/getappglobals.md
-  - docs/models/operations/getapprequest.md
-  - docs/models/operations/getappresponse.md
-  - docs/models/operations/deleteappglobals.md
-  - docs/models/operations/deleteapprequest.md
-  - docs/models/operations/deleteappresponse.md
-  - docs/models/shared/listorgtokens.md
-  - docs/models/shared/orgtoken.md
-  - docs/models/shared/orgtokenstatus.md
-  - docs/models/shared/createdorgtoken.md
-  - docs/models/shared/createorgtoken.md
-  - docs/models/shared/createroomparams.md
-  - docs/models/shared/region.md
-  - docs/models/shared/currentallocation.md
-  - docs/models/shared/room.md
-  - docs/models/shared/roomallocation.md
-  - docs/models/shared/roomstatus.md
-  - docs/models/shared/roomwithoutallocationscurrentallocation.md
-  - docs/models/shared/roomwithoutallocations.md
-  - docs/models/shared/connectioninfo.md
-  - docs/models/shared/status.md
-  - docs/models/shared/startingconnectioninfo.md
-  - docs/models/shared/activeconnectioninfostatus.md
-  - docs/models/shared/activeconnectioninfo.md
-  - docs/models/shared/transporttype.md
-  - docs/models/shared/roomconnectiondata.md
-  - docs/models/shared/roomreadystatus.md
-  - docs/models/shared/exposedport.md
-  - docs/models/shared/connectioninfov2.md
-  - docs/models/shared/updateroomconfigparams.md
-  - docs/models/shared/processwithroomsexposedport.md
-  - docs/models/shared/processwithrooms.md
-  - docs/models/shared/processexposedport.md
-  - docs/models/shared/process.md
-  - docs/models/shared/processv2exposedport.md
-  - docs/models/shared/processv2.md
-  - docs/models/shared/processstatus.md
-  - docs/models/shared/processv3exposedport.md
-  - docs/models/shared/processv3.md
-  - docs/models/shared/orgspage.md
-  - docs/models/shared/organization.md
-  - docs/models/shared/pendingorginvitespage.md
-  - docs/models/shared/pendingorginvite.md
-  - docs/models/shared/orgmemberspage.md
-  - docs/models/shared/orgmember.md
-  - docs/models/shared/createuserinvite.md
-  - docs/models/shared/rescinduserinvite.md
-  - docs/models/shared/metricsdata.md
-  - docs/models/shared/metricvalue.md
-  - docs/models/shared/metricname.md
-  - docs/models/shared/verificationemailsuccess.md
-  - docs/models/shared/verificationemailrequest.md
-  - docs/models/shared/createdby.md
-  - docs/models/shared/lobby.md
-  - docs/models/shared/lobbyvisibility.md
-  - docs/models/shared/createlobbyparams.md
-  - docs/models/shared/setlobbystateparams.md
-  - docs/models/shared/lobbyv3createdby.md
-  - docs/models/shared/lobbyv3.md
-  - docs/models/shared/createlobbyv3params.md
-  - docs/models/shared/pingendpoints.md
-  - docs/models/shared/env.md
-  - docs/models/shared/deploymentv1transporttype.md
-  - docs/models/shared/deploymentv1.md
-  - docs/models/shared/containerport.md
-  - docs/models/shared/planname.md
-  - docs/models/shared/deploymentconfigenv.md
-  - docs/models/shared/deploymentconfig.md
-  - docs/models/shared/deploymentv2env.md
-  - docs/models/shared/deploymentv2.md
-  - docs/models/shared/deploymentconfigv2env.md
-  - docs/models/shared/deploymentconfigv2.md
-  - docs/models/shared/deploymentsv3page.md
-  - docs/models/shared/deploymentv3env.md
-  - docs/models/shared/deploymentv3.md
-  - docs/models/shared/deploymentconfigv3env.md
-  - docs/models/shared/deploymentconfigv3.md
-  - docs/models/shared/regionalcontainertags.md
-  - docs/models/shared/build.md
-  - docs/models/shared/buildstatus.md
-  - docs/models/shared/createbuildparams.md
-  - docs/models/shared/buildwithuploadurlregionalcontainertags.md
-  - docs/models/shared/uploadbodyparams.md
-  - docs/models/shared/buildwithuploadurl.md
-  - docs/models/shared/buildwithmultiparturlsregionalcontainertags.md
-  - docs/models/shared/buildwithmultiparturls.md
-  - docs/models/shared/buildpart.md
-  - docs/models/shared/createmultipartbuildparams.md
-  - docs/models/shared/buildsv3page.md
-  - docs/models/shared/buildv3.md
-  - docs/models/shared/createdbuildv3withmultiparturls.md
-  - docs/models/shared/deletedbuild.md
-  - docs/models/shared/invoiceitempage.md
-  - docs/models/shared/invoiceitem.md
-  - docs/models/shared/paymentmethod.md
-  - docs/models/shared/linkpaymentmethod.md
-  - docs/models/shared/achpaymentmethod.md
-  - docs/models/shared/cardpaymentmethod.md
-  - docs/models/shared/cardbrand.md
-  - docs/models/shared/customerportalurl.md
-  - docs/models/shared/invoice.md
-  - docs/models/shared/invoicestatus.md
-  - docs/models/shared/playertokenobject.md
-  - docs/models/shared/nicknameobject.md
-  - docs/models/shared/googleidtokenobject.md
-  - docs/models/shared/applicationwithlatestdeploymentandbuilddeprecatedenv.md
-  - docs/models/shared/deployment.md
-  - docs/models/shared/applicationwithlatestdeploymentandbuilddeprecated.md
-  - docs/models/shared/google.md
-  - docs/models/shared/authconfiguration.md
-  - docs/models/shared/recordstringnever.md
-  - docs/models/shared/application.md
-  - docs/models/shared/appconfig.md
-  - docs/models/shared/applicationspage.md
-  - docs/models/shared/applicationwithlatestdeploymentandbuildenv.md
-  - docs/models/shared/applicationwithlatestdeploymentandbuilddeployment.md
-  - docs/models/shared/applicationwithlatestdeploymentandbuild.md
-  - docs/models/shared/security.md
-  - docs/models/sdkerrors/apierror.md
-  - docs/sdks/sdk/README.md
-  - docs/models/operations/option.md
-  - docs/sdks/tokensv1/README.md
-  - docs/sdks/roomsv1/README.md
-  - docs/sdks/roomsv2/README.md
-  - docs/sdks/processesv1/README.md
-  - docs/sdks/processesv2/README.md
-  - docs/sdks/processesv3/README.md
-  - docs/sdks/organizationsv1/README.md
-  - docs/sdks/metricsv1/README.md
-  - docs/sdks/managementv1/README.md
-  - docs/sdks/logsv1/README.md
-  - docs/sdks/lobbiesv1/README.md
-  - docs/sdks/lobbiesv2/README.md
-  - docs/sdks/lobbiesv3/README.md
-  - docs/sdks/discoveryv1/README.md
-  - docs/sdks/discoveryv2/README.md
-  - docs/sdks/deploymentsv1/README.md
-  - docs/sdks/deploymentsv2/README.md
-  - docs/sdks/deploymentsv3/README.md
-  - docs/sdks/buildsv1/README.md
-  - docs/sdks/buildsv2/README.md
-  - docs/sdks/buildsv3/README.md
-  - docs/sdks/billingv1/README.md
-  - docs/sdks/authv1/README.md
-  - docs/sdks/appsv1/README.md
-  - docs/sdks/appsv2/README.md
-  - USAGE.md
+  - lobbiesv1.go
+  - lobbiesv2.go
+  - lobbiesv3.go
+  - logsv1.go
+  - managementv1.go
+  - metricsv1.go
+  - models/errors/sdkerror.go
   - models/operations/options.go
-  - .gitattributes
-  - internal/hooks/hooks.go
-  - CONTRIBUTING.md
+  - organizationsv1.go
+  - processesv1.go
+  - processesv2.go
+  - processesv3.go
+  - retry/config.go
+  - roomsv1.go
+  - roomsv2.go
+  - tokensv1.go
+  - types/bigint.go
+  - types/date.go
+  - types/datetime.go
+  - types/decimal.go
+  - types/pointers.go
+examples:
+  GetOrgTokens:
+    speakeasy-default-get-org-tokens:
+      parameters:
+        path:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "200":
+          application/json: {"tokens": [{"createdAt": "2022-10-03T00:28:03.217Z", "createdBy": "noreply@hathora.dev", "lastFourCharsOfKey": "<value>", "status": "revoked", "name": "ci-token", "orgId": "<id>", "orgTokenId": "org-token-af469a92-5b45-4565-b3c4-b79878de67d2"}]}
+        "401":
+          application/json: {"message": "<value>"}
+  CreateOrgToken:
+    speakeasy-default-create-org-token:
+      parameters:
+        path:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      requestBody:
+        application/json: {"name": "ci-token"}
+      responses:
+        "201":
+          application/json: {"plainTextToken": "<value>", "orgToken": {"createdAt": "2023-07-08T21:31:16.458Z", "createdBy": "noreply@hathora.dev", "lastFourCharsOfKey": "<value>", "status": "active", "name": "ci-token", "orgId": "<id>", "orgTokenId": "org-token-af469a92-5b45-4565-b3c4-b79878de67d2"}}
+        "401":
+          application/json: {"message": "<value>"}
+  RevokeOrgToken:
+    speakeasy-default-revoke-org-token:
+      parameters:
+        path:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+          orgTokenId: "org-token-af469a92-5b45-4565-b3c4-b79878de67d2"
+      responses:
+        "200":
+          application/json: false
+        "401":
+          application/json: {"message": "<value>"}
+  CreateRoomDeprecated:
+    speakeasy-default-create-room-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query:
+          roomId: "2swovpy1fnunu"
+      requestBody:
+        application/json: {"deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "clientIPs": ["123.123.123.123"], "roomConfig": "{\"name\":\"my-room\"}", "region": "London"}
+      responses:
+        "201":
+          application/json: "2swovpy1fnunu"
+        "400":
+          application/json: {"message": "<value>"}
+  GetRoomInfoDeprecated:
+    speakeasy-default-get-room-info-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          roomId: "2swovpy1fnunu"
+      responses:
+        "200":
+          application/json: {"currentAllocation": {"unscheduledAt": "2024-11-07T20:34:26.981Z", "scheduledAt": "2024-08-15T12:15:33.984Z", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "roomAllocationId": "e3a0aa32-1711-4036-acfa-008b96061a78"}, "status": "active", "allocations": [{"unscheduledAt": "2022-06-26T00:20:57.528Z", "scheduledAt": "2023-02-07T05:04:32.232Z", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "roomAllocationId": "e3a0aa32-1711-4036-acfa-008b96061a78"}, {"unscheduledAt": "2023-05-27T01:25:52.895Z", "scheduledAt": "2024-01-22T17:02:06.151Z", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "roomAllocationId": "e3a0aa32-1711-4036-acfa-008b96061a78"}, {"unscheduledAt": "2022-06-20T14:20:53.478Z", "scheduledAt": "2022-08-19T03:53:54.463Z", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "roomAllocationId": "e3a0aa32-1711-4036-acfa-008b96061a78"}], "roomConfig": "{\"name\":\"my-room\"}", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetActiveRoomsForProcessDeprecated:
+    speakeasy-default-get-active-rooms-for-process-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          processId: "cbfcddd2-0006-43ae-996c-995fff7bed2e"
+      responses:
+        "200":
+          application/json: [{"currentAllocation": {"unscheduledAt": "2024-11-29T20:10:58.686Z", "scheduledAt": "2023-03-27T20:17:37.723Z", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "roomAllocationId": "e3a0aa32-1711-4036-acfa-008b96061a78"}, "status": "active", "roomConfig": "{\"name\":\"my-room\"}", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}, {"currentAllocation": {"unscheduledAt": "2023-07-15T09:35:39.721Z", "scheduledAt": "2024-04-09T10:56:00.093Z", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "roomAllocationId": "e3a0aa32-1711-4036-acfa-008b96061a78"}, "status": "active", "roomConfig": "{\"name\":\"my-room\"}", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}, {"currentAllocation": {"unscheduledAt": "2024-07-27T13:40:43.672Z", "scheduledAt": "2022-07-21T11:06:09.616Z", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "roomAllocationId": "e3a0aa32-1711-4036-acfa-008b96061a78"}, "status": "active", "roomConfig": "{\"name\":\"my-room\"}", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}]
+        "401":
+          application/json: {"message": "<value>"}
+  GetInactiveRoomsForProcessDeprecated:
+    speakeasy-default-get-inactive-rooms-for-process-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          processId: "cbfcddd2-0006-43ae-996c-995fff7bed2e"
+      responses:
+        "200":
+          application/json: []
+        "401":
+          application/json: {"message": "<value>"}
+  DestroyRoomDeprecated:
+    speakeasy-default-destroy-room-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          roomId: "2swovpy1fnunu"
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+  SuspendRoomDeprecated:
+    speakeasy-default-suspend-room-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          roomId: "2swovpy1fnunu"
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+  GetConnectionInfoDeprecated:
+    speakeasy-default-get-connection-info-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          roomId: "2swovpy1fnunu"
+      responses:
+        "200":
+          application/json: {"status": "active", "transportType": "tcp", "port": "990.30", "host": "unpleasant-boyfriend.name", "roomId": "2swovpy1fnunu"}
+        "400":
+          application/json: {"message": "<value>"}
+  CreateRoom:
+    speakeasy-default-create-room:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query:
+          roomId: "2swovpy1fnunu"
+      requestBody:
+        application/json: {"deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "clientIPs": ["123.123.123.123"], "roomConfig": "{\"name\":\"my-room\"}", "region": "Dallas"}
+      responses:
+        "201":
+          application/json: {"additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "status": "active", "roomId": "2swovpy1fnunu", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e"}
+        "400":
+          application/json: {"message": "<value>"}
+  GetRoomInfo:
+    speakeasy-default-get-room-info:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          roomId: "2swovpy1fnunu"
+      responses:
+        "200":
+          application/json: {"currentAllocation": {"unscheduledAt": "2024-11-10T01:54:28.943Z", "scheduledAt": "2023-07-26T00:45:58.316Z", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "roomAllocationId": "e3a0aa32-1711-4036-acfa-008b96061a78"}, "status": "active", "allocations": [{"unscheduledAt": "2023-09-01T05:11:11.318Z", "scheduledAt": "2022-04-02T11:20:42.629Z", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "roomAllocationId": "e3a0aa32-1711-4036-acfa-008b96061a78"}], "roomConfig": "{\"name\":\"my-room\"}", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetActiveRoomsForProcess:
+    speakeasy-default-get-active-rooms-for-process:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          processId: "cbfcddd2-0006-43ae-996c-995fff7bed2e"
+      responses:
+        "200":
+          application/json: []
+        "401":
+          application/json: {"message": "<value>"}
+  GetInactiveRoomsForProcess:
+    speakeasy-default-get-inactive-rooms-for-process:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          processId: "cbfcddd2-0006-43ae-996c-995fff7bed2e"
+      responses:
+        "200":
+          application/json: [{"currentAllocation": {"unscheduledAt": "2023-09-18T22:53:47.360Z", "scheduledAt": "2023-04-25T23:27:12.620Z", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "roomAllocationId": "e3a0aa32-1711-4036-acfa-008b96061a78"}, "status": "active", "roomConfig": "{\"name\":\"my-room\"}", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}]
+        "401":
+          application/json: {"message": "<value>"}
+  DestroyRoom:
+    speakeasy-default-destroy-room:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          roomId: "2swovpy1fnunu"
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+  SuspendRoomV2Deprecated:
+    speakeasy-default-suspend-room-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          roomId: "2swovpy1fnunu"
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+  GetConnectionInfo:
+    speakeasy-default-get-connection-info:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          roomId: "2swovpy1fnunu"
+      responses:
+        "200":
+          application/json: {"additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "status": "active", "roomId": "2swovpy1fnunu"}
+        "400":
+          application/json: {"message": "<value>"}
+  UpdateRoomConfig:
+    speakeasy-default-update-room-config:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          roomId: "2swovpy1fnunu"
+      requestBody:
+        application/json: {"roomConfig": "{\"name\":\"my-room\"}"}
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+  GetRunningProcesses:
+    speakeasy-default-get-running-processes:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query: {}
+      responses:
+        "200":
+          application/json: [{"egressedBytes": 435, "idleSince": "2024-04-16T22:05:36.139Z", "activeConnectionsUpdatedAt": "2023-02-28T21:14:31.297Z", "activeConnections": 10, "roomsAllocatedUpdatedAt": "2022-02-18T08:49:49.103Z", "roomsAllocated": 1, "roomSlotsAvailableUpdatedAt": "2022-01-13T17:20:56.826Z", "roomSlotsAvailable": "872.12", "draining": true, "terminatedAt": "2024-11-03T21:15:12.165Z", "stoppingAt": "2023-06-24T04:12:38.708Z", "startedAt": "2023-11-29T13:16:05.799Z", "startingAt": "2024-03-26T11:32:01.922Z", "roomsPerProcess": 3, "additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "port": "9891.33", "host": "rotten-march.biz", "region": "Frankfurt", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "deploymentId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "rooms": [{"currentAllocation": {"unscheduledAt": "2022-07-17T19:45:54.757Z", "scheduledAt": "2022-05-26T12:37:04.536Z", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "roomAllocationId": "e3a0aa32-1711-4036-acfa-008b96061a78"}, "status": "active", "roomConfig": "{\"name\":\"my-room\"}", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}], "totalRooms": 197192}, {"egressedBytes": 435, "idleSince": "2023-03-21T10:07:31.016Z", "activeConnectionsUpdatedAt": "2023-06-09T03:06:22.087Z", "activeConnections": 10, "roomsAllocatedUpdatedAt": "2022-03-16T11:16:22.956Z", "roomsAllocated": 1, "roomSlotsAvailableUpdatedAt": "2024-06-06T22:41:26.610Z", "roomSlotsAvailable": "7631.85", "draining": false, "terminatedAt": "2023-12-25T08:51:18.699Z", "stoppingAt": "2024-03-06T03:36:28.858Z", "startedAt": "2022-11-17T18:06:25.653Z", "startingAt": "2023-01-13T13:58:22.537Z", "roomsPerProcess": 3, "additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "port": "6547.39", "host": "glorious-climb.net", "region": "Dallas", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "deploymentId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "rooms": [{"currentAllocation": {"unscheduledAt": "2022-10-30T02:11:59.423Z", "scheduledAt": "2022-10-04T21:23:17.176Z", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "roomAllocationId": "e3a0aa32-1711-4036-acfa-008b96061a78"}, "status": "active", "roomConfig": "{\"name\":\"my-room\"}", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}, {"currentAllocation": {"unscheduledAt": "2022-11-11T18:51:59.810Z", "scheduledAt": "2023-05-12T12:18:16.657Z", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "roomAllocationId": "e3a0aa32-1711-4036-acfa-008b96061a78"}, "status": "active", "roomConfig": "{\"name\":\"my-room\"}", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}, {"currentAllocation": {"unscheduledAt": "2023-12-17T01:44:26.210Z", "scheduledAt": "2023-04-12T21:15:18.110Z", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "roomAllocationId": "e3a0aa32-1711-4036-acfa-008b96061a78"}, "status": "active", "roomConfig": "{\"name\":\"my-room\"}", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}], "totalRooms": 371061}]
+        "401":
+          application/json: {"message": "<value>"}
+  GetStoppedProcesses:
+    speakeasy-default-get-stopped-processes:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query: {}
+      responses:
+        "200":
+          application/json: [{"egressedBytes": 435, "idleSince": "2024-02-02T19:54:10.305Z", "activeConnectionsUpdatedAt": "2022-06-30T10:26:06.346Z", "activeConnections": 10, "roomsAllocatedUpdatedAt": "2022-05-04T16:52:36.191Z", "roomsAllocated": 1, "roomSlotsAvailableUpdatedAt": "2022-03-19T09:05:17.308Z", "roomSlotsAvailable": "7831.19", "draining": false, "terminatedAt": "2023-04-02T10:44:24.918Z", "stoppingAt": "2024-08-15T05:08:45.925Z", "startedAt": "2023-10-20T12:19:51.834Z", "startingAt": "2022-01-31T21:04:01.615Z", "roomsPerProcess": 3, "additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "port": "9284.69", "host": "exhausted-knitting.biz", "region": "Los_Angeles", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "deploymentId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}, {"egressedBytes": 435, "idleSince": "2023-11-17T06:23:39.664Z", "activeConnectionsUpdatedAt": "2024-01-01T05:59:37.458Z", "activeConnections": 10, "roomsAllocatedUpdatedAt": "2024-05-13T04:04:07.012Z", "roomsAllocated": 1, "roomSlotsAvailableUpdatedAt": "2022-02-02T11:35:15.259Z", "roomSlotsAvailable": "1603.90", "draining": false, "terminatedAt": "2022-04-01T03:51:40.800Z", "stoppingAt": "2024-02-19T23:32:44.715Z", "startedAt": "2022-06-07T14:26:45.534Z", "startingAt": "2022-11-22T12:06:41.903Z", "roomsPerProcess": 3, "additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "port": "2659.33", "host": "admired-bin.org", "region": "Singapore", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "deploymentId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}, {"egressedBytes": 435, "idleSince": "2022-08-07T01:18:05.284Z", "activeConnectionsUpdatedAt": "2023-02-12T11:53:46.219Z", "activeConnections": 10, "roomsAllocatedUpdatedAt": "2024-03-26T07:40:29.100Z", "roomsAllocated": 1, "roomSlotsAvailableUpdatedAt": "2022-03-24T06:32:28.768Z", "roomSlotsAvailable": "9342.16", "draining": true, "terminatedAt": "2023-10-04T01:01:31.814Z", "stoppingAt": "2023-10-20T02:15:33.517Z", "startedAt": "2022-05-06T12:32:05.172Z", "startingAt": "2024-01-24T14:50:46.774Z", "roomsPerProcess": 3, "additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "port": "1074.23", "host": "powerless-remark.com", "region": "Dallas", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "deploymentId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}]
+        "401":
+          application/json: {"message": "<value>"}
+  GetProcessInfoDeprecated:
+    speakeasy-default-get-process-info-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          processId: "cbfcddd2-0006-43ae-996c-995fff7bed2e"
+      responses:
+        "200":
+          application/json: {"egressedBytes": 435, "idleSince": "2024-10-01T07:24:08.106Z", "activeConnectionsUpdatedAt": "2024-06-17T01:42:29.701Z", "activeConnections": 10, "roomsAllocatedUpdatedAt": "2024-03-27T19:51:33.445Z", "roomsAllocated": 1, "roomSlotsAvailableUpdatedAt": "2024-12-21T07:45:50.419Z", "roomSlotsAvailable": "4422.87", "draining": true, "terminatedAt": "2022-09-25T15:26:01.287Z", "stoppingAt": "2023-04-26T14:37:39.561Z", "startedAt": "2024-04-09T00:14:02.566Z", "startingAt": "2022-09-01T08:59:39.747Z", "roomsPerProcess": 3, "additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "port": "9781.06", "host": "jagged-roadway.com", "region": "Dallas", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "deploymentId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetProcessInfoV2Deprecated:
+    speakeasy-default-get-process-info-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          processId: "cbfcddd2-0006-43ae-996c-995fff7bed2e"
+      responses:
+        "200":
+          application/json: {"status": "starting", "roomsAllocated": 1, "terminatedAt": "2024-01-10T14:15:09.929Z", "stoppingAt": "2024-04-02T09:20:48.017Z", "startedAt": "2023-09-05T22:23:52.640Z", "createdAt": "2023-10-25T02:41:16.498Z", "roomsPerProcess": 3, "additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "region": "Dubai", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "deploymentId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetLatestProcessesV2Deprecated:
+    speakeasy-default-get-latest-processes-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query: {}
+      responses:
+        "200":
+          application/json: [{"status": "running", "roomsAllocated": 1, "terminatedAt": "2022-02-03T18:33:11.473Z", "stoppingAt": "2022-07-28T01:29:14.081Z", "startedAt": "2023-12-18T05:39:51.247Z", "createdAt": "2023-08-05T07:27:57.212Z", "roomsPerProcess": 3, "additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "region": "Sydney", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "deploymentId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}, {"status": "draining", "roomsAllocated": 1, "terminatedAt": "2024-10-18T10:58:30.060Z", "stoppingAt": "2022-06-05T10:34:03.355Z", "startedAt": "2024-01-21T12:28:01.562Z", "createdAt": "2022-09-29T11:54:10.349Z", "roomsPerProcess": 3, "additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "region": "Chicago", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "deploymentId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}]
+        "401":
+          application/json: {"message": "<value>"}
+  GetProcessesCountExperimentalV2Deprecated:
+    speakeasy-default-get-processes-count-experimental-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query: {}
+      responses:
+        "200":
+          application/json: {"count": "4304.38"}
+        "401":
+          application/json: {"message": "<value>"}
+  StopProcessV2Deprecated:
+    speakeasy-default-stop-process-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          processId: "cbfcddd2-0006-43ae-996c-995fff7bed2e"
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+  CreateProcessV2Deprecated:
+    speakeasy-default-create-process-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          region: "Tokyo"
+      responses:
+        "201":
+          application/json: {"status": "running", "roomsAllocated": 1, "terminatedAt": "2024-09-15T20:45:32.677Z", "stoppingAt": "2023-03-22T20:04:29.092Z", "startedAt": "2022-03-23T16:00:33.277Z", "createdAt": "2024-05-10T17:31:49.196Z", "roomsPerProcess": 3, "additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "region": "Sao_Paulo", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "deploymentId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetLatestProcesses:
+    speakeasy-default-get-latest-processes:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query: {}
+      responses:
+        "200":
+          application/json: [{"status": "draining", "roomsAllocated": 1, "terminatedAt": "2024-04-20T20:17:37.932Z", "stoppingAt": "2022-09-07T05:57:23.957Z", "startedAt": "2022-03-06T15:57:00.225Z", "createdAt": "2023-02-21T09:03:45.377Z", "roomsPerProcess": 3, "additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "region": "Frankfurt", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}, {"status": "running", "roomsAllocated": 1, "terminatedAt": "2022-07-18T20:07:21.123Z", "stoppingAt": "2024-03-22T01:11:37.277Z", "startedAt": "2023-06-23T05:55:38.452Z", "createdAt": "2023-12-10T20:20:38.039Z", "roomsPerProcess": 3, "additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "region": "Tokyo", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}]
+        "401":
+          application/json: {"message": "<value>"}
+  GetProcessesCountExperimental:
+    speakeasy-default-get-processes-count-experimental:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query: {}
+      responses:
+        "200":
+          application/json: {"count": "4724.83"}
+        "401":
+          application/json: {"message": "<value>"}
+  CreateProcess:
+    speakeasy-default-create-process:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          region: "Sao_Paulo"
+      responses:
+        "201":
+          application/json: {"status": "stopped", "roomsAllocated": 1, "terminatedAt": "2023-03-23T04:06:25.653Z", "stoppingAt": "2022-05-16T14:01:12.166Z", "startedAt": "2023-01-23T14:38:37.913Z", "createdAt": "2023-10-03T00:12:41.482Z", "roomsPerProcess": 3, "additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "region": "Washington_DC", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetProcess:
+    speakeasy-default-get-process:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          processId: "cbfcddd2-0006-43ae-996c-995fff7bed2e"
+      responses:
+        "200":
+          application/json: {"status": "stopping", "roomsAllocated": 1, "terminatedAt": "2022-08-27T15:32:02.022Z", "stoppingAt": "2024-12-07T20:41:15.051Z", "startedAt": "2022-01-30T08:12:14.869Z", "createdAt": "2022-09-14T23:34:03.902Z", "roomsPerProcess": 3, "additionalExposedPorts": [{"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}], "exposedPort": {"transportType": "tcp", "port": 34567, "host": "1.proxy.hathora.dev", "name": "default"}, "region": "London", "processId": "cbfcddd2-0006-43ae-996c-995fff7bed2e", "deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  StopProcess:
+    speakeasy-default-stop-process:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          processId: "cbfcddd2-0006-43ae-996c-995fff7bed2e"
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+  GetProcessMetrics:
+    speakeasy-default-get-process-metrics:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          processId: "cbfcddd2-0006-43ae-996c-995fff7bed2e"
+        query: {}
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+        "200": {}
+  GetOrgs:
+    speakeasy-default-get-orgs:
+      responses:
+        "200":
+          application/json: {"orgs": []}
+        "401":
+          application/json: {"message": "<value>"}
+  GetUserPendingInvites:
+    speakeasy-default-get-user-pending-invites:
+      responses:
+        "200":
+          application/json: {"invites": [{"scopes": ["billing:read-write"], "createdAt": "2024-06-02T22:56:51.490Z", "invitedBy": "noreply@hathora.dev", "userEmail": "noreply@hathora.dev", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"}, {"scopes": [], "createdAt": "2024-12-10T20:40:33.103Z", "invitedBy": "noreply@hathora.dev", "userEmail": "noreply@hathora.dev", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"}]}
+        "401":
+          application/json: {"message": "<value>"}
+  GetOrgMembers:
+    speakeasy-default-get-org-members:
+      parameters:
+        path:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "200":
+          application/json: {"members": []}
+        "401":
+          application/json: {"message": "<value>"}
+  InviteUser:
+    speakeasy-default-invite-user:
+      parameters:
+        path:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      requestBody:
+        application/json: {"userEmail": "noreply@hathora.dev"}
+      responses:
+        "200":
+          application/json: {"scopes": [], "createdAt": "2023-11-22T10:44:46.941Z", "invitedBy": "noreply@hathora.dev", "userEmail": "noreply@hathora.dev", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"}
+        "401":
+          application/json: {"message": "<value>"}
+  UpdateUserInvite:
+    speakeasy-default-update-user-invite:
+      parameters:
+        path:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      requestBody:
+        application/json: {"scopes": "viewer", "userEmail": "noreply@hathora.dev"}
+      responses:
+        "200":
+          application/json: true
+        "401":
+          application/json: {"message": "<value>"}
+  RescindInvite:
+    speakeasy-default-rescind-invite:
+      parameters:
+        path:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      requestBody:
+        application/json: {"userEmail": "noreply@hathora.dev"}
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+  GetOrgPendingInvites:
+    speakeasy-default-get-org-pending-invites:
+      parameters:
+        path:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "200":
+          application/json: {"invites": []}
+        "401":
+          application/json: {"message": "<value>"}
+  AcceptInvite:
+    speakeasy-default-accept-invite:
+      parameters:
+        path:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+  RejectInvite:
+    speakeasy-default-reject-invite:
+      parameters:
+        path:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+  GetUsageLimits:
+    speakeasy-default-get-usage-limits:
+      parameters:
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "200":
+          application/json: {"monthlyProcessVcpuHoursConsumed": "5579.88", "concurrentProcessVcpus7DayMax": "7121.65"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetMetricsDeprecated:
+    speakeasy-default-get-metrics-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          processId: "cbfcddd2-0006-43ae-996c-995fff7bed2e"
+        query: {}
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+        "200": {}
+  SendVerificationEmail:
+    speakeasy-default-send-verification-email:
+      requestBody:
+        application/json: {"userId": "<id>"}
+      responses:
+        "200":
+          application/json: "success"
+        "401":
+          application/json: {"message": "<value>"}
+  GetLogsForProcess:
+    speakeasy-default-get-logs-for-process:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          processId: "cbfcddd2-0006-43ae-996c-995fff7bed2e"
+        query:
+          tailLines: 100
+      responses:
+        "400":
+          application/json: {"message": "<value>"}
+        "200": {}
+  DownloadLogForProcess:
+    speakeasy-default-download-log-for-process:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          processId: "cbfcddd2-0006-43ae-996c-995fff7bed2e"
+      responses:
+        "400":
+          application/json: {"message": "<value>"}
+        "200": {}
+  CreatePrivateLobbyDeprecated:
+    speakeasy-default-create-private-lobby-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query: {}
+      responses:
+        "200":
+          application/json: "2swovpy1fnunu"
+        "400":
+          application/json: {"message": "<value>"}
+  CreatePublicLobbyDeprecated:
+    speakeasy-default-create-public-lobby-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query: {}
+      responses:
+        "200":
+          application/json: "2swovpy1fnunu"
+        "400":
+          application/json: {"message": "<value>"}
+  ListActivePublicLobbiesDeprecatedV1:
+    speakeasy-default-list-active-public-lobbies-deprecated-v1:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query: {}
+      responses:
+        "200":
+          application/json: [{"shortCode": "LFG4", "initialConfig": "<value>", "createdAt": "2023-11-08T00:58:14.604Z", "createdBy": "google-oauth2|107030234048588177467", "local": false, "visibility": "private", "region": "Johannesburg", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}, {"shortCode": "LFG4", "initialConfig": "<value>", "createdAt": "2022-03-09T17:56:37.363Z", "createdBy": "google-oauth2|107030234048588177467", "local": false, "visibility": "private", "region": "Dallas", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}, {"shortCode": "LFG4", "initialConfig": "<value>", "createdAt": "2024-05-18T01:51:10.065Z", "createdBy": "google-oauth2|107030234048588177467", "local": true, "visibility": "private", "region": "Mumbai", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}]
+        "404":
+          application/json: {"message": "<value>"}
+  CreatePrivateLobby:
+    speakeasy-default-create-private-lobby:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query:
+          roomId: "2swovpy1fnunu"
+      requestBody:
+        application/json: {"initialConfig": "<value>", "region": "London"}
+      responses:
+        "201":
+          application/json: {"shortCode": "LFG4", "initialConfig": "<value>", "createdAt": "2023-07-19T04:23:52.656Z", "createdBy": "google-oauth2|107030234048588177467", "local": true, "visibility": "private", "region": "Seattle", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "400":
+          application/json: {"message": "<value>"}
+  CreatePublicLobby:
+    speakeasy-default-create-public-lobby:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query:
+          roomId: "2swovpy1fnunu"
+      requestBody:
+        application/json: {"initialConfig": "<value>", "region": "Johannesburg"}
+      responses:
+        "201":
+          application/json: {"shortCode": "LFG4", "initialConfig": "<value>", "createdAt": "2023-11-28T02:02:25.922Z", "createdBy": "google-oauth2|107030234048588177467", "local": true, "visibility": "private", "region": "Dubai", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "400":
+          application/json: {"message": "<value>"}
+  CreateLocalLobby:
+    speakeasy-default-create-local-lobby:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query:
+          roomId: "2swovpy1fnunu"
+      requestBody:
+        application/json: {"initialConfig": "<value>", "region": "Johannesburg"}
+      responses:
+        "201":
+          application/json: {"shortCode": "LFG4", "initialConfig": "<value>", "createdAt": "2023-07-25T01:08:32.320Z", "createdBy": "google-oauth2|107030234048588177467", "local": false, "visibility": "private", "region": "Tokyo", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "400":
+          application/json: {"message": "<value>"}
+  CreateLobbyDeprecated:
+    speakeasy-default-create-lobby-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query:
+          roomId: "2swovpy1fnunu"
+      requestBody:
+        application/json: {"visibility": "private", "initialConfig": "<value>", "region": "Sao_Paulo"}
+      responses:
+        "201":
+          application/json: {"shortCode": "LFG4", "initialConfig": "<value>", "createdAt": "2024-06-14T21:44:41.196Z", "createdBy": "google-oauth2|107030234048588177467", "local": false, "visibility": "private", "region": "Singapore", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "400":
+          application/json: {"message": "<value>"}
+  ListActivePublicLobbiesDeprecatedV2:
+    speakeasy-default-list-active-public-lobbies-deprecated-v2:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query: {}
+      responses:
+        "200":
+          application/json: [{"shortCode": "LFG4", "initialConfig": "<value>", "createdAt": "2024-04-21T18:42:49.974Z", "createdBy": "google-oauth2|107030234048588177467", "local": false, "visibility": "private", "region": "Mumbai", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}]
+        "401":
+          application/json: {"message": "<value>"}
+  GetLobbyInfo:
+    speakeasy-default-get-lobby-info:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          roomId: "2swovpy1fnunu"
+      responses:
+        "200":
+          application/json: {"shortCode": "LFG4", "initialConfig": "<value>", "createdAt": "2022-07-06T04:13:36.623Z", "createdBy": "google-oauth2|107030234048588177467", "local": true, "visibility": "private", "region": "Mumbai", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "404":
+          application/json: {"message": "<value>"}
+  SetLobbyState:
+    speakeasy-default-set-lobby-state:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          roomId: "2swovpy1fnunu"
+      requestBody:
+        application/json: {"state": "South Dakota"}
+      responses:
+        "200":
+          application/json: {"shortCode": "LFG4", "initialConfig": "<value>", "createdAt": "2023-10-29T09:25:45.486Z", "createdBy": "google-oauth2|107030234048588177467", "local": true, "visibility": "private", "region": "Los_Angeles", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  CreateLobby:
+    speakeasy-default-create-lobby:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query:
+          shortCode: "LFG4"
+          roomId: "2swovpy1fnunu"
+      requestBody:
+        application/json: {"visibility": "private", "roomConfig": "{\"name\":\"my-room\"}", "region": "Seattle"}
+      responses:
+        "201":
+          application/json: {"shortCode": "LFG4", "createdAt": "2024-10-06T23:08:27.155Z", "createdBy": "google-oauth2|107030234048588177467", "roomConfig": "{\"name\":\"my-room\"}", "visibility": "private", "region": "Mumbai", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "400":
+          application/json: {"message": "<value>"}
+  ListActivePublicLobbies:
+    speakeasy-default-list-active-public-lobbies:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query: {}
+      responses:
+        "200":
+          application/json: []
+        "401":
+          application/json: {"message": "<value>"}
+  GetLobbyInfoByRoomId:
+    speakeasy-default-get-lobby-info-by-room-id:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          roomId: "2swovpy1fnunu"
+      responses:
+        "200":
+          application/json: {"shortCode": "LFG4", "createdAt": "2023-05-04T00:54:54.671Z", "createdBy": "google-oauth2|107030234048588177467", "roomConfig": "{\"name\":\"my-room\"}", "visibility": "private", "region": "Dubai", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "404":
+          application/json: {"message": "<value>"}
+  GetLobbyInfoByShortCode:
+    speakeasy-default-get-lobby-info-by-short-code:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          shortCode: "LFG4"
+      responses:
+        "200":
+          application/json: {"shortCode": "LFG4", "createdAt": "2024-01-01T16:22:21.687Z", "createdBy": "google-oauth2|107030234048588177467", "roomConfig": "{\"name\":\"my-room\"}", "visibility": "private", "region": "Tokyo", "roomId": "2swovpy1fnunu", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "404":
+          application/json: {"message": "<value>"}
+  GetFleets:
+    speakeasy-default-get-fleets:
+      parameters:
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "200":
+          application/json: {"fleets": [{"orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "fleetId": "<id>"}]}
+        "401":
+          application/json: {"message": "<value>"}
+  GetFleetRegion:
+    speakeasy-default-get-fleet-region:
+      parameters:
+        path:
+          fleetId: "<id>"
+          region: "Sao_Paulo"
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "200":
+          application/json: {"cloudMinVcpusUpdatedAt": "2023-10-10T11:34:21.782Z", "cloudMinVcpus": 225958, "scaleIncrementVcpus": 996706}
+        "401":
+          application/json: {"message": "<value>"}
+  UpdateFleetRegion:
+    speakeasy-default-update-fleet-region:
+      parameters:
+        path:
+          fleetId: "<id>"
+          region: "Singapore"
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      requestBody:
+        application/json: {"cloudMinVcpus": 511402}
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+  GetFleetMetrics:
+    speakeasy-default-get-fleet-metrics:
+      parameters:
+        path:
+          fleetId: "<id>"
+          region: "London"
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+        "200": {}
+  GetPingServiceEndpointsDeprecated:
+    speakeasy-default-get-ping-service-endpoints-deprecated:
+      responses:
+        "200":
+          application/json: [{"port": 2000, "host": "ping.hathora.dev", "region": "Seattle"}]
+  GetPingServiceEndpoints:
+    speakeasy-default-get-ping-service-endpoints:
+      responses:
+        "200":
+          application/json: [{"port": 2000, "host": "ping.hathora.dev", "region": "Seattle"}]
+  GetDeploymentsV1Deprecated:
+    speakeasy-default-get-deployments-v1-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      responses:
+        "200":
+          application/json: []
+        "401":
+          application/json: {"message": "<value>"}
+  GetLatestDeploymentV1Deprecated:
+    speakeasy-default-get-latest-deployment-v1-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      responses:
+        "200":
+          application/json: {"env": [], "roomsPerProcess": 3, "planName": "tiny", "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "tls", "port": 8000, "name": "default"}, "transportType": "tls", "containerPort": "1887.86", "createdAt": "2022-02-01T12:34:54.073Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": 1, "buildId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetDeploymentInfoV1Deprecated:
+    speakeasy-default-get-deployment-info-v1-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          deploymentId: 1
+      responses:
+        "200":
+          application/json: {"env": [{"value": "TRUE", "name": "EULA"}, {"value": "TRUE", "name": "EULA"}, {"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "planName": "tiny", "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "tls", "port": 8000, "name": "default"}, "transportType": "tcp", "containerPort": "375.10", "createdAt": "2024-06-09T23:16:01.122Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": 1, "buildId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  CreateDeploymentV1Deprecated:
+    speakeasy-default-create-deployment-v1-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          buildId: 1
+      requestBody:
+        application/json: {"env": [{"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "planName": "tiny", "additionalContainerPorts": [], "transportType": "tls", "containerPort": 4000}
+      responses:
+        "201":
+          application/json: {"env": [{"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "planName": "tiny", "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "udp", "port": 8000, "name": "default"}, "transportType": "tls", "containerPort": "6530.16", "createdAt": "2024-04-23T21:04:06.767Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": 1, "buildId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "400":
+          application/json: {"message": "<value>"}
+  GetDeploymentsV2Deprecated:
+    speakeasy-default-get-deployments-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      responses:
+        "200":
+          application/json: [{"idleTimeoutEnabled": false, "env": [{"value": "TRUE", "name": "EULA"}, {"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "tls", "port": 8000, "name": "default"}, "createdAt": "2024-10-17T13:32:31.814Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": 1, "buildId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}]
+        "401":
+          application/json: {"message": "<value>"}
+  GetLatestDeploymentV2Deprecated:
+    speakeasy-default-get-latest-deployment-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      responses:
+        "200":
+          application/json: {"idleTimeoutEnabled": false, "env": [{"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "tls", "port": 8000, "name": "default"}, "createdAt": "2024-02-06T07:06:45.274Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": 1, "buildId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetDeploymentInfoV2Deprecated:
+    speakeasy-default-get-deployment-info-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          deploymentId: 1
+      responses:
+        "200":
+          application/json: {"idleTimeoutEnabled": true, "env": [{"value": "TRUE", "name": "EULA"}, {"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "tls", "port": 8000, "name": "default"}, "createdAt": "2024-06-29T17:10:42.639Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": 1, "buildId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  CreateDeploymentV2Deprecated:
+    speakeasy-default-create-deployment-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          buildId: 1
+      requestBody:
+        application/json: {"idleTimeoutEnabled": false, "env": [{"value": "TRUE", "name": "EULA"}, {"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "additionalContainerPorts": [], "transportType": "tls", "containerPort": 4000, "requestedMemoryMB": 1024, "requestedCPU": 0.5}
+      responses:
+        "201":
+          application/json: {"idleTimeoutEnabled": false, "env": [], "roomsPerProcess": 3, "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "tls", "port": 8000, "name": "default"}, "createdAt": "2023-10-25T09:24:49.311Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": 1, "buildId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "400":
+          application/json: {"message": "<value>"}
+  GetDeployments:
+    speakeasy-default-get-deployments:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+        query:
+          deploymentTag: "alpha"
+      responses:
+        "200":
+          application/json: {"deployments": [{"deploymentTag": "alpha", "idleTimeoutEnabled": false, "env": [{"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "udp", "port": 8000, "name": "default"}, "createdAt": "2022-04-09T10:08:00.916Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "buildTag": "0.1.14-14c793", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}, {"deploymentTag": "alpha", "idleTimeoutEnabled": true, "env": [], "roomsPerProcess": 3, "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "tcp", "port": 8000, "name": "default"}, "createdAt": "2022-07-18T23:48:22.727Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "buildTag": "0.1.14-14c793", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}, {"deploymentTag": "alpha", "idleTimeoutEnabled": true, "env": [{"value": "TRUE", "name": "EULA"}, {"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "udp", "port": 8000, "name": "default"}, "createdAt": "2023-12-03T07:37:15.702Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "buildTag": "0.1.14-14c793", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}]}
+        "401":
+          application/json: {"message": "<value>"}
+  CreateDeployment:
+    speakeasy-default-create-deployment:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      requestBody:
+        application/json: {"deploymentTag": "alpha", "idleTimeoutEnabled": false, "env": [], "roomsPerProcess": 3, "additionalContainerPorts": [], "transportType": "tcp", "containerPort": 4000, "requestedMemoryMB": 1024, "requestedCPU": 0.5, "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5"}
+      responses:
+        "201":
+          application/json: {"deploymentTag": "alpha", "idleTimeoutEnabled": false, "env": [{"value": "TRUE", "name": "EULA"}, {"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "tls", "port": 8000, "name": "default"}, "createdAt": "2022-01-02T01:22:23.622Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "buildTag": "0.1.14-14c793", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "400":
+          application/json: {"message": "<value>"}
+  GetLatestDeployment:
+    speakeasy-default-get-latest-deployment:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      responses:
+        "200":
+          application/json: {"deploymentTag": "alpha", "idleTimeoutEnabled": true, "env": [{"value": "TRUE", "name": "EULA"}, {"value": "TRUE", "name": "EULA"}, {"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "tls", "port": 8000, "name": "default"}, "createdAt": "2023-12-23T07:49:50.926Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "buildTag": "0.1.14-14c793", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetDeployment:
+    speakeasy-default-get-deployment:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          deploymentId: "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5"
+      responses:
+        "200":
+          application/json: {"deploymentTag": "alpha", "idleTimeoutEnabled": true, "env": [{"value": "TRUE", "name": "EULA"}, {"value": "TRUE", "name": "EULA"}, {"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "tcp", "port": 8000, "name": "default"}, "createdAt": "2023-09-03T08:18:32.123Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "buildTag": "0.1.14-14c793", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetBuildsDeprecated:
+    speakeasy-default-get-builds-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      responses:
+        "200":
+          application/json: [{"buildTag": "0.1.14-14c793", "regionalContainerTags": [], "imageSize": 126387, "status": "succeeded", "deletedAt": "2024-04-02T00:24:05.550Z", "finishedAt": "2022-08-08T10:30:35.885Z", "startedAt": "2022-07-04T00:41:08.616Z", "createdAt": "2022-12-04T10:15:52.554Z", "createdBy": "noreply@hathora.dev", "buildId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}]
+        "401":
+          application/json: {"message": "<value>"}
+  GetBuildInfoDeprecated:
+    speakeasy-default-get-build-info-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          buildId: 1
+      responses:
+        "200":
+          application/json: {"buildTag": "0.1.14-14c793", "regionalContainerTags": [{"containerTag": "<value>", "region": "Frankfurt"}, {"containerTag": "<value>", "region": "London"}, {"containerTag": "<value>", "region": "Johannesburg"}], "imageSize": 414496, "status": "succeeded", "deletedAt": "2023-08-19T04:35:50.245Z", "finishedAt": "2024-09-11T02:43:30.967Z", "startedAt": "2024-08-19T23:43:20.769Z", "createdAt": "2024-07-08T21:01:56.966Z", "createdBy": "noreply@hathora.dev", "buildId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  CreateBuildDeprecated:
+    speakeasy-default-create-build-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      requestBody:
+        application/json: {"buildTag": "0.1.14-14c793"}
+      responses:
+        "201":
+          application/json: {"buildTag": "0.1.14-14c793", "regionalContainerTags": [{"containerTag": "<value>", "region": "Seattle"}, {"containerTag": "<value>", "region": "Dubai"}, {"containerTag": "<value>", "region": "Singapore"}], "imageSize": 754438, "status": "succeeded", "deletedAt": "2024-09-17T23:19:15.094Z", "finishedAt": "2023-10-03T12:30:01.434Z", "startedAt": "2022-02-13T10:29:08.560Z", "createdAt": "2024-07-11T08:01:50.508Z", "createdBy": "noreply@hathora.dev", "buildId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  DeleteBuildDeprecated:
+    speakeasy-default-delete-build-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          buildId: 1
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+  RunBuildDeprecated:
+    speakeasy-default-run-build-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          buildId: 1
+      requestBody:
+        multipart/form-data: {"file": {}}
+      responses:
+        "200":
+          text/plain: "<value>"
+        "400":
+          application/json: {"message": "<value>"}
+  GetBuildsV2Deprecated:
+    speakeasy-default-get-builds-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      responses:
+        "200":
+          application/json: []
+        "401":
+          application/json: {"message": "<value>"}
+  GetBuildInfoV2Deprecated:
+    speakeasy-default-get-build-info-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          buildId: 1
+      responses:
+        "200":
+          application/json: {"buildTag": "0.1.14-14c793", "regionalContainerTags": [{"containerTag": "<value>", "region": "Tokyo"}], "imageSize": 487518, "status": "running", "deletedAt": "2022-04-17T06:02:25.176Z", "finishedAt": "2024-12-28T16:55:54.752Z", "startedAt": "2023-09-26T20:39:18.819Z", "createdAt": "2022-08-22T10:35:32.235Z", "createdBy": "noreply@hathora.dev", "buildId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  CreateBuildV2Deprecated:
+    speakeasy-default-create-build-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      requestBody:
+        application/json: {"buildTag": "0.1.14-14c793"}
+      responses:
+        "201":
+          application/json: {"buildTag": "0.1.14-14c793", "regionalContainerTags": [], "imageSize": 934286, "status": "running", "deletedAt": "2022-03-22T09:33:23.258Z", "finishedAt": "2024-09-11T02:09:02.613Z", "startedAt": "2024-12-03T13:49:32.127Z", "createdAt": "2022-01-28T11:35:23.019Z", "createdBy": "noreply@hathora.dev", "buildId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"}
+        "401":
+          application/json: {"message": "<value>"}
+  CreateBuildWithUploadUrlV2Deprecated:
+    speakeasy-default-create-build-with-upload-url-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      requestBody:
+        application/json: {"buildTag": "0.1.14-14c793"}
+      responses:
+        "201":
+          application/json: {"buildTag": "0.1.14-14c793", "regionalContainerTags": [{"containerTag": "<value>", "region": "Sydney"}], "imageSize": 472742, "status": "created", "deletedAt": "2024-06-20T14:41:13.957Z", "finishedAt": "2024-08-18T02:57:04.696Z", "startedAt": "2023-03-07T05:17:21.812Z", "createdAt": "2023-06-28T16:21:58.948Z", "createdBy": "noreply@hathora.dev", "buildId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "uploadBodyParams": [{"value": "<value>", "key": "<key>"}], "uploadUrl": "https://dapper-label.info"}
+        "401":
+          application/json: {"message": "<value>"}
+  CreateWithMultipartUploadsV2Deprecated:
+    speakeasy-default-create-with-multipart-uploads-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      requestBody:
+        application/json: {"buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "buildTag": "0.1.14-14c793", "buildSizeInBytes": "3146.66"}
+      responses:
+        "201":
+          application/json: {"buildTag": "0.1.14-14c793", "regionalContainerTags": [{"containerTag": "<value>", "region": "Los_Angeles"}], "imageSize": 99674, "status": "created", "deletedAt": "2023-01-11T08:01:35.189Z", "finishedAt": "2023-05-31T17:34:08.033Z", "startedAt": "2023-01-12T04:17:56.407Z", "createdAt": "2022-11-02T12:56:50.671Z", "createdBy": "noreply@hathora.dev", "buildId": 1, "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "completeUploadPostRequestUrl": "https://courteous-amnesty.info/", "maxChunkSize": "2123.35", "uploadParts": [{"putRequestUrl": "https://good-natured-cassava.biz/", "partNumber": "7242.86"}, {"putRequestUrl": "https://evil-haversack.com", "partNumber": "8666.81"}, {"putRequestUrl": "https://wry-promise.info/", "partNumber": "8909.13"}]}
+        "400":
+          application/json: {"message": "<value>"}
+  DeleteBuildV2Deprecated:
+    speakeasy-default-delete-build-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          buildId: 1
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+  RunBuildV2Deprecated:
+    speakeasy-default-run-build-v2-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+          buildId: 1
+      responses:
+        "400":
+          application/json: {"message": "<value>"}
+        "200": {}
+  GetBuilds:
+    speakeasy-default-get-builds:
+      parameters:
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "200":
+          application/json: {"builds": [{"buildTag": "0.1.14-14c793", "imageSize": 62978, "status": "failed", "deletedAt": "2023-04-03T10:11:25.538Z", "finishedAt": "2024-04-24T06:14:47.991Z", "startedAt": "2024-04-14T07:30:43.053Z", "createdAt": "2024-02-12T15:10:52.322Z", "createdBy": "noreply@hathora.dev", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"}, {"buildTag": "0.1.14-14c793", "imageSize": 950297, "status": "succeeded", "deletedAt": "2024-08-06T10:33:28.756Z", "finishedAt": "2023-06-26T02:32:40.056Z", "startedAt": "2022-07-10T13:10:35.908Z", "createdAt": "2022-02-05T20:15:42.089Z", "createdBy": "noreply@hathora.dev", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"}]}
+        "401":
+          application/json: {"message": "<value>"}
+  CreateBuild:
+    speakeasy-default-create-build:
+      parameters:
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      requestBody:
+        application/json: {"buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "buildTag": "0.1.14-14c793", "buildSizeInBytes": "5387.84"}
+      responses:
+        "201":
+          application/json: {"buildTag": "0.1.14-14c793", "imageSize": 111410, "status": "failed", "deletedAt": "2022-10-03T13:44:52.411Z", "finishedAt": "2023-10-09T20:55:23.805Z", "startedAt": "2024-07-15T13:43:40.932Z", "createdAt": "2023-02-10T17:11:36.930Z", "createdBy": "noreply@hathora.dev", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "completeUploadPostRequestUrl": "https://untidy-godfather.org/", "maxChunkSize": "425.78", "uploadParts": []}
+        "400":
+          application/json: {"message": "<value>"}
+  GetBuild:
+    speakeasy-default-get-build:
+      parameters:
+        path:
+          buildId: "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5"
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "200":
+          application/json: {"buildTag": "0.1.14-14c793", "imageSize": 827546, "status": "running", "deletedAt": "2022-08-28T06:31:38.029Z", "finishedAt": "2022-07-01T23:31:54.150Z", "startedAt": "2022-02-25T19:36:28.984Z", "createdAt": "2024-04-19T14:30:39.329Z", "createdBy": "noreply@hathora.dev", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"}
+        "401":
+          application/json: {"message": "<value>"}
+  DeleteBuild:
+    speakeasy-default-delete-build:
+      parameters:
+        path:
+          buildId: "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5"
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+        "200": {}
+  RunBuild:
+    speakeasy-default-run-build:
+      parameters:
+        path:
+          buildId: "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5"
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "400":
+          application/json: {"message": "<value>"}
+        "200": {}
+  GetBalance:
+    speakeasy-default-get-balance:
+      parameters:
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "200":
+          application/json: "68.43"
+        "401":
+          application/json: {"message": "<value>"}
+  GetUpcomingInvoiceItems:
+    speakeasy-default-get-upcoming-invoice-items:
+      parameters:
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "200":
+          application/json: {"invoiceItems": [{"amount": "3848.12", "unitPrice": "479.97", "quantity": "2049.63", "unit": "meter", "productName": "<value>"}, {"amount": "6502.55", "unitPrice": "9111.09", "quantity": "3849.63", "unit": "hertz", "productName": "<value>"}, {"amount": "4556.80", "unitPrice": "773.02", "quantity": "7075.91", "unit": "henry", "productName": "<value>"}]}
+        "401":
+          application/json: {"message": "<value>"}
+  GetUpcomingInvoiceTotal:
+    speakeasy-default-get-upcoming-invoice-total:
+      parameters:
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "200":
+          application/json: {"value": "2752.14"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetPaymentMethod:
+    speakeasy-default-get-payment-method:
+      parameters:
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+        "200": {}
+  InitStripeCustomerPortalUrl:
+    speakeasy-default-init-stripe-customer-portal-url:
+      parameters:
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      requestBody:
+        application/json: {"returnUrl": "https://smart-puppet.biz/"}
+      responses:
+        "200":
+          application/json: "<value>"
+        "401":
+          application/json: {"message": "<value>"}
+  GetInvoices:
+    speakeasy-default-get-invoices:
+      parameters:
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "200":
+          application/json: [{"status": "paid", "amountDue": "9402.67", "pdfUrl": "https://happy-go-lucky-bakeware.biz", "dueDate": "2023-05-17T21:30:38.840Z", "year": "9590.25", "month": "8858.55", "id": "<id>"}, {"status": "overdue", "amountDue": "1743.66", "pdfUrl": "https://somber-bowling.org", "dueDate": "2024-08-05T20:02:10.376Z", "year": "614.14", "month": "4221.79", "id": "<id>"}, {"status": "pending", "amountDue": "8173.14", "pdfUrl": "https://crushing-suspension.org/", "dueDate": "2023-05-01T02:38:56.141Z", "year": "9770.56", "month": "67.54", "id": "<id>"}]
+        "401":
+          application/json: {"message": "<value>"}
+  LoginAnonymous:
+    speakeasy-default-login-anonymous:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      responses:
+        "200":
+          application/json: {"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiYW5vbnltb3VzIiwiaWQiOiJ3aDA4eWN3eTJwOSIsIm5hbWUiOiJqaXR0ZXJ5LXNhbG1vbi1ndWxsIiwiaWF0IjoxNjg5MzQ5MTk3fQ.-LzlPhZw2tw0ycZ229IRHwwmINGKWNPFMDrXOphLjEk"}
+        "404":
+          application/json: {"message": "<value>"}
+  LoginNickname:
+    speakeasy-default-login-nickname:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      requestBody:
+        application/json: {"nickname": "squiddytwoshoes"}
+      responses:
+        "200":
+          application/json: {"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiYW5vbnltb3VzIiwiaWQiOiJ3aDA4eWN3eTJwOSIsIm5hbWUiOiJqaXR0ZXJ5LXNhbG1vbi1ndWxsIiwiaWF0IjoxNjg5MzQ5MTk3fQ.-LzlPhZw2tw0ycZ229IRHwwmINGKWNPFMDrXOphLjEk"}
+        "404":
+          application/json: {"message": "<value>"}
+  LoginGoogle:
+    speakeasy-default-login-google:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      requestBody:
+        application/json: {"idToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImZkNDhhNzUxMzhkOWQ0OGYwYWE2MzVlZjU2OWM0ZTE5NmY3YWU4ZDYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXpwIjoiODQ4NDEyODI2Nzg4LW00bXNyYjZxNDRkbTJ1ZTNrZ3Z1aTBmcTdrZGE1NWxzLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiYXVkIjoiODQ4NDEyODI2Nzg4LW00bXNyYjZxNDRkbTJ1ZTNrZ3Z1aTBmcTdrZGE1NWxzLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTE0NTQyMzMwNzI3MTU2MTMzNzc2IiwiZW1haWwiOiJocGFdkeivmeuzQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoidno1NGhhdTNxbnVR"}
+      responses:
+        "200":
+          application/json: {"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiYW5vbnltb3VzIiwiaWQiOiJ3aDA4eWN3eTJwOSIsIm5hbWUiOiJqaXR0ZXJ5LXNhbG1vbi1ndWxsIiwiaWF0IjoxNjg5MzQ5MTk3fQ.-LzlPhZw2tw0ycZ229IRHwwmINGKWNPFMDrXOphLjEk"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetAppsV1Deprecated:
+    speakeasy-default-get-apps-v1-deprecated:
+      responses:
+        "200":
+          application/json: []
+        "401":
+          application/json: {"message": "<value>"}
+  CreateAppV1Deprecated:
+    speakeasy-default-create-app-v1-deprecated:
+      requestBody:
+        application/json: {"appName": "minecraft"}
+      responses:
+        "201":
+          application/json: {"deletedBy": "noreply@hathora.dev", "deletedAt": "2023-02-17T14:23:22.462Z", "createdAt": "2023-05-23T05:17:10.920Z", "createdBy": "noreply@hathora.dev", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appSecret": "secret-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "appName": "minecraft"}
+        "401":
+          application/json: {"message": "<value>"}
+  UpdateAppV1Deprecated:
+    speakeasy-default-update-app-v1-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      requestBody:
+        application/json: {"appName": "minecraft"}
+      responses:
+        "200":
+          application/json: {"deletedBy": "noreply@hathora.dev", "deletedAt": "2022-12-19T03:26:23.362Z", "createdAt": "2024-05-07T03:58:14.207Z", "createdBy": "noreply@hathora.dev", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appSecret": "secret-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "appName": "minecraft"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetAppInfoV1Deprecated:
+    speakeasy-default-get-app-info-v1-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      responses:
+        "200":
+          application/json: {"deletedBy": "noreply@hathora.dev", "deletedAt": "2022-07-24T20:16:35.295Z", "createdAt": "2023-12-03T19:30:46.663Z", "createdBy": "noreply@hathora.dev", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appSecret": "secret-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "appName": "minecraft"}
+        "401":
+          application/json: {"message": "<value>"}
+  DeleteAppV1Deprecated:
+    speakeasy-default-delete-app-v1-deprecated:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+  GetApps:
+    speakeasy-default-get-apps:
+      parameters:
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      responses:
+        "200":
+          application/json: {"applications": [{"deletedBy": "noreply@hathora.dev", "deletedAt": "2024-05-19T07:37:51.466Z", "createdAt": "2023-10-30T17:07:20.503Z", "createdBy": "noreply@hathora.dev", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appSecret": "secret-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "appName": "minecraft", "deployment": {"deploymentTag": "alpha", "idleTimeoutEnabled": false, "env": [{"value": "TRUE", "name": "EULA"}, {"value": "TRUE", "name": "EULA"}, {"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "tls", "port": 8000, "name": "default"}, "createdAt": "2023-04-05T06:31:00.807Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "buildTag": "0.1.14-14c793", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "build": {"buildTag": "0.1.14-14c793", "imageSize": 175044, "status": "succeeded", "deletedAt": "2022-11-08T18:09:33.664Z", "finishedAt": "2023-01-24T03:27:30.683Z", "startedAt": "2023-11-28T01:38:00.201Z", "createdAt": "2022-12-27T15:51:37.628Z", "createdBy": "noreply@hathora.dev", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"}}}, {"deletedBy": "noreply@hathora.dev", "deletedAt": "2024-08-25T15:30:39.795Z", "createdAt": "2023-01-21T03:51:37.018Z", "createdBy": "noreply@hathora.dev", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appSecret": "secret-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "appName": "minecraft", "deployment": {"deploymentTag": "alpha", "idleTimeoutEnabled": false, "env": [{"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "tls", "port": 8000, "name": "default"}, "createdAt": "2022-07-03T23:32:47.598Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "buildTag": "0.1.14-14c793", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "build": {"buildTag": "0.1.14-14c793", "imageSize": 723247, "status": "running", "deletedAt": "2022-03-10T11:31:49.059Z", "finishedAt": "2022-11-04T06:54:41.130Z", "startedAt": "2024-05-05T16:07:49.630Z", "createdAt": "2024-11-15T05:31:19.501Z", "createdBy": "noreply@hathora.dev", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"}}}, {"deletedBy": "noreply@hathora.dev", "deletedAt": "2023-06-23T14:09:23.898Z", "createdAt": "2024-10-07T00:55:28.149Z", "createdBy": "noreply@hathora.dev", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appSecret": "secret-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "appName": "minecraft", "deployment": {"deploymentTag": "alpha", "idleTimeoutEnabled": false, "env": [{"value": "TRUE", "name": "EULA"}, {"value": "TRUE", "name": "EULA"}], "roomsPerProcess": 3, "additionalContainerPorts": [{"transportType": "tcp", "port": 8000, "name": "default"}], "defaultContainerPort": {"transportType": "udp", "port": 8000, "name": "default"}, "createdAt": "2022-09-11T06:14:22.463Z", "createdBy": "noreply@hathora.dev", "requestedMemoryMB": 1024, "requestedCPU": 0.5, "deploymentId": "dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "buildTag": "0.1.14-14c793", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "build": {"buildTag": "0.1.14-14c793", "imageSize": 225006, "status": "succeeded", "deletedAt": "2022-04-19T03:28:19.505Z", "finishedAt": "2023-09-02T09:28:59.548Z", "startedAt": "2024-03-30T21:49:04.028Z", "createdAt": "2024-05-29T19:39:23.330Z", "createdBy": "noreply@hathora.dev", "buildId": "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"}}}]}
+        "401":
+          application/json: {"message": "<value>"}
+  CreateApp:
+    speakeasy-default-create-app:
+      parameters:
+        query:
+          orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
+      requestBody:
+        application/json: {"appName": "minecraft"}
+      responses:
+        "201":
+          application/json: {"deletedBy": "noreply@hathora.dev", "deletedAt": "2024-03-25T14:27:16.779Z", "createdAt": "2024-02-03T20:05:29.586Z", "createdBy": "noreply@hathora.dev", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appSecret": "secret-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "appName": "minecraft"}
+        "401":
+          application/json: {"message": "<value>"}
+  GetApp:
+    speakeasy-default-get-app:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      responses:
+        "200":
+          application/json: {"deletedBy": "noreply@hathora.dev", "deletedAt": "2023-02-18T07:51:03.251Z", "createdAt": "2024-07-06T02:39:27.766Z", "createdBy": "noreply@hathora.dev", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appSecret": "secret-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "appName": "minecraft"}
+        "401":
+          application/json: {"message": "<value>"}
+  UpdateApp:
+    speakeasy-default-update-app:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      requestBody:
+        application/json: {"appName": "minecraft"}
+      responses:
+        "200":
+          application/json: {"deletedBy": "noreply@hathora.dev", "deletedAt": "2022-08-09T16:09:30.379Z", "createdAt": "2023-09-15T06:34:02.715Z", "createdBy": "noreply@hathora.dev", "orgId": "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appSecret": "secret-6f706e83-0ec1-437a-9a46-7d4281eb2f39", "appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2", "appName": "minecraft"}
+        "401":
+          application/json: {"message": "<value>"}
+  DeleteApp:
+    speakeasy-default-delete-app:
+      parameters:
+        path:
+          appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+      responses:
+        "401":
+          application/json: {"message": "<value>"}
+generatedTests: {}

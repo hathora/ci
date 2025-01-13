@@ -3,7 +3,15 @@
 package globals
 
 type Globals struct {
+	OrgID *string `queryParam:"style=form,explode=true,name=orgId"`
 	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
+}
+
+func (o *Globals) GetOrgID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.OrgID
 }
 
 func (o *Globals) GetAppID() *string {

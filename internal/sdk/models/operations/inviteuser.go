@@ -3,13 +3,12 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type InviteUserRequest struct {
-	OrgID            string                  `pathParam:"style=simple,explode=false,name=orgId"`
-	CreateUserInvite shared.CreateUserInvite `request:"mediaType=application/json"`
+	OrgID            string                      `pathParam:"style=simple,explode=false,name=orgId"`
+	CreateUserInvite components.CreateUserInvite `request:"mediaType=application/json"`
 }
 
 func (o *InviteUserRequest) GetOrgID() string {
@@ -19,48 +18,9 @@ func (o *InviteUserRequest) GetOrgID() string {
 	return o.OrgID
 }
 
-func (o *InviteUserRequest) GetCreateUserInvite() shared.CreateUserInvite {
+func (o *InviteUserRequest) GetCreateUserInvite() components.CreateUserInvite {
 	if o == nil {
-		return shared.CreateUserInvite{}
+		return components.CreateUserInvite{}
 	}
 	return o.CreateUserInvite
-}
-
-type InviteUserResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	PendingOrgInvite *shared.PendingOrgInvite
-}
-
-func (o *InviteUserResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *InviteUserResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *InviteUserResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *InviteUserResponse) GetPendingOrgInvite() *shared.PendingOrgInvite {
-	if o == nil {
-		return nil
-	}
-	return o.PendingOrgInvite
 }

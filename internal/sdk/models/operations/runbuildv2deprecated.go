@@ -2,11 +2,6 @@
 
 package operations
 
-import (
-	"io"
-	"net/http"
-)
-
 type RunBuildV2DeprecatedGlobals struct {
 	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
 }
@@ -19,8 +14,9 @@ func (o *RunBuildV2DeprecatedGlobals) GetAppID() *string {
 }
 
 type RunBuildV2DeprecatedFile struct {
-	FileName string `multipartForm:"name=file"`
-	Content  []byte `multipartForm:"content"`
+	FileName string `multipartForm:"name=fileName"`
+	// This field accepts []byte data or io.Reader implementations, such as *os.File.
+	Content any `multipartForm:"content"`
 }
 
 func (o *RunBuildV2DeprecatedFile) GetFileName() string {
@@ -30,15 +26,15 @@ func (o *RunBuildV2DeprecatedFile) GetFileName() string {
 	return o.FileName
 }
 
-func (o *RunBuildV2DeprecatedFile) GetContent() []byte {
+func (o *RunBuildV2DeprecatedFile) GetContent() any {
 	if o == nil {
-		return []byte{}
+		return nil
 	}
 	return o.Content
 }
 
 type RunBuildV2DeprecatedRequestBody struct {
-	File *RunBuildV2DeprecatedFile `multipartForm:"file"`
+	File *RunBuildV2DeprecatedFile `multipartForm:"file,name=file"`
 }
 
 func (o *RunBuildV2DeprecatedRequestBody) GetFile() *RunBuildV2DeprecatedFile {
@@ -73,44 +69,4 @@ func (o *RunBuildV2DeprecatedRequest) GetRequestBody() RunBuildV2DeprecatedReque
 		return RunBuildV2DeprecatedRequestBody{}
 	}
 	return o.RequestBody
-}
-
-type RunBuildV2DeprecatedResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	// The Close method must be called on this field, even if it is not used, to prevent resource leaks.
-	ResponseStream io.ReadCloser
-}
-
-func (o *RunBuildV2DeprecatedResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *RunBuildV2DeprecatedResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *RunBuildV2DeprecatedResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *RunBuildV2DeprecatedResponse) GetResponseStream() io.ReadCloser {
-	if o == nil {
-		return nil
-	}
-	return o.ResponseStream
 }

@@ -2,10 +2,6 @@
 
 package operations
 
-import (
-	"net/http"
-)
-
 type StopProcessGlobals struct {
 	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
 }
@@ -34,34 +30,4 @@ func (o *StopProcessRequest) GetProcessID() string {
 		return ""
 	}
 	return o.ProcessID
-}
-
-type StopProcessResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-}
-
-func (o *StopProcessResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *StopProcessResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *StopProcessResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
 }

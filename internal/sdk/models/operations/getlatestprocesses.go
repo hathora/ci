@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type GetLatestProcessesGlobals struct {
@@ -19,9 +18,9 @@ func (o *GetLatestProcessesGlobals) GetAppID() *string {
 }
 
 type GetLatestProcessesRequest struct {
-	AppID  *string                `pathParam:"style=simple,explode=false,name=appId"`
-	Status []shared.ProcessStatus `queryParam:"style=form,explode=true,name=status"`
-	Region []shared.Region        `queryParam:"style=form,explode=true,name=region"`
+	AppID  *string                    `pathParam:"style=simple,explode=false,name=appId"`
+	Status []components.ProcessStatus `queryParam:"style=form,explode=true,name=status"`
+	Region []components.Region        `queryParam:"style=form,explode=true,name=region"`
 }
 
 func (o *GetLatestProcessesRequest) GetAppID() *string {
@@ -31,55 +30,16 @@ func (o *GetLatestProcessesRequest) GetAppID() *string {
 	return o.AppID
 }
 
-func (o *GetLatestProcessesRequest) GetStatus() []shared.ProcessStatus {
+func (o *GetLatestProcessesRequest) GetStatus() []components.ProcessStatus {
 	if o == nil {
 		return nil
 	}
 	return o.Status
 }
 
-func (o *GetLatestProcessesRequest) GetRegion() []shared.Region {
+func (o *GetLatestProcessesRequest) GetRegion() []components.Region {
 	if o == nil {
 		return nil
 	}
 	return o.Region
-}
-
-type GetLatestProcessesResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	ProcessV3s []shared.ProcessV3
-}
-
-func (o *GetLatestProcessesResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *GetLatestProcessesResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *GetLatestProcessesResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *GetLatestProcessesResponse) GetProcessV3s() []shared.ProcessV3 {
-	if o == nil {
-		return nil
-	}
-	return o.ProcessV3s
 }

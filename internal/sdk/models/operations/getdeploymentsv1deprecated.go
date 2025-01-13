@@ -2,11 +2,6 @@
 
 package operations
 
-import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
-)
-
 type GetDeploymentsV1DeprecatedGlobals struct {
 	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
 }
@@ -27,43 +22,4 @@ func (o *GetDeploymentsV1DeprecatedRequest) GetAppID() *string {
 		return nil
 	}
 	return o.AppID
-}
-
-type GetDeploymentsV1DeprecatedResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	DeploymentV1s []shared.DeploymentV1
-}
-
-func (o *GetDeploymentsV1DeprecatedResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *GetDeploymentsV1DeprecatedResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *GetDeploymentsV1DeprecatedResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *GetDeploymentsV1DeprecatedResponse) GetDeploymentV1s() []shared.DeploymentV1 {
-	if o == nil {
-		return nil
-	}
-	return o.DeploymentV1s
 }

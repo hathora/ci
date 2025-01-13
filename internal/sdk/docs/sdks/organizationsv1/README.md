@@ -1,16 +1,20 @@
 # OrganizationsV1
 (*OrganizationsV1*)
 
+## Overview
+
 ### Available Operations
 
-* [GetOrgs](#getorgs) - Returns an unsorted list of all organizations that you are a member of (an accepted membership invite). An organization is uniquely identified by an `orgId`.
-* [GetUserPendingInvites](#getuserpendinginvites)
-* [GetOrgMembers](#getorgmembers)
-* [InviteUser](#inviteuser)
-* [RescindInvite](#rescindinvite)
-* [GetOrgPendingInvites](#getorgpendinginvites)
-* [AcceptInvite](#acceptinvite)
-* [RejectInvite](#rejectinvite)
+* [GetOrgs](#getorgs) - GetOrgs
+* [GetUserPendingInvites](#getuserpendinginvites) - GetUserPendingInvites
+* [GetOrgMembers](#getorgmembers) - GetOrgMembers
+* [InviteUser](#inviteuser) - InviteUser
+* [UpdateUserInvite](#updateuserinvite) - UpdateUserInvite
+* [RescindInvite](#rescindinvite) - RescindInvite
+* [GetOrgPendingInvites](#getorgpendinginvites) - GetOrgPendingInvites
+* [AcceptInvite](#acceptinvite) - AcceptInvite
+* [RejectInvite](#rejectinvite) - RejectInvite
+* [GetUsageLimits](#getusagelimits) - GetUsageLimits
 
 ## GetOrgs
 
@@ -22,27 +26,25 @@ Returns an unsorted list of all organizations that you are a member of (an accep
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    ctx := context.Background()
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
 
-    ctx := context.Background()
     res, err := s.OrganizationsV1.GetOrgs(ctx)
     if err != nil {
         log.Fatal(err)
     }
-    if res.OrgsPage != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -55,16 +57,20 @@ func main() {
 | `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |
 
-
 ### Response
 
-**[*operations.GetOrgsResponse](../../models/operations/getorgsresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+**[*components.OrgsPage](../../models/components/orgspage.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 404, 429    | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
 
 ## GetUserPendingInvites
+
+GetUserPendingInvites
 
 ### Example Usage
 
@@ -72,27 +78,25 @@ func main() {
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    ctx := context.Background()
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
 
-    ctx := context.Background()
     res, err := s.OrganizationsV1.GetUserPendingInvites(ctx)
     if err != nil {
         log.Fatal(err)
     }
-    if res.PendingOrgInvitesPage != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -105,44 +109,46 @@ func main() {
 | `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |
 
-
 ### Response
 
-**[*operations.GetUserPendingInvitesResponse](../../models/operations/getuserpendinginvitesresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,429            | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+**[*components.PendingOrgInvitesPage](../../models/components/pendingorginvitespage.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 429         | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
 
 ## GetOrgMembers
 
+GetOrgMembers
+
 ### Example Usage
 
 ```go
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
     ctx := context.Background()
-    res, err := s.OrganizationsV1.GetOrgMembers(ctx, orgID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.OrganizationsV1.GetOrgMembers(ctx, "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39")
     if err != nil {
         log.Fatal(err)
     }
-    if res.OrgMembersPage != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -156,48 +162,49 @@ func main() {
 | `orgID`                                                  | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39                 |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
-
 ### Response
 
-**[*operations.GetOrgMembersResponse](../../models/operations/getorgmembersresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,429            | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+**[*components.OrgMembersPage](../../models/components/orgmemberspage.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 429         | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
 
 ## InviteUser
 
+InviteUser
+
 ### Example Usage
 
 ```go
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
+	"hathoracloud/models/components"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
-
-    createUserInvite := shared.CreateUserInvite{
-        UserEmail: "noreply@hathora.dev",
-    }
     ctx := context.Background()
-    res, err := s.OrganizationsV1.InviteUser(ctx, orgID, createUserInvite)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.OrganizationsV1.InviteUser(ctx, "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", components.CreateUserInvite{
+        UserEmail: "noreply@hathora.dev",
+    })
     if err != nil {
         log.Fatal(err)
     }
-    if res.PendingOrgInvite != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -205,107 +212,167 @@ func main() {
 
 ### Parameters
 
-| Parameter                                                          | Type                                                               | Required                                                           | Description                                                        | Example                                                            |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| `ctx`                                                              | [context.Context](https://pkg.go.dev/context#Context)              | :heavy_check_mark:                                                 | The context to use for the request.                                |                                                                    |
-| `orgID`                                                            | *string*                                                           | :heavy_check_mark:                                                 | N/A                                                                | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39                           |
-| `createUserInvite`                                                 | [shared.CreateUserInvite](../../models/shared/createuserinvite.md) | :heavy_check_mark:                                                 | N/A                                                                |                                                                    |
-| `opts`                                                             | [][operations.Option](../../models/operations/option.md)           | :heavy_minus_sign:                                                 | The options for this request.                                      |                                                                    |
-
+| Parameter                                                                  | Type                                                                       | Required                                                                   | Description                                                                | Example                                                                    |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `ctx`                                                                      | [context.Context](https://pkg.go.dev/context#Context)                      | :heavy_check_mark:                                                         | The context to use for the request.                                        |                                                                            |
+| `orgID`                                                                    | *string*                                                                   | :heavy_check_mark:                                                         | N/A                                                                        | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39                                   |
+| `createUserInvite`                                                         | [components.CreateUserInvite](../../models/components/createuserinvite.md) | :heavy_check_mark:                                                         | N/A                                                                        |                                                                            |
+| `opts`                                                                     | [][operations.Option](../../models/operations/option.md)                   | :heavy_minus_sign:                                                         | The options for this request.                                              |                                                                            |
 
 ### Response
 
-**[*operations.InviteUserResponse](../../models/operations/inviteuserresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,422,429        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+**[*components.PendingOrgInvite](../../models/components/pendingorginvite.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 422, 429    | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
+
+## UpdateUserInvite
+
+UpdateUserInvite
+
+### Example Usage
+
+```go
+package main
+
+import(
+	"context"
+	"hathoracloud"
+	"hathoracloud/models/components"
+	"log"
+)
+
+func main() {
+    ctx := context.Background()
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.OrganizationsV1.UpdateUserInvite(ctx, "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", components.UpdateUserInvite{
+        Scopes: components.CreateUpdateUserInviteScopesUserRole(
+            components.UserRoleViewer,
+        ),
+        UserEmail: "noreply@hathora.dev",
+    })
+    if err != nil {
+        log.Fatal(err)
+    }
+    if res != nil {
+        // handle response
+    }
+}
+```
+
+### Parameters
+
+| Parameter                                                                  | Type                                                                       | Required                                                                   | Description                                                                | Example                                                                    |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `ctx`                                                                      | [context.Context](https://pkg.go.dev/context#Context)                      | :heavy_check_mark:                                                         | The context to use for the request.                                        |                                                                            |
+| `orgID`                                                                    | *string*                                                                   | :heavy_check_mark:                                                         | N/A                                                                        | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39                                   |
+| `updateUserInvite`                                                         | [components.UpdateUserInvite](../../models/components/updateuserinvite.md) | :heavy_check_mark:                                                         | N/A                                                                        |                                                                            |
+| `opts`                                                                     | [][operations.Option](../../models/operations/option.md)                   | :heavy_minus_sign:                                                         | The options for this request.                                              |                                                                            |
+
+### Response
+
+**[*bool](../../.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 422, 429    | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
 
 ## RescindInvite
 
+RescindInvite
+
 ### Example Usage
 
 ```go
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
+	"hathoracloud/models/components"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
-
-    rescindUserInvite := shared.RescindUserInvite{
-        UserEmail: "noreply@hathora.dev",
-    }
     ctx := context.Background()
-    res, err := s.OrganizationsV1.RescindInvite(ctx, orgID, rescindUserInvite)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    err := s.OrganizationsV1.RescindInvite(ctx, "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39", components.RescindUserInvite{
+        UserEmail: "noreply@hathora.dev",
+    })
     if err != nil {
         log.Fatal(err)
-    }
-    if res != nil {
-        // handle response
     }
 }
 ```
 
 ### Parameters
 
-| Parameter                                                            | Type                                                                 | Required                                                             | Description                                                          | Example                                                              |
-| -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `ctx`                                                                | [context.Context](https://pkg.go.dev/context#Context)                | :heavy_check_mark:                                                   | The context to use for the request.                                  |                                                                      |
-| `orgID`                                                              | *string*                                                             | :heavy_check_mark:                                                   | N/A                                                                  | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39                             |
-| `rescindUserInvite`                                                  | [shared.RescindUserInvite](../../models/shared/rescinduserinvite.md) | :heavy_check_mark:                                                   | N/A                                                                  |                                                                      |
-| `opts`                                                               | [][operations.Option](../../models/operations/option.md)             | :heavy_minus_sign:                                                   | The options for this request.                                        |                                                                      |
-
+| Parameter                                                                    | Type                                                                         | Required                                                                     | Description                                                                  | Example                                                                      |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `ctx`                                                                        | [context.Context](https://pkg.go.dev/context#Context)                        | :heavy_check_mark:                                                           | The context to use for the request.                                          |                                                                              |
+| `orgID`                                                                      | *string*                                                                     | :heavy_check_mark:                                                           | N/A                                                                          | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39                                     |
+| `rescindUserInvite`                                                          | [components.RescindUserInvite](../../models/components/rescinduserinvite.md) | :heavy_check_mark:                                                           | N/A                                                                          |                                                                              |
+| `opts`                                                                       | [][operations.Option](../../models/operations/option.md)                     | :heavy_minus_sign:                                                           | The options for this request.                                                |                                                                              |
 
 ### Response
 
-**[*operations.RescindInviteResponse](../../models/operations/rescindinviteresponse.md), error**
-| Error Object        | Status Code         | Content Type        |
-| ------------------- | ------------------- | ------------------- |
-| sdkerrors.APIError  | 401,404,422,429,500 | application/json    |
-| sdkerrors.SDKError  | 4xx-5xx             | */*                 |
+**error**
+
+### Errors
+
+| Error Type              | Status Code             | Content Type            |
+| ----------------------- | ----------------------- | ----------------------- |
+| errors.APIError         | 401, 404, 422, 429, 500 | application/json        |
+| errors.SDKError         | 4XX, 5XX                | \*/\*                   |
 
 ## GetOrgPendingInvites
 
+GetOrgPendingInvites
+
 ### Example Usage
 
 ```go
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
     ctx := context.Background()
-    res, err := s.OrganizationsV1.GetOrgPendingInvites(ctx, orgID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.OrganizationsV1.GetOrgPendingInvites(ctx, "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39")
     if err != nil {
         log.Fatal(err)
     }
-    if res.PendingOrgInvitesPage != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -319,45 +386,44 @@ func main() {
 | `orgID`                                                  | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39                 |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
-
 ### Response
 
-**[*operations.GetOrgPendingInvitesResponse](../../models/operations/getorgpendinginvitesresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,429            | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+**[*components.PendingOrgInvitesPage](../../models/components/pendingorginvitespage.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 429         | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
 
 ## AcceptInvite
 
+AcceptInvite
+
 ### Example Usage
 
 ```go
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
     ctx := context.Background()
-    res, err := s.OrganizationsV1.AcceptInvite(ctx, orgID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    err := s.OrganizationsV1.AcceptInvite(ctx, "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39")
     if err != nil {
         log.Fatal(err)
-    }
-    if res != nil {
-        // handle response
     }
 }
 ```
@@ -370,40 +436,92 @@ func main() {
 | `orgID`                                                  | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39                 |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
-
 ### Response
 
-**[*operations.AcceptInviteResponse](../../models/operations/acceptinviteresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+**error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 404, 429    | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
 
 ## RejectInvite
 
+RejectInvite
+
 ### Example Usage
 
 ```go
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
     ctx := context.Background()
-    res, err := s.OrganizationsV1.RejectInvite(ctx, orgID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    err := s.OrganizationsV1.RejectInvite(ctx, "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39")
+    if err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+### Parameters
+
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `orgID`                                                  | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
+
+### Response
+
+**error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 404, 429    | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
+
+## GetUsageLimits
+
+GetUsageLimits
+
+### Example Usage
+
+```go
+package main
+
+import(
+	"context"
+	"hathoracloud"
+	"log"
+)
+
+func main() {
+    ctx := context.Background()
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.OrganizationsV1.GetUsageLimits(ctx, hathoracloud.String("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"))
     if err != nil {
         log.Fatal(err)
     }
@@ -418,14 +536,16 @@ func main() {
 | Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
 | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
 | `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
-| `orgID`                                                  | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39                 |
+| `orgID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | org-6f706e83-0ec1-437a-9a46-7d4281eb2f39                 |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
-
 
 ### Response
 
-**[*operations.RejectInviteResponse](../../models/operations/rejectinviteresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
+**[*components.UsageLimits](../../models/components/usagelimits.md), error**
+
+### Errors
+
+| Error Type         | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+| errors.APIError    | 401, 404, 429, 500 | application/json   |
+| errors.SDKError    | 4XX, 5XX           | \*/\*              |

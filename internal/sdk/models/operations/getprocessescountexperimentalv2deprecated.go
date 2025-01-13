@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type GetProcessesCountExperimentalV2DeprecatedGlobals struct {
@@ -19,9 +18,9 @@ func (o *GetProcessesCountExperimentalV2DeprecatedGlobals) GetAppID() *string {
 }
 
 type GetProcessesCountExperimentalV2DeprecatedRequest struct {
-	AppID  *string                `pathParam:"style=simple,explode=false,name=appId"`
-	Status []shared.ProcessStatus `queryParam:"style=form,explode=true,name=status"`
-	Region []shared.Region        `queryParam:"style=form,explode=true,name=region"`
+	AppID  *string                    `pathParam:"style=simple,explode=false,name=appId"`
+	Status []components.ProcessStatus `queryParam:"style=form,explode=true,name=status"`
+	Region []components.Region        `queryParam:"style=form,explode=true,name=region"`
 }
 
 func (o *GetProcessesCountExperimentalV2DeprecatedRequest) GetAppID() *string {
@@ -31,14 +30,14 @@ func (o *GetProcessesCountExperimentalV2DeprecatedRequest) GetAppID() *string {
 	return o.AppID
 }
 
-func (o *GetProcessesCountExperimentalV2DeprecatedRequest) GetStatus() []shared.ProcessStatus {
+func (o *GetProcessesCountExperimentalV2DeprecatedRequest) GetStatus() []components.ProcessStatus {
 	if o == nil {
 		return nil
 	}
 	return o.Status
 }
 
-func (o *GetProcessesCountExperimentalV2DeprecatedRequest) GetRegion() []shared.Region {
+func (o *GetProcessesCountExperimentalV2DeprecatedRequest) GetRegion() []components.Region {
 	if o == nil {
 		return nil
 	}
@@ -55,43 +54,4 @@ func (o *GetProcessesCountExperimentalV2DeprecatedResponseBody) GetCount() float
 		return 0.0
 	}
 	return o.Count
-}
-
-type GetProcessesCountExperimentalV2DeprecatedResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	Object *GetProcessesCountExperimentalV2DeprecatedResponseBody
-}
-
-func (o *GetProcessesCountExperimentalV2DeprecatedResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *GetProcessesCountExperimentalV2DeprecatedResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *GetProcessesCountExperimentalV2DeprecatedResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *GetProcessesCountExperimentalV2DeprecatedResponse) GetObject() *GetProcessesCountExperimentalV2DeprecatedResponseBody {
-	if o == nil {
-		return nil
-	}
-	return o.Object
 }

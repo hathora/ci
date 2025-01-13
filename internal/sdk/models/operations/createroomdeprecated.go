@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type CreateRoomDeprecatedGlobals struct {
@@ -19,9 +18,9 @@ func (o *CreateRoomDeprecatedGlobals) GetAppID() *string {
 }
 
 type CreateRoomDeprecatedRequest struct {
-	AppID            *string                 `pathParam:"style=simple,explode=false,name=appId"`
-	RoomID           *string                 `queryParam:"style=form,explode=true,name=roomId"`
-	CreateRoomParams shared.CreateRoomParams `request:"mediaType=application/json"`
+	AppID            *string                     `pathParam:"style=simple,explode=false,name=appId"`
+	RoomID           *string                     `queryParam:"style=form,explode=true,name=roomId"`
+	CreateRoomParams components.CreateRoomParams `request:"mediaType=application/json"`
 }
 
 func (o *CreateRoomDeprecatedRequest) GetAppID() *string {
@@ -38,47 +37,9 @@ func (o *CreateRoomDeprecatedRequest) GetRoomID() *string {
 	return o.RoomID
 }
 
-func (o *CreateRoomDeprecatedRequest) GetCreateRoomParams() shared.CreateRoomParams {
+func (o *CreateRoomDeprecatedRequest) GetCreateRoomParams() components.CreateRoomParams {
 	if o == nil {
-		return shared.CreateRoomParams{}
+		return components.CreateRoomParams{}
 	}
 	return o.CreateRoomParams
-}
-
-type CreateRoomDeprecatedResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	RoomID      *string
-}
-
-func (o *CreateRoomDeprecatedResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *CreateRoomDeprecatedResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *CreateRoomDeprecatedResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *CreateRoomDeprecatedResponse) GetRoomID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.RoomID
 }

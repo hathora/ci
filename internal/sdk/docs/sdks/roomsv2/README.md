@@ -1,16 +1,18 @@
 # RoomsV2
 (*RoomsV2*)
 
+## Overview
+
 ### Available Operations
 
-* [CreateRoom](#createroom) - Create a new [room](https://hathora.dev/docs/concepts/hathora-entities#room) for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application). Poll the [`GetConnectionInfo()`](https://hathora.dev/api#tag/RoomV2/operation/GetConnectionInfo) endpoint to get connection details for an active room.
-* [GetRoomInfo](#getroominfo) - Retreive current and historical allocation data for a [room](https://hathora.dev/docs/concepts/hathora-entities#room).
-* [GetActiveRoomsForProcess](#getactiveroomsforprocess) - Get all active [rooms](https://hathora.dev/docs/concepts/hathora-entities#room) for a given [process](https://hathora.dev/docs/concepts/hathora-entities#process).
-* [GetInactiveRoomsForProcess](#getinactiveroomsforprocess) - Get all inactive [rooms](https://hathora.dev/docs/concepts/hathora-entities#room) for a given [process](https://hathora.dev/docs/concepts/hathora-entities#process).
-* [DestroyRoom](#destroyroom) - Destroy a [room](https://hathora.dev/docs/concepts/hathora-entities#room). All associated metadata is deleted.
-* [~~SuspendRoomV2Deprecated~~](#suspendroomv2deprecated) - Suspend a [room](https://hathora.dev/docs/concepts/hathora-entities#room). The room is unallocated from the process but can be rescheduled later using the same `roomId`. :warning: **Deprecated**
-* [GetConnectionInfo](#getconnectioninfo) - Poll this endpoint to get connection details to a [room](https://hathora.dev/docs/concepts/hathora-entities#room). Clients can call this endpoint without authentication.
-* [UpdateRoomConfig](#updateroomconfig)
+* [CreateRoom](#createroom) - CreateRoom
+* [GetRoomInfo](#getroominfo) - GetRoomInfo
+* [GetActiveRoomsForProcess](#getactiveroomsforprocess) - GetActiveRoomsForProcess
+* [GetInactiveRoomsForProcess](#getinactiveroomsforprocess) - GetInactiveRoomsForProcess
+* [DestroyRoom](#destroyroom) - DestroyRoom
+* [~~SuspendRoomV2Deprecated~~](#suspendroomv2deprecated) - SuspendRoomV2Deprecated :warning: **Deprecated**
+* [GetConnectionInfo](#getconnectioninfo) - GetConnectionInfo
+* [UpdateRoomConfig](#updateroomconfig) - UpdateRoomConfig
 
 ## CreateRoom
 
@@ -22,34 +24,33 @@ Create a new [room](https://hathora.dev/docs/concepts/hathora-entities#room) for
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
+	"hathoracloud/models/components"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    createRoomParams := shared.CreateRoomParams{
-        RoomConfig: sdk.String("{\"name\":\"my-room\"}"),
-        Region: shared.RegionSaoPaulo,
-    }
-
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
-    var roomID *string = sdk.String("2swovpy1fnunu")
     ctx := context.Background()
-    res, err := s.RoomsV2.CreateRoom(ctx, createRoomParams, appID, roomID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.RoomsV2.CreateRoom(ctx, components.CreateRoomParams{
+        DeploymentID: hathoracloud.String("dep-6d4c6a71-2d75-4b42-94e1-f312f57f33c5"),
+        ClientIPs: []string{
+            "123.123.123.123",
+        },
+        RoomConfig: hathoracloud.String("{\"name\":\"my-room\"}"),
+        Region: components.RegionDallas,
+    }, hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"), hathoracloud.String("2swovpy1fnunu"))
     if err != nil {
         log.Fatal(err)
     }
-    if res.RoomConnectionData != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -57,22 +58,24 @@ func main() {
 
 ### Parameters
 
-| Parameter                                                          | Type                                                               | Required                                                           | Description                                                        | Example                                                            |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| `ctx`                                                              | [context.Context](https://pkg.go.dev/context#Context)              | :heavy_check_mark:                                                 | The context to use for the request.                                |                                                                    |
-| `createRoomParams`                                                 | [shared.CreateRoomParams](../../models/shared/createroomparams.md) | :heavy_check_mark:                                                 | N/A                                                                |                                                                    |
-| `appID`                                                            | **string*                                                          | :heavy_minus_sign:                                                 | N/A                                                                | app-af469a92-5b45-4565-b3c4-b79878de67d2                           |
-| `roomID`                                                           | **string*                                                          | :heavy_minus_sign:                                                 | N/A                                                                | 2swovpy1fnunu                                                      |
-| `opts`                                                             | [][operations.Option](../../models/operations/option.md)           | :heavy_minus_sign:                                                 | The options for this request.                                      |                                                                    |
-
+| Parameter                                                                  | Type                                                                       | Required                                                                   | Description                                                                | Example                                                                    |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `ctx`                                                                      | [context.Context](https://pkg.go.dev/context#Context)                      | :heavy_check_mark:                                                         | The context to use for the request.                                        |                                                                            |
+| `createRoomParams`                                                         | [components.CreateRoomParams](../../models/components/createroomparams.md) | :heavy_check_mark:                                                         | N/A                                                                        |                                                                            |
+| `appID`                                                                    | **string*                                                                  | :heavy_minus_sign:                                                         | N/A                                                                        | app-af469a92-5b45-4565-b3c4-b79878de67d2                                   |
+| `roomID`                                                                   | **string*                                                                  | :heavy_minus_sign:                                                         | N/A                                                                        | 2swovpy1fnunu                                                              |
+| `opts`                                                                     | [][operations.Option](../../models/operations/option.md)                   | :heavy_minus_sign:                                                         | The options for this request.                                              |                                                                            |
 
 ### Response
 
-**[*operations.CreateRoomResponse](../../models/operations/createroomresponse.md), error**
-| Error Object                | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| sdkerrors.APIError          | 400,401,402,404,422,429,500 | application/json            |
-| sdkerrors.SDKError          | 4xx-5xx                     | */*                         |
+**[*components.RoomConnectionData](../../models/components/roomconnectiondata.md), error**
+
+### Errors
+
+| Error Type                        | Status Code                       | Content Type                      |
+| --------------------------------- | --------------------------------- | --------------------------------- |
+| errors.APIError                   | 400, 401, 402, 404, 422, 429, 500 | application/json                  |
+| errors.SDKError                   | 4XX, 5XX                          | \*/\*                             |
 
 ## GetRoomInfo
 
@@ -84,193 +87,21 @@ Retreive current and historical allocation data for a [room](https://hathora.dev
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var roomID string = "2swovpy1fnunu"
-
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.RoomsV2.GetRoomInfo(ctx, roomID, appID)
-    if err != nil {
-        log.Fatal(err)
-    }
-    if res.Room != nil {
-        // handle response
-    }
-}
-```
-
-### Parameters
-
-| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
-| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
-| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
-| `roomID`                                                 | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | 2swovpy1fnunu                                            |
-| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
-| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
-
-
-### Response
-
-**[*operations.GetRoomInfoResponse](../../models/operations/getroominforesponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,422,429    | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
-
-## GetActiveRoomsForProcess
-
-Get all active [rooms](https://hathora.dev/docs/concepts/hathora-entities#room) for a given [process](https://hathora.dev/docs/concepts/hathora-entities#process).
-
-### Example Usage
-
-```go
-package main
-
-import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
-	"context"
-	"log"
-)
-
-func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-    var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
 
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    ctx := context.Background()
-    res, err := s.RoomsV2.GetActiveRoomsForProcess(ctx, processID, appID)
-    if err != nil {
-        log.Fatal(err)
-    }
-    if res.RoomWithoutAllocations != nil {
-        // handle response
-    }
-}
-```
-
-### Parameters
-
-| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
-| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
-| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
-| `processID`                                              | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | cbfcddd2-0006-43ae-996c-995fff7bed2e                     |
-| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
-| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
-
-
-### Response
-
-**[*operations.GetActiveRoomsForProcessResponse](../../models/operations/getactiveroomsforprocessresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
-
-## GetInactiveRoomsForProcess
-
-Get all inactive [rooms](https://hathora.dev/docs/concepts/hathora-entities#room) for a given [process](https://hathora.dev/docs/concepts/hathora-entities#process).
-
-### Example Usage
-
-```go
-package main
-
-import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
-	"context"
-	"log"
-)
-
-func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
-
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    ctx := context.Background()
-    res, err := s.RoomsV2.GetInactiveRoomsForProcess(ctx, processID, appID)
-    if err != nil {
-        log.Fatal(err)
-    }
-    if res.RoomWithoutAllocations != nil {
-        // handle response
-    }
-}
-```
-
-### Parameters
-
-| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
-| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
-| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
-| `processID`                                              | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | cbfcddd2-0006-43ae-996c-995fff7bed2e                     |
-| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
-| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
-
-
-### Response
-
-**[*operations.GetInactiveRoomsForProcessResponse](../../models/operations/getinactiveroomsforprocessresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
-
-## DestroyRoom
-
-Destroy a [room](https://hathora.dev/docs/concepts/hathora-entities#room). All associated metadata is deleted.
-
-### Example Usage
-
-```go
-package main
-
-import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
-	"context"
-	"log"
-)
-
-func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var roomID string = "2swovpy1fnunu"
-
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    ctx := context.Background()
-    res, err := s.RoomsV2.DestroyRoom(ctx, roomID, appID)
+    res, err := s.RoomsV2.GetRoomInfo(ctx, "2swovpy1fnunu", hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"))
     if err != nil {
         log.Fatal(err)
     }
@@ -289,14 +120,175 @@ func main() {
 | `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
+### Response
+
+**[*components.Room](../../models/components/room.md), error**
+
+### Errors
+
+| Error Type         | Status Code        | Content Type       |
+| ------------------ | ------------------ | ------------------ |
+| errors.APIError    | 401, 404, 422, 429 | application/json   |
+| errors.SDKError    | 4XX, 5XX           | \*/\*              |
+
+## GetActiveRoomsForProcess
+
+Get all active [rooms](https://hathora.dev/docs/concepts/hathora-entities#room) for a given [process](https://hathora.dev/docs/concepts/hathora-entities#process).
+
+### Example Usage
+
+```go
+package main
+
+import(
+	"context"
+	"hathoracloud"
+	"log"
+)
+
+func main() {
+    ctx := context.Background()
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.RoomsV2.GetActiveRoomsForProcess(ctx, "cbfcddd2-0006-43ae-996c-995fff7bed2e", hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"))
+    if err != nil {
+        log.Fatal(err)
+    }
+    if res != nil {
+        // handle response
+    }
+}
+```
+
+### Parameters
+
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `processID`                                              | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | cbfcddd2-0006-43ae-996c-995fff7bed2e                     |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 ### Response
 
-**[*operations.DestroyRoomResponse](../../models/operations/destroyroomresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
+**[[]components.RoomWithoutAllocations](../../.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 404, 429    | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
+
+## GetInactiveRoomsForProcess
+
+Get all inactive [rooms](https://hathora.dev/docs/concepts/hathora-entities#room) for a given [process](https://hathora.dev/docs/concepts/hathora-entities#process).
+
+### Example Usage
+
+```go
+package main
+
+import(
+	"context"
+	"hathoracloud"
+	"log"
+)
+
+func main() {
+    ctx := context.Background()
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.RoomsV2.GetInactiveRoomsForProcess(ctx, "cbfcddd2-0006-43ae-996c-995fff7bed2e", hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"))
+    if err != nil {
+        log.Fatal(err)
+    }
+    if res != nil {
+        // handle response
+    }
+}
+```
+
+### Parameters
+
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `processID`                                              | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | cbfcddd2-0006-43ae-996c-995fff7bed2e                     |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
+
+### Response
+
+**[[]components.RoomWithoutAllocations](../../.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 404, 429    | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
+
+## DestroyRoom
+
+Destroy a [room](https://hathora.dev/docs/concepts/hathora-entities#room). All associated metadata is deleted.
+
+### Example Usage
+
+```go
+package main
+
+import(
+	"context"
+	"hathoracloud"
+	"log"
+)
+
+func main() {
+    ctx := context.Background()
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    err := s.RoomsV2.DestroyRoom(ctx, "2swovpy1fnunu", hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"))
+    if err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+### Parameters
+
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `roomID`                                                 | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | 2swovpy1fnunu                                            |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
+
+### Response
+
+**error**
+
+### Errors
+
+| Error Type         | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429,500    | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+| errors.APIError    | 401, 404, 429, 500 | application/json   |
+| errors.SDKError    | 4XX, 5XX           | \*/\*              |
 
 ## ~~SuspendRoomV2Deprecated~~
 
@@ -310,30 +302,23 @@ Suspend a [room](https://hathora.dev/docs/concepts/hathora-entities#room). The r
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var roomID string = "2swovpy1fnunu"
-
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.RoomsV2.SuspendRoomV2Deprecated(ctx, roomID, appID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    err := s.RoomsV2.SuspendRoomV2Deprecated(ctx, "2swovpy1fnunu", hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"))
     if err != nil {
         log.Fatal(err)
-    }
-    if res != nil {
-        // handle response
     }
 }
 ```
@@ -347,14 +332,16 @@ func main() {
 | `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
-
 ### Response
 
-**[*operations.SuspendRoomV2DeprecatedResponse](../../models/operations/suspendroomv2deprecatedresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
+**error**
+
+### Errors
+
+| Error Type         | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429,500    | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+| errors.APIError    | 401, 404, 429, 500 | application/json   |
+| errors.SDKError    | 4XX, 5XX           | \*/\*              |
 
 ## GetConnectionInfo
 
@@ -366,24 +353,24 @@ Poll this endpoint to get connection details to a [room](https://hathora.dev/doc
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var roomID string = "2swovpy1fnunu"
-
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.RoomsV2.GetConnectionInfo(ctx, roomID, appID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.RoomsV2.GetConnectionInfo(ctx, "2swovpy1fnunu", hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"))
     if err != nil {
         log.Fatal(err)
     }
-    if res.ConnectionInfoV2 != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -398,16 +385,20 @@ func main() {
 | `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
-
 ### Response
 
-**[*operations.GetConnectionInfoResponse](../../models/operations/getconnectioninforesponse.md), error**
-| Error Object            | Status Code             | Content Type            |
-| ----------------------- | ----------------------- | ----------------------- |
-| sdkerrors.APIError      | 400,402,404,422,429,500 | application/json        |
-| sdkerrors.SDKError      | 4xx-5xx                 | */*                     |
+**[*components.ConnectionInfoV2](../../models/components/connectioninfov2.md), error**
+
+### Errors
+
+| Error Type                   | Status Code                  | Content Type                 |
+| ---------------------------- | ---------------------------- | ---------------------------- |
+| errors.APIError              | 400, 402, 404, 422, 429, 500 | application/json             |
+| errors.SDKError              | 4XX, 5XX                     | \*/\*                        |
 
 ## UpdateRoomConfig
+
+UpdateRoomConfig
 
 ### Example Usage
 
@@ -415,53 +406,47 @@ func main() {
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
+	"hathoracloud/models/components"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var roomID string = "2swovpy1fnunu"
-
-    updateRoomConfigParams := shared.UpdateRoomConfigParams{
-        RoomConfig: "{\"name\":\"my-room\"}",
-    }
-
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.RoomsV2.UpdateRoomConfig(ctx, roomID, updateRoomConfigParams, appID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    err := s.RoomsV2.UpdateRoomConfig(ctx, "2swovpy1fnunu", components.UpdateRoomConfigParams{
+        RoomConfig: "{\"name\":\"my-room\"}",
+    }, hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"))
     if err != nil {
         log.Fatal(err)
-    }
-    if res != nil {
-        // handle response
     }
 }
 ```
 
 ### Parameters
 
-| Parameter                                                                      | Type                                                                           | Required                                                                       | Description                                                                    | Example                                                                        |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| `ctx`                                                                          | [context.Context](https://pkg.go.dev/context#Context)                          | :heavy_check_mark:                                                             | The context to use for the request.                                            |                                                                                |
-| `roomID`                                                                       | *string*                                                                       | :heavy_check_mark:                                                             | N/A                                                                            | 2swovpy1fnunu                                                                  |
-| `updateRoomConfigParams`                                                       | [shared.UpdateRoomConfigParams](../../models/shared/updateroomconfigparams.md) | :heavy_check_mark:                                                             | N/A                                                                            |                                                                                |
-| `appID`                                                                        | **string*                                                                      | :heavy_minus_sign:                                                             | N/A                                                                            | app-af469a92-5b45-4565-b3c4-b79878de67d2                                       |
-| `opts`                                                                         | [][operations.Option](../../models/operations/option.md)                       | :heavy_minus_sign:                                                             | The options for this request.                                                  |                                                                                |
-
+| Parameter                                                                              | Type                                                                                   | Required                                                                               | Description                                                                            | Example                                                                                |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `ctx`                                                                                  | [context.Context](https://pkg.go.dev/context#Context)                                  | :heavy_check_mark:                                                                     | The context to use for the request.                                                    |                                                                                        |
+| `roomID`                                                                               | *string*                                                                               | :heavy_check_mark:                                                                     | N/A                                                                                    | 2swovpy1fnunu                                                                          |
+| `updateRoomConfigParams`                                                               | [components.UpdateRoomConfigParams](../../models/components/updateroomconfigparams.md) | :heavy_check_mark:                                                                     | N/A                                                                                    |                                                                                        |
+| `appID`                                                                                | **string*                                                                              | :heavy_minus_sign:                                                                     | N/A                                                                                    | app-af469a92-5b45-4565-b3c4-b79878de67d2                                               |
+| `opts`                                                                                 | [][operations.Option](../../models/operations/option.md)                               | :heavy_minus_sign:                                                                     | The options for this request.                                                          |                                                                                        |
 
 ### Response
 
-**[*operations.UpdateRoomConfigResponse](../../models/operations/updateroomconfigresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429,500    | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+**error**
+
+### Errors
+
+| Error Type              | Status Code             | Content Type            |
+| ----------------------- | ----------------------- | ----------------------- |
+| errors.APIError         | 401, 404, 422, 429, 500 | application/json        |
+| errors.SDKError         | 4XX, 5XX                | \*/\*                   |

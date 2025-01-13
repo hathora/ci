@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type CreatePrivateLobbyGlobals struct {
@@ -31,8 +30,8 @@ func (o *CreatePrivateLobbySecurity) GetPlayerAuth() string {
 
 type CreatePrivateLobbyRequestBody struct {
 	// User input to initialize the game state. Object must be smaller than 64KB.
-	InitialConfig any           `json:"initialConfig"`
-	Region        shared.Region `json:"region"`
+	InitialConfig any               `json:"initialConfig"`
+	Region        components.Region `json:"region"`
 }
 
 func (o *CreatePrivateLobbyRequestBody) GetInitialConfig() any {
@@ -42,9 +41,9 @@ func (o *CreatePrivateLobbyRequestBody) GetInitialConfig() any {
 	return o.InitialConfig
 }
 
-func (o *CreatePrivateLobbyRequestBody) GetRegion() shared.Region {
+func (o *CreatePrivateLobbyRequestBody) GetRegion() components.Region {
 	if o == nil {
-		return shared.Region("")
+		return components.Region("")
 	}
 	return o.Region
 }
@@ -74,42 +73,4 @@ func (o *CreatePrivateLobbyRequest) GetRequestBody() CreatePrivateLobbyRequestBo
 		return CreatePrivateLobbyRequestBody{}
 	}
 	return o.RequestBody
-}
-
-type CreatePrivateLobbyResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	Lobby       *shared.Lobby
-}
-
-func (o *CreatePrivateLobbyResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *CreatePrivateLobbyResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *CreatePrivateLobbyResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *CreatePrivateLobbyResponse) GetLobby() *shared.Lobby {
-	if o == nil {
-		return nil
-	}
-	return o.Lobby
 }

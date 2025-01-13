@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type LoginNicknameGlobals struct {
@@ -19,8 +18,8 @@ func (o *LoginNicknameGlobals) GetAppID() *string {
 }
 
 type LoginNicknameRequest struct {
-	AppID          *string               `pathParam:"style=simple,explode=false,name=appId"`
-	NicknameObject shared.NicknameObject `request:"mediaType=application/json"`
+	AppID          *string                   `pathParam:"style=simple,explode=false,name=appId"`
+	NicknameObject components.NicknameObject `request:"mediaType=application/json"`
 }
 
 func (o *LoginNicknameRequest) GetAppID() *string {
@@ -30,48 +29,9 @@ func (o *LoginNicknameRequest) GetAppID() *string {
 	return o.AppID
 }
 
-func (o *LoginNicknameRequest) GetNicknameObject() shared.NicknameObject {
+func (o *LoginNicknameRequest) GetNicknameObject() components.NicknameObject {
 	if o == nil {
-		return shared.NicknameObject{}
+		return components.NicknameObject{}
 	}
 	return o.NicknameObject
-}
-
-type LoginNicknameResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	PlayerTokenObject *shared.PlayerTokenObject
-}
-
-func (o *LoginNicknameResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *LoginNicknameResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *LoginNicknameResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *LoginNicknameResponse) GetPlayerTokenObject() *shared.PlayerTokenObject {
-	if o == nil {
-		return nil
-	}
-	return o.PlayerTokenObject
 }

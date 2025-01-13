@@ -3,13 +3,23 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
+type CreateBuildGlobals struct {
+	OrgID *string `queryParam:"style=form,explode=true,name=orgId"`
+}
+
+func (o *CreateBuildGlobals) GetOrgID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.OrgID
+}
+
 type CreateBuildRequest struct {
-	OrgID                      *string                           `queryParam:"style=form,explode=true,name=orgId"`
-	CreateMultipartBuildParams shared.CreateMultipartBuildParams `request:"mediaType=application/json"`
+	OrgID                      *string                               `queryParam:"style=form,explode=true,name=orgId"`
+	CreateMultipartBuildParams components.CreateMultipartBuildParams `request:"mediaType=application/json"`
 }
 
 func (o *CreateBuildRequest) GetOrgID() *string {
@@ -19,47 +29,9 @@ func (o *CreateBuildRequest) GetOrgID() *string {
 	return o.OrgID
 }
 
-func (o *CreateBuildRequest) GetCreateMultipartBuildParams() shared.CreateMultipartBuildParams {
+func (o *CreateBuildRequest) GetCreateMultipartBuildParams() components.CreateMultipartBuildParams {
 	if o == nil {
-		return shared.CreateMultipartBuildParams{}
+		return components.CreateMultipartBuildParams{}
 	}
 	return o.CreateMultipartBuildParams
-}
-
-type CreateBuildResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse                     *http.Response
-	CreatedBuildV3WithMultipartUrls *shared.CreatedBuildV3WithMultipartUrls
-}
-
-func (o *CreateBuildResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *CreateBuildResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *CreateBuildResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *CreateBuildResponse) GetCreatedBuildV3WithMultipartUrls() *shared.CreatedBuildV3WithMultipartUrls {
-	if o == nil {
-		return nil
-	}
-	return o.CreatedBuildV3WithMultipartUrls
 }

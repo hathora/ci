@@ -1,12 +1,14 @@
 # LobbiesV3
 (*LobbiesV3*)
 
+## Overview
+
 ### Available Operations
 
-* [CreateLobby](#createlobby) - Create a new lobby for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). A lobby object is a wrapper around a [room](https://hathora.dev/docs/concepts/hathora-entities#room) object. With a lobby, you get additional functionality like configuring the visibility of the room, managing the state of a match, and retrieving a list of public lobbies to display to players.
-* [ListActivePublicLobbies](#listactivepubliclobbies) - Get all active lobbies for a given [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `region`. Use this endpoint to display all public lobbies that a player can join in the game client.
-* [GetLobbyInfoByRoomID](#getlobbyinfobyroomid) - Get details for a lobby.
-* [GetLobbyInfoByShortCode](#getlobbyinfobyshortcode) - Get details for a lobby. If 2 or more lobbies have the same `shortCode`, then the most recently created lobby will be returned.
+* [CreateLobby](#createlobby) - CreateLobby
+* [ListActivePublicLobbies](#listactivepubliclobbies) - ListActivePublicLobbies
+* [GetLobbyInfoByRoomID](#getlobbyinfobyroomid) - GetLobbyInfoByRoomId
+* [GetLobbyInfoByShortCode](#getlobbyinfobyshortcode) - GetLobbyInfoByShortCode
 
 ## CreateLobby
 
@@ -18,39 +20,32 @@ Create a new lobby for an [application](https://hathora.dev/docs/concepts/hathor
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/operations"
-	"os"
-	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
+	"hathoracloud"
+	"hathoracloud/models/components"
+	"hathoracloud/models/operations"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    security := operations.CreateLobbySecurity{
-            PlayerAuth: os.Getenv("PLAYER_AUTH"),
-        }
-
-    createLobbyV3Params := shared.CreateLobbyV3Params{
-        Visibility: shared.LobbyVisibilityPrivate,
-        RoomConfig: sdk.String("{\"name\":\"my-room\"}"),
-        Region: shared.RegionSeattle,
-    }
-
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
-    var shortCode *string = sdk.String("LFG4")
-
-    var roomID *string = sdk.String("2swovpy1fnunu")
     ctx := context.Background()
-    res, err := s.LobbiesV3.CreateLobby(ctx, security, createLobbyV3Params, appID, shortCode, roomID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.LobbiesV3.CreateLobby(ctx, operations.CreateLobbySecurity{
+        PlayerAuth: "<YOUR_BEARER_TOKEN_HERE>",
+    }, components.CreateLobbyV3Params{
+        Visibility: components.LobbyVisibilityPrivate,
+        RoomConfig: hathoracloud.String("{\"name\":\"my-room\"}"),
+        Region: components.RegionSeattle,
+    }, hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"), hathoracloud.String("LFG4"), hathoracloud.String("2swovpy1fnunu"))
     if err != nil {
         log.Fatal(err)
     }
-    if res.LobbyV3 != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -62,20 +57,22 @@ func main() {
 | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | `ctx`                                                                            | [context.Context](https://pkg.go.dev/context#Context)                            | :heavy_check_mark:                                                               | The context to use for the request.                                              |                                                                                  |
 | `security`                                                                       | [operations.CreateLobbySecurity](../../models/operations/createlobbysecurity.md) | :heavy_check_mark:                                                               | The security requirements to use for the request.                                |                                                                                  |
-| `createLobbyV3Params`                                                            | [shared.CreateLobbyV3Params](../../models/shared/createlobbyv3params.md)         | :heavy_check_mark:                                                               | N/A                                                                              |                                                                                  |
+| `createLobbyV3Params`                                                            | [components.CreateLobbyV3Params](../../models/components/createlobbyv3params.md) | :heavy_check_mark:                                                               | N/A                                                                              |                                                                                  |
 | `appID`                                                                          | **string*                                                                        | :heavy_minus_sign:                                                               | N/A                                                                              | app-af469a92-5b45-4565-b3c4-b79878de67d2                                         |
 | `shortCode`                                                                      | **string*                                                                        | :heavy_minus_sign:                                                               | N/A                                                                              | LFG4                                                                             |
 | `roomID`                                                                         | **string*                                                                        | :heavy_minus_sign:                                                               | N/A                                                                              | 2swovpy1fnunu                                                                    |
 | `opts`                                                                           | [][operations.Option](../../models/operations/option.md)                         | :heavy_minus_sign:                                                               | The options for this request.                                                    |                                                                                  |
 
-
 ### Response
 
-**[*operations.CreateLobbyResponse](../../models/operations/createlobbyresponse.md), error**
-| Error Object                | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| sdkerrors.APIError          | 400,401,402,404,422,429,500 | application/json            |
-| sdkerrors.SDKError          | 4xx-5xx                     | */*                         |
+**[*components.LobbyV3](../../models/components/lobbyv3.md), error**
+
+### Errors
+
+| Error Type                        | Status Code                       | Content Type                      |
+| --------------------------------- | --------------------------------- | --------------------------------- |
+| errors.APIError                   | 400, 401, 402, 404, 422, 429, 500 | application/json                  |
+| errors.SDKError                   | 4XX, 5XX                          | \*/\*                             |
 
 ## ListActivePublicLobbies
 
@@ -87,25 +84,24 @@ Get all active lobbies for a given [application](https://hathora.dev/docs/concep
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
-    var region *shared.Region = shared.RegionSeattle.ToPointer()
     ctx := context.Background()
-    res, err := s.LobbiesV3.ListActivePublicLobbies(ctx, appID, region)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.LobbiesV3.ListActivePublicLobbies(ctx, hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"), nil)
     if err != nil {
         log.Fatal(err)
     }
-    if res.LobbyV3s != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -117,17 +113,19 @@ func main() {
 | ------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
 | `ctx`                                                              | [context.Context](https://pkg.go.dev/context#Context)              | :heavy_check_mark:                                                 | The context to use for the request.                                |                                                                    |
 | `appID`                                                            | **string*                                                          | :heavy_minus_sign:                                                 | N/A                                                                | app-af469a92-5b45-4565-b3c4-b79878de67d2                           |
-| `region`                                                           | [*shared.Region](../../models/shared/region.md)                    | :heavy_minus_sign:                                                 | If omitted, active public lobbies in all regions will be returned. |                                                                    |
+| `region`                                                           | [*components.Region](../../models/components/region.md)            | :heavy_minus_sign:                                                 | If omitted, active public lobbies in all regions will be returned. |                                                                    |
 | `opts`                                                             | [][operations.Option](../../models/operations/option.md)           | :heavy_minus_sign:                                                 | The options for this request.                                      |                                                                    |
-
 
 ### Response
 
-**[*operations.ListActivePublicLobbiesResponse](../../models/operations/listactivepubliclobbiesresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,429            | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+**[[]components.LobbyV3](../../.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 429         | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
 
 ## GetLobbyInfoByRoomID
 
@@ -139,24 +137,24 @@ Get details for a lobby.
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var roomID string = "2swovpy1fnunu"
-
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.LobbiesV3.GetLobbyInfoByRoomID(ctx, roomID, appID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.LobbiesV3.GetLobbyInfoByRoomID(ctx, "2swovpy1fnunu", hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"))
     if err != nil {
         log.Fatal(err)
     }
-    if res.LobbyV3 != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -171,14 +169,16 @@ func main() {
 | `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
-
 ### Response
 
-**[*operations.GetLobbyInfoByRoomIDResponse](../../models/operations/getlobbyinfobyroomidresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 404,422,429        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+**[*components.LobbyV3](../../models/components/lobbyv3.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 404, 422, 429    | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
 
 ## GetLobbyInfoByShortCode
 
@@ -190,24 +190,24 @@ Get details for a lobby. If 2 or more lobbies have the same `shortCode`, then th
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var shortCode string = "LFG4"
-
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.LobbiesV3.GetLobbyInfoByShortCode(ctx, shortCode, appID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.LobbiesV3.GetLobbyInfoByShortCode(ctx, "LFG4", hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"))
     if err != nil {
         log.Fatal(err)
     }
-    if res.LobbyV3 != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -222,11 +222,13 @@ func main() {
 | `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
-
 ### Response
 
-**[*operations.GetLobbyInfoByShortCodeResponse](../../models/operations/getlobbyinfobyshortcoderesponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 404,429            | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+**[*components.LobbyV3](../../models/components/lobbyv3.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 404, 429         | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |

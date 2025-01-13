@@ -1,0 +1,9 @@
+# CreateOrgToken
+
+
+## Fields
+
+| Field                                                                               | Type                                                                                | Required                                                                            | Description                                                                         | Example                                                                             |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `Scopes`                                                                            | [*components.CreateOrgTokenScopes](../../models/components/createorgtokenscopes.md) | :heavy_minus_sign:                                                                  | If not defined, the token has Admin access.                                         |                                                                                     |
+| `Name`                                                                              | *string*                                                                            | :heavy_check_mark:                                                                  | Readable name for a token. Must be unique within an organization.                   | ci-token                                                                            |

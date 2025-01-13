@@ -3,44 +3,35 @@
 package operations
 
 import (
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
-type InitStripeCustomerPortalURLResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	String *string
+type InitStripeCustomerPortalURLGlobals struct {
+	OrgID *string `queryParam:"style=form,explode=true,name=orgId"`
 }
 
-func (o *InitStripeCustomerPortalURLResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *InitStripeCustomerPortalURLResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *InitStripeCustomerPortalURLResponse) GetRawResponse() *http.Response {
+func (o *InitStripeCustomerPortalURLGlobals) GetOrgID() *string {
 	if o == nil {
 		return nil
 	}
-	return o.RawResponse
+	return o.OrgID
 }
 
-func (o *InitStripeCustomerPortalURLResponse) GetString() *string {
+type InitStripeCustomerPortalURLRequest struct {
+	OrgID             *string                      `queryParam:"style=form,explode=true,name=orgId"`
+	CustomerPortalURL components.CustomerPortalURL `request:"mediaType=application/json"`
+}
+
+func (o *InitStripeCustomerPortalURLRequest) GetOrgID() *string {
 	if o == nil {
 		return nil
 	}
-	return o.String
+	return o.OrgID
+}
+
+func (o *InitStripeCustomerPortalURLRequest) GetCustomerPortalURL() components.CustomerPortalURL {
+	if o == nil {
+		return components.CustomerPortalURL{}
+	}
+	return o.CustomerPortalURL
 }
