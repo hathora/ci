@@ -1,6 +1,6 @@
 module github.com/hathora/ci
 
-go 1.22.2
+go 1.23
 
 require (
 	github.com/dustin/go-humanize v1.0.1
