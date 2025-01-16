@@ -31,7 +31,7 @@ sdk-clean: ## Re-generate the SDK using speakeasyapi.dev
 
 .PHONY: lint
 lint: ## Lints the project, logging any warnings or errors without modifying any files.
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.54
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.63
 	golangci-lint run ./...
 
 .PHONY: fmt
