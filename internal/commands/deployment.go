@@ -139,6 +139,7 @@ var Deployment = &cli.Command{
 				additionalContainerPortsFlag,
 				envVarsFlag,
 				fromLatestFlag,
+				deploymentTagFlag,
 			),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				zap.L().Debug("creating a deployment...")
@@ -165,6 +166,11 @@ var Deployment = &cli.Command{
 					return err
 				}
 
+				var deploymentTag *string
+				if deployment.DeploymentTag != "" {
+					deploymentTag = &deployment.DeploymentTag
+				}
+
 				res, err := deployment.SDK.DeploymentsV3.CreateDeployment(
 					ctx,
 					components.DeploymentConfigV3{
@@ -177,6 +183,7 @@ var Deployment = &cli.Command{
 						RequestedCPU:             deployment.RequestedCPU,
 						AdditionalContainerPorts: deployment.AdditionalContainerPorts,
 						Env:                      deployment.Env,
+						DeploymentTag:            deploymentTag,
 					},
 					deployment.AppID,
 				)
@@ -294,6 +301,16 @@ var (
 		Name:     "from-latest",
 		Sources:  cli.EnvVars(deploymentEnvVar("FROM_LATEST")),
 		Usage:    "whether to use settings from the latest deployment; if true other flags and config file values act as overrides",
+		Category: "Deployment:",
+	}
+
+	deploymentTagFlag = &cli.StringFlag{
+		Name: "deployment-tag",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(deploymentEnvVar("DEPLOYMENT_TAG")),
+			altsrc.ConfigFile(configFlag.Name, "deployment.deployment-tag"),
+		),
+		Usage:    "arbitrary metadata associated with a deployment",
 		Category: "Deployment:",
 	}
 )
@@ -442,6 +459,7 @@ type CreateDeploymentConfig struct {
 	RequestedCPU             float64
 	AdditionalContainerPorts []components.ContainerPort
 	Env                      []components.DeploymentConfigV3Env
+	DeploymentTag            string
 }
 
 var _ LoadableConfig = (*CreateDeploymentConfig)(nil)
@@ -472,6 +490,7 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 	c.ContainerPort = int(cmd.Int(containerPortFlag.Name))
 	c.RequestedMemoryMB = cmd.Float(requestedMemoryFlag.Name)
 	c.RequestedCPU = cmd.Float(requestedCPUFlag.Name)
+	c.DeploymentTag = cmd.String(deploymentTagFlag.Name)
 
 	addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
 	parsedAddlPorts, err := parseContainerPorts(addlPorts)

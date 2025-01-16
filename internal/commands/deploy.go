@@ -30,6 +30,7 @@ var Deploy = &cli.Command{
 		additionalContainerPortsFlag,
 		envVarsFlag,
 		idleTimeoutFlag,
+		deploymentTagFlag,
 	),
 	UsageText: `hathora deploy [options]`,
 	Action: func(ctx context.Context, cmd *cli.Command) error {
@@ -61,6 +62,11 @@ var Deploy = &cli.Command{
 			return err
 		}
 
+		var deploymentTag *string
+		if deploy.DeploymentTag != "" {
+			deploymentTag = &deploy.DeploymentTag
+		}
+
 		res, err := deploy.SDK.DeploymentsV3.CreateDeployment(
 			ctx,
 			components.DeploymentConfigV3{
@@ -73,6 +79,7 @@ var Deploy = &cli.Command{
 				RequestedCPU:             deploy.RequestedCPU,
 				AdditionalContainerPorts: deploy.AdditionalContainerPorts,
 				Env:                      deploy.Env,
+				DeploymentTag:            deploymentTag,
 			},
 			deploy.AppID,
 		)
