@@ -309,7 +309,6 @@ func NormalizeArgs(cmd *cli.Command, args []string) []string {
 		}
 		// this skips when the iterator is on the last arg or whenever it's not
 		// the last but another flag name arg immediately follows this one
-		// nor try if the next element is a new flag name
 		if i >= l-1 || strings.HasPrefix(args[i+1], "-") {
 			continue
 		}
