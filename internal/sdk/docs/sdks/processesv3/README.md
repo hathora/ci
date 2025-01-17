@@ -1,13 +1,18 @@
 # ProcessesV3
 (*ProcessesV3*)
 
+## Overview
+
+Operations to get data on active and stopped [processes](https://hathora.dev/docs/concepts/hathora-entities#process).
+
 ### Available Operations
 
-* [GetLatestProcesses](#getlatestprocesses) - Retrieve the 10 most recent [processes](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `status` or `region`.
-* [GetProcessesCountExperimental](#getprocessescountexperimental) - Count the number of [processes](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter by optionally passing in a `status` or `region`.
-* [CreateProcess](#createprocess) - Creates a [process](https://hathora.dev/docs/concepts/hathora-entities#process) without a room. Use this to pre-allocate processes ahead of time so that subsequent room assignment via [CreateRoom()](https://hathora.dev/api#tag/RoomV2/operation/CreateRoom) can be instant.
-* [GetProcess](#getprocess) - Get details for a [process](https://hathora.dev/docs/concepts/hathora-entities#process).
-* [StopProcess](#stopprocess) - Stops a [process](https://hathora.dev/docs/concepts/hathora-entities#process) immediately.
+* [GetLatestProcesses](#getlatestprocesses) - GetLatestProcesses
+* [GetProcessesCountExperimental](#getprocessescountexperimental) - GetProcessesCountExperimental
+* [CreateProcess](#createprocess) - CreateProcess
+* [GetProcess](#getprocess) - GetProcess
+* [StopProcess](#stopprocess) - StopProcess
+* [GetProcessMetrics](#getprocessmetrics) - GetProcessMetrics
 
 ## GetLatestProcesses
 
@@ -19,35 +24,25 @@ Retrieve the 10 most recent [processes](https://hathora.dev/docs/concepts/hathor
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
-    var status []shared.ProcessStatus = []shared.ProcessStatus{
-        shared.ProcessStatusStopped,
-    }
-
-    var region []shared.Region = []shared.Region{
-        shared.RegionFrankfurt,
-    }
     ctx := context.Background()
-    res, err := s.ProcessesV3.GetLatestProcesses(ctx, appID, status, region)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.ProcessesV3.GetLatestProcesses(ctx, hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"), nil, nil)
     if err != nil {
         log.Fatal(err)
     }
-    if res.ProcessV3s != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -55,22 +50,24 @@ func main() {
 
 ### Parameters
 
-| Parameter                                                      | Type                                                           | Required                                                       | Description                                                    | Example                                                        |
-| -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- |
-| `ctx`                                                          | [context.Context](https://pkg.go.dev/context#Context)          | :heavy_check_mark:                                             | The context to use for the request.                            |                                                                |
-| `appID`                                                        | **string*                                                      | :heavy_minus_sign:                                             | N/A                                                            | app-af469a92-5b45-4565-b3c4-b79878de67d2                       |
-| `status`                                                       | [][shared.ProcessStatus](../../models/shared/processstatus.md) | :heavy_minus_sign:                                             | N/A                                                            |                                                                |
-| `region`                                                       | [][shared.Region](../../models/shared/region.md)               | :heavy_minus_sign:                                             | N/A                                                            |                                                                |
-| `opts`                                                         | [][operations.Option](../../models/operations/option.md)       | :heavy_minus_sign:                                             | The options for this request.                                  |                                                                |
-
+| Parameter                                                              | Type                                                                   | Required                                                               | Description                                                            | Example                                                                |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `ctx`                                                                  | [context.Context](https://pkg.go.dev/context#Context)                  | :heavy_check_mark:                                                     | The context to use for the request.                                    |                                                                        |
+| `appID`                                                                | **string*                                                              | :heavy_minus_sign:                                                     | N/A                                                                    | app-af469a92-5b45-4565-b3c4-b79878de67d2                               |
+| `status`                                                               | [][components.ProcessStatus](../../models/components/processstatus.md) | :heavy_minus_sign:                                                     | N/A                                                                    |                                                                        |
+| `region`                                                               | [][components.Region](../../models/components/region.md)               | :heavy_minus_sign:                                                     | N/A                                                                    |                                                                        |
+| `opts`                                                                 | [][operations.Option](../../models/operations/option.md)               | :heavy_minus_sign:                                                     | The options for this request.                                          |                                                                        |
 
 ### Response
 
-**[*operations.GetLatestProcessesResponse](../../models/operations/getlatestprocessesresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
+**[[]components.ProcessV3](../../.md), error**
+
+### Errors
+
+| Error Type         | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+| errors.APIError    | 401, 404, 422, 429 | application/json   |
+| errors.SDKError    | 4XX, 5XX           | \*/\*              |
 
 ## GetProcessesCountExperimental
 
@@ -82,35 +79,25 @@ Count the number of [processes](https://hathora.dev/docs/concepts/hathora-entiti
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
-    var status []shared.ProcessStatus = []shared.ProcessStatus{
-        shared.ProcessStatusDraining,
-    }
-
-    var region []shared.Region = []shared.Region{
-        shared.RegionLosAngeles,
-    }
     ctx := context.Background()
-    res, err := s.ProcessesV3.GetProcessesCountExperimental(ctx, appID, status, region)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.ProcessesV3.GetProcessesCountExperimental(ctx, hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"), nil, nil)
     if err != nil {
         log.Fatal(err)
     }
-    if res.Object != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -118,22 +105,24 @@ func main() {
 
 ### Parameters
 
-| Parameter                                                      | Type                                                           | Required                                                       | Description                                                    | Example                                                        |
-| -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- |
-| `ctx`                                                          | [context.Context](https://pkg.go.dev/context#Context)          | :heavy_check_mark:                                             | The context to use for the request.                            |                                                                |
-| `appID`                                                        | **string*                                                      | :heavy_minus_sign:                                             | N/A                                                            | app-af469a92-5b45-4565-b3c4-b79878de67d2                       |
-| `status`                                                       | [][shared.ProcessStatus](../../models/shared/processstatus.md) | :heavy_minus_sign:                                             | N/A                                                            |                                                                |
-| `region`                                                       | [][shared.Region](../../models/shared/region.md)               | :heavy_minus_sign:                                             | N/A                                                            |                                                                |
-| `opts`                                                         | [][operations.Option](../../models/operations/option.md)       | :heavy_minus_sign:                                             | The options for this request.                                  |                                                                |
-
+| Parameter                                                              | Type                                                                   | Required                                                               | Description                                                            | Example                                                                |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `ctx`                                                                  | [context.Context](https://pkg.go.dev/context#Context)                  | :heavy_check_mark:                                                     | The context to use for the request.                                    |                                                                        |
+| `appID`                                                                | **string*                                                              | :heavy_minus_sign:                                                     | N/A                                                                    | app-af469a92-5b45-4565-b3c4-b79878de67d2                               |
+| `status`                                                               | [][components.ProcessStatus](../../models/components/processstatus.md) | :heavy_minus_sign:                                                     | N/A                                                                    |                                                                        |
+| `region`                                                               | [][components.Region](../../models/components/region.md)               | :heavy_minus_sign:                                                     | N/A                                                                    |                                                                        |
+| `opts`                                                                 | [][operations.Option](../../models/operations/option.md)               | :heavy_minus_sign:                                                     | The options for this request.                                          |                                                                        |
 
 ### Response
 
-**[*operations.GetProcessesCountExperimentalResponse](../../models/operations/getprocessescountexperimentalresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
+**[*operations.GetProcessesCountExperimentalResponseBody](../../models/operations/getprocessescountexperimentalresponsebody.md), error**
+
+### Errors
+
+| Error Type         | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+| errors.APIError    | 401, 404, 422, 429 | application/json   |
+| errors.SDKError    | 4XX, 5XX           | \*/\*              |
 
 ## CreateProcess
 
@@ -145,29 +134,26 @@ Creates a [process](https://hathora.dev/docs/concepts/hathora-entities#process) 
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
+	"hathoracloud/models/components"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var region shared.Region = shared.RegionTokyo
-
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.ProcessesV3.CreateProcess(ctx, region, appID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.ProcessesV3.CreateProcess(ctx, components.RegionSaoPaulo, hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"))
     if err != nil {
         log.Fatal(err)
     }
-    if res.ProcessV3 != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -178,18 +164,20 @@ func main() {
 | Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
 | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
 | `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
-| `region`                                                 | [shared.Region](../../models/shared/region.md)           | :heavy_check_mark:                                       | N/A                                                      |                                                          |
+| `region`                                                 | [components.Region](../../models/components/region.md)   | :heavy_check_mark:                                       | N/A                                                      |                                                          |
 | `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
-
 ### Response
 
-**[*operations.CreateProcessResponse](../../models/operations/createprocessresponse.md), error**
-| Error Object            | Status Code             | Content Type            |
-| ----------------------- | ----------------------- | ----------------------- |
-| sdkerrors.APIError      | 401,402,404,422,429,500 | application/json        |
-| sdkerrors.SDKError      | 4xx-5xx                 | */*                     |
+**[*components.ProcessV3](../../models/components/processv3.md), error**
+
+### Errors
+
+| Error Type                   | Status Code                  | Content Type                 |
+| ---------------------------- | ---------------------------- | ---------------------------- |
+| errors.APIError              | 401, 402, 404, 422, 429, 500 | application/json             |
+| errors.SDKError              | 4XX, 5XX                     | \*/\*                        |
 
 ## GetProcess
 
@@ -201,81 +189,21 @@ Get details for a [process](https://hathora.dev/docs/concepts/hathora-entities#p
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
-
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.ProcessesV3.GetProcess(ctx, processID, appID)
-    if err != nil {
-        log.Fatal(err)
-    }
-    if res.ProcessV3 != nil {
-        // handle response
-    }
-}
-```
-
-### Parameters
-
-| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
-| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
-| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
-| `processID`                                              | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | cbfcddd2-0006-43ae-996c-995fff7bed2e                     |
-| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
-| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
-
-
-### Response
-
-**[*operations.GetProcessResponse](../../models/operations/getprocessresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
-
-## StopProcess
-
-Stops a [process](https://hathora.dev/docs/concepts/hathora-entities#process) immediately.
-
-### Example Usage
-
-```go
-package main
-
-import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
-	"context"
-	"log"
-)
-
-func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
     )
-    var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
 
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-    ctx := context.Background()
-    res, err := s.ProcessesV3.StopProcess(ctx, processID, appID)
+    res, err := s.ProcessesV3.GetProcess(ctx, "cbfcddd2-0006-43ae-996c-995fff7bed2e", hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"))
     if err != nil {
         log.Fatal(err)
     }
@@ -294,11 +222,120 @@ func main() {
 | `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
+### Response
+
+**[*components.ProcessV3](../../models/components/processv3.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 404, 429    | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
+
+## StopProcess
+
+Stops a [process](https://hathora.dev/docs/concepts/hathora-entities#process) immediately.
+
+### Example Usage
+
+```go
+package main
+
+import(
+	"context"
+	"hathoracloud"
+	"log"
+)
+
+func main() {
+    ctx := context.Background()
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    err := s.ProcessesV3.StopProcess(ctx, "cbfcddd2-0006-43ae-996c-995fff7bed2e", hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"))
+    if err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+### Parameters
+
+| Parameter                                                | Type                                                     | Required                                                 | Description                                              | Example                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
+| `processID`                                              | *string*                                                 | :heavy_check_mark:                                       | N/A                                                      | cbfcddd2-0006-43ae-996c-995fff7bed2e                     |
+| `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
+| `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
 ### Response
 
-**[*operations.StopProcessResponse](../../models/operations/stopprocessresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
+**error**
+
+### Errors
+
+| Error Type         | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429,500    | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+| errors.APIError    | 401, 404, 429, 500 | application/json   |
+| errors.SDKError    | 4XX, 5XX           | \*/\*              |
+
+## GetProcessMetrics
+
+GetProcessMetrics
+
+### Example Usage
+
+```go
+package main
+
+import(
+	"context"
+	"hathoracloud"
+	"hathoracloud/models/operations"
+	"log"
+)
+
+func main() {
+    ctx := context.Background()
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.ProcessesV3.GetProcessMetrics(ctx, operations.GetProcessMetricsRequest{
+        ProcessID: "cbfcddd2-0006-43ae-996c-995fff7bed2e",
+    })
+    if err != nil {
+        log.Fatal(err)
+    }
+    if res != nil {
+        // handle response
+    }
+}
+```
+
+### Parameters
+
+| Parameter                                                                                  | Type                                                                                       | Required                                                                                   | Description                                                                                |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `ctx`                                                                                      | [context.Context](https://pkg.go.dev/context#Context)                                      | :heavy_check_mark:                                                                         | The context to use for the request.                                                        |
+| `request`                                                                                  | [operations.GetProcessMetricsRequest](../../models/operations/getprocessmetricsrequest.md) | :heavy_check_mark:                                                                         | The request object to use for the request.                                                 |
+| `opts`                                                                                     | [][operations.Option](../../models/operations/option.md)                                   | :heavy_minus_sign:                                                                         | The options for this request.                                                              |
+
+### Response
+
+**[*components.ProcessMetricsData](../../models/components/processmetricsdata.md), error**
+
+### Errors
+
+| Error Type              | Status Code             | Content Type            |
+| ----------------------- | ----------------------- | ----------------------- |
+| errors.APIError         | 401, 404, 422, 429, 500 | application/json        |
+| errors.SDKError         | 4XX, 5XX                | \*/\*                   |

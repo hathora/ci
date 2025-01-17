@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type CreateProcessV2DeprecatedGlobals struct {
@@ -19,8 +18,8 @@ func (o *CreateProcessV2DeprecatedGlobals) GetAppID() *string {
 }
 
 type CreateProcessV2DeprecatedRequest struct {
-	AppID  *string       `pathParam:"style=simple,explode=false,name=appId"`
-	Region shared.Region `pathParam:"style=simple,explode=false,name=region"`
+	AppID  *string           `pathParam:"style=simple,explode=false,name=appId"`
+	Region components.Region `pathParam:"style=simple,explode=false,name=region"`
 }
 
 func (o *CreateProcessV2DeprecatedRequest) GetAppID() *string {
@@ -30,47 +29,9 @@ func (o *CreateProcessV2DeprecatedRequest) GetAppID() *string {
 	return o.AppID
 }
 
-func (o *CreateProcessV2DeprecatedRequest) GetRegion() shared.Region {
+func (o *CreateProcessV2DeprecatedRequest) GetRegion() components.Region {
 	if o == nil {
-		return shared.Region("")
+		return components.Region("")
 	}
 	return o.Region
-}
-
-type CreateProcessV2DeprecatedResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	ProcessV2   *shared.ProcessV2
-}
-
-func (o *CreateProcessV2DeprecatedResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *CreateProcessV2DeprecatedResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *CreateProcessV2DeprecatedResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *CreateProcessV2DeprecatedResponse) GetProcessV2() *shared.ProcessV2 {
-	if o == nil {
-		return nil
-	}
-	return o.ProcessV2
 }

@@ -4,26 +4,24 @@ package main
 
 import (
 	"context"
-	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/shared"
+	"hathoracloud"
 	"log"
-	"os"
 )
 
 func main() {
-	s := sdk.New(
-		sdk.WithSecurity(shared.Security{
-			HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-		}),
-		sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-	)
-	var orgID string = "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"
 	ctx := context.Background()
-	res, err := s.TokensV1.GetOrgTokens(ctx, orgID)
+
+	s := hathoracloud.New(
+		hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+		hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+		hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+	)
+
+	res, err := s.TokensV1.GetOrgTokens(ctx, "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39")
 	if err != nil {
 		log.Fatal(err)
 	}
-	if res.ListOrgTokens != nil {
+	if res != nil {
 		// handle response
 	}
 }

@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type CreateBuildDeprecatedGlobals struct {
@@ -19,8 +18,8 @@ func (o *CreateBuildDeprecatedGlobals) GetAppID() *string {
 }
 
 type CreateBuildDeprecatedRequest struct {
-	AppID             *string                  `pathParam:"style=simple,explode=false,name=appId"`
-	CreateBuildParams shared.CreateBuildParams `request:"mediaType=application/json"`
+	AppID             *string                      `pathParam:"style=simple,explode=false,name=appId"`
+	CreateBuildParams components.CreateBuildParams `request:"mediaType=application/json"`
 }
 
 func (o *CreateBuildDeprecatedRequest) GetAppID() *string {
@@ -30,47 +29,9 @@ func (o *CreateBuildDeprecatedRequest) GetAppID() *string {
 	return o.AppID
 }
 
-func (o *CreateBuildDeprecatedRequest) GetCreateBuildParams() shared.CreateBuildParams {
+func (o *CreateBuildDeprecatedRequest) GetCreateBuildParams() components.CreateBuildParams {
 	if o == nil {
-		return shared.CreateBuildParams{}
+		return components.CreateBuildParams{}
 	}
 	return o.CreateBuildParams
-}
-
-type CreateBuildDeprecatedResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	Build       *shared.Build
-}
-
-func (o *CreateBuildDeprecatedResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *CreateBuildDeprecatedResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *CreateBuildDeprecatedResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *CreateBuildDeprecatedResponse) GetBuild() *shared.Build {
-	if o == nil {
-		return nil
-	}
-	return o.Build
 }

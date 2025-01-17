@@ -7,25 +7,25 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 var (
 	containerPortShorthandRegex = regexp.MustCompile(`^(?:(?P<name>\S+)\:)?(?P<port>[0-9]+)(?:/(?P<transport>\S+))?$`)
 	nameAllowedChars            = regexp.MustCompile(`^[a-zA-Z0-9_-]+$`)
-	defaultTransportType        = shared.TransportTypeTCP
+	defaultTransportType        = components.TransportTypeTCP
 	maxPort                     = 65535
 	minPort                     = 1
 )
 
-func ParseContainerPort(s string) (*shared.ContainerPort, error) {
+func ParseContainerPort(s string) (*components.ContainerPort, error) {
 	s = strings.TrimSpace(s)
 	if s == "" {
 		return nil, fmt.Errorf("container port cannot be empty")
 	}
 
 	var port int
-	transportType := shared.TransportTypeTCP
+	transportType := components.TransportTypeTCP
 	var name string
 
 	matches := containerPortShorthandRegex.FindStringSubmatch(s)
@@ -53,9 +53,9 @@ func ParseContainerPort(s string) (*shared.ContainerPort, error) {
 			case "tcp":
 				transportType = defaultTransportType
 			case "udp":
-				transportType = shared.TransportTypeUDP
+				transportType = components.TransportTypeUDP
 			case "tls":
-				transportType = shared.TransportTypeTLS
+				transportType = components.TransportTypeTLS
 			default:
 				err = errors.Join(err, fmt.Errorf("invalid transport type: %s", candidate))
 			}
@@ -71,7 +71,7 @@ func ParseContainerPort(s string) (*shared.ContainerPort, error) {
 		return nil, err
 	}
 
-	return &shared.ContainerPort{
+	return &components.ContainerPort{
 		Port:          port,
 		TransportType: transportType,
 		Name:          name,

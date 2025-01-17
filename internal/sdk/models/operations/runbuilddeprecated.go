@@ -2,10 +2,6 @@
 
 package operations
 
-import (
-	"net/http"
-)
-
 type RunBuildDeprecatedGlobals struct {
 	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
 }
@@ -18,8 +14,9 @@ func (o *RunBuildDeprecatedGlobals) GetAppID() *string {
 }
 
 type File struct {
-	FileName string `multipartForm:"name=file"`
-	Content  []byte `multipartForm:"content"`
+	FileName string `multipartForm:"name=fileName"`
+	// This field accepts []byte data or io.Reader implementations, such as *os.File.
+	Content any `multipartForm:"content"`
 }
 
 func (o *File) GetFileName() string {
@@ -29,15 +26,15 @@ func (o *File) GetFileName() string {
 	return o.FileName
 }
 
-func (o *File) GetContent() []byte {
+func (o *File) GetContent() any {
 	if o == nil {
-		return []byte{}
+		return nil
 	}
 	return o.Content
 }
 
 type RunBuildDeprecatedRequestBody struct {
-	File File `multipartForm:"file"`
+	File File `multipartForm:"file,name=file"`
 }
 
 func (o *RunBuildDeprecatedRequestBody) GetFile() File {
@@ -72,43 +69,4 @@ func (o *RunBuildDeprecatedRequest) GetRequestBody() RunBuildDeprecatedRequestBo
 		return RunBuildDeprecatedRequestBody{}
 	}
 	return o.RequestBody
-}
-
-type RunBuildDeprecatedResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	Res *string
-}
-
-func (o *RunBuildDeprecatedResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *RunBuildDeprecatedResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *RunBuildDeprecatedResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *RunBuildDeprecatedResponse) GetRes() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Res
 }

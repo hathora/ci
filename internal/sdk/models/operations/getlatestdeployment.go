@@ -2,11 +2,6 @@
 
 package operations
 
-import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
-)
-
 type GetLatestDeploymentGlobals struct {
 	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
 }
@@ -27,43 +22,4 @@ func (o *GetLatestDeploymentRequest) GetAppID() *string {
 		return nil
 	}
 	return o.AppID
-}
-
-type GetLatestDeploymentResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	DeploymentV3 *shared.DeploymentV3
-}
-
-func (o *GetLatestDeploymentResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *GetLatestDeploymentResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *GetLatestDeploymentResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *GetLatestDeploymentResponse) GetDeploymentV3() *shared.DeploymentV3 {
-	if o == nil {
-		return nil
-	}
-	return o.DeploymentV3
 }

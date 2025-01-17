@@ -14,7 +14,7 @@ import (
 	"github.com/hathora/ci/internal/commands/altsrc"
 	"github.com/hathora/ci/internal/output"
 	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/sdk/models/components"
 	"github.com/hathora/ci/internal/setup"
 	"github.com/hathora/ci/internal/shorthand"
 	"github.com/hathora/ci/internal/workaround"
@@ -67,7 +67,7 @@ var Deployment = &cli.Command{
 					return fmt.Errorf("failed to get deployment info: %w", err)
 				}
 
-				return deployment.Output.Write(res.DeploymentV3, os.Stdout)
+				return deployment.Output.Write(res, os.Stdout)
 			},
 		},
 		{
@@ -92,7 +92,7 @@ var Deployment = &cli.Command{
 					return fmt.Errorf("failed to get the latest deployment: %w", err)
 				}
 
-				return deployment.Output.Write(res.DeploymentV3, os.Stdout)
+				return deployment.Output.Write(res, os.Stdout)
 			},
 		},
 		{
@@ -112,16 +112,16 @@ var Deployment = &cli.Command{
 				}
 				deployment.Log.Debug("getting all deployments...")
 
-				res, err := deployment.SDK.DeploymentsV3.GetDeployments(ctx, deployment.AppID)
+				res, err := deployment.SDK.DeploymentsV3.GetDeployments(ctx, deployment.AppID, nil)
 				if err != nil {
 					return fmt.Errorf("failed to get deployments: %w", err)
 				}
 
-				if len(res.DeploymentsV3Page.Deployments) == 0 {
+				if len(res.Deployments) == 0 {
 					return fmt.Errorf("no deployments found")
 				}
 
-				return deployment.Output.Write(res.DeploymentsV3Page.Deployments, os.Stdout)
+				return deployment.Output.Write(res.Deployments, os.Stdout)
 			},
 		},
 		{
@@ -139,6 +139,7 @@ var Deployment = &cli.Command{
 				additionalContainerPortsFlag,
 				envVarsFlag,
 				fromLatestFlag,
+				deploymentTagFlag,
 			),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				zap.L().Debug("creating a deployment...")
@@ -156,7 +157,7 @@ var Deployment = &cli.Command{
 						return fmt.Errorf("unable to retrieve latest deployment: %w", err)
 					}
 
-					deployment.Merge(res.DeploymentV3)
+					deployment.Merge(res)
 				}
 
 				if err := deployment.Validate(); err != nil {
@@ -165,9 +166,14 @@ var Deployment = &cli.Command{
 					return err
 				}
 
+				var deploymentTag *string
+				if deployment.DeploymentTag != "" {
+					deploymentTag = &deployment.DeploymentTag
+				}
+
 				res, err := deployment.SDK.DeploymentsV3.CreateDeployment(
 					ctx,
-					shared.DeploymentConfigV3{
+					components.DeploymentConfigV3{
 						BuildID:                  deployment.BuildID,
 						IdleTimeoutEnabled:       *deployment.IdleTimeoutEnabled,
 						RoomsPerProcess:          deployment.RoomsPerProcess,
@@ -177,6 +183,7 @@ var Deployment = &cli.Command{
 						RequestedCPU:             deployment.RequestedCPU,
 						AdditionalContainerPorts: deployment.AdditionalContainerPorts,
 						Env:                      deployment.Env,
+						DeploymentTag:            deploymentTag,
 					},
 					deployment.AppID,
 				)
@@ -184,7 +191,7 @@ var Deployment = &cli.Command{
 					return fmt.Errorf("failed to create a deployment: %w", err)
 				}
 
-				return deployment.Output.Write(res.DeploymentV3, os.Stdout)
+				return deployment.Output.Write(res, os.Stdout)
 			},
 		},
 	},
@@ -296,14 +303,24 @@ var (
 		Usage:    "whether to use settings from the latest deployment; if true other flags and config file values act as overrides",
 		Category: "Deployment:",
 	}
+
+	deploymentTagFlag = &cli.StringFlag{
+		Name: "deployment-tag",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(deploymentEnvVar("DEPLOYMENT_TAG")),
+			altsrc.ConfigFile(configFlag.Name, "deployment.deployment-tag"),
+		),
+		Usage:    "arbitrary metadata associated with a deployment",
+		Category: "Deployment:",
+	}
 )
 
-func parseContainerPorts(ports []string) ([]shared.ContainerPort, error) {
+func parseContainerPorts(ports []string) ([]components.ContainerPort, error) {
 	// this converts a string representation of the slice from a config file into a real string slice
 	if len(ports) == 1 && strings.HasPrefix(ports[0], "[") && strings.HasSuffix(ports[0], "]") {
 		ports = strings.Split(strings.TrimPrefix(strings.TrimSuffix(ports[0], "]"), "["), " ")
 	}
-	output := make([]shared.ContainerPort, 0, len(ports))
+	output := make([]components.ContainerPort, 0, len(ports))
 	for _, port := range ports {
 		p, err := shorthand.ParseContainerPort(port)
 		if err != nil {
@@ -314,7 +331,7 @@ func parseContainerPorts(ports []string) ([]shared.ContainerPort, error) {
 	return output, nil
 }
 
-func parseEnvVars(envVars []string) ([]shared.DeploymentConfigV3Env, error) {
+func parseEnvVars(envVars []string) ([]components.DeploymentConfigV3Env, error) {
 	// Envs from a Config File are parsed from urfave/cli as a single-element
 	// string slice of all the values like:
 	// []string{`[KEY1=VAL1 KEY2=VAL2 KEY3="QUOTED VAL3"]`}
@@ -327,7 +344,7 @@ func parseEnvVars(envVars []string) ([]shared.DeploymentConfigV3Env, error) {
 		}
 	}
 	envVars = fixOverZealousCommaSplitting(envVars)
-	output := make([]shared.DeploymentConfigV3Env, 0, len(envVars))
+	output := make([]components.DeploymentConfigV3Env, 0, len(envVars))
 	for _, envVar := range envVars {
 		env, err := shorthand.ParseDeploymentEnvVar(envVar)
 		if err != nil {
@@ -366,7 +383,7 @@ var (
 
 type DeploymentConfig struct {
 	*GlobalConfig
-	SDK    *sdk.SDK
+	SDK    *sdk.HathoraCloud
 	Output output.FormatWriter
 }
 
@@ -380,7 +397,7 @@ func (c *DeploymentConfig) Load(cmd *cli.Command) error {
 	c.GlobalConfig = global
 
 	c.SDK = setup.SDK(c.Token, c.BaseURL, c.Verbosity)
-	var deployment shared.DeploymentV3
+	var deployment components.DeploymentV3
 	output, err := OutputFormatterFor(cmd, deployment)
 	if err != nil {
 		return err
@@ -436,12 +453,13 @@ type CreateDeploymentConfig struct {
 	BuildID                  string
 	IdleTimeoutEnabled       *bool
 	RoomsPerProcess          int
-	TransportType            shared.TransportType
+	TransportType            components.TransportType
 	ContainerPort            int
 	RequestedMemoryMB        float64
 	RequestedCPU             float64
-	AdditionalContainerPorts []shared.ContainerPort
-	Env                      []shared.DeploymentConfigV3Env
+	AdditionalContainerPorts []components.ContainerPort
+	Env                      []components.DeploymentConfigV3Env
+	DeploymentTag            string
 }
 
 var _ LoadableConfig = (*CreateDeploymentConfig)(nil)
@@ -468,10 +486,11 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 	}
 
 	c.RoomsPerProcess = int(cmd.Int(roomsPerProcessFlag.Name))
-	c.TransportType = shared.TransportType(cmd.String(transportTypeFlag.Name))
+	c.TransportType = components.TransportType(cmd.String(transportTypeFlag.Name))
 	c.ContainerPort = int(cmd.Int(containerPortFlag.Name))
 	c.RequestedMemoryMB = cmd.Float(requestedMemoryFlag.Name)
 	c.RequestedCPU = cmd.Float(requestedCPUFlag.Name)
+	c.DeploymentTag = cmd.String(deploymentTagFlag.Name)
 
 	addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
 	parsedAddlPorts, err := parseContainerPorts(addlPorts)
@@ -490,7 +509,7 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 	return nil
 }
 
-func (c *CreateDeploymentConfig) Merge(latest *shared.DeploymentV3) {
+func (c *CreateDeploymentConfig) Merge(latest *components.DeploymentV3) {
 	if latest == nil {
 		return
 	}

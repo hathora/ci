@@ -2,46 +2,24 @@
 
 package operations
 
-import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
-)
-
-type GetUpcomingInvoiceItemsResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	InvoiceItemPage *shared.InvoiceItemPage
+type GetUpcomingInvoiceItemsGlobals struct {
+	OrgID *string `queryParam:"style=form,explode=true,name=orgId"`
 }
 
-func (o *GetUpcomingInvoiceItemsResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *GetUpcomingInvoiceItemsResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *GetUpcomingInvoiceItemsResponse) GetRawResponse() *http.Response {
+func (o *GetUpcomingInvoiceItemsGlobals) GetOrgID() *string {
 	if o == nil {
 		return nil
 	}
-	return o.RawResponse
+	return o.OrgID
 }
 
-func (o *GetUpcomingInvoiceItemsResponse) GetInvoiceItemPage() *shared.InvoiceItemPage {
+type GetUpcomingInvoiceItemsRequest struct {
+	OrgID *string `queryParam:"style=form,explode=true,name=orgId"`
+}
+
+func (o *GetUpcomingInvoiceItemsRequest) GetOrgID() *string {
 	if o == nil {
 		return nil
 	}
-	return o.InvoiceItemPage
+	return o.OrgID
 }

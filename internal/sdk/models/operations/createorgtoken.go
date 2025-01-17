@@ -3,13 +3,12 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type CreateOrgTokenRequest struct {
-	OrgID          string                `pathParam:"style=simple,explode=false,name=orgId"`
-	CreateOrgToken shared.CreateOrgToken `request:"mediaType=application/json"`
+	OrgID          string                    `pathParam:"style=simple,explode=false,name=orgId"`
+	CreateOrgToken components.CreateOrgToken `request:"mediaType=application/json"`
 }
 
 func (o *CreateOrgTokenRequest) GetOrgID() string {
@@ -19,47 +18,9 @@ func (o *CreateOrgTokenRequest) GetOrgID() string {
 	return o.OrgID
 }
 
-func (o *CreateOrgTokenRequest) GetCreateOrgToken() shared.CreateOrgToken {
+func (o *CreateOrgTokenRequest) GetCreateOrgToken() components.CreateOrgToken {
 	if o == nil {
-		return shared.CreateOrgToken{}
+		return components.CreateOrgToken{}
 	}
 	return o.CreateOrgToken
-}
-
-type CreateOrgTokenResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse     *http.Response
-	CreatedOrgToken *shared.CreatedOrgToken
-}
-
-func (o *CreateOrgTokenResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *CreateOrgTokenResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *CreateOrgTokenResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *CreateOrgTokenResponse) GetCreatedOrgToken() *shared.CreatedOrgToken {
-	if o == nil {
-		return nil
-	}
-	return o.CreatedOrgToken
 }

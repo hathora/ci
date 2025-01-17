@@ -4,8 +4,7 @@ package operations
 
 import (
 	"github.com/hathora/ci/internal/sdk/internal/utils"
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type CreatePrivateLobbyDeprecatedGlobals struct {
@@ -31,9 +30,9 @@ func (o *CreatePrivateLobbyDeprecatedSecurity) GetPlayerAuth() string {
 }
 
 type CreatePrivateLobbyDeprecatedRequest struct {
-	AppID  *string        `pathParam:"style=simple,explode=false,name=appId"`
-	Region *shared.Region `queryParam:"style=form,explode=true,name=region"`
-	Local  *bool          `default:"false" queryParam:"style=form,explode=true,name=local"`
+	AppID  *string            `pathParam:"style=simple,explode=false,name=appId"`
+	Region *components.Region `queryParam:"style=form,explode=true,name=region"`
+	Local  *bool              `default:"false" queryParam:"style=form,explode=true,name=local"`
 }
 
 func (c CreatePrivateLobbyDeprecatedRequest) MarshalJSON() ([]byte, error) {
@@ -54,7 +53,7 @@ func (o *CreatePrivateLobbyDeprecatedRequest) GetAppID() *string {
 	return o.AppID
 }
 
-func (o *CreatePrivateLobbyDeprecatedRequest) GetRegion() *shared.Region {
+func (o *CreatePrivateLobbyDeprecatedRequest) GetRegion() *components.Region {
 	if o == nil {
 		return nil
 	}
@@ -66,43 +65,4 @@ func (o *CreatePrivateLobbyDeprecatedRequest) GetLocal() *bool {
 		return nil
 	}
 	return o.Local
-}
-
-type CreatePrivateLobbyDeprecatedResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	RoomID *string
-}
-
-func (o *CreatePrivateLobbyDeprecatedResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *CreatePrivateLobbyDeprecatedResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *CreatePrivateLobbyDeprecatedResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *CreatePrivateLobbyDeprecatedResponse) GetRoomID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.RoomID
 }

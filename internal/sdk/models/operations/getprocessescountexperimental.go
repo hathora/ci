@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type GetProcessesCountExperimentalGlobals struct {
@@ -19,9 +18,9 @@ func (o *GetProcessesCountExperimentalGlobals) GetAppID() *string {
 }
 
 type GetProcessesCountExperimentalRequest struct {
-	AppID  *string                `pathParam:"style=simple,explode=false,name=appId"`
-	Status []shared.ProcessStatus `queryParam:"style=form,explode=true,name=status"`
-	Region []shared.Region        `queryParam:"style=form,explode=true,name=region"`
+	AppID  *string                    `pathParam:"style=simple,explode=false,name=appId"`
+	Status []components.ProcessStatus `queryParam:"style=form,explode=true,name=status"`
+	Region []components.Region        `queryParam:"style=form,explode=true,name=region"`
 }
 
 func (o *GetProcessesCountExperimentalRequest) GetAppID() *string {
@@ -31,14 +30,14 @@ func (o *GetProcessesCountExperimentalRequest) GetAppID() *string {
 	return o.AppID
 }
 
-func (o *GetProcessesCountExperimentalRequest) GetStatus() []shared.ProcessStatus {
+func (o *GetProcessesCountExperimentalRequest) GetStatus() []components.ProcessStatus {
 	if o == nil {
 		return nil
 	}
 	return o.Status
 }
 
-func (o *GetProcessesCountExperimentalRequest) GetRegion() []shared.Region {
+func (o *GetProcessesCountExperimentalRequest) GetRegion() []components.Region {
 	if o == nil {
 		return nil
 	}
@@ -55,43 +54,4 @@ func (o *GetProcessesCountExperimentalResponseBody) GetCount() float64 {
 		return 0.0
 	}
 	return o.Count
-}
-
-type GetProcessesCountExperimentalResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	Object *GetProcessesCountExperimentalResponseBody
-}
-
-func (o *GetProcessesCountExperimentalResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *GetProcessesCountExperimentalResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *GetProcessesCountExperimentalResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *GetProcessesCountExperimentalResponse) GetObject() *GetProcessesCountExperimentalResponseBody {
-	if o == nil {
-		return nil
-	}
-	return o.Object
 }

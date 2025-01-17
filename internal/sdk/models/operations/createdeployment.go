@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type CreateDeploymentGlobals struct {
@@ -19,8 +18,8 @@ func (o *CreateDeploymentGlobals) GetAppID() *string {
 }
 
 type CreateDeploymentRequest struct {
-	AppID              *string                   `pathParam:"style=simple,explode=false,name=appId"`
-	DeploymentConfigV3 shared.DeploymentConfigV3 `request:"mediaType=application/json"`
+	AppID              *string                       `pathParam:"style=simple,explode=false,name=appId"`
+	DeploymentConfigV3 components.DeploymentConfigV3 `request:"mediaType=application/json"`
 }
 
 func (o *CreateDeploymentRequest) GetAppID() *string {
@@ -30,47 +29,9 @@ func (o *CreateDeploymentRequest) GetAppID() *string {
 	return o.AppID
 }
 
-func (o *CreateDeploymentRequest) GetDeploymentConfigV3() shared.DeploymentConfigV3 {
+func (o *CreateDeploymentRequest) GetDeploymentConfigV3() components.DeploymentConfigV3 {
 	if o == nil {
-		return shared.DeploymentConfigV3{}
+		return components.DeploymentConfigV3{}
 	}
 	return o.DeploymentConfigV3
-}
-
-type CreateDeploymentResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse  *http.Response
-	DeploymentV3 *shared.DeploymentV3
-}
-
-func (o *CreateDeploymentResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *CreateDeploymentResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *CreateDeploymentResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *CreateDeploymentResponse) GetDeploymentV3() *shared.DeploymentV3 {
-	if o == nil {
-		return nil
-	}
-	return o.DeploymentV3
 }

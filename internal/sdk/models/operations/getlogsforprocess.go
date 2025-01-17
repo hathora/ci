@@ -4,8 +4,6 @@ package operations
 
 import (
 	"github.com/hathora/ci/internal/sdk/internal/utils"
-	"io"
-	"net/http"
 )
 
 type GetLogsForProcessGlobals struct {
@@ -63,44 +61,4 @@ func (o *GetLogsForProcessRequest) GetTailLines() *int {
 		return nil
 	}
 	return o.TailLines
-}
-
-type GetLogsForProcessResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	// The Close method must be called on this field, even if it is not used, to prevent resource leaks.
-	ResponseStream io.ReadCloser
-}
-
-func (o *GetLogsForProcessResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *GetLogsForProcessResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *GetLogsForProcessResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *GetLogsForProcessResponse) GetResponseStream() io.ReadCloser {
-	if o == nil {
-		return nil
-	}
-	return o.ResponseStream
 }

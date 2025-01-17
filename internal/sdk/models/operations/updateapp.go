@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type UpdateAppGlobals struct {
@@ -19,8 +18,8 @@ func (o *UpdateAppGlobals) GetAppID() *string {
 }
 
 type UpdateAppRequest struct {
-	AppID     *string          `pathParam:"style=simple,explode=false,name=appId"`
-	AppConfig shared.AppConfig `request:"mediaType=application/json"`
+	AppID     *string              `pathParam:"style=simple,explode=false,name=appId"`
+	AppConfig components.AppConfig `request:"mediaType=application/json"`
 }
 
 func (o *UpdateAppRequest) GetAppID() *string {
@@ -30,48 +29,9 @@ func (o *UpdateAppRequest) GetAppID() *string {
 	return o.AppID
 }
 
-func (o *UpdateAppRequest) GetAppConfig() shared.AppConfig {
+func (o *UpdateAppRequest) GetAppConfig() components.AppConfig {
 	if o == nil {
-		return shared.AppConfig{}
+		return components.AppConfig{}
 	}
 	return o.AppConfig
-}
-
-type UpdateAppResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	Application *shared.Application
-}
-
-func (o *UpdateAppResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *UpdateAppResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *UpdateAppResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *UpdateAppResponse) GetApplication() *shared.Application {
-	if o == nil {
-		return nil
-	}
-	return o.Application
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/sdk/models/components"
 	"github.com/hathora/ci/internal/shorthand"
 )
 
@@ -16,14 +16,14 @@ func Test_ContainerPortShorthand(t *testing.T) {
 	tests := []struct {
 		name      string
 		input     string
-		expect    *shared.ContainerPort
+		expect    *components.ContainerPort
 		expectErr bool
 	}{
 		{
 			name:  "port only",
 			input: "8080",
-			expect: &shared.ContainerPort{
-				TransportType: shared.TransportTypeTCP,
+			expect: &components.ContainerPort{
+				TransportType: components.TransportTypeTCP,
 				Port:          8080,
 				Name:          "",
 			},
@@ -31,8 +31,8 @@ func Test_ContainerPortShorthand(t *testing.T) {
 		{
 			name:  "port with space",
 			input: " 8080\t",
-			expect: &shared.ContainerPort{
-				TransportType: shared.TransportTypeTCP,
+			expect: &components.ContainerPort{
+				TransportType: components.TransportTypeTCP,
 				Port:          8080,
 				Name:          "",
 			},
@@ -40,8 +40,8 @@ func Test_ContainerPortShorthand(t *testing.T) {
 		{
 			name:  "port and transport",
 			input: "8080/udp",
-			expect: &shared.ContainerPort{
-				TransportType: shared.TransportTypeUDP,
+			expect: &components.ContainerPort{
+				TransportType: components.TransportTypeUDP,
 				Port:          8080,
 				Name:          "",
 			},
@@ -49,8 +49,8 @@ func Test_ContainerPortShorthand(t *testing.T) {
 		{
 			name:  "port and transport with space",
 			input: "\t8080/udp",
-			expect: &shared.ContainerPort{
-				TransportType: shared.TransportTypeUDP,
+			expect: &components.ContainerPort{
+				TransportType: components.TransportTypeUDP,
 				Port:          8080,
 				Name:          "",
 			},
@@ -58,8 +58,8 @@ func Test_ContainerPortShorthand(t *testing.T) {
 		{
 			name:  "port, transport, and name",
 			input: "my-port:8080/udp",
-			expect: &shared.ContainerPort{
-				TransportType: shared.TransportTypeUDP,
+			expect: &components.ContainerPort{
+				TransportType: components.TransportTypeUDP,
 				Port:          8080,
 				Name:          "my-port",
 			},
@@ -67,8 +67,8 @@ func Test_ContainerPortShorthand(t *testing.T) {
 		{
 			name:  "port, transport, and name with space",
 			input: "my-port:5555/tls\t",
-			expect: &shared.ContainerPort{
-				TransportType: shared.TransportTypeTLS,
+			expect: &components.ContainerPort{
+				TransportType: components.TransportTypeTLS,
 				Port:          5555,
 				Name:          "my-port",
 			},
@@ -76,8 +76,8 @@ func Test_ContainerPortShorthand(t *testing.T) {
 		{
 			name:  "port and name",
 			input: "my-port:8080",
-			expect: &shared.ContainerPort{
-				TransportType: shared.TransportTypeTCP,
+			expect: &components.ContainerPort{
+				TransportType: components.TransportTypeTCP,
 				Port:          8080,
 				Name:          "my-port",
 			},

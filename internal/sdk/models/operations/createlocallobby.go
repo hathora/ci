@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type CreateLocalLobbyGlobals struct {
@@ -31,8 +30,8 @@ func (o *CreateLocalLobbySecurity) GetPlayerAuth() string {
 
 type CreateLocalLobbyRequestBody struct {
 	// User input to initialize the game state. Object must be smaller than 64KB.
-	InitialConfig any           `json:"initialConfig"`
-	Region        shared.Region `json:"region"`
+	InitialConfig any               `json:"initialConfig"`
+	Region        components.Region `json:"region"`
 }
 
 func (o *CreateLocalLobbyRequestBody) GetInitialConfig() any {
@@ -42,9 +41,9 @@ func (o *CreateLocalLobbyRequestBody) GetInitialConfig() any {
 	return o.InitialConfig
 }
 
-func (o *CreateLocalLobbyRequestBody) GetRegion() shared.Region {
+func (o *CreateLocalLobbyRequestBody) GetRegion() components.Region {
 	if o == nil {
-		return shared.Region("")
+		return components.Region("")
 	}
 	return o.Region
 }
@@ -74,42 +73,4 @@ func (o *CreateLocalLobbyRequest) GetRequestBody() CreateLocalLobbyRequestBody {
 		return CreateLocalLobbyRequestBody{}
 	}
 	return o.RequestBody
-}
-
-type CreateLocalLobbyResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	Lobby       *shared.Lobby
-}
-
-func (o *CreateLocalLobbyResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *CreateLocalLobbyResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *CreateLocalLobbyResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *CreateLocalLobbyResponse) GetLobby() *shared.Lobby {
-	if o == nil {
-		return nil
-	}
-	return o.Lobby
 }

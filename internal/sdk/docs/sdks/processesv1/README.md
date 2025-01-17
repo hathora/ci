@@ -3,13 +3,13 @@
 
 ## Overview
 
-Deprecated. Use [ProcessesV2](https://hathora.dev/api#tag/ProcessesV2).
+Deprecated. Use [ProcessesV3](https://hathora.dev/api#tag/ProcessesV3).
 
 ### Available Operations
 
-* [~~GetRunningProcesses~~](#getrunningprocesses) - Retrieve 10 most recently started [process](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `region`. :warning: **Deprecated**
-* [~~GetStoppedProcesses~~](#getstoppedprocesses) - Retrieve 10 most recently stopped [process](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `region`. :warning: **Deprecated**
-* [~~GetProcessInfoDeprecated~~](#getprocessinfodeprecated) - Get details for a [process](https://hathora.dev/docs/concepts/hathora-entities#process). :warning: **Deprecated**
+* [~~GetRunningProcesses~~](#getrunningprocesses) - GetRunningProcesses :warning: **Deprecated**
+* [~~GetStoppedProcesses~~](#getstoppedprocesses) - GetStoppedProcesses :warning: **Deprecated**
+* [~~GetProcessInfoDeprecated~~](#getprocessinfodeprecated) - GetProcessInfoDeprecated :warning: **Deprecated**
 
 ## ~~GetRunningProcesses~~
 
@@ -23,29 +23,25 @@ Retrieve 10 most recently started [process](https://hathora.dev/docs/concepts/ha
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
-    var region *shared.Region = shared.RegionTokyo.ToPointer()
     ctx := context.Background()
-    res, err := s.ProcessesV1.GetRunningProcesses(ctx, appID, region)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.ProcessesV1.GetRunningProcesses(ctx, hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"), nil)
     if err != nil {
         log.Fatal(err)
     }
-    if res.ProcessWithRooms != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -57,17 +53,19 @@ func main() {
 | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
 | `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
 | `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
-| `region`                                                 | [*shared.Region](../../models/shared/region.md)          | :heavy_minus_sign:                                       | N/A                                                      |                                                          |
+| `region`                                                 | [*components.Region](../../models/components/region.md)  | :heavy_minus_sign:                                       | N/A                                                      |                                                          |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
-
 
 ### Response
 
-**[*operations.GetRunningProcessesResponse](../../models/operations/getrunningprocessesresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
+**[[]components.ProcessWithRooms](../../.md), error**
+
+### Errors
+
+| Error Type         | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+| errors.APIError    | 401, 404, 422, 429 | application/json   |
+| errors.SDKError    | 4XX, 5XX           | \*/\*              |
 
 ## ~~GetStoppedProcesses~~
 
@@ -81,29 +79,25 @@ Retrieve 10 most recently stopped [process](https://hathora.dev/docs/concepts/ha
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
-
-    var region *shared.Region = shared.RegionSydney.ToPointer()
     ctx := context.Background()
-    res, err := s.ProcessesV1.GetStoppedProcesses(ctx, appID, region)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.ProcessesV1.GetStoppedProcesses(ctx, hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"), nil)
     if err != nil {
         log.Fatal(err)
     }
-    if res.Processes != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -115,17 +109,19 @@ func main() {
 | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
 | `ctx`                                                    | [context.Context](https://pkg.go.dev/context#Context)    | :heavy_check_mark:                                       | The context to use for the request.                      |                                                          |
 | `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
-| `region`                                                 | [*shared.Region](../../models/shared/region.md)          | :heavy_minus_sign:                                       | N/A                                                      |                                                          |
+| `region`                                                 | [*components.Region](../../models/components/region.md)  | :heavy_minus_sign:                                       | N/A                                                      |                                                          |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
-
 
 ### Response
 
-**[*operations.GetStoppedProcessesResponse](../../models/operations/getstoppedprocessesresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
+**[[]components.Process](../../.md), error**
+
+### Errors
+
+| Error Type         | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+| errors.APIError    | 401, 404, 422, 429 | application/json   |
+| errors.SDKError    | 4XX, 5XX           | \*/\*              |
 
 ## ~~GetProcessInfoDeprecated~~
 
@@ -139,29 +135,25 @@ Get details for a [process](https://hathora.dev/docs/concepts/hathora-entities#p
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"os"
-	"github.com/hathora/ci/internal/sdk"
 	"context"
+	"hathoracloud"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithSecurity(shared.Security{
-            HathoraDevToken: sdk.String(os.Getenv("HATHORA_DEV_TOKEN")),
-        }),
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    var processID string = "cbfcddd2-0006-43ae-996c-995fff7bed2e"
-
-    var appID *string = sdk.String("app-af469a92-5b45-4565-b3c4-b79878de67d2")
     ctx := context.Background()
-    res, err := s.ProcessesV1.GetProcessInfoDeprecated(ctx, processID, appID)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithSecurity("<YOUR_BEARER_TOKEN_HERE>"),
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.ProcessesV1.GetProcessInfoDeprecated(ctx, "cbfcddd2-0006-43ae-996c-995fff7bed2e", hathoracloud.String("app-af469a92-5b45-4565-b3c4-b79878de67d2"))
     if err != nil {
         log.Fatal(err)
     }
-    if res.Process != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -176,11 +168,13 @@ func main() {
 | `appID`                                                  | **string*                                                | :heavy_minus_sign:                                       | N/A                                                      | app-af469a92-5b45-4565-b3c4-b79878de67d2                 |
 | `opts`                                                   | [][operations.Option](../../models/operations/option.md) | :heavy_minus_sign:                                       | The options for this request.                            |                                                          |
 
-
 ### Response
 
-**[*operations.GetProcessInfoDeprecatedResponse](../../models/operations/getprocessinfodeprecatedresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
+**[*components.Process](../../models/components/process.md), error**
+
+### Errors
+
+| Error Type         | Status Code        | Content Type       |
 | ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,404,429,500    | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+| errors.APIError    | 401, 404, 429, 500 | application/json   |
+| errors.SDKError    | 4XX, 5XX           | \*/\*              |

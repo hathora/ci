@@ -2,45 +2,24 @@
 
 package operations
 
-import (
-	"net/http"
-)
-
-type GetBalanceResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	Number *float64
+type GetBalanceGlobals struct {
+	OrgID *string `queryParam:"style=form,explode=true,name=orgId"`
 }
 
-func (o *GetBalanceResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *GetBalanceResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *GetBalanceResponse) GetRawResponse() *http.Response {
+func (o *GetBalanceGlobals) GetOrgID() *string {
 	if o == nil {
 		return nil
 	}
-	return o.RawResponse
+	return o.OrgID
 }
 
-func (o *GetBalanceResponse) GetNumber() *float64 {
+type GetBalanceRequest struct {
+	OrgID *string `queryParam:"style=form,explode=true,name=orgId"`
+}
+
+func (o *GetBalanceRequest) GetOrgID() *string {
 	if o == nil {
 		return nil
 	}
-	return o.Number
+	return o.OrgID
 }

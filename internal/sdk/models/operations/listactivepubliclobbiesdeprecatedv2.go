@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type ListActivePublicLobbiesDeprecatedV2Globals struct {
@@ -21,7 +20,7 @@ func (o *ListActivePublicLobbiesDeprecatedV2Globals) GetAppID() *string {
 type ListActivePublicLobbiesDeprecatedV2Request struct {
 	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
 	// Region to filter by. If omitted, active public lobbies in all regions will be returned.
-	Region *shared.Region `queryParam:"style=form,explode=true,name=region"`
+	Region *components.Region `queryParam:"style=form,explode=true,name=region"`
 }
 
 func (o *ListActivePublicLobbiesDeprecatedV2Request) GetAppID() *string {
@@ -31,48 +30,9 @@ func (o *ListActivePublicLobbiesDeprecatedV2Request) GetAppID() *string {
 	return o.AppID
 }
 
-func (o *ListActivePublicLobbiesDeprecatedV2Request) GetRegion() *shared.Region {
+func (o *ListActivePublicLobbiesDeprecatedV2Request) GetRegion() *components.Region {
 	if o == nil {
 		return nil
 	}
 	return o.Region
-}
-
-type ListActivePublicLobbiesDeprecatedV2Response struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	Lobbies []shared.Lobby
-}
-
-func (o *ListActivePublicLobbiesDeprecatedV2Response) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *ListActivePublicLobbiesDeprecatedV2Response) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *ListActivePublicLobbiesDeprecatedV2Response) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *ListActivePublicLobbiesDeprecatedV2Response) GetLobbies() []shared.Lobby {
-	if o == nil {
-		return nil
-	}
-	return o.Lobbies
 }

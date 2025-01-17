@@ -54,7 +54,7 @@ var Log = &cli.Command{
 			return fmt.Errorf("failed to get logs: %w", err)
 		}
 
-		err = output.StreamOutput(res.ResponseStream, os.Stdout)
+		err = output.StreamOutput(res, os.Stdout)
 		if err != nil {
 			zap.L().Error("failed to stream output to console", zap.Error(err))
 		}
@@ -109,7 +109,7 @@ var (
 
 type LogConfig struct {
 	*GlobalConfig
-	SDK *sdk.SDK
+	SDK *sdk.HathoraCloud
 }
 
 var _ LoadableConfig = (*LogConfig)(nil)

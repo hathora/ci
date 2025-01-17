@@ -2,11 +2,6 @@
 
 package operations
 
-import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
-)
-
 type GetRoomInfoGlobals struct {
 	AppID *string `pathParam:"style=simple,explode=false,name=appId"`
 }
@@ -35,43 +30,4 @@ func (o *GetRoomInfoRequest) GetRoomID() string {
 		return ""
 	}
 	return o.RoomID
-}
-
-type GetRoomInfoResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	Room *shared.Room
-}
-
-func (o *GetRoomInfoResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *GetRoomInfoResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *GetRoomInfoResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *GetRoomInfoResponse) GetRoom() *shared.Room {
-	if o == nil {
-		return nil
-	}
-	return o.Room
 }

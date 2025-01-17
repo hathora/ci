@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type GetRunningProcessesGlobals struct {
@@ -19,8 +18,8 @@ func (o *GetRunningProcessesGlobals) GetAppID() *string {
 }
 
 type GetRunningProcessesRequest struct {
-	AppID  *string        `pathParam:"style=simple,explode=false,name=appId"`
-	Region *shared.Region `queryParam:"style=form,explode=true,name=region"`
+	AppID  *string            `pathParam:"style=simple,explode=false,name=appId"`
+	Region *components.Region `queryParam:"style=form,explode=true,name=region"`
 }
 
 func (o *GetRunningProcessesRequest) GetAppID() *string {
@@ -30,48 +29,9 @@ func (o *GetRunningProcessesRequest) GetAppID() *string {
 	return o.AppID
 }
 
-func (o *GetRunningProcessesRequest) GetRegion() *shared.Region {
+func (o *GetRunningProcessesRequest) GetRegion() *components.Region {
 	if o == nil {
 		return nil
 	}
 	return o.Region
-}
-
-type GetRunningProcessesResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	ProcessWithRooms []shared.ProcessWithRooms
-}
-
-func (o *GetRunningProcessesResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *GetRunningProcessesResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *GetRunningProcessesResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *GetRunningProcessesResponse) GetProcessWithRooms() []shared.ProcessWithRooms {
-	if o == nil {
-		return nil
-	}
-	return o.ProcessWithRooms
 }

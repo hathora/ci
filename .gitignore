@@ -43,3 +43,6 @@
 **/tmp/
 
 **/.env*
+
+## MacOS artifacts
+.DS_Store

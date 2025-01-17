@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type CreateLobbyDeprecatedGlobals struct {
@@ -30,9 +29,9 @@ func (o *CreateLobbyDeprecatedSecurity) GetPlayerAuth() string {
 }
 
 type CreateLobbyDeprecatedRequest struct {
-	AppID             *string                  `pathParam:"style=simple,explode=false,name=appId"`
-	RoomID            *string                  `queryParam:"style=form,explode=true,name=roomId"`
-	CreateLobbyParams shared.CreateLobbyParams `request:"mediaType=application/json"`
+	AppID             *string                      `pathParam:"style=simple,explode=false,name=appId"`
+	RoomID            *string                      `queryParam:"style=form,explode=true,name=roomId"`
+	CreateLobbyParams components.CreateLobbyParams `request:"mediaType=application/json"`
 }
 
 func (o *CreateLobbyDeprecatedRequest) GetAppID() *string {
@@ -49,47 +48,9 @@ func (o *CreateLobbyDeprecatedRequest) GetRoomID() *string {
 	return o.RoomID
 }
 
-func (o *CreateLobbyDeprecatedRequest) GetCreateLobbyParams() shared.CreateLobbyParams {
+func (o *CreateLobbyDeprecatedRequest) GetCreateLobbyParams() components.CreateLobbyParams {
 	if o == nil {
-		return shared.CreateLobbyParams{}
+		return components.CreateLobbyParams{}
 	}
 	return o.CreateLobbyParams
-}
-
-type CreateLobbyDeprecatedResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	Lobby       *shared.Lobby
-}
-
-func (o *CreateLobbyDeprecatedResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *CreateLobbyDeprecatedResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *CreateLobbyDeprecatedResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *CreateLobbyDeprecatedResponse) GetLobby() *shared.Lobby {
-	if o == nil {
-		return nil
-	}
-	return o.Lobby
 }

@@ -3,8 +3,7 @@
 package operations
 
 import (
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type CreateDeploymentV1DeprecatedGlobals struct {
@@ -19,9 +18,9 @@ func (o *CreateDeploymentV1DeprecatedGlobals) GetAppID() *string {
 }
 
 type CreateDeploymentV1DeprecatedRequest struct {
-	AppID            *string                 `pathParam:"style=simple,explode=false,name=appId"`
-	BuildID          int                     `pathParam:"style=simple,explode=false,name=buildId"`
-	DeploymentConfig shared.DeploymentConfig `request:"mediaType=application/json"`
+	AppID            *string                     `pathParam:"style=simple,explode=false,name=appId"`
+	BuildID          int                         `pathParam:"style=simple,explode=false,name=buildId"`
+	DeploymentConfig components.DeploymentConfig `request:"mediaType=application/json"`
 }
 
 func (o *CreateDeploymentV1DeprecatedRequest) GetAppID() *string {
@@ -38,47 +37,9 @@ func (o *CreateDeploymentV1DeprecatedRequest) GetBuildID() int {
 	return o.BuildID
 }
 
-func (o *CreateDeploymentV1DeprecatedRequest) GetDeploymentConfig() shared.DeploymentConfig {
+func (o *CreateDeploymentV1DeprecatedRequest) GetDeploymentConfig() components.DeploymentConfig {
 	if o == nil {
-		return shared.DeploymentConfig{}
+		return components.DeploymentConfig{}
 	}
 	return o.DeploymentConfig
-}
-
-type CreateDeploymentV1DeprecatedResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse  *http.Response
-	DeploymentV1 *shared.DeploymentV1
-}
-
-func (o *CreateDeploymentV1DeprecatedResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *CreateDeploymentV1DeprecatedResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *CreateDeploymentV1DeprecatedResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *CreateDeploymentV1DeprecatedResponse) GetDeploymentV1() *shared.DeploymentV1 {
-	if o == nil {
-		return nil
-	}
-	return o.DeploymentV1
 }

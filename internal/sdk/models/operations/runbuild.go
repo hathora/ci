@@ -2,10 +2,16 @@
 
 package operations
 
-import (
-	"io"
-	"net/http"
-)
+type RunBuildGlobals struct {
+	OrgID *string `queryParam:"style=form,explode=true,name=orgId"`
+}
+
+func (o *RunBuildGlobals) GetOrgID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.OrgID
+}
 
 type RunBuildRequest struct {
 	BuildID string  `pathParam:"style=simple,explode=false,name=buildId"`
@@ -24,44 +30,4 @@ func (o *RunBuildRequest) GetOrgID() *string {
 		return nil
 	}
 	return o.OrgID
-}
-
-type RunBuildResponse struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	// The Close method must be called on this field, even if it is not used, to prevent resource leaks.
-	ResponseStream io.ReadCloser
-}
-
-func (o *RunBuildResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *RunBuildResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *RunBuildResponse) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *RunBuildResponse) GetResponseStream() io.ReadCloser {
-	if o == nil {
-		return nil
-	}
-	return o.ResponseStream
 }

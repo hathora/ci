@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/sdk/models/components"
 	"github.com/hathora/ci/internal/shorthand"
 )
 
@@ -14,13 +14,13 @@ func Test_DeploymentEnvVarShorthand(t *testing.T) {
 	tests := []struct {
 		name      string
 		input     string
-		expect    *shared.DeploymentConfigV3Env
+		expect    *components.DeploymentConfigV3Env
 		expectErr bool
 	}{
 		{
 			name:  "name and value",
 			input: "NAME=VALUE",
-			expect: &shared.DeploymentConfigV3Env{
+			expect: &components.DeploymentConfigV3Env{
 				Name:  "NAME",
 				Value: "VALUE",
 			},
@@ -28,7 +28,7 @@ func Test_DeploymentEnvVarShorthand(t *testing.T) {
 		{
 			name:  "name and value with spaces",
 			input: "NAME = VALUE ",
-			expect: &shared.DeploymentConfigV3Env{
+			expect: &components.DeploymentConfigV3Env{
 				Name:  "NAME",
 				Value: "VALUE",
 			},
@@ -46,7 +46,7 @@ func Test_DeploymentEnvVarShorthand(t *testing.T) {
 		{
 			name:  "nested flag",
 			input: `KEY=-SomeFlag="With Spaces,And Commas"`,
-			expect: &shared.DeploymentConfigV3Env{
+			expect: &components.DeploymentConfigV3Env{
 				Name:  "KEY",
 				Value: `-SomeFlag="With Spaces,And Commas"`,
 			},

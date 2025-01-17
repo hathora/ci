@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli/v3"
 	"go.uber.org/zap"
 
-	"github.com/hathora/ci/internal/sdk/models/shared"
+	"github.com/hathora/ci/internal/sdk/models/components"
 	"github.com/hathora/ci/internal/shorthand"
 )
 
@@ -30,6 +30,7 @@ var Deploy = &cli.Command{
 		additionalContainerPortsFlag,
 		envVarsFlag,
 		idleTimeoutFlag,
+		deploymentTagFlag,
 	),
 	UsageText: `hathora deploy [options]`,
 	Action: func(ctx context.Context, cmd *cli.Command) error {
@@ -47,7 +48,7 @@ var Deploy = &cli.Command{
 				return fmt.Errorf("unable to retrieve latest deployment: %w", err)
 			}
 
-			deploy.Merge(res.DeploymentV3, cmd.IsSet(idleTimeoutFlag.Name))
+			deploy.Merge(res, cmd.IsSet(idleTimeoutFlag.Name))
 		}
 
 		if err := deploy.Validate(); err != nil {
@@ -61,9 +62,14 @@ var Deploy = &cli.Command{
 			return err
 		}
 
+		var deploymentTag *string
+		if deploy.DeploymentTag != "" {
+			deploymentTag = &deploy.DeploymentTag
+		}
+
 		res, err := deploy.SDK.DeploymentsV3.CreateDeployment(
 			ctx,
-			shared.DeploymentConfigV3{
+			components.DeploymentConfigV3{
 				BuildID:                  createdBuild.BuildID,
 				IdleTimeoutEnabled:       *deploy.IdleTimeoutEnabled,
 				RoomsPerProcess:          deploy.RoomsPerProcess,
@@ -73,6 +79,7 @@ var Deploy = &cli.Command{
 				RequestedCPU:             deploy.RequestedCPU,
 				AdditionalContainerPorts: deploy.AdditionalContainerPorts,
 				Env:                      deploy.Env,
+				DeploymentTag:            deploymentTag,
 			},
 			deploy.AppID,
 		)
@@ -80,7 +87,7 @@ var Deploy = &cli.Command{
 			return fmt.Errorf("failed to create a deployment: %w", err)
 		}
 
-		return deploy.Output.Write(res.DeploymentV3, os.Stdout)
+		return deploy.Output.Write(res, os.Stdout)
 	},
 }
 
@@ -113,7 +120,7 @@ func (c *DeployConfig) Load(cmd *cli.Command) error {
 	return nil
 }
 
-func (c *DeployConfig) Merge(latest *shared.DeploymentV3, isIdleTimeoutDefault bool) {
+func (c *DeployConfig) Merge(latest *components.DeploymentV3, isIdleTimeoutDefault bool) {
 	if latest == nil {
 		return
 	}

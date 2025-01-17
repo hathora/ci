@@ -4,8 +4,7 @@ package operations
 
 import (
 	"github.com/hathora/ci/internal/sdk/internal/utils"
-	"github.com/hathora/ci/internal/sdk/models/shared"
-	"net/http"
+	"github.com/hathora/ci/internal/sdk/models/components"
 )
 
 type ListActivePublicLobbiesDeprecatedV1Globals struct {
@@ -20,9 +19,9 @@ func (o *ListActivePublicLobbiesDeprecatedV1Globals) GetAppID() *string {
 }
 
 type ListActivePublicLobbiesDeprecatedV1Request struct {
-	AppID  *string        `pathParam:"style=simple,explode=false,name=appId"`
-	Local  *bool          `default:"false" queryParam:"style=form,explode=true,name=local"`
-	Region *shared.Region `queryParam:"style=form,explode=true,name=region"`
+	AppID  *string            `pathParam:"style=simple,explode=false,name=appId"`
+	Local  *bool              `default:"false" queryParam:"style=form,explode=true,name=local"`
+	Region *components.Region `queryParam:"style=form,explode=true,name=region"`
 }
 
 func (l ListActivePublicLobbiesDeprecatedV1Request) MarshalJSON() ([]byte, error) {
@@ -50,48 +49,9 @@ func (o *ListActivePublicLobbiesDeprecatedV1Request) GetLocal() *bool {
 	return o.Local
 }
 
-func (o *ListActivePublicLobbiesDeprecatedV1Request) GetRegion() *shared.Region {
+func (o *ListActivePublicLobbiesDeprecatedV1Request) GetRegion() *components.Region {
 	if o == nil {
 		return nil
 	}
 	return o.Region
-}
-
-type ListActivePublicLobbiesDeprecatedV1Response struct {
-	// HTTP response content type for this operation
-	ContentType string
-	// HTTP response status code for this operation
-	StatusCode int
-	// Raw HTTP response; suitable for custom response parsing
-	RawResponse *http.Response
-	// Ok
-	Lobbies []shared.Lobby
-}
-
-func (o *ListActivePublicLobbiesDeprecatedV1Response) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *ListActivePublicLobbiesDeprecatedV1Response) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *ListActivePublicLobbiesDeprecatedV1Response) GetRawResponse() *http.Response {
-	if o == nil {
-		return nil
-	}
-	return o.RawResponse
-}
-
-func (o *ListActivePublicLobbiesDeprecatedV1Response) GetLobbies() []shared.Lobby {
-	if o == nil {
-		return nil
-	}
-	return o.Lobbies
 }

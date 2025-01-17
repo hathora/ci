@@ -7,9 +7,11 @@
 
 ### Available Operations
 
-* [SendVerificationEmail](#sendverificationemail)
+* [SendVerificationEmail](#sendverificationemail) - SendVerificationEmail
 
 ## SendVerificationEmail
+
+SendVerificationEmail
 
 ### Example Usage
 
@@ -17,25 +19,27 @@
 package main
 
 import(
-	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/shared"
 	"context"
+	"hathoracloud"
+	"hathoracloud/models/components"
 	"log"
 )
 
 func main() {
-    s := sdk.New(
-        sdk.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
-    )
-    request := shared.VerificationEmailRequest{
-        UserID: "<value>",
-    }
     ctx := context.Background()
-    res, err := s.ManagementV1.SendVerificationEmail(ctx, request)
+    
+    s := hathoracloud.New(
+        hathoracloud.WithOrgID("org-6f706e83-0ec1-437a-9a46-7d4281eb2f39"),
+        hathoracloud.WithAppID("app-af469a92-5b45-4565-b3c4-b79878de67d2"),
+    )
+
+    res, err := s.ManagementV1.SendVerificationEmail(ctx, components.VerificationEmailRequest{
+        UserID: "<id>",
+    })
     if err != nil {
         log.Fatal(err)
     }
-    if res.VerificationEmailSuccess != nil {
+    if res != nil {
         // handle response
     }
 }
@@ -43,17 +47,19 @@ func main() {
 
 ### Parameters
 
-| Parameter                                                                          | Type                                                                               | Required                                                                           | Description                                                                        |
-| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `ctx`                                                                              | [context.Context](https://pkg.go.dev/context#Context)                              | :heavy_check_mark:                                                                 | The context to use for the request.                                                |
-| `request`                                                                          | [shared.VerificationEmailRequest](../../models/shared/verificationemailrequest.md) | :heavy_check_mark:                                                                 | The request object to use for the request.                                         |
-| `opts`                                                                             | [][operations.Option](../../models/operations/option.md)                           | :heavy_minus_sign:                                                                 | The options for this request.                                                      |
-
+| Parameter                                                                                  | Type                                                                                       | Required                                                                                   | Description                                                                                |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `ctx`                                                                                      | [context.Context](https://pkg.go.dev/context#Context)                                      | :heavy_check_mark:                                                                         | The context to use for the request.                                                        |
+| `request`                                                                                  | [components.VerificationEmailRequest](../../models/components/verificationemailrequest.md) | :heavy_check_mark:                                                                         | The request object to use for the request.                                                 |
+| `opts`                                                                                     | [][operations.Option](../../models/operations/option.md)                                   | :heavy_minus_sign:                                                                         | The options for this request.                                                              |
 
 ### Response
 
-**[*operations.SendVerificationEmailResponse](../../models/operations/sendverificationemailresponse.md), error**
-| Error Object       | Status Code        | Content Type       |
-| ------------------ | ------------------ | ------------------ |
-| sdkerrors.APIError | 401,429,500        | application/json   |
-| sdkerrors.SDKError | 4xx-5xx            | */*                |
+**[*components.VerificationEmailSuccess](../../models/components/verificationemailsuccess.md), error**
+
+### Errors
+
+| Error Type       | Status Code      | Content Type     |
+| ---------------- | ---------------- | ---------------- |
+| errors.APIError  | 401, 429, 500    | application/json |
+| errors.SDKError  | 4XX, 5XX         | \*/\*            |
