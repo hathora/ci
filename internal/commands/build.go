@@ -17,9 +17,9 @@ import (
 	"github.com/hathora/ci/internal/commands/altsrc"
 	"github.com/hathora/ci/internal/httputil"
 	"github.com/hathora/ci/internal/output"
-	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/components"
 	"github.com/hathora/ci/internal/setup"
+	sdk "github.com/hathora/cloud-sdk-go"
+	"github.com/hathora/cloud-sdk-go/models/components"
 	"golang.org/x/sync/errgroup"
 )
 

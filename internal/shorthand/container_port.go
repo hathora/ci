@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/hathora/ci/internal/sdk/models/components"
+	"github.com/hathora/cloud-sdk-go/models/components"
 )
 
 var (
