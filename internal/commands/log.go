@@ -13,7 +13,7 @@ import (
 	"github.com/hathora/ci/internal/output"
 	"github.com/hathora/ci/internal/setup"
 	"github.com/hathora/ci/internal/workaround"
-	sdk "github.com/hathora/cloud-sdk-go"
+	sdk "github.com/hathora/cloud-sdk-go/hathoracloud"
 )
 
 const logFlagEnvVarPrefix = globalFlagEnvVarPrefix + "LOG_"

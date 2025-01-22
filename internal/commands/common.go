@@ -15,7 +15,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/hathora/ci/internal/output"
-	"github.com/hathora/cloud-sdk-go/models/components"
+	"github.com/hathora/cloud-sdk-go/hathoracloud/models/components"
 )
 
 var (

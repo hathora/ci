@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/hathora/ci/internal/commands"
-	sdk "github.com/hathora/cloud-sdk-go"
-	"github.com/hathora/cloud-sdk-go/models/components"
+	sdk "github.com/hathora/cloud-sdk-go/hathoracloud"
+	"github.com/hathora/cloud-sdk-go/hathoracloud/models/components"
 )
 
 func Test_DeploymentTextOutput(t *testing.T) {

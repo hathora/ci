@@ -4,7 +4,7 @@ import (
 	"github.com/hashicorp/go-cleanhttp"
 
 	"github.com/hathora/ci/internal/httputil"
-	sdk "github.com/hathora/cloud-sdk-go"
+	sdk "github.com/hathora/cloud-sdk-go/hathoracloud"
 )
 
 func HTTPClient(loggingVerbosity int) sdk.HTTPClient {

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/hathora/ci/internal/shorthand"
-	"github.com/hathora/cloud-sdk-go/models/components"
+	"github.com/hathora/cloud-sdk-go/hathoracloud/models/components"
 )
 
 func Test_DeploymentEnvVarShorthand(t *testing.T) {

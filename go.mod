@@ -7,7 +7,7 @@ require (
 	github.com/fatih/color v1.18.0
 	github.com/h2non/filetype v1.1.3
 	github.com/hashicorp/go-cleanhttp v0.5.2
-	github.com/hathora/cloud-sdk-go v0.0.0-20250113192510-5287840d4e1e
+	github.com/hathora/cloud-sdk-go/hathoracloud v0.0.0-20250122221419-b680f9dc502e
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00
 	github.com/stretchr/testify v1.10.0
 	github.com/urfave/cli/v3 v3.0.0-alpha9

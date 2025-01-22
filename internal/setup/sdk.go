@@ -1,7 +1,7 @@
 package setup
 
 import (
-	sdk "github.com/hathora/cloud-sdk-go"
+	sdk "github.com/hathora/cloud-sdk-go/hathoracloud"
 )
 
 func SDK(token, baseURL string, loggingVerbosity int) *sdk.HathoraCloud {

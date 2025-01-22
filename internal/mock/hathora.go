@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/hathora/ci/internal/httputil"
-	sdk "github.com/hathora/cloud-sdk-go"
+	sdk "github.com/hathora/cloud-sdk-go/hathoracloud"
 	"github.com/stretchr/testify/require"
 )
 
