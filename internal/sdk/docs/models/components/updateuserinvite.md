@@ -1,9 +1,0 @@
-# UpdateUserInvite
-
-
-## Fields
-
-| Field                                                                                  | Type                                                                                   | Required                                                                               | Description                                                                            | Example                                                                                |
-| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `Scopes`                                                                               | [components.UpdateUserInviteScopes](../../models/components/updateuserinvitescopes.md) | :heavy_check_mark:                                                                     | Scopes can only be removed or added if a user has those scopes.                        |                                                                                        |
-| `UserEmail`                                                                            | *string*                                                                               | :heavy_check_mark:                                                                     | A user's email.                                                                        | noreply@hathora.dev                                                                    |
