@@ -54,7 +54,8 @@ func App() *cli.Command {
 				return nil
 			}
 
-			err = altsrc.InitializeValueSourcesFromFlags(ctx, cmd, os.Args[1:])
+			err = altsrc.InitializeValueSourcesFromFlags(ctx, cmd,
+				NormalizeArgs(cmd, os.Args)[1:])
 			if err != nil {
 				return err
 			}

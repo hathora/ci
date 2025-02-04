@@ -12,7 +12,9 @@ import (
 )
 
 func main() {
-	if err := commands.App().Run(context.Background(), os.Args); err != nil {
+	app := commands.App()
+	args := commands.NormalizeArgs(app, os.Args)
+	if err := app.Run(context.Background(), args); err != nil {
 		red := color.New(color.FgRed)
 		errStr := fmt.Sprintf("%v", err)
 		errorLines := strings.Split(errStr, "\n")
