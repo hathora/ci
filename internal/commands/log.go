@@ -9,9 +9,10 @@ import (
 	"github.com/urfave/cli/v3"
 	"go.uber.org/zap"
 
+	sdk "github.com/hathora/cloud-sdk-go/hathoracloud"
+
 	"github.com/hathora/ci/internal/commands/altsrc"
 	"github.com/hathora/ci/internal/output"
-	"github.com/hathora/ci/internal/sdk"
 	"github.com/hathora/ci/internal/setup"
 	"github.com/hathora/ci/internal/workaround"
 )

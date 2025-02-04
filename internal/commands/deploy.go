@@ -9,8 +9,8 @@ import (
 	"github.com/urfave/cli/v3"
 	"go.uber.org/zap"
 
-	"github.com/hathora/ci/internal/sdk/models/components"
 	"github.com/hathora/ci/internal/shorthand"
+	"github.com/hathora/cloud-sdk-go/hathoracloud/models/components"
 )
 
 var Deploy = &cli.Command{

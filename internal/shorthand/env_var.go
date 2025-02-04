@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/hathora/ci/internal/sdk/models/components"
+	"github.com/hathora/cloud-sdk-go/hathoracloud/models/components"
 )
 
 func ParseDeploymentEnvVar(s string) (*components.DeploymentConfigV3Env, error) {
