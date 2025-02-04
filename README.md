@@ -90,12 +90,3 @@ To quickly rebuild a CLI binary, you can use:
 ```sh
 make clean && make build
 ```
-
-### Regenerating the SDK
-
-The SDK can be regenerated based on the OpenAPI spec hosted at `https://hathora.dev/swagger.json`. To do this, run the following command from the root of the project. You must have the speakeasy CLI installed.
-
-```sh
-make sdk-clean
-rm internal/sdk/go.mod
-```
