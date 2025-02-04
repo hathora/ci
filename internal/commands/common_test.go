@@ -2,9 +2,9 @@ package commands
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/urfave/cli/v3"
 )
 
@@ -41,9 +41,7 @@ func TestNormalizeArgs(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
 			got := NormalizeArgs(cmd, test.input)
-			if !reflect.DeepEqual(got, test.expected) {
-				t.Errorf("got %v expected %v", got, test.expected)
-			}
+			assert.Equal(t, fmt.Sprintf("%v", got), fmt.Sprintf("%v", test.expected))
 		})
 	}
 }
