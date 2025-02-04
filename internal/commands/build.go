@@ -12,15 +12,16 @@ import (
 
 	"github.com/urfave/cli/v3"
 	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
 
 	"github.com/hathora/ci/internal/archive"
 	"github.com/hathora/ci/internal/commands/altsrc"
 	"github.com/hathora/ci/internal/httputil"
 	"github.com/hathora/ci/internal/output"
-	"github.com/hathora/ci/internal/sdk"
-	"github.com/hathora/ci/internal/sdk/models/components"
 	"github.com/hathora/ci/internal/setup"
-	"golang.org/x/sync/errgroup"
+
+	sdk "github.com/hathora/cloud-sdk-go/hathoracloud"
+	"github.com/hathora/cloud-sdk-go/hathoracloud/models/components"
 )
 
 type etagPart struct {
