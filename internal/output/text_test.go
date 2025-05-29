@@ -202,8 +202,8 @@ func Test_BuildTextOutput(t *testing.T) {
 				FinishedAt: nil,
 			},
 			expect: [][]string{
-				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt", "ContentHash", "OrgID", "ShareURL"},
-				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null", "null"},
+				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt", "ContentHash", "ExpiredAt", "OrgID", "ShareURL"},
+				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null", "null", "null"},
 			},
 		},
 		{
@@ -219,8 +219,8 @@ func Test_BuildTextOutput(t *testing.T) {
 				FinishedAt: nil,
 			},
 			expect: [][]string{
-				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt", "ContentHash", "OrgID", "ShareURL"},
-				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null", "null"},
+				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt", "ContentHash", "ExpiredAt", "OrgID", "ShareURL"},
+				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null", "null", "null"},
 			},
 		},
 		{
@@ -248,9 +248,9 @@ func Test_BuildTextOutput(t *testing.T) {
 				},
 			},
 			expect: [][]string{
-				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt", "ContentHash", "OrgID", "ShareURL"},
-				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null", "null"},
-				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null", "null"},
+				{"BuildID", "BuildTag", "CreatedAt", "Status", "ImageSize", "StartedAt", "FinishedAt", "ContentHash", "ExpiredAt", "OrgID", "ShareURL"},
+				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null", "null", "null"},
+				{"bld-1", "v1.0.0", "2021-01-01T00:00:00Z", "status", "2.0", "KiB", "2021-01-01T00:00:00Z", "null", "null", "null", "null"},
 			},
 		},
 	}
