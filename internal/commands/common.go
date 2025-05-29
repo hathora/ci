@@ -22,6 +22,7 @@ var (
 	infoCommandName   = "info"
 	listCommandName   = "list"
 	createCommandName = "create"
+	dockerCommandName = "create-docker"
 	deleteCommandName = "delete"
 	latestCommandName = "latest"
 )

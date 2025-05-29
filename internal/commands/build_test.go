@@ -274,3 +274,24 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 		})
 	}
 }
+
+func TestParseRegistryAndImage(t *testing.T) {
+	out := commands.ParseRegistryAndImage("", "private.repo/namespace/image:tag", "")
+	if out.RegistryURL == nil {
+		t.Error("expected non-nil registry")
+	} else if *out.RegistryURL != "private.repo" {
+		t.Errorf("expected private.repo got %s", *out.RegistryURL)
+	}
+	if out.Image != "namespace/image:tag" {
+		t.Errorf("expected namespace/image:tag got %s", out.Image)
+	}
+	out = commands.ParseRegistryAndImage("private.repo", "namespace/image:tag", "")
+	if out.RegistryURL == nil {
+		t.Error("expected non-nil registry")
+	} else if *out.RegistryURL != "private.repo" {
+		t.Errorf("expected private.repo got %s", *out.RegistryURL)
+	}
+	if out.Image != "namespace/image:tag" {
+		t.Errorf("expected namespace/image:tag got %s", out.Image)
+	}
+}
