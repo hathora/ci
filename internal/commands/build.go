@@ -100,6 +100,10 @@ var Build = &cli.Command{
 					return err
 				}
 
+				if created.Status == components.BuildStatusFailed {
+					return fmt.Errorf("Build failed")
+				}
+
 				return build.Output.Write(created, os.Stdout)
 			},
 		},
