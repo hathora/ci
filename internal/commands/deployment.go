@@ -31,7 +31,7 @@ var (
 	minCPU                = 0.25
 	maxCPUDecimalPlaces   = 2
 	maxCPU                = float64(4)
-	minMemoryMB           = float64(1024)
+	minMemoryMB           = float64(512)
 	maxMemoryMB           = float64(8192)
 )
 
