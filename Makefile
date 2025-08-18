@@ -24,11 +24,6 @@ build: ## Build the command binaries.
         -ldflags "-X 'github.com/hathora/ci/internal/commands.BuildVersion=${BUILD_VERSION}'" \
         hathora/main.go
 
-.PHONY: sdk-clean
-sdk-clean: ## Re-generate the SDK using speakeasyapi.dev
-	rm -rf ./sdk
-	go generate ./...
-
 .PHONY: lint
 lint: ## Lints the project, logging any warnings or errors without modifying any files.
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.63
