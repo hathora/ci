@@ -27,6 +27,7 @@ var Deploy = &cli.Command{
 		containerPortFlag,
 		requestedMemoryFlag,
 		requestedCPUFlag,
+		requestedGPUFlag,
 		additionalContainerPortsFlag,
 		envVarsFlag,
 		idleTimeoutFlag,
@@ -67,6 +68,8 @@ var Deploy = &cli.Command{
 			deploymentTag = &deploy.DeploymentTag
 		}
 
+		gpu := float64(deploy.RequestedGPU)
+
 		res, err := deploy.SDK.DeploymentsV3.CreateDeployment(
 			ctx,
 			components.DeploymentConfigV3{
@@ -77,6 +80,7 @@ var Deploy = &cli.Command{
 				ContainerPort:            deploy.ContainerPort,
 				RequestedMemoryMB:        deploy.RequestedMemoryMB,
 				RequestedCPU:             deploy.RequestedCPU,
+				ExperimentalRequestedGPU: &gpu, // TODO: add support for final API field when it exists
 				AdditionalContainerPorts: deploy.AdditionalContainerPorts,
 				Env:                      deploy.Env,
 				DeploymentTag:            deploymentTag,
@@ -147,6 +151,13 @@ func (c *DeployConfig) Merge(latest *components.DeploymentV3, isIdleTimeoutDefau
 
 	if c.RequestedCPU == 0 {
 		c.RequestedCPU = latest.RequestedCPU
+	}
+
+	if c.RequestedGPU == 0 {
+		// TODO: add support for final API field when it exists
+		if latest.ExperimentalRequestedGPU != nil {
+			c.RequestedGPU = int64(*latest.ExperimentalRequestedGPU)
+		}
 	}
 
 	if len(c.AdditionalContainerPorts) == 0 {

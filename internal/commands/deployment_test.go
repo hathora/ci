@@ -196,6 +196,7 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 					"containerPort": 8000,
 					"requestedMemoryMB": 1024,
 					"requestedCPU": 0.5,
+					"experimentalRequestedGPU": 0,
 					"additionalContainerPorts": [
 						{
 							"transportType": "tcp",
