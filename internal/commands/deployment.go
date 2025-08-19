@@ -171,6 +171,8 @@ var Deployment = &cli.Command{
 					deploymentTag = &deployment.DeploymentTag
 				}
 
+				gpu := float64(deployment.RequestedGPU)
+
 				res, err := deployment.SDK.DeploymentsV3.CreateDeployment(
 					ctx,
 					components.DeploymentConfigV3{
@@ -181,6 +183,7 @@ var Deployment = &cli.Command{
 						ContainerPort:            deployment.ContainerPort,
 						RequestedMemoryMB:        deployment.RequestedMemoryMB,
 						RequestedCPU:             deployment.RequestedCPU,
+						ExperimentalRequestedGPU: &gpu, // TODO: add support for final API field when it exists
 						AdditionalContainerPorts: deployment.AdditionalContainerPorts,
 						Env:                      deployment.Env,
 						DeploymentTag:            deploymentTag,
@@ -293,6 +296,17 @@ var (
 			altsrc.ConfigFile(configFlag.Name, "deployment.requested-cpu"),
 		),
 		Usage:      "`<cores>` to allocate to your process",
+		Persistent: true,
+		Category:   "Deployment:",
+	}
+
+	requestedGPUFlag = &workaround.FloatFlag{
+		Name: "requested-gpu",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(deploymentEnvVar("REQUESTED_GPU")),
+			altsrc.ConfigFile(configFlag.Name, "deployment.requested-gpu"),
+		),
+		Usage:      "`<gpus>` to allocate to your process",
 		Persistent: true,
 		Category:   "Deployment:",
 	}
@@ -457,6 +471,7 @@ type CreateDeploymentConfig struct {
 	ContainerPort            int
 	RequestedMemoryMB        float64
 	RequestedCPU             float64
+	RequestedGPU             int64
 	AdditionalContainerPorts []components.ContainerPort
 	Env                      []components.DeploymentConfigV3Env
 	DeploymentTag            string
@@ -490,6 +505,7 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 	c.ContainerPort = int(cmd.Int(containerPortFlag.Name))
 	c.RequestedMemoryMB = cmd.Float(requestedMemoryFlag.Name)
 	c.RequestedCPU = cmd.Float(requestedCPUFlag.Name)
+	c.RequestedGPU = cmd.Int(requestedGPUFlag.Name)
 	c.DeploymentTag = cmd.String(deploymentTagFlag.Name)
 
 	addlPorts := cmd.StringSlice(additionalContainerPortsFlag.Name)
@@ -540,6 +556,13 @@ func (c *CreateDeploymentConfig) Merge(latest *components.DeploymentV3) {
 
 	if c.RequestedCPU == 0 {
 		c.RequestedCPU = latest.RequestedCPU
+	}
+
+	if c.RequestedGPU == 0 {
+		// TODO: add support for final API field when it exists
+		if latest.ExperimentalRequestedGPU != nil {
+			c.RequestedGPU = int64(*latest.ExperimentalRequestedGPU)
+		}
 	}
 
 	if len(c.AdditionalContainerPorts) == 0 {
