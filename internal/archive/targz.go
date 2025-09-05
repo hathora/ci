@@ -10,8 +10,8 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/boyter/gocodewalker"
 	"github.com/h2non/filetype"
-	"github.com/monochromegane/go-gitignore"
 	"go.uber.org/zap"
 )
 
@@ -19,33 +19,6 @@ type TGZFile struct {
 	Content []byte
 	Name    string
 	Path    string
-}
-
-func getIgnoreMatchers(srcFolder string, filepaths ...string) ([]gitignore.IgnoreMatcher, error) {
-	var matchers []gitignore.IgnoreMatcher
-	for _, path := range filepaths {
-		matcher, err := gitignore.NewGitIgnore(filepath.Join(srcFolder, path), ".")
-		if err != nil {
-			zap.L().Debug("Could not find a " + path + " file. " + path + " matcher will not be used.")
-			continue
-		}
-
-		matchers = append(matchers, matcher)
-	}
-
-	return matchers, nil
-}
-
-func shouldIgnoreFilepath(filepath string, isDir bool, matchers []gitignore.IgnoreMatcher) bool {
-	anyMatches := false
-	for _, matcher := range matchers {
-		if matcher.Match(filepath, isDir) {
-			anyMatches = true
-			break
-		}
-	}
-
-	return anyMatches
 }
 
 func CreateTGZ(srcFolder string, ext string) (string, error) {
@@ -62,70 +35,69 @@ func CreateTGZ(srcFolder string, ext string) (string, error) {
 	tarWriter := tar.NewWriter(gzipWriter)
 	defer tarWriter.Close()
 
-	ignoreMatchers, err := getIgnoreMatchers(
-		srcFolder,
-		".dockerignore",
-		".gitignore",
-	)
+	paths := make(chan *gocodewalker.File, 100)
 
+	walker := gocodewalker.NewFileWalker(srcFolder, paths)
+	// .gitignore is ignored by default
+	walker.CustomIgnore = []string{".dockerignore"}
+	walker.SetErrorHandler(func(err error) bool {
+		zap.L().Error("Error walking directory", zap.Error(err))
+		return false
+	})
+
+	err = walker.Start()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("error walking directory: %w", err)
 	}
 
-	err = filepath.Walk(srcFolder, func(filePath string, info os.FileInfo, err error) error {
+	for path := range paths {
+
+		info, err := os.Stat(path.Location)
 		if err != nil {
-			return err
+			return "", fmt.Errorf("error statting file: %w", err)
 		}
 
 		if !info.Mode().IsRegular() {
-			return nil
+			continue
 		}
 
-		relPath, err := filepath.Rel(srcFolder, filePath)
+		relPath, err := filepath.Rel(srcFolder, path.Location)
 		if err != nil {
-			return err
+			return "", fmt.Errorf("error getting relative path: %w", err)
 		}
 
-		if shouldIgnoreFilepath(relPath, info.IsDir(), ignoreMatchers) {
-			zap.L().Debug("Ignoring file: " + relPath)
-			return nil
-		}
+		zap.L().Debug("Considering file: " + relPath)
 
 		header, err := tar.FileInfoHeader(info, "")
 		if err != nil {
-			return err
+			return "", fmt.Errorf("error creating tar file info header: %w", err)
 		}
 		header.Name = filepath.ToSlash(relPath)
 
 		if err := tarWriter.WriteHeader(header); err != nil {
-			return err
+			return "", err
 		}
 
 		if info.IsDir() {
 			zap.L().Debug("Including directory reference: " + relPath)
-			return nil
+			continue
 		}
 
-		file, err := os.Open(filePath)
+		file, err := os.Open(path.Location)
 		if err != nil {
-			return err
+			return "", fmt.Errorf("error opening file: %w", err)
 		}
 		defer file.Close()
 
 		written, err := io.Copy(tarWriter, file)
 		if err != nil {
-			return fmt.Errorf("error copying file content for %s: %w", filePath, err)
+			return "", fmt.Errorf("error copying file content for %s: %w", path.Location, err)
 		}
 		if written != info.Size() {
-			return fmt.Errorf("expected to write %d bytes but wrote %d bytes for file %s", info.Size(), written, filePath)
+			return "", fmt.Errorf("expected to write %d bytes but wrote %d bytes for file %s", info.Size(), written, path.Location)
 		}
 
 		zap.L().Debug("Including file: " + relPath)
-		return nil
-	})
-
-	if err != nil {
-		return "", err
 	}
 
 	return tarGzFile.Name(), nil
