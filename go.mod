@@ -5,12 +5,12 @@ go 1.23.0
 toolchain go1.23.9
 
 require (
+	github.com/boyter/gocodewalker v1.5.1
 	github.com/dustin/go-humanize v1.0.1
 	github.com/fatih/color v1.18.0
 	github.com/h2non/filetype v1.1.3
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hathora/cloud-sdk-go/hathoracloud v0.3.20
-	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00
 	github.com/stretchr/testify v1.10.0
 	github.com/urfave/cli/v3 v3.0.0-alpha9
 	go.uber.org/zap v1.27.0
@@ -19,6 +19,7 @@ require (
 )
 
 require (
+	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/ericlagergren/decimal v0.0.0-20240411145413-00de7ca16731 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect

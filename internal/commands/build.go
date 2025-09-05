@@ -101,7 +101,7 @@ var Build = &cli.Command{
 				}
 
 				if created.Status == components.BuildStatusFailed {
-					return fmt.Errorf("Build failed")
+					return fmt.Errorf("build failed")
 				}
 
 				return build.Output.Write(created, os.Stdout)
@@ -236,6 +236,7 @@ func doBuildCreate(ctx context.Context, hathora *sdk.HathoraCloud, buildTag, bui
 	if err != nil {
 		return nil, fmt.Errorf("no build file available for run: %w", err)
 	}
+
 	fileSize := int64(len(file.Content))
 	params := components.CreateMultipartBuildParams{BuildSizeInBytes: float64(fileSize)}
 	if buildTag != "" {
