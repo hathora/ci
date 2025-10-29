@@ -32,6 +32,7 @@ var Deploy = &cli.Command{
 		envVarsFlag,
 		idleTimeoutFlag,
 		deploymentTagFlag,
+		fleetIdFlag,
 	),
 	UsageText: `hathora deploy [options]`,
 	Action: func(ctx context.Context, cmd *cli.Command) error {
@@ -50,6 +51,18 @@ var Deploy = &cli.Command{
 			}
 
 			deploy.Merge(res, cmd.IsSet(idleTimeoutFlag.Name))
+		}
+
+		// Auto-detect fleet ID if not provided and not merged from latest
+		if deploy.FleetId == "" {
+			fleetId, err := autoDetectFleetId(ctx, deploy.SDK, deploy.AppID)
+			if err != nil {
+				return fmt.Errorf("failed to auto-detect fleet: %w", err)
+			}
+			if fleetId != "" {
+				deploy.FleetId = fleetId
+				deploy.Log.Debug("auto-detected fleet", zap.String("fleet.id", fleetId))
+			}
 		}
 
 		if err := deploy.Validate(); err != nil {
@@ -74,6 +87,7 @@ var Deploy = &cli.Command{
 			ctx,
 			components.DeploymentConfigV3{
 				BuildID:                  createdBuild.BuildID,
+				FleetId:                  deploy.FleetId,
 				IdleTimeoutEnabled:       *deploy.IdleTimeoutEnabled,
 				RoomsPerProcess:          deploy.RoomsPerProcess,
 				TransportType:            deploy.TransportType,
@@ -129,6 +143,10 @@ func (c *DeployConfig) Merge(latest *components.DeploymentV3, isIdleTimeoutDefau
 		return
 	}
 
+	if c.FleetId == "" {
+		c.FleetId = latest.FleetId
+	}
+
 	if !isIdleTimeoutDefault {
 		c.IdleTimeoutEnabled = &latest.IdleTimeoutEnabled
 	}
@@ -174,6 +192,10 @@ func (c *DeployConfig) Validate() error {
 
 	if c.AppID == nil || *c.AppID == "" {
 		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+	}
+
+	if c.FleetId == "" {
+		err = errors.Join(err, missingRequiredFlag(fleetIdFlag.Name))
 	}
 
 	if c.RoomsPerProcess == 0 {

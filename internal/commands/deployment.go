@@ -140,6 +140,7 @@ var Deployment = &cli.Command{
 				envVarsFlag,
 				fromLatestFlag,
 				deploymentTagFlag,
+				fleetIdFlag,
 			),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				zap.L().Debug("creating a deployment...")
@@ -160,6 +161,18 @@ var Deployment = &cli.Command{
 					deployment.Merge(res)
 				}
 
+				// Auto-detect fleet ID if not provided and not merged from latest
+				if deployment.FleetId == "" {
+					fleetId, err := autoDetectFleetId(ctx, deployment.SDK, deployment.AppID)
+					if err != nil {
+						return fmt.Errorf("failed to auto-detect fleet: %w", err)
+					}
+					if fleetId != "" {
+						deployment.FleetId = fleetId
+						deployment.Log.Debug("auto-detected fleet", zap.String("fleet.id", fleetId))
+					}
+				}
+
 				if err := deployment.Validate(); err != nil {
 					//nolint:errcheck
 					cli.ShowSubcommandHelp(cmd)
@@ -177,6 +190,7 @@ var Deployment = &cli.Command{
 					ctx,
 					components.DeploymentConfigV3{
 						BuildID:                  deployment.BuildID,
+						FleetId:                  deployment.FleetId,
 						IdleTimeoutEnabled:       *deployment.IdleTimeoutEnabled,
 						RoomsPerProcess:          deployment.RoomsPerProcess,
 						TransportType:            deployment.TransportType,
@@ -327,6 +341,17 @@ var (
 		Usage:    "arbitrary metadata associated with a deployment",
 		Category: "Deployment:",
 	}
+
+	fleetIdFlag = &cli.StringFlag{
+		Name: "fleet-id",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(deploymentEnvVar("FLEET_ID")),
+			altsrc.ConfigFile(configFlag.Name, "deployment.fleet-id"),
+		),
+		Usage:      "the `<id>` of the fleet",
+		Persistent: true,
+		Category:   "Deployment:",
+	}
 )
 
 func parseContainerPorts(ports []string) ([]components.ContainerPort, error) {
@@ -465,6 +490,7 @@ var (
 type CreateDeploymentConfig struct {
 	*DeploymentConfig
 	BuildID                  string
+	FleetId                  string
 	IdleTimeoutEnabled       *bool
 	RoomsPerProcess          int
 	TransportType            components.TransportType
@@ -487,6 +513,7 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 
 	c.DeploymentConfig = deployment
 	c.BuildID = cmd.String(buildIDFlag.Name)
+	c.FleetId = cmd.String(fleetIdFlag.Name)
 
 	// Value of the idleTimeoutFlag by priority, high to low
 	// Passed in as an argument
@@ -532,6 +559,10 @@ func (c *CreateDeploymentConfig) Merge(latest *components.DeploymentV3) {
 
 	if c.BuildID == "" {
 		c.BuildID = latest.BuildID
+	}
+
+	if c.FleetId == "" {
+		c.FleetId = latest.FleetId
 	}
 
 	if c.IdleTimeoutEnabled == nil {
@@ -585,6 +616,10 @@ func (c *CreateDeploymentConfig) Validate() error {
 		err = errors.Join(err, missingRequiredFlag(buildIDFlag.Name))
 	}
 
+	if c.FleetId == "" {
+		err = errors.Join(err, missingRequiredFlag(fleetIdFlag.Name))
+	}
+
 	if c.RoomsPerProcess == 0 {
 		err = errors.Join(err, missingRequiredFlag(roomsPerProcessFlag.Name))
 	}
@@ -634,4 +669,24 @@ func (c *CreateDeploymentConfig) New() LoadableConfig {
 
 func CreateDeploymentConfigFrom(cmd *cli.Command) (*CreateDeploymentConfig, error) {
 	return ConfigFromCLI[*CreateDeploymentConfig](createDeploymentConfigKey, cmd)
+}
+
+// autoDetectFleetId attempts to auto-detect the fleet ID when there's only one fleet in the account.
+// Returns the fleet ID if exactly one fleet exists, otherwise returns an empty string.
+func autoDetectFleetId(ctx context.Context, sdk *sdk.HathoraCloud, appID *string) (string, error) {
+	if appID == nil || *appID == "" {
+		return "", nil
+	}
+
+	res, err := sdk.FleetsV1.GetFleets(ctx, nil)
+	if err != nil {
+		// If fleet listing fails, just return empty string and let validation handle it
+		return "", nil
+	}
+
+	if len(res.Fleets) == 1 {
+		return res.Fleets[0].FleetId, nil
+	}
+
+	return "", nil
 }
