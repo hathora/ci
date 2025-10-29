@@ -136,6 +136,7 @@ var Deployment = &cli.Command{
 				containerPortFlag,
 				requestedMemoryFlag,
 				requestedCPUFlag,
+				requestedGPUFlag,
 				additionalContainerPortsFlag,
 				envVarsFlag,
 				fromLatestFlag,
