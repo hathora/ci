@@ -53,15 +53,15 @@ var Deploy = &cli.Command{
 			deploy.Merge(res, cmd.IsSet(idleTimeoutFlag.Name))
 		}
 
-		// Auto-detect fleet ID if not provided and not merged from latest
+		// If we didn't get a fleet ID from either its flag or the latest deployment,
+		// fallback to the org's default fleet ID.
 		if deploy.FleetId == "" {
-			fleetId, err := autoDetectFleetId(ctx, deploy.SDK, deploy.AppID)
+			defaultFleetId, err := getOrgDefaultFleetId(ctx, deploy.SDK, deploy.AppID)
 			if err != nil {
-				return fmt.Errorf("failed to auto-detect fleet: %w", err)
+				return fmt.Errorf("failed to get default fleet ID: %w", err)
 			}
-			if fleetId != "" {
-				deploy.FleetId = fleetId
-				deploy.Log.Debug("auto-detected fleet", zap.String("fleet.id", fleetId))
+			if defaultFleetId != "" {
+				deploy.FleetId = defaultFleetId
 			}
 		}
 
@@ -81,13 +81,18 @@ var Deploy = &cli.Command{
 			deploymentTag = &deploy.DeploymentTag
 		}
 
+		var fleetID *string
+		if deploy.FleetId != "" {
+			fleetID = &deploy.FleetId
+		}
+
 		gpu := float64(deploy.RequestedGPU)
 
 		res, err := deploy.SDK.DeploymentsV3.CreateDeployment(
 			ctx,
 			components.DeploymentConfigV3{
 				BuildID:                  createdBuild.BuildID,
-				FleetId:                  deploy.FleetId,
+				FleetID:                  fleetID,
 				IdleTimeoutEnabled:       *deploy.IdleTimeoutEnabled,
 				RoomsPerProcess:          deploy.RoomsPerProcess,
 				TransportType:            deploy.TransportType,
@@ -144,7 +149,9 @@ func (c *DeployConfig) Merge(latest *components.DeploymentV3, isIdleTimeoutDefau
 	}
 
 	if c.FleetId == "" {
-		c.FleetId = latest.FleetId
+		if latest.FleetID != nil {
+			c.FleetId = *latest.FleetID
+		}
 	}
 
 	if !isIdleTimeoutDefault {

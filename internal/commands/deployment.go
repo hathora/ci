@@ -112,7 +112,7 @@ var Deployment = &cli.Command{
 				}
 				deployment.Log.Debug("getting all deployments...")
 
-				res, err := deployment.SDK.DeploymentsV3.GetDeployments(ctx, deployment.AppID, nil)
+				res, err := deployment.SDK.DeploymentsV3.GetDeployments(ctx, deployment.AppID, nil, nil)
 				if err != nil {
 					return fmt.Errorf("failed to get deployments: %w", err)
 				}
@@ -162,15 +162,15 @@ var Deployment = &cli.Command{
 					deployment.Merge(res)
 				}
 
-				// Auto-detect fleet ID if not provided and not merged from latest
+				// If we didn't get a fleet ID from either its flag or the latest deployment,
+				// fallback to the org's default fleet ID.
 				if deployment.FleetId == "" {
-					fleetId, err := autoDetectFleetId(ctx, deployment.SDK, deployment.AppID)
+					defaultFleetId, err := getOrgDefaultFleetId(ctx, deployment.SDK, deployment.AppID)
 					if err != nil {
-						return fmt.Errorf("failed to auto-detect fleet: %w", err)
+						return fmt.Errorf("failed to get default fleet ID: %w", err)
 					}
-					if fleetId != "" {
-						deployment.FleetId = fleetId
-						deployment.Log.Debug("auto-detected fleet", zap.String("fleet.id", fleetId))
+					if defaultFleetId != "" {
+						deployment.FleetId = defaultFleetId
 					}
 				}
 
@@ -185,13 +185,18 @@ var Deployment = &cli.Command{
 					deploymentTag = &deployment.DeploymentTag
 				}
 
+				var fleetID *string
+				if deployment.FleetId != "" {
+					fleetID = &deployment.FleetId
+				}
+
 				gpu := float64(deployment.RequestedGPU)
 
 				res, err := deployment.SDK.DeploymentsV3.CreateDeployment(
 					ctx,
 					components.DeploymentConfigV3{
 						BuildID:                  deployment.BuildID,
-						FleetId:                  deployment.FleetId,
+						FleetID:                  fleetID,
 						IdleTimeoutEnabled:       *deployment.IdleTimeoutEnabled,
 						RoomsPerProcess:          deployment.RoomsPerProcess,
 						TransportType:            deployment.TransportType,
@@ -563,7 +568,9 @@ func (c *CreateDeploymentConfig) Merge(latest *components.DeploymentV3) {
 	}
 
 	if c.FleetId == "" {
-		c.FleetId = latest.FleetId
+		if latest.FleetID != nil {
+			c.FleetId = *latest.FleetID
+		}
 	}
 
 	if c.IdleTimeoutEnabled == nil {
@@ -672,22 +679,28 @@ func CreateDeploymentConfigFrom(cmd *cli.Command) (*CreateDeploymentConfig, erro
 	return ConfigFromCLI[*CreateDeploymentConfig](createDeploymentConfigKey, cmd)
 }
 
-// autoDetectFleetId attempts to auto-detect the fleet ID when there's only one fleet in the account.
-// Returns the fleet ID if exactly one fleet exists, otherwise returns an empty string.
-func autoDetectFleetId(ctx context.Context, sdk *sdk.HathoraCloud, appID *string) (string, error) {
+func getOrgDefaultFleetId(ctx context.Context, sdk *sdk.HathoraCloud, appID *string) (string, error) {
 	if appID == nil || *appID == "" {
-		return "", nil
+		return "", fmt.Errorf("app ID is required")
 	}
 
-	res, err := sdk.FleetsV1.GetFleets(ctx, nil)
+	app, err := sdk.AppsV2.GetApp(ctx, appID)
 	if err != nil {
-		// If fleet listing fails, just return empty string and let validation handle it
-		return "", nil
+		return "", fmt.Errorf("failed to get org: %w", err)
 	}
 
-	if len(res.Fleets) == 1 {
-		return res.Fleets[0].FleetId, nil
+	orgs, err := sdk.OrganizationsV1.GetOrgs(ctx)
+	if err != nil {
+		return "", fmt.Errorf("failed to get orgs: %w", err)
+	}
+	for _, org := range orgs.Orgs {
+		if app.OrgID == org.OrgID {
+			if org.DefaultFleetID == nil {
+				return "", nil
+			}
+			return *org.DefaultFleetID, nil
+		}
 	}
 
-	return "", nil
+	return "", fmt.Errorf("app %s organization not found", *appID)
 }
