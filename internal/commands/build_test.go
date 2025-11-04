@@ -59,7 +59,8 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 				"createdAt": "2019-08-24T14:15:22Z",
 				"createdBy": "google-oauth2|107030234048588177467",
 				"buildId": "bld-1",
-				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+				"orgId": "org-1234567890"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
@@ -89,7 +90,8 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 						"createdAt": "2019-08-24T14:15:22Z",
 						"createdBy": "google-oauth2|107030234048588177467",
 						"buildId": "bld-1",
-						"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+						"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+						"orgId": "org-1234567890"
 					}
 				]
 			}`,
@@ -121,7 +123,8 @@ func Test_Integration_BuildCommands_Happy(t *testing.T) {
 				"createdAt": "2019-08-24T14:15:22Z",
 				"createdBy": "google-oauth2|107030234048588177467",
 				"buildId": "bld-1",
-				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+				"orgId": "org-1234567890"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodPost, "request method should be POST")
@@ -214,7 +217,8 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 				"createdAt": "2019-08-24T14:15:22Z",
 				"createdBy": "google-oauth2|107030234048588177467",
 				"buildId": "bld-1",
-				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+				"orgId": "org-1234567890"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")
@@ -242,7 +246,8 @@ func Test_Integration_BuildCommands_GlobalArgs(t *testing.T) {
 				"createdAt": "2019-08-24T14:15:22Z",
 				"createdBy": "google-oauth2|107030234048588177467",
 				"buildId": "bld-1",
-				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+				"orgId": "org-1234567890"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
 				assert.Equal(t, r.Method, http.MethodGet, "request method should be GET")

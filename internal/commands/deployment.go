@@ -112,7 +112,7 @@ var Deployment = &cli.Command{
 				}
 				deployment.Log.Debug("getting all deployments...")
 
-				res, err := deployment.SDK.DeploymentsV3.GetDeployments(ctx, deployment.AppID, nil)
+				res, err := deployment.SDK.DeploymentsV3.GetDeployments(ctx, deployment.AppID, nil, nil)
 				if err != nil {
 					return fmt.Errorf("failed to get deployments: %w", err)
 				}
@@ -136,10 +136,12 @@ var Deployment = &cli.Command{
 				containerPortFlag,
 				requestedMemoryFlag,
 				requestedCPUFlag,
+				requestedGPUFlag,
 				additionalContainerPortsFlag,
 				envVarsFlag,
 				fromLatestFlag,
 				deploymentTagFlag,
+				fleetIdFlag,
 			),
 			Action: func(ctx context.Context, cmd *cli.Command) error {
 				zap.L().Debug("creating a deployment...")
@@ -160,6 +162,18 @@ var Deployment = &cli.Command{
 					deployment.Merge(res)
 				}
 
+				// If we didn't get a fleet ID from either its flag or the latest deployment,
+				// fallback to the org's default fleet ID.
+				if deployment.FleetId == "" {
+					defaultFleetId, err := getOrgDefaultFleetId(ctx, deployment.SDK, deployment.AppID)
+					if err != nil {
+						return fmt.Errorf("failed to get default fleet ID: %w", err)
+					}
+					if defaultFleetId != "" {
+						deployment.FleetId = defaultFleetId
+					}
+				}
+
 				if err := deployment.Validate(); err != nil {
 					//nolint:errcheck
 					cli.ShowSubcommandHelp(cmd)
@@ -171,12 +185,18 @@ var Deployment = &cli.Command{
 					deploymentTag = &deployment.DeploymentTag
 				}
 
+				var fleetID *string
+				if deployment.FleetId != "" {
+					fleetID = &deployment.FleetId
+				}
+
 				gpu := float64(deployment.RequestedGPU)
 
 				res, err := deployment.SDK.DeploymentsV3.CreateDeployment(
 					ctx,
 					components.DeploymentConfigV3{
 						BuildID:                  deployment.BuildID,
+						FleetID:                  fleetID,
 						IdleTimeoutEnabled:       *deployment.IdleTimeoutEnabled,
 						RoomsPerProcess:          deployment.RoomsPerProcess,
 						TransportType:            deployment.TransportType,
@@ -327,6 +347,17 @@ var (
 		Usage:    "arbitrary metadata associated with a deployment",
 		Category: "Deployment:",
 	}
+
+	fleetIdFlag = &cli.StringFlag{
+		Name: "fleet-id",
+		Sources: cli.NewValueSourceChain(
+			cli.EnvVar(deploymentEnvVar("FLEET_ID")),
+			altsrc.ConfigFile(configFlag.Name, "deployment.fleet-id"),
+		),
+		Usage:      "the `<id>` of the fleet",
+		Persistent: true,
+		Category:   "Deployment:",
+	}
 )
 
 func parseContainerPorts(ports []string) ([]components.ContainerPort, error) {
@@ -465,6 +496,7 @@ var (
 type CreateDeploymentConfig struct {
 	*DeploymentConfig
 	BuildID                  string
+	FleetId                  string
 	IdleTimeoutEnabled       *bool
 	RoomsPerProcess          int
 	TransportType            components.TransportType
@@ -487,6 +519,7 @@ func (c *CreateDeploymentConfig) Load(cmd *cli.Command) error {
 
 	c.DeploymentConfig = deployment
 	c.BuildID = cmd.String(buildIDFlag.Name)
+	c.FleetId = cmd.String(fleetIdFlag.Name)
 
 	// Value of the idleTimeoutFlag by priority, high to low
 	// Passed in as an argument
@@ -532,6 +565,12 @@ func (c *CreateDeploymentConfig) Merge(latest *components.DeploymentV3) {
 
 	if c.BuildID == "" {
 		c.BuildID = latest.BuildID
+	}
+
+	if c.FleetId == "" {
+		if latest.FleetID != nil {
+			c.FleetId = *latest.FleetID
+		}
 	}
 
 	if c.IdleTimeoutEnabled == nil {
@@ -585,6 +624,10 @@ func (c *CreateDeploymentConfig) Validate() error {
 		err = errors.Join(err, missingRequiredFlag(buildIDFlag.Name))
 	}
 
+	if c.FleetId == "" {
+		err = errors.Join(err, missingRequiredFlag(fleetIdFlag.Name))
+	}
+
 	if c.RoomsPerProcess == 0 {
 		err = errors.Join(err, missingRequiredFlag(roomsPerProcessFlag.Name))
 	}
@@ -634,4 +677,30 @@ func (c *CreateDeploymentConfig) New() LoadableConfig {
 
 func CreateDeploymentConfigFrom(cmd *cli.Command) (*CreateDeploymentConfig, error) {
 	return ConfigFromCLI[*CreateDeploymentConfig](createDeploymentConfigKey, cmd)
+}
+
+func getOrgDefaultFleetId(ctx context.Context, sdk *sdk.HathoraCloud, appID *string) (string, error) {
+	if appID == nil || *appID == "" {
+		return "", fmt.Errorf("app ID is required")
+	}
+
+	app, err := sdk.AppsV2.GetApp(ctx, appID)
+	if err != nil {
+		return "", fmt.Errorf("failed to get org: %w", err)
+	}
+
+	orgs, err := sdk.OrganizationsV1.GetOrgs(ctx)
+	if err != nil {
+		return "", fmt.Errorf("failed to get orgs: %w", err)
+	}
+	for _, org := range orgs.Orgs {
+		if app.OrgID == org.OrgID {
+			if org.DefaultFleetID == nil {
+				return "", nil
+			}
+			return *org.DefaultFleetID, nil
+		}
+	}
+
+	return "", fmt.Errorf("app %s organization not found", *appID)
 }

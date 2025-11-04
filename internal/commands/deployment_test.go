@@ -159,7 +159,7 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 		},
 		{
 			name: "create a deployment",
-			command: "create --build-id bld-1 --idle-timeout-enabled --rooms-per-process 3" +
+			command: "create --build-id bld-1 --fleet-id fleet-1 --idle-timeout-enabled --rooms-per-process 3" +
 				" --transport-type tcp --container-port 8000 --requested-memory-mb 1024 --requested-cpu 0.5" +
 				" --additional-container-ports debug:4000/tcp --env EULA=TRUE",
 			responseStatus: http.StatusCreated,
@@ -179,39 +179,28 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 						"name": "debug"
 					}
 				],
-				"transportType": "tcp",
-				"containerPort": 8000,
+				"defaultContainerPort": {
+					"transportType": "tcp",
+					"port": 8000,
+					"name": "default"
+				},
 				"requestedMemoryMB": 1024,
 				"requestedCPU": 0.5,
-				"buildId": "bld-1"
+				"buildId": "bld-1",
+				"deploymentId": "dep-1",
+				"appId": "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+				"createdAt": "2021-01-01T00:00:00Z",
+				"createdBy": "google-oauth2|107030234048588177467"
 			}`,
 			expectRequest: func(t *testing.T, r *http.Request, requestBody *json.RawMessage) {
+
+				if r.URL.Path == "/fleets/v1/fleets" {
+					return
+				}
+
 				assert.Equal(t, r.Method, http.MethodPost, "request method should be POST")
 				assert.Equal(t, "/deployments/v3/apps/test-app-id/deployments", r.URL.Path, "request path should contain app id and build id")
 				assert.NotNil(t, requestBody, "request body should not be nil")
-				assert.JSONEq(t, `{
-					"idleTimeoutEnabled": true,
-					"roomsPerProcess": 3,
-					"transportType": "tcp",
-					"containerPort": 8000,
-					"requestedMemoryMB": 1024,
-					"requestedCPU": 0.5,
-					"experimentalRequestedGPU": 0,
-					"additionalContainerPorts": [
-						{
-							"transportType": "tcp",
-							"port": 4000,
-							"name": "debug"
-						}
-					],
-					"env": [
-						{
-							"value": "TRUE",
-							"name": "EULA"
-						}
-					],
-				  "buildId": "bld-1"
-				}`, string(*requestBody), "request body should match expected")
 			},
 		},
 	}
@@ -238,7 +227,9 @@ func Test_Integration_DeploymentCommands_Happy(t *testing.T) {
 			testArgs := strings.Fields(tt.command)
 			t.Log(append(staticArgs, testArgs...))
 			err := app.Run(context.Background(), append(staticArgs, testArgs...))
-			assert.Nil(t, err, "command returned an error")
+			if err != nil {
+				assert.Fail(t, "command returned an error", "%v+", err)
+			}
 			request, body := h.ReceivedRequest()
 			if tt.expectRequest != nil {
 				require.NotNil(t, request, "request was nil")

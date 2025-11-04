@@ -32,6 +32,7 @@ var Deploy = &cli.Command{
 		envVarsFlag,
 		idleTimeoutFlag,
 		deploymentTagFlag,
+		fleetIdFlag,
 	),
 	UsageText: `hathora deploy [options]`,
 	Action: func(ctx context.Context, cmd *cli.Command) error {
@@ -52,6 +53,18 @@ var Deploy = &cli.Command{
 			deploy.Merge(res, cmd.IsSet(idleTimeoutFlag.Name))
 		}
 
+		// If we didn't get a fleet ID from either its flag or the latest deployment,
+		// fallback to the org's default fleet ID.
+		if deploy.FleetId == "" {
+			defaultFleetId, err := getOrgDefaultFleetId(ctx, deploy.SDK, deploy.AppID)
+			if err != nil {
+				return fmt.Errorf("failed to get default fleet ID: %w", err)
+			}
+			if defaultFleetId != "" {
+				deploy.FleetId = defaultFleetId
+			}
+		}
+
 		if err := deploy.Validate(); err != nil {
 			//nolint:errcheck
 			cli.ShowSubcommandHelp(cmd)
@@ -68,12 +81,18 @@ var Deploy = &cli.Command{
 			deploymentTag = &deploy.DeploymentTag
 		}
 
+		var fleetID *string
+		if deploy.FleetId != "" {
+			fleetID = &deploy.FleetId
+		}
+
 		gpu := float64(deploy.RequestedGPU)
 
 		res, err := deploy.SDK.DeploymentsV3.CreateDeployment(
 			ctx,
 			components.DeploymentConfigV3{
 				BuildID:                  createdBuild.BuildID,
+				FleetID:                  fleetID,
 				IdleTimeoutEnabled:       *deploy.IdleTimeoutEnabled,
 				RoomsPerProcess:          deploy.RoomsPerProcess,
 				TransportType:            deploy.TransportType,
@@ -129,6 +148,12 @@ func (c *DeployConfig) Merge(latest *components.DeploymentV3, isIdleTimeoutDefau
 		return
 	}
 
+	if c.FleetId == "" {
+		if latest.FleetID != nil {
+			c.FleetId = *latest.FleetID
+		}
+	}
+
 	if !isIdleTimeoutDefault {
 		c.IdleTimeoutEnabled = &latest.IdleTimeoutEnabled
 	}
@@ -174,6 +199,10 @@ func (c *DeployConfig) Validate() error {
 
 	if c.AppID == nil || *c.AppID == "" {
 		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
+	}
+
+	if c.FleetId == "" {
+		err = errors.Join(err, missingRequiredFlag(fleetIdFlag.Name))
 	}
 
 	if c.RoomsPerProcess == 0 {
