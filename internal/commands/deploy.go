@@ -53,18 +53,6 @@ var Deploy = &cli.Command{
 			deploy.Merge(res, cmd.IsSet(idleTimeoutFlag.Name))
 		}
 
-		// If we didn't get a fleet ID from either its flag or the latest deployment,
-		// fallback to the org's default fleet ID.
-		if deploy.FleetId == "" {
-			defaultFleetId, err := getOrgDefaultFleetId(ctx, deploy.SDK, deploy.AppID)
-			if err != nil {
-				return fmt.Errorf("failed to get default fleet ID: %w", err)
-			}
-			if defaultFleetId != "" {
-				deploy.FleetId = defaultFleetId
-			}
-		}
-
 		if err := deploy.Validate(); err != nil {
 			//nolint:errcheck
 			cli.ShowSubcommandHelp(cmd)
@@ -199,10 +187,6 @@ func (c *DeployConfig) Validate() error {
 
 	if c.AppID == nil || *c.AppID == "" {
 		err = errors.Join(err, missingRequiredFlag(appIDFlag.Name))
-	}
-
-	if c.FleetId == "" {
-		err = errors.Join(err, missingRequiredFlag(fleetIdFlag.Name))
 	}
 
 	if c.RoomsPerProcess == 0 {
