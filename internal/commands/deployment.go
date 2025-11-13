@@ -162,18 +162,6 @@ var Deployment = &cli.Command{
 					deployment.Merge(res)
 				}
 
-				// If we didn't get a fleet ID from either its flag or the latest deployment,
-				// fallback to the org's default fleet ID.
-				if deployment.FleetId == "" {
-					defaultFleetId, err := getOrgDefaultFleetId(ctx, deployment.SDK, deployment.AppID)
-					if err != nil {
-						return fmt.Errorf("failed to get default fleet ID: %w", err)
-					}
-					if defaultFleetId != "" {
-						deployment.FleetId = defaultFleetId
-					}
-				}
-
 				if err := deployment.Validate(); err != nil {
 					//nolint:errcheck
 					cli.ShowSubcommandHelp(cmd)
@@ -624,10 +612,6 @@ func (c *CreateDeploymentConfig) Validate() error {
 		err = errors.Join(err, missingRequiredFlag(buildIDFlag.Name))
 	}
 
-	if c.FleetId == "" {
-		err = errors.Join(err, missingRequiredFlag(fleetIdFlag.Name))
-	}
-
 	if c.RoomsPerProcess == 0 {
 		err = errors.Join(err, missingRequiredFlag(roomsPerProcessFlag.Name))
 	}
@@ -677,30 +661,4 @@ func (c *CreateDeploymentConfig) New() LoadableConfig {
 
 func CreateDeploymentConfigFrom(cmd *cli.Command) (*CreateDeploymentConfig, error) {
 	return ConfigFromCLI[*CreateDeploymentConfig](createDeploymentConfigKey, cmd)
-}
-
-func getOrgDefaultFleetId(ctx context.Context, sdk *sdk.HathoraCloud, appID *string) (string, error) {
-	if appID == nil || *appID == "" {
-		return "", fmt.Errorf("app ID is required")
-	}
-
-	app, err := sdk.AppsV2.GetApp(ctx, appID)
-	if err != nil {
-		return "", fmt.Errorf("failed to get org: %w", err)
-	}
-
-	orgs, err := sdk.OrganizationsV1.GetOrgs(ctx)
-	if err != nil {
-		return "", fmt.Errorf("failed to get orgs: %w", err)
-	}
-	for _, org := range orgs.Orgs {
-		if app.OrgID == org.OrgID {
-			if org.DefaultFleetID == nil {
-				return "", nil
-			}
-			return *org.DefaultFleetID, nil
-		}
-	}
-
-	return "", fmt.Errorf("app %s organization not found", *appID)
 }
