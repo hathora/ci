@@ -108,7 +108,7 @@ func CreateTGZ(srcFolder string, ext string) (string, error) {
 		walker.Terminate()
 		for range paths { // drain
 		}
-		eg.Wait()
+		_ = eg.Wait()
 		return "", err
 	}
 
