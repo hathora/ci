@@ -45,7 +45,7 @@ func Test_DeploymentEnvVarShorthand(t *testing.T) {
 		},
 		{
 			name:  "nested flag",
-			input: `KEY=-SomeFlag="With Spaces,And Commas"`,
+			input: `MAVERICK_MAP_OVERRIDE=/MAP_Hangman/Hangman_Main?game=/Script/Engine.GameModeBase`,
 			expect: &components.DeploymentConfigV3Env{
 				Name:  "KEY",
 				Value: `-SomeFlag="With Spaces,And Commas"`,

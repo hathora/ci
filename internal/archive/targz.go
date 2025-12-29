@@ -13,6 +13,7 @@ import (
 	"github.com/boyter/gocodewalker"
 	"github.com/h2non/filetype"
 	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
 )
 
 type TGZFile struct {
@@ -45,59 +46,74 @@ func CreateTGZ(srcFolder string, ext string) (string, error) {
 		return false
 	})
 
-	err = walker.Start()
-	if err != nil {
-		return "", fmt.Errorf("error walking directory: %w", err)
+	var eg errgroup.Group
+
+	eg.Go(func() error {
+		return walker.Start()
+	})
+
+	processFiles := func() error {
+		for path := range paths {
+			info, err := os.Stat(path.Location)
+			if err != nil {
+				return fmt.Errorf("error statting file: %w", err)
+			}
+
+			if !info.Mode().IsRegular() {
+				continue
+			}
+
+			relPath, err := filepath.Rel(srcFolder, path.Location)
+			if err != nil {
+				return fmt.Errorf("error getting relative path: %w", err)
+			}
+
+			zap.L().Debug("Considering file: " + relPath)
+
+			header, err := tar.FileInfoHeader(info, "")
+			if err != nil {
+				return fmt.Errorf("error creating tar file info header: %w", err)
+			}
+			header.Name = filepath.ToSlash(relPath)
+
+			if err := tarWriter.WriteHeader(header); err != nil {
+				return err
+			}
+
+			if info.IsDir() {
+				zap.L().Debug("Including directory reference: " + relPath)
+				continue
+			}
+
+			file, err := os.Open(path.Location)
+			if err != nil {
+				return fmt.Errorf("error opening file: %w", err)
+			}
+
+			written, err := io.Copy(tarWriter, file)
+			file.Close()
+			if err != nil {
+				return fmt.Errorf("error copying file content for %s: %w", path.Location, err)
+			}
+			if written != info.Size() {
+				return fmt.Errorf("expected to write %d bytes but wrote %d bytes for file %s", info.Size(), written, path.Location)
+			}
+
+			zap.L().Debug("Including file: " + relPath)
+		}
+		return nil
 	}
 
-	for path := range paths {
-
-		info, err := os.Stat(path.Location)
-		if err != nil {
-			return "", fmt.Errorf("error statting file: %w", err)
+	if err := processFiles(); err != nil {
+		walker.Terminate()
+		for range paths { // drain
 		}
+		eg.Wait()
+		return "", err
+	}
 
-		if !info.Mode().IsRegular() {
-			continue
-		}
-
-		relPath, err := filepath.Rel(srcFolder, path.Location)
-		if err != nil {
-			return "", fmt.Errorf("error getting relative path: %w", err)
-		}
-
-		zap.L().Debug("Considering file: " + relPath)
-
-		header, err := tar.FileInfoHeader(info, "")
-		if err != nil {
-			return "", fmt.Errorf("error creating tar file info header: %w", err)
-		}
-		header.Name = filepath.ToSlash(relPath)
-
-		if err := tarWriter.WriteHeader(header); err != nil {
-			return "", err
-		}
-
-		if info.IsDir() {
-			zap.L().Debug("Including directory reference: " + relPath)
-			continue
-		}
-
-		file, err := os.Open(path.Location)
-		if err != nil {
-			return "", fmt.Errorf("error opening file: %w", err)
-		}
-		defer file.Close()
-
-		written, err := io.Copy(tarWriter, file)
-		if err != nil {
-			return "", fmt.Errorf("error copying file content for %s: %w", path.Location, err)
-		}
-		if written != info.Size() {
-			return "", fmt.Errorf("expected to write %d bytes but wrote %d bytes for file %s", info.Size(), written, path.Location)
-		}
-
-		zap.L().Debug("Including file: " + relPath)
+	if err := eg.Wait(); err != nil {
+		return "", err
 	}
 
 	return tarGzFile.Name(), nil
